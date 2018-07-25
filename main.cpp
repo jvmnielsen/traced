@@ -2,10 +2,18 @@
 #include <iostream>
 #include <vector>
 #include "PixelBuffer.h"
+#include "Vec3.h"
 
 // arguments necessary for SDL to be multi-platform
 int main( int argc, char * argv[] )
 {
+
+    Vec3f vec = { 1.0, 2.0, 3.0 };
+    std::cout << vec[2];
+
+
+
+
     Window window = Window( 400, 400 );
     window.initializeWindow();
 

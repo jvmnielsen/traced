@@ -121,10 +121,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
+    <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PixelBuffer.h" />
+    <ClInclude Include="Vec3.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
