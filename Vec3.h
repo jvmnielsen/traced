@@ -1,6 +1,5 @@
 #pragma once
-
-#include <cstdint>
+#include <iostream>
 
 template<typename T>
 class Vec3
@@ -60,6 +59,20 @@ Vec3<T> crossProduct( const Vec3<T>& vec1, const Vec3<T>& vec2 )
         vec1.m_y * vec2.m_z - vec1.m_z * vec2.m_y,
         vec1.m_z * vec2.m_x - vec1.m_x * vec2.m_z,
         vec1.m_x * vec2.m_y - vec1.m_y * vec2.m_x );
+}
+
+template< typename T >
+inline std::istream& operator >> ( std::istream &is, Vec3<T> &vec )
+{
+    is >> vec.m_x >> vec.m_y >> vec.m_z;
+    return is;
+}
+
+template< typename T >
+inline std::ostream& operator >> ( std::ostream &os, Vec3<T> &vec )
+{
+    os << vec.m_x << vec.m_y << vec.m_z;
+    return os;
 }
 
 
