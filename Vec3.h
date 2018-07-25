@@ -10,8 +10,8 @@ public:
     Vec3();
     Vec3( T x, T y, T z );
 
-    inline T magnitudeSquared() const;
-    inline T magnitude() const;
+    inline T length_squared() const;
+    inline T length() const;
 
     inline Vec3 operator *  ( const T factor ) const;
     inline Vec3& operator *= ( const T factor );
@@ -31,10 +31,10 @@ public:
     inline Vec3 operator / ( const Vec3& vec2 ) const;
     inline Vec3& operator /= ( const Vec3& vec2 );
 
-    inline T dotProduct( const Vec3& vec2 ) const;
+    inline T dot_product( const Vec3& vec2 ) const;
     //static const inline T dotProduct( const Vec3& vec1, const Vec3& vec2 );
     
-    inline Vec3& crossProduct( const Vec3& vec2 );
+    inline Vec3& cross_product( const Vec3& vec2 );
     //static inline Vec3 crossProduct( const Vec3& vec1, const Vec3& vec2 );
     
     inline void normalize();
@@ -47,13 +47,13 @@ public:
 };
 
 template< typename T >
-inline T dotProduct( const Vec3<T>& vec1, const Vec3<T>& vec2 )
+inline T dot_product( const Vec3<T>& vec1, const Vec3<T>& vec2 )
 {
     return vec1.m_x * vec2.m_x + vec1.m_y * vec2.m_y + vec1.m_z * vec2.m_z;
 }
 
 template< typename T >
-Vec3<T> crossProduct( const Vec3<T>& vec1, const Vec3<T>& vec2 ) 
+Vec3<T> cross_product( const Vec3<T>& vec1, const Vec3<T>& vec2 ) 
 {
     return Vec3<T>(
         vec1.m_y * vec2.m_z - vec1.m_z * vec2.m_y,
@@ -75,6 +75,17 @@ inline std::ostream& operator >> ( std::ostream &os, Vec3<T> &vec )
     return os;
 }
 
+template< typename T >
+inline Vec3<T> unit_vector( Vec3<T> vec )
+{
+    return vec / vec.length();
+}
+
+template< typename T >
+inline Vec3<T> operator * ( const float t, const Vec3<T> &vec )
+{
+    return Vec3<T>( t * vec.m_x, t*vec.m_y, t*vec.m_z );
+}
 
 typedef Vec3<float> Vec3f;
 typedef Vec3<int> Vec3i;

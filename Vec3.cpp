@@ -2,13 +2,13 @@
 #include <math.h>
 
 template< typename T >
-T Vec3< T >::magnitudeSquared() const
+T Vec3< T >::length_squared() const
 {
     return m_x * m_x + m_y * m_y + m_z * m_z;
 }
 
 template< typename T >
-T Vec3<T>::magnitude() const
+T Vec3<T>::length() const
 {
     // sqrt returns a double, so we can only cast 
     // 'down' to float or int -- no loss in precision
@@ -123,13 +123,13 @@ Vec3<T>& Vec3<T>::operator /= ( const Vec3<T>& vec2 )
 }
 
 template< typename T >
-T Vec3<T>::dotProduct( const Vec3<T>& vec2 ) const
+T Vec3<T>::dot_product( const Vec3<T>& vec2 ) const
 {
     return m_x * vec2.m_x + m_y * vec2.m_y + m_z * vec2.m_z;
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::crossProduct( const Vec3<T>& vec2 )
+Vec3<T>& Vec3<T>::cross_product( const Vec3<T>& vec2 )
 {
     m_x = m_y * vec2.m_z - m_z * vec2.m_y;
     m_y = m_z * vec2.m_x - m_x * vec2.m_z;
@@ -140,7 +140,7 @@ Vec3<T>& Vec3<T>::crossProduct( const Vec3<T>& vec2 )
 template< typename T >
 void Vec3<T>::normalize()
 {
-    T length = this->magnitude();
+    T length = this->length();
     if (length > 0) // avoid division by 0
     {
         T invertedLength = 1 / length;

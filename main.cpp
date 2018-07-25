@@ -1,25 +1,28 @@
 #include "Window.h"
-#include <iostream>
 #include <vector>
 #include "PixelBuffer.h"
 #include "Vec3.h"
+#include "Ray.h"
+
+Vec3f color( const Rayf& ray )
+{
+    Vec3f unit_direction = unit_vector( ray.direction() );
+    float t = 0.5 * ( unit_direction.m_y + 1.0 );
+    return Vec3f( 1.0, 1.0, 1.0 ) * (1.0 - t) + Vec3f( 0.5, 0.7, 1.0 ) * t;
+}
+
 
 // arguments necessary for SDL to be multi-platform
 int main( int argc, char * argv[] )
 {
 
-    Vec3f vec = { 1.0, 2.0, 3.0 };
-    std::cout << vec[2];
-
-
-
-
-    Window window = Window( 400, 400 );
+    Window window = Window( 480, 720 );
     window.initializeWindow();
 
     std::vector<unsigned char> testVector;
-    PixelBuffer buffer = PixelBuffer( testVector, 4, 400, 400 );
+    PixelBuffer buffer = PixelBuffer( testVector, 4, 480, 720 );
 
+    /*
     int nx = 400;
     int ny = 400;
 
@@ -38,17 +41,34 @@ int main( int argc, char * argv[] )
             buffer.m_pixelData.push_back( ib );
             buffer.m_pixelData.push_back( 255 );
         }
-    }
+    } */
 
-    /*
-    for (int i = 0; i < 400 * 400; ++i)
+    int nx = 720;
+    int ny = 480;
+
+    Vec3f lower_left_corner{ -2.0, -1.0, -1.0 };
+    Vec3f horizontal{ 4.0, 0.0, 0.0 };
+    Vec3f vertical{ 0.0,2.0,0.0 };
+    Vec3f origin{ 0.0, 0.0, 0.0 };
+
+    for (int j = ny - 1; j >= 0; j--)
     {
-        buffer.m_pixelData.push_back( 100 );
-        buffer.m_pixelData.push_back( 200 );
-        buffer.m_pixelData.push_back( 200 );
-        buffer.m_pixelData.push_back( 255 );
+        for (int i = 0; i < nx; i++)
+        {
+            float u = float( i ) / float( nx );
+            float v = float( j ) / float( ny );
+            Rayf r( origin, lower_left_corner + u * horizontal + v * vertical );
+            Vec3f col = color( r );
+            int ir = int( 255.99 * col[0] );
+            buffer.m_pixelData.push_back( ir );
+            int ig = int( 255.99 * col[1] );
+            buffer.m_pixelData.push_back( ig );
+            int ib = int( 255.99 * col[2] );
+            buffer.m_pixelData.push_back( ib );
+            buffer.m_pixelData.push_back( 255 );
+        }
     }
-    */
+    
     window.renderPixelBuffer( buffer );
 
     return 0;
