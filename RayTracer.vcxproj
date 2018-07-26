@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Hitable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pixel.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="PixelBuffer.h" />

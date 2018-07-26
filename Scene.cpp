@@ -2,6 +2,7 @@
 #include "Window.h"
 #include <float.h>
 #include "Sphere.h"
+#include "Camera.h"
 
 /*
 void Scene::add_object_to_scene( Hitable& hitable )
@@ -54,23 +55,22 @@ void Scene::render()
     Window window = Window( m_screen_width, m_screen_height );
     window.initializeWindow();
 
-    PixelBuffer buffer = PixelBuffer( 4, m_screen_width, m_screen_height );
-
-    Vec3f lower_left_cornor( -2.0, -1.0, -1.0 );
-    Vec3f horizontal( 4.0, 0.0, 0.0 );
-    Vec3f vertical( 0.0, 2.0, 0.0 );
-    Vec3f origin( 0.0, 0.0, 0.0 );
+	PixelBuffer buffer = PixelBuffer(4, m_screen_width, m_screen_height);
     
     m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5) );
     m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100 ) );
     
+	Camera camera;
+
     for (int j = m_screen_height - 1; j >= 0; j--)
     {
         for (int i = 0; i < m_screen_width; i++)
         {
-            float u = float( i ) / float( m_screen_width );
+			Vec3f col(0, 0, 0);
+			
+			float u = float( i ) / float( m_screen_width );
             float v = float( j ) / float( m_screen_height );
-            Rayf ray( origin, lower_left_cornor + u * horizontal + v * vertical );
+            //Rayf ray( origin, lower_left_cornor + u * horizontal + v * vertical );
 
             Vec3f p = ray.point_at_parameter( 2.0 );
             Vec3f col = color( ray );

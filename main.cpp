@@ -42,11 +42,10 @@ Vec3f color( const Rayf& ray )
 // arguments necessary for SDL to be multi-platform
 int main( int argc, char * argv[] )
 {
-    
     const int SCREEN_WIDTH = 1000;
     const int SCREEN_HEIGHT = 500;
 
-    Scene scene{ Pixel( 255,255,255,255 ), 1000, 500 };
+    Scene scene{ Pixel( 255, 255, 255, 255 ), 1000, 500 };
     scene.render();
 
     return 0; 

@@ -12,7 +12,7 @@ public:
     void add_pixel( Pixel& pixel );
     const int channels() { return m_channels; }
 
-    std::vector<int> m_pixel_data;
+    std::vector<unsigned char> m_pixel_data;
 
     //std::vector<Pixel> m_pixel_data;
     
