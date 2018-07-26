@@ -61,7 +61,7 @@ bool Window::initializeWindow()
 
 void Window::renderPixelBuffer( PixelBuffer &pixelBuffer )
 {
-    void *data = &pixelBuffer.m_pixelData[0];
+    void *data = &pixelBuffer.m_pixel_data[0];
     
     m_screenSurface = SDL_CreateRGBSurfaceWithFormatFrom( data,
                                                           pixelBuffer.m_screenWidth,
@@ -97,9 +97,7 @@ void Window::renderPixelBuffer( PixelBuffer &pixelBuffer )
                 running = false;
             }
         }
-    }
-
-        
+    } 
 }
 
 

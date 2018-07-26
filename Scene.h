@@ -16,14 +16,11 @@ public:
         , m_screen_height( screen_height )
     { }
 
-
-    ~Scene();
-
-    void add_object_to_scene( Hitable& hitable );
+    //void add_object_to_scene( Hitable& hitable );
     void render();
 
 private:
-    std::vector<Hitable> m_scene_objects;
+    std::vector<Hitable*> m_scene_objects;
     Pixel m_background_color;
     unsigned int m_screen_width;
     unsigned int m_screen_height;

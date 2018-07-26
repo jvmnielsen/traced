@@ -11,7 +11,8 @@ PixelBuffer::PixelBuffer( const int channels,
     //pixels = unsigned char[m_screenWidth * m_screenHeight * m_channels];
 }
 
+/*
 void PixelBuffer::add_pixel( Pixel& pixel )
 {
     m_pixel_data.push_back( pixel );
-}
+} */

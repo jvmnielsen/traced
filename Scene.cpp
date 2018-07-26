@@ -3,11 +3,11 @@
 #include <float.h>
 #include "Sphere.h"
 
-
+/*
 void Scene::add_object_to_scene( Hitable& hitable )
 {
     m_scene_objects.push_back( hitable );
-}
+} */
 
 bool Scene::intercepts( 
     const Rayf& ray,
@@ -20,7 +20,7 @@ bool Scene::intercepts(
     double closest_so_far = t_max;
     for ( auto& hitable : m_scene_objects )
     {
-        if (hitable.hit( ray, t_min, closest_so_far, temp_rec ))
+        if (hitable->hit( ray, t_min, closest_so_far, temp_rec ))
         {
             hit_anything = true;
             closest_so_far = temp_rec.t;
@@ -61,18 +61,28 @@ void Scene::render()
     Vec3f vertical( 0.0, 2.0, 0.0 );
     Vec3f origin( 0.0, 0.0, 0.0 );
     
-    add_object_to_scene( Sphere( Vec3f( 0,0,-1 ), 0.5) );
-    add_object_to_scene( Sphere( Vec3f( 0, -100.5, -1 ), 100 ) );
+    m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5) );
+    m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100 ) );
     
     for (int j = m_screen_height - 1; j >= 0; j--)
     {
         for (int i = 0; i < m_screen_width; i++)
         {
-            
+            float u = float( i ) / float( m_screen_width );
+            float v = float( j ) / float( m_screen_height );
+            Rayf ray( origin, lower_left_cornor + u * horizontal + v * vertical );
+
+            Vec3f p = ray.point_at_parameter( 2.0 );
+            Vec3f col = color( ray );
+            int ir = int( 255.99 * col.m_x );
+            buffer.m_pixel_data.push_back( ir );
+            int ig = int( 255.99 * col.m_y );
+            buffer.m_pixel_data.push_back( ig );
+            int ib = int( 255.99 * col.m_z );
+            buffer.m_pixel_data.push_back( ib );
+            buffer.m_pixel_data.push_back( 255 );
         }
     }
-
-
 
     window.renderPixelBuffer( buffer );
 }
