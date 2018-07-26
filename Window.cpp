@@ -1,10 +1,10 @@
 #include "Window.h"
 #include <iostream>
 
-Window::Window( const int screenHeight, 
-                const int screenWidth )
-    : m_screenHeight( screenHeight )
-    , m_screenWidth( screenWidth )
+Window::Window( const int screenWidth,
+                const int screenHeight )
+    : m_screenWidth( screenWidth )
+    , m_screenHeight( screenHeight )
 {
     m_screenSurface = NULL;
     m_texture = NULL;

@@ -1,15 +1,19 @@
 #pragma once
 #include <vector>
 #include <cstddef>
+#include "Pixel.h"
 
-struct PixelBuffer
+class PixelBuffer
 {
-    PixelBuffer( const std::vector<unsigned char> pixelData, const int channels, const int screenWidth, const int screenHeight );
-    
-    ~PixelBuffer();
+public:
+    PixelBuffer( const int channels, const int screenWidth, const int screenHeight );
 
-    std::vector<unsigned char> m_pixelData;
-    unsigned char* pixels;
+    void add_pixel( Pixel& pixel );
+    const int channels() { return m_channels; }
+
+private:
+
+    std::vector<Pixel> m_pixel_data;
     
     // how many bits per pixel (24 or 32 most commonly for RGB and RGBA respectively)
     const int m_channels;

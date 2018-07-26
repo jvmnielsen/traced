@@ -31,10 +31,10 @@ public:
     inline Vec3 operator / ( const Vec3& vec2 ) const;
     inline Vec3& operator /= ( const Vec3& vec2 );
 
-    inline T dot_product( const Vec3& vec2 ) const;
+    inline T dot( const Vec3& vec2 ) const;
     //static const inline T dotProduct( const Vec3& vec1, const Vec3& vec2 );
     
-    inline Vec3& cross_product( const Vec3& vec2 );
+    inline Vec3& cross( const Vec3& vec2 );
     //static inline Vec3 crossProduct( const Vec3& vec1, const Vec3& vec2 );
     
     inline void normalize();
@@ -47,13 +47,13 @@ public:
 };
 
 template< typename T >
-inline T dot_product( const Vec3<T>& vec1, const Vec3<T>& vec2 )
+inline T dot( const Vec3<T>& vec1, const Vec3<T>& vec2 )
 {
     return vec1.m_x * vec2.m_x + vec1.m_y * vec2.m_y + vec1.m_z * vec2.m_z;
 }
 
 template< typename T >
-Vec3<T> cross_product( const Vec3<T>& vec1, const Vec3<T>& vec2 ) 
+Vec3<T> cross( const Vec3<T>& vec1, const Vec3<T>& vec2 ) 
 {
     return Vec3<T>(
         vec1.m_y * vec2.m_z - vec1.m_z * vec2.m_y,

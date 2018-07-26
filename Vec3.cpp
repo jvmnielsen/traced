@@ -123,13 +123,13 @@ Vec3<T>& Vec3<T>::operator /= ( const Vec3<T>& vec2 )
 }
 
 template< typename T >
-T Vec3<T>::dot_product( const Vec3<T>& vec2 ) const
+T Vec3<T>::dot( const Vec3<T>& vec2 ) const
 {
     return m_x * vec2.m_x + m_y * vec2.m_y + m_z * vec2.m_z;
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::cross_product( const Vec3<T>& vec2 )
+Vec3<T>& Vec3<T>::cross( const Vec3<T>& vec2 )
 {
     m_x = m_y * vec2.m_z - m_z * vec2.m_y;
     m_y = m_z * vec2.m_x - m_x * vec2.m_z;
