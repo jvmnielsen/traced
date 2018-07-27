@@ -3,7 +3,7 @@
 #include <float.h>
 #include "Sphere.h"
 #include "Camera.h"
-#include <random>
+
 
 /*
 void Scene::add_object_to_scene( Hitable& hitable )
@@ -32,15 +32,23 @@ bool Scene::intercepts(
     return hit_anything;
 }
 
+Vec3f Scene::random_in_unit_sphere()
+{
+	Vec3f p;
+	do
+	{
+		p = 2.0 * Vec3f( m_distribution(m_generator), m_distribution(m_generator), m_distribution(m_generator) ) - Vec3f(1,1,1);
+	} while (p.length_squared() >= 1.0);
+	return p;
+}
+
 Vec3f Scene::color( const Rayf& ray )
 {
     hit_record record;
     if ( intercepts( ray, 0.0, FLT_MAX, record ) )
     {
-        return 0.5 * Vec3f(
-            record.normal.m_x + 1,
-            record.normal.m_y + 1,
-            record.normal.m_z + 1 );
+		Vec3f target = record.p + record.normal + random_in_unit_sphere();
+		return 0.5 * color( Rayf(record.p, target - record.p) );
     }
     else
     {
@@ -68,10 +76,7 @@ void Scene::render()
 
 	Camera camera;
 
-    // to generate random numbers [0,1]
-    std::random_device rd;
-    std::mt19937 gen( rd() );
-    std::uniform_real_distribution<> dist( 0, 1 );
+    
 
     int ns = 100;
 
@@ -83,14 +88,17 @@ void Scene::render()
             
             for (int s = 0; s < ns; s++)
             {
-                float u = float( i + dist(gen) ) / float( m_screen_width );
-                float v = float( j + dist(gen) ) / float( m_screen_height );
+                float u = float( i + m_distribution(m_generator) ) / float( m_screen_width );
+                float v = float( j + m_distribution(m_generator) ) / float( m_screen_height );
                 Rayf ray = camera.get_ray( u, v );
                 Vec3f p = ray.point_at_parameter( 2.0 );
                 col += color( ray );
             }
             
             col /= float( ns );
+
+			// gamma correction
+			col = Vec3f(sqrt(col.m_x), sqrt(col.m_y), sqrt(col.m_z));
 
             int ir = int( 255.99 * col.m_x );
             buffer.m_pixel_data.push_back( ir );
