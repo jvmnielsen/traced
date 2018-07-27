@@ -45,7 +45,7 @@ Vec3f Scene::random_in_unit_sphere()
 Vec3f Scene::color( const Rayf& ray )
 {
     hit_record record;
-    if ( intercepts( ray, 0.0, FLT_MAX, record ) )
+    if ( intercepts( ray, 0.001, FLT_MAX, record ) )
     {
 		Vec3f target = record.p + record.normal + random_in_unit_sphere();
 		return 0.5 * color( Rayf(record.p, target - record.p) );
