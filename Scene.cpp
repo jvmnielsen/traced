@@ -3,6 +3,7 @@
 #include <float.h>
 #include "Sphere.h"
 #include "Camera.h"
+#include "Material.h"
 
 
 /*
@@ -34,21 +35,32 @@ bool Scene::intercepts(
 
 Vec3f Scene::random_in_unit_sphere()
 {
+	std::mt19937 generator{ std::random_device()() };
+	std::uniform_real_distribution<> distribution( 0, 1 );
+
 	Vec3f p;
 	do
 	{
-		p = 2.0 * Vec3f( m_distribution(m_generator), m_distribution(m_generator), m_distribution(m_generator) ) - Vec3f(1,1,1);
+		p = 2.0 * Vec3f( distribution(generator), distribution(generator), distribution(generator) ) - Vec3f(1,1,1);
 	} while (p.length_squared() >= 1.0);
 	return p;
 }
 
-Vec3f Scene::color( const Rayf& ray )
+Vec3f Scene::color( const Rayf& ray, int depth )
 {
     hit_record record;
     if ( intercepts( ray, 0.001, FLT_MAX, record ) )
     {
-		Vec3f target = record.p + record.normal + random_in_unit_sphere();
-		return 0.5 * color( Rayf(record.p, target - record.p) );
+		Rayf scattered;
+		Vec3f attenuation;
+		if (depth < 50 && record.mat_ptr->scatter(ray, record, attenuation, scattered))
+		{
+			return attenuation * color(scattered, depth + 1);
+		}
+		else
+		{
+			return Vec3f(0, 0, 0);
+		}
     }
     else
     {
@@ -66,9 +78,11 @@ void Scene::render()
 
 	PixelBuffer buffer = PixelBuffer(4, m_screen_width, m_screen_height);
     
-    m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5) );
-    m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100 ) );
-    
+    m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
+    m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
+	m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
+	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.8, 0.8))));
+
     Vec3f lower_left_corner( -2.0, -1.0, -1.0 );
     Vec3f horizontal( 4.0, 0.0, 0.0 );
     Vec3f vertical( 0.0, 2.0, 0.0 );
@@ -92,7 +106,7 @@ void Scene::render()
                 float v = float( j + m_distribution(m_generator) ) / float( m_screen_height );
                 Rayf ray = camera.get_ray( u, v );
                 Vec3f p = ray.point_at_parameter( 2.0 );
-                col += color( ray );
+                col += color( ray, 0 );
             }
             
             col /= float( ns );

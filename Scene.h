@@ -24,6 +24,8 @@ public:
     //void add_object_to_scene( Hitable& hitable );
     void render();
 
+    static Vec3f random_in_unit_sphere();
+
 private:
     std::vector<Hitable*> m_scene_objects;
     Pixel m_background_color;
@@ -36,7 +38,7 @@ private:
 	std::uniform_real_distribution<> m_distribution;
 
     bool intercepts( const Rayf& ray, const float t_min, const float t_max, hit_record& record );
-	Vec3f random_in_unit_sphere();
-    Vec3f color( const Rayf& ray );
+	
+    Vec3f color( const Rayf& ray, int depth );
 };
 

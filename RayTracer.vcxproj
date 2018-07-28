@@ -122,6 +122,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Hitable.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Pixel.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="Ray.cpp" />
@@ -133,6 +134,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Hitable.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="Ray.h" />
