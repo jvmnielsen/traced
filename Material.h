@@ -29,10 +29,7 @@ public:
 	Vec3f m_albedo;
 };
 
-Vec3f reflectVec(const Vec3f& v, const Vec3f& n)
-{
-	return v - 2 * dot(v, n) * n;
-}
+Vec3f reflect(const Vec3f& v, const Vec3f& n);
 
 class Metal :
 	public Material
@@ -42,7 +39,7 @@ public:
 
 	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered) const
 	{
-		Vec3f reflected = reflectVec(unit_vector(ray_in.direction()), rec.normal);
+		Vec3f reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
 		scattered = Rayf(rec.p, reflected);
 		attenuation = m_albedo;
 		return (dot(scattered.direction(), rec.normal) > 0);
