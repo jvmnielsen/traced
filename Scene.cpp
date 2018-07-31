@@ -75,14 +75,14 @@ void Scene::render()
     m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
     m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
 	m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
-	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), -0.5, new Dielectric( 1.5 )));
+	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 )));
 
     Vec3f lower_left_corner( -2.0, -1.0, -1.0 );
     Vec3f horizontal( 4.0, 0.0, 0.0 );
     Vec3f vertical( 0.0, 2.0, 0.0 );
     Vec3f origin( 0.0, 0.0, 0.0 );
 
-	Camera camera;
+    Camera camera( Vec3f( -2, 2, 1 ), Vec3f(0,0,-1), Vec3f(0,1,0), 90, float(m_screen_width) / float(m_screen_height));
 
     
 

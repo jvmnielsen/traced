@@ -5,12 +5,22 @@
 class Camera
 {
 public:
-	Camera()
+    Camera( Vec3f look_from, Vec3f look_at, Vec3f view_up, float vFOV, float aspect )
 	{
-		lower_left_corner = Vec3f(-2.0, -1.0, -1.0);
-		horizontal        = Vec3f(4.0, 0.0, 0.0);
-		vertical          = Vec3f(0.0, 2.0, 0.0);
-		origin            = Vec3f(0.0, 0.0, 0.0);
+        Vec3f u, v, w;
+
+        float theta = vFOV * M_PI / 180;
+        float half_height = tan( theta / 2 );
+        float half_width = aspect * half_height;
+        
+        origin = look_from;
+        w = unit_vector( look_from - look_at );
+        u = unit_vector( cross( view_up, w ) );
+        v = cross( w, u );
+
+        lower_left_corner = origin - half_width * u - half_height * v - w;
+        horizontal = 2 * half_width * u;
+        vertical = 2 * half_height * v;
 	}
 	
 
