@@ -5,13 +5,6 @@
 #include "Camera.h"
 #include "Material.h"
 
-
-/*
-void Scene::add_object_to_scene( Hitable& hitable )
-{
-    m_scene_objects.push_back( hitable );
-} */
-
 bool Scene::intercepts( 
     const Rayf& ray,
     const float t_min,
@@ -35,7 +28,8 @@ bool Scene::intercepts(
 
 Vec3f Scene::random_in_unit_sphere()
 {
-	std::mt19937 generator{ std::random_device()() };
+    // might be too expensive creating and destroying every call
+	std::mt19937 generator{ std::random_device()() }; 
 	std::uniform_real_distribution<> distribution( 0, 1 );
 
 	Vec3f p;
@@ -81,7 +75,7 @@ void Scene::render()
     m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
     m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
 	m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
-	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.8, 0.8))));
+	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), -0.5, new Dielectric( 1.5 )));
 
     Vec3f lower_left_corner( -2.0, -1.0, -1.0 );
     Vec3f horizontal( 4.0, 0.0, 0.0 );
