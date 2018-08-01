@@ -82,7 +82,11 @@ void Scene::render()
     Vec3f vertical( 0.0, 2.0, 0.0 );
     Vec3f origin( 0.0, 0.0, 0.0 );
 
-    Camera camera( Vec3f( -2, 2, 1 ), Vec3f(0,0,-1), Vec3f(0,1,0), 90, float(m_screen_width) / float(m_screen_height));
+	Vec3f look_from{ 3,3,2 };
+	Vec3f look_at{ 0,0,-1 };
+	float dist_to_focus = (look_from - look_at).length();
+	float aperture = 2.0;
+    Camera camera( look_from, look_at, Vec3f(0,1,0), 20, float(m_screen_width)/float(m_screen_height), aperture, dist_to_focus);
 
     
 
