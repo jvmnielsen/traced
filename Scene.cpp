@@ -72,10 +72,10 @@ void Scene::render()
 
 	PixelBuffer buffer = PixelBuffer(4, m_screen_width, m_screen_height);
     
-    m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
-    m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
-	m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
-	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 )));
+    //m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
+    //m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
+	//m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
+	//m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 )));
 
     Vec3f lower_left_corner( -2.0, -1.0, -1.0 );
     Vec3f horizontal( 4.0, 0.0, 0.0 );

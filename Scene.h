@@ -26,8 +26,10 @@ public:
 
     static Vec3f random_in_unit_sphere();
 
-private:
     std::vector<Hitable*> m_scene_objects;
+
+private:
+    
     Pixel m_background_color;
     unsigned int m_screen_width;
     unsigned int m_screen_height;
