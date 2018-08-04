@@ -120,6 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Hitable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -133,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Pixel.h" />

@@ -4,6 +4,7 @@
 #include "Sphere.h"
 #include "Camera.h"
 #include "Material.h"
+#include <future>
 
 bool Scene::intercepts( 
     const Rayf& ray,
@@ -65,17 +66,12 @@ Vec3f Scene::color( const Rayf& ray, int depth )
 }
 
 
-void Scene::render()
+void Scene::render( PixelBuffer& buffer )
 {
-    Window window = Window( m_screen_width, m_screen_height );
-    window.initializeWindow();
-
-	PixelBuffer buffer = PixelBuffer(4, m_screen_width, m_screen_height);
-    
-    //m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
-    //m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
-	//m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
-	//m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 )));
+    m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
+    m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
+	m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
+	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 )));
 
     Vec3f lower_left_corner( -2.0, -1.0, -1.0 );
     Vec3f horizontal( 4.0, 0.0, 0.0 );
@@ -91,7 +87,7 @@ void Scene::render()
     
 
     int ns = 100;
-
+    int counter = 0;
     for (int j = m_screen_height - 1; j >= 0; j--)
     {
         for (int i = 0; i < m_screen_width; i++)
@@ -113,14 +109,15 @@ void Scene::render()
 			col = Vec3f(sqrt(col.m_x), sqrt(col.m_y), sqrt(col.m_z));
 
             int ir = int( 255.99 * col.m_x );
-            buffer.m_pixel_data.push_back( ir );
+            buffer.m_pixel_data[counter++] =  ir;
             int ig = int( 255.99 * col.m_y );
-            buffer.m_pixel_data.push_back( ig );
+            buffer.m_pixel_data[counter++] = ig;
             int ib = int( 255.99 * col.m_z );
-            buffer.m_pixel_data.push_back( ib );
-            buffer.m_pixel_data.push_back( 255 );
+            buffer.m_pixel_data[counter++] = ib;
+            buffer.m_pixel_data[counter++] = 255;
+
         }
     }
 
-    window.renderPixelBuffer( buffer );
+    
 }

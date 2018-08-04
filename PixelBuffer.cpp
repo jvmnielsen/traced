@@ -7,7 +7,15 @@ PixelBuffer::PixelBuffer( const int channels,
     , m_screenWidth( screenWidth )
     , m_screenHeight( screenHeight )
 {
-    m_pixel_data.reserve( m_screenWidth * m_screenHeight * m_channels );
+    int screen_size = m_screenWidth * m_screenHeight * channels;
+    m_pixel_data.reserve( screen_size );
+
+    //Pixel white_pixel{ 255, 255, 255, 255 };
+
+    for (int i = 0; i < screen_size; ++i)
+    {
+        m_pixel_data.push_back( 255 );
+    }
     //pixels = unsigned char[m_screenWidth * m_screenHeight * m_channels];
 }
 

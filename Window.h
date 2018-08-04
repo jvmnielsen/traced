@@ -9,12 +9,14 @@ class Window
 public:
 	Window( const int screenHeight, const int screenWidth );
 	
+    Window();
 	~Window();
 
 	bool initializeWindow();
 
-    void renderPixelBuffer( PixelBuffer &pixelBuffer );
-    void renderPixelBuffer( char* pixels );
+    void render_buffer( PixelBuffer &pixelBuffer );
+    void update_texture( PixelBuffer& buffer );
+   
 private:
 	SDL_Window *m_windowHandle;
 	SDL_Surface *m_screenSurface;

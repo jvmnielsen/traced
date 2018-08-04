@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "Material.h"
 #include "Sphere.h"
+#include "Controller.h"
 
 Scene& random_scene()
 {
@@ -13,7 +14,7 @@ Scene& random_scene()
     const unsigned int SCREEN_WIDTH = 800;
     const unsigned int SCREEN_HEIGHT = 400;
 
-    Scene scene{ Pixel( 255, 255, 255, 255 ), SCREEN_WIDTH, SCREEN_HEIGHT };
+    Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
     scene.m_scene_objects.push_back( new Sphere( Vec3f( 0, -1000, 0 ), 1000, new Lambertian( Vec3f( 0.5, 0.5, 0.5 ) ) ) );
 
     std::mt19937 generator{ std::random_device()() };
@@ -64,8 +65,11 @@ int main( int argc, char * argv[] )
     const unsigned int SCREEN_WIDTH = 800;
     const unsigned int SCREEN_HEIGHT = 400;
 
-    Scene scene = random_scene();
-    scene.render();
+    //Scene scene = random_scene();
+    Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
+    Controller controller{ scene };
+    controller.run();
+    //scene.render();
 
     return 0; 
 }

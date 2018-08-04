@@ -59,19 +59,19 @@ bool Window::initializeWindow()
     return true;
 }
 
-void Window::renderPixelBuffer( PixelBuffer &pixelBuffer )
+void Window::update_texture( PixelBuffer& buffer )
 {
-    void *data = &pixelBuffer.m_pixel_data[0];
-    
+    void *data = &buffer.m_pixel_data[0];
+
     m_screenSurface = SDL_CreateRGBSurfaceWithFormatFrom( data,
-                                                          pixelBuffer.m_screenWidth,
-                                                          pixelBuffer.m_screenHeight,
-                                                          pixelBuffer.m_channels * 8,                         // bits per byte
-                                                          pixelBuffer.m_screenWidth * pixelBuffer.m_channels, // how many pixels per line (depth * width)
-                                                          SDL_PIXELFORMAT_RGBA32 ); 
+                                                          buffer.m_screenWidth,
+                                                          buffer.m_screenHeight,
+                                                          buffer.m_channels * 8,                         // bits per byte
+                                                          buffer.m_screenWidth * buffer.m_channels, // how many pixels per line (depth * width)
+                                                          SDL_PIXELFORMAT_RGBA32 );
 
 
-    SDL_SaveBMP( m_screenSurface, "test.bmp" );
+    //SDL_SaveBMP( m_screenSurface, "test.bmp" );
 
     m_texture = SDL_CreateTextureFromSurface( m_renderer,
                                               m_screenSurface );
@@ -79,7 +79,10 @@ void Window::renderPixelBuffer( PixelBuffer &pixelBuffer )
     SDL_RenderClear( m_renderer );
     SDL_RenderCopy( m_renderer, m_texture, NULL, NULL );
     SDL_RenderPresent( m_renderer );
+}
 
+void Window::render_buffer( PixelBuffer &pixelBuffer )
+{
     bool running = true;
 
     //Event handler
@@ -91,11 +94,14 @@ void Window::renderPixelBuffer( PixelBuffer &pixelBuffer )
         //Handle events on queue
         while (SDL_PollEvent( &eventHandler ) != 0)
         {
+       
             //User requests quit
             if (eventHandler.type == SDL_QUIT)
             {
                 running = false;
             }
+
+            update_texture( pixelBuffer );
         }
     } 
 }
