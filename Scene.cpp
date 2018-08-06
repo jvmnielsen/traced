@@ -27,19 +27,7 @@ bool Scene::intercepts(
     return hit_anything;
 }
 
-Vec3f Scene::random_in_unit_sphere()
-{
-    // might be too expensive creating and destroying every call
-	std::mt19937 generator{ std::random_device()() }; 
-	std::uniform_real_distribution<> distribution( 0, 1 );
 
-	Vec3f p;
-	do
-	{
-		p = 2.0 * Vec3f( distribution(generator), distribution(generator), distribution(generator) ) - Vec3f(1,1,1);
-	} while (p.length_squared() >= 1.0);
-	return p;
-}
 
 Vec3f Scene::color( const Rayf& ray, int depth )
 {
@@ -68,25 +56,24 @@ Vec3f Scene::color( const Rayf& ray, int depth )
 
 void Scene::render( PixelBuffer& buffer )
 {
+    
     m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
     m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
 	m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
-	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 )));
+	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 ))); 
 
     Vec3f lower_left_corner( -2.0, -1.0, -1.0 );
     Vec3f horizontal( 4.0, 0.0, 0.0 );
     Vec3f vertical( 0.0, 2.0, 0.0 );
     Vec3f origin( 0.0, 0.0, 0.0 );
 
-	Vec3f look_from{ 3,3,2 };
-	Vec3f look_at{ 0,0,-1 };
-	float dist_to_focus = (look_from - look_at).length();
-	float aperture = 2.0;
+	Vec3f look_from{ 13,2,3 };
+	Vec3f look_at{ 0,0,0 };
+	float dist_to_focus = 10.0;
+	float aperture = 0.01;
     Camera camera( look_from, look_at, Vec3f(0,1,0), 20, float(m_screen_width)/float(m_screen_height), aperture, dist_to_focus);
 
-    
-
-    int ns = 100;
+    int ns = 10;
     int counter = 0;
     for (int j = m_screen_height - 1; j >= 0; j--)
     {
@@ -96,8 +83,8 @@ void Scene::render( PixelBuffer& buffer )
             
             for (int s = 0; s < ns; s++)
             {
-                float u = float( i + m_distribution(m_generator) ) / float( m_screen_width );
-                float v = float( j + m_distribution(m_generator) ) / float( m_screen_height );
+                float u = float( i + m_dist( m_gen) ) / float( m_screen_width );
+                float v = float( j + m_dist( m_gen) ) / float( m_screen_height );
                 Rayf ray = camera.get_ray( u, v );
                 Vec3f p = ray.point_at_parameter( 2.0 );
                 col += color( ray, 0 );

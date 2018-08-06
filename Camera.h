@@ -6,7 +6,7 @@
 #define _USE_MATH_DEFINES // for C++  
 #include <cmath>  
 
-Vec3f random_in_unit_disk();
+
 
 
 class Camera
@@ -15,7 +15,8 @@ public:
     Camera( Vec3f look_from, Vec3f look_at, Vec3f view_up, float vFOV, float aspect, float aperture, float focus_dist )
 		: m_lens_radius( aperture / 2 )
 		, m_origin( look_from )
-	
+        , m_gen( std::random_device()() )
+        , m_dist( 0, 1 )
 	{
 		m_w = unit_vector( look_from - look_at );
 		m_u = unit_vector( cross( view_up, m_w ) );
@@ -32,6 +33,7 @@ public:
 		m_vertical = 2 * half_height * focus_dist * m_v;
 	}
 	
+    Vec3f random_in_unit_disk();
 
 	Rayf get_ray( float s, float t ) 
 	{
@@ -47,5 +49,10 @@ public:
 	Vec3f m_horizontal;
 	Vec3f m_vertical;
 	float m_lens_radius;
+
+    // to generate random numbers [0,1]
+    //std::random_device m_seed;
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<> m_dist;
 };
 

@@ -8,38 +8,38 @@
 #include "Sphere.h"
 #include "Controller.h"
 
-Scene& random_scene()
+Scene random_scene()
 {
     int n = 500;
-    const unsigned int SCREEN_WIDTH = 800;
-    const unsigned int SCREEN_HEIGHT = 400;
+    const unsigned int SCREEN_WIDTH = 400;
+    const unsigned int SCREEN_HEIGHT = 200;
 
     Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
     scene.m_scene_objects.push_back( new Sphere( Vec3f( 0, -1000, 0 ), 1000, new Lambertian( Vec3f( 0.5, 0.5, 0.5 ) ) ) );
 
-    std::mt19937 generator{ std::random_device()() };
-    std::uniform_real_distribution<> distribution( 0, 1 );
+    std::mt19937 gen{ std::random_device()() };
+    std::uniform_real_distribution<> dist( 0, 1 );
 
     int i = 1;
     for (int a = -11; a < 11; a++)
     {
         for (int b = -11; b < 11; b++)
         {
-            float choose_mat = distribution( generator );
-            Vec3f center( a + 0.9 * distribution( generator ), 0.2, b + 0.9 * distribution( generator ));
+            float choose_mat = dist( gen );
+            Vec3f center( a + 0.9 * dist( gen ), 0.2, b + 0.9 * dist( gen ));
             if ((center - Vec3f( 4, 0.2, 0 )).length() > 0.9)
             {
                 if (choose_mat < 0.8)
                 {
                     scene.m_scene_objects.push_back( new Sphere( center, 0.2, new Lambertian( Vec3f( 
-                        distribution( generator ) * distribution( generator ), 
-                        distribution( generator ) * distribution( generator ), 
-                        distribution( generator ) * distribution( generator ) ) ) ) );
+                        dist( gen ) * dist( gen ), 
+                        dist( gen ) * dist( gen ), 
+                        dist( gen ) * dist( gen ) ) ) ) );
                 }
                 else if (choose_mat < 0.95)
                 {
-                    scene.m_scene_objects.push_back( new Sphere( center, 0.2, new Metal( Vec3f( 0.5*(1 + distribution( generator )),
-                                                     0.5*(1 + distribution( generator )), 0.5*(1 + distribution( generator )) ) ) ) );
+                    scene.m_scene_objects.push_back( new Sphere( center, 0.2, new Metal( Vec3f( 0.5*(1 + dist( gen )),
+                                                     0.5*(1 + dist( gen )), 0.5*(1 + dist( gen )) ) ) ) );
                 }
                 else
                 {
@@ -65,8 +65,8 @@ int main( int argc, char * argv[] )
     const unsigned int SCREEN_WIDTH = 800;
     const unsigned int SCREEN_HEIGHT = 400;
 
-    //Scene scene = random_scene();
-    Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
+    Scene scene = random_scene();
+    //Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
     Controller controller{ scene };
     controller.run();
     //scene.render();

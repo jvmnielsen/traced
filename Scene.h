@@ -16,8 +16,8 @@ public:
         //: m_background_color( background_color )
         : m_screen_width( screen_width )
         , m_screen_height( screen_height )
-		, m_generator(std::random_device()())
-		, m_distribution(0,1) 
+        , m_gen( std::random_device()() )
+        , m_dist( 0, 1 )
     {
 		
 	}
@@ -25,7 +25,7 @@ public:
     //void add_object_to_scene( Hitable& hitable );
     void render( PixelBuffer& buffer );
 
-    static Vec3f random_in_unit_sphere();
+    
 
     std::vector<Hitable*> m_scene_objects; // need to destroy objects
 
@@ -37,11 +37,11 @@ private:
     
     Pixel m_background_color;
     
-
-	// to generate random numbers [0,1]
-	//std::random_device m_seed;
-	std::mt19937 m_generator;
-	std::uniform_real_distribution<> m_distribution;
+    // to generate random numbers [0,1]
+    //std::random_device m_seed;
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<> m_dist;
+	
 
     bool intercepts( const Rayf& ray, const float t_min, const float t_max, hit_record& record );
 	

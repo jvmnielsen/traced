@@ -12,29 +12,37 @@ bool refract( const Vec3f& v, const Vec3f& n, float ni_over_nt, Vec3f& refracted
 
 float schlick( float cosine, float refractive_index );
 
-
-
 class Material
 {
 public:
-	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered) const = 0;
+	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered) = 0;
 };
 
 class Lambertian :
 	public Material
 {
 public:
-	Lambertian(const Vec3f& albedo) : m_albedo(albedo) {}
+	Lambertian(const Vec3f& albedo) 
+        : m_albedo(albedo) 
+        , m_gen( std::random_device()() )
+        , m_dist( 0, 1 ) {}
 
-	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered) const
+    Vec3f random_in_unit_sphere();
+
+	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered)
 	{
-		Vec3f target = rec.p + rec.normal + Scene::random_in_unit_sphere();
+		Vec3f target = rec.p + rec.normal + random_in_unit_sphere();
 		scattered = Rayf(rec.p, target - rec.p);
 		attenuation = m_albedo;
 		return true;
 	}
 
 	Vec3f m_albedo;
+    // to generate random numbers [0,1]
+    //std::random_device m_seed;
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<> m_dist;
+
 };
 
 
@@ -45,7 +53,7 @@ class Metal :
 public:
 	Metal(const Vec3f& albedo) : m_albedo(albedo) {}
 
-	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered) const
+	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered)
 	{
 		Vec3f reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
 		scattered = Rayf(rec.p, reflected);
@@ -62,7 +70,7 @@ class Dielectric
 public: 
     Dielectric( float refractive_index ) : m_refractive_index( refractive_index ) {}
 
-    virtual bool scatter( const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered ) const
+    virtual bool scatter( const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered )
     {
         // clean-up, especially all the "scattered ="
         Vec3f outward_normal;
