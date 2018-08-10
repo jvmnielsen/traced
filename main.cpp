@@ -63,8 +63,8 @@ Scene random_scene()
 // arguments necessary for SDL to be multi-platform
 int main( int argc, char * argv[] )
 {
-    const unsigned int SCREEN_WIDTH = 800;
-    const unsigned int SCREEN_HEIGHT = 400;
+    const unsigned int SCREEN_WIDTH = 720;
+    const unsigned int SCREEN_HEIGHT = 480;
 
     //Scene scene = random_scene();
     Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
