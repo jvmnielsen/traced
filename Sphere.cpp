@@ -1,34 +1,52 @@
 #include "Sphere.h"
 
-bool Sphere::hit( const Rayf& ray, const float t_min, const float t_max, hit_record& record ) const
+bool Sphere::is_hit_by(const Rayf& ray, float& t) const
 {
-    Vec3f oc = ray.origin() - m_center;
-    float a = dot( ray.direction(), ray.direction() );
-    float b = dot( oc, ray.direction() );
-    float c = dot( oc, oc ) - m_radius * m_radius;
-    float discriminant = b * b - a * c;
-    if (discriminant > 0)
+    float solu_one, solu_two;
+
+    auto center_at_orig = m_center - ray.origin();
+
+    const auto a = ray.direction().dot( ray.direction() );
+    const auto b = 2 * ray.direction().dot( center_at_orig );
+    const auto c = center_at_orig.dot( center_at_orig ) - m_radius_squared;
+
+    if ( !solve_quadratic( a, b, c, solu_one, solu_two ) )
+        return false;
+
+    if (!(solu_one > 0 || solu_two > 0))
+        return false;
+
+    t = (solu_one > solu_two) ?
+        solu_one :
+        solu_two;
+
+    return true;
+
+
+}
+
+bool Sphere::solve_quadratic(const float a, const float b, const float c, float& solu_one, float& solu_two) const
+{
+    const auto discr = b * b - 4 * a * c;
+
+    if (discr < 0) 
+        return false;
+
+    else if (discr == 0) 
+        solu_one = solu_two = -0.5 * b / a;
+
+    else
     {
-        float temp = (-b - sqrt( b*b - a * c )) / a;
-        if (temp < t_max && temp > t_min)
-        {
-            record.t = temp;
-            record.p = ray.point_at_parameter( record.t );
-            record.normal = (record.p - m_center) / m_radius;
-            record.mat_ptr = m_material;
-            return true;
-        }
-        temp = (-b + sqrt( b*b - a * c )) / a;
-        if (temp < t_max && temp > t_min)
-        {
-            record.t = temp;
-            record.p = ray.point_at_parameter( record.t );
-            record.normal = (record.p - m_center) / m_radius;
-            record.mat_ptr = m_material;
-            return true;
-        }
+        const float q = (b > 0) ?
+            -0.5 * (b + sqrt( discr )) :
+            -0.5 * (b - sqrt( discr ));
+
+        solu_one = q / a;
+        solu_two = c / q;
     }
-    return false;
 
+    if (solu_one > solu_two)
+        std::swap( solu_one, solu_two );
 
+    return true;
 }

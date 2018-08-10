@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "Controller.h"
 
+/*
 Scene random_scene()
 {
     int n = 500;
@@ -57,7 +58,7 @@ Scene random_scene()
     return scene;
 
     
-}
+} */
 
 // arguments necessary for SDL to be multi-platform
 int main( int argc, char * argv[] )
@@ -65,8 +66,10 @@ int main( int argc, char * argv[] )
     const unsigned int SCREEN_WIDTH = 800;
     const unsigned int SCREEN_HEIGHT = 400;
 
-    Scene scene = random_scene();
-    //Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
+    //Scene scene = random_scene();
+    Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
+
+
     Controller controller{ scene };
     controller.run();
     //scene.render();

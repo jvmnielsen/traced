@@ -26,6 +26,7 @@ float schlick( float cosine, float refractive_index )
     return r0 + (1 - r0) * pow( (1 - cosine), 5 );
 }
 
+/*
 Vec3f Lambertian::random_in_unit_sphere()
 {
     Vec3f p;
@@ -34,4 +35,4 @@ Vec3f Lambertian::random_in_unit_sphere()
         p = 2.0 * Vec3f( m_dist( m_gen ), m_dist( m_gen ), m_dist( m_gen ) ) - Vec3f( 1, 1, 1 );
     } while (p.length_squared() >= 1.0);
     return p;
-}
+} */

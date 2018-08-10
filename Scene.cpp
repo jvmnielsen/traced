@@ -1,110 +1,81 @@
 #include "Scene.h"
 #include "Window.h"
-#include <float.h>
+//#include <float.h>
 #include "Sphere.h"
 #include "Camera.h"
 #include "Material.h"
-#include <future>
+#include "Matrix44.h"
 
-bool Scene::intercepts( 
-    const Rayf& ray,
-    const float t_min,
-    const float t_max,
-    hit_record& record )
+
+inline float deg_to_rad(const float deg)
 {
-    hit_record temp_rec;
-    bool hit_anything = false;
-    double closest_so_far = t_max;
-    for ( auto& hitable : m_scene_objects )
+    return deg * M_PI / 280;
+}
+
+
+HitData Scene::trace( const Rayf& ray )
+{
+    HitData hit_data = { };
+
+    for ( auto& renderable : m_scene_objects )
     {
-        if (hitable->hit( ray, t_min, closest_so_far, temp_rec ))
+        if ( renderable->is_hit_by(ray, hit_data.m_t) )
         {
-            hit_anything = true;
-            closest_so_far = temp_rec.t;
-            record = temp_rec;
+            hit_data.update_closest_and_assign( renderable );
         }
     }
-    return hit_anything;
+
+    return hit_data;
 }
 
 
 
-Vec3f Scene::color( const Rayf& ray, int depth )
+Vec3f Scene::cast_ray( const Rayf& ray )
 {
-    hit_record record;
-    if ( intercepts( ray, 0.001, FLT_MAX, record ) )
+    auto hit_data = trace( ray );
+
+    if ( hit_data.has_been_hit() )
     {
-		Rayf scattered;
-		Vec3f attenuation;
-		if (depth < 50 && record.mat_ptr->scatter(ray, record, attenuation, scattered))
-		{
-			return attenuation * color(scattered, depth + 1);
-		}
-		else
-		{
-			return Vec3f(0, 0, 0);
-		}
+        return hit_data.m_renderable_ptr->m_surface_color;
     }
-    else
-    {
-        Vec3f unit_direction = unit_vector( ray.direction() );
-        float t = 0.5 * (unit_direction.m_y + 1.0);
-        return (1.0 - t) * Vec3f( 1.0, 1.0, 1.0 ) + t * Vec3f( 0.5, 0.7, 1.0 );
-    }
+
+    return {250, 110, 10};
 }
 
 
 void Scene::render( PixelBuffer& buffer )
 {
-    
-    m_scene_objects.push_back( new Sphere( Vec3f( 0,0,-1 ), 0.5, new Lambertian( Vec3f( 0.8, 0.3, 0.3 ) ) ) );
-    m_scene_objects.push_back( new Sphere( Vec3f( 0, -100.5, -1 ), 100, new Lambertian( Vec3f( 0.8, 0.8, 0.0 ) ) ) );
-	m_scene_objects.push_back( new Sphere( Vec3f( 1, 0, -1 ), 0.5, new Metal( Vec3f(0.8, 0.6, 0.2))));
-	m_scene_objects.push_back( new Sphere( Vec3f( -1, 0, -1 ), 0.5, new Dielectric( 1.5 ))); 
+    Matrix44f camera_to_world;
 
-    Vec3f lower_left_corner( -2.0, -1.0, -1.0 );
-    Vec3f horizontal( 4.0, 0.0, 0.0 );
-    Vec3f vertical( 0.0, 2.0, 0.0 );
-    Vec3f origin( 0.0, 0.0, 0.0 );
+    const float fov = 90;
 
-	Vec3f look_from{ 13,2,3 };
-	Vec3f look_at{ 0,0,0 };
-	float dist_to_focus = 10.0;
-	float aperture = 0.01;
-    Camera camera( look_from, look_at, Vec3f(0,1,0), 20, float(m_screen_width)/float(m_screen_height), aperture, dist_to_focus);
+    const auto scale = tan( deg_to_rad( fov * 0.5 ) );
 
-    int ns = 10;
+    const auto image_aspect_ratio = m_screen_width / m_screen_height;
+
+    const auto origin = camera_to_world.multiply_with_point( Vec3f(0) );
+
     int counter = 0;
-    for (int j = m_screen_height - 1; j >= 0; j--)
+
+    for (size_t j = 0; j < m_screen_height; ++j)
     {
-        for (int i = 0; i < m_screen_width; i++)
+        for (size_t i = 0; i < m_screen_width; ++i)
         {
-            Vec3f col( 0, 0, 0 );
-            
-            for (int s = 0; s < ns; s++)
-            {
-                float u = float( i + m_dist( m_gen) ) / float( m_screen_width );
-                float v = float( j + m_dist( m_gen) ) / float( m_screen_height );
-                Rayf ray = camera.get_ray( u, v );
-                Vec3f p = ray.point_at_parameter( 2.0 );
-                col += color( ray, 0 );
-            }
-            
-            col /= float( ns );
+            const float x = (2 * (i + 0.5) / m_screen_width - 1) * image_aspect_ratio * scale;
+            const float y = (1 - 2 * (j + 0.5) / m_screen_height) * scale;
 
-			// gamma correction
-			col = Vec3f(sqrt(col.m_x), sqrt(col.m_y), sqrt(col.m_z));
+            auto dir = camera_to_world.multiply_with_point( Vec3f( x, y, -1 ) );
+            dir.normalize();
 
-            int ir = int( 255.99 * col.m_x );
-            buffer.m_pixel_data[counter++] =  ir;
-            int ig = int( 255.99 * col.m_y );
-            buffer.m_pixel_data[counter++] = ig;
-            int ib = int( 255.99 * col.m_z );
-            buffer.m_pixel_data[counter++] = ib;
+            auto color = cast_ray( Rayf( origin, dir ) );
+
+            buffer.m_pixel_data[counter++] = color[0];
+            buffer.m_pixel_data[counter++] = color[1];
+            buffer.m_pixel_data[counter++] = color[2];
             buffer.m_pixel_data[counter++] = 255;
-
         }
     }
+
 
     
 }

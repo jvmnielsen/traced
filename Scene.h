@@ -1,18 +1,21 @@
 #pragma once
 #include <vector>
-#include "Hitable.h"
+#include "Renderable.h"
 #include "Pixel.h"
 #include "Ray.h"
 #include <random>
 #include "PixelBuffer.h"
+#include <memory>
+#include <limits>
+#include "HitData.h"
 
 class Scene
 {
 public:
     Scene() {}
     Scene( //Pixel& background_color,
-           unsigned int screen_width,
-           unsigned int screen_height ) 
+            const unsigned int screen_width,
+            const unsigned int screen_height ) 
         //: m_background_color( background_color )
         : m_screen_width( screen_width )
         , m_screen_height( screen_height )
@@ -22,12 +25,12 @@ public:
 		
 	}
 
-    //void add_object_to_scene( Hitable& hitable );
+    //void add_object_to_scene( Renderable& hitable );
     void render( PixelBuffer& buffer );
 
     
 
-    std::vector<Hitable*> m_scene_objects; // need to destroy objects
+    std::vector<std::shared_ptr<Renderable>> m_scene_objects;
 
     unsigned int m_screen_width;
     unsigned int m_screen_height;
@@ -41,10 +44,11 @@ private:
     //std::random_device m_seed;
     std::mt19937 m_gen;
     std::uniform_real_distribution<> m_dist;
-	
 
-    bool intercepts( const Rayf& ray, const float t_min, const float t_max, hit_record& record );
+    const float m_infinity = std::numeric_limits<float>::max();
+
+    HitData trace( const Rayf& ray );
 	
-    Vec3f color( const Rayf& ray, int depth );
+    Vec3f cast_ray( const Rayf& ray );
 };
 

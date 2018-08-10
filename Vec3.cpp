@@ -17,6 +17,14 @@ T Vec3<T>::length() const
 }
 
 template< typename T >
+Vec3<T>::Vec3( T val )
+    : m_x( val )
+    , m_y( val )
+    , m_z( val )
+{
+}
+
+template< typename T >
 Vec3<T> ::Vec3()
     : m_x( T( 0 ) )
     , m_y( T( 0 ) )

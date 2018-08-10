@@ -1,10 +1,10 @@
 #pragma once
 
-struct hit_record;
+struct hit_data;
 
 #include "Scene.h"
 #include "Ray.h"
-#include "Hitable.h"
+#include "Renderable.h"
 
 Vec3f reflect( const Vec3f& v, const Vec3f& n );
 
@@ -15,9 +15,10 @@ float schlick( float cosine, float refractive_index );
 class Material
 {
 public:
-	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered) = 0;
+	virtual bool scatter(const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered) = 0;
 };
 
+/*
 class Lambertian :
 	public Material
 {
@@ -29,7 +30,7 @@ public:
 
     Vec3f random_in_unit_sphere();
 
-	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered)
+	virtual bool scatter(const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered)
 	{
 		Vec3f target = rec.p + rec.normal + random_in_unit_sphere();
 		scattered = Rayf(rec.p, target - rec.p);
@@ -53,7 +54,7 @@ class Metal :
 public:
 	Metal(const Vec3f& albedo) : m_albedo(albedo) {}
 
-	virtual bool scatter(const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered)
+	virtual bool scatter(const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered)
 	{
 		Vec3f reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
 		scattered = Rayf(rec.p, reflected);
@@ -70,7 +71,7 @@ class Dielectric
 public: 
     Dielectric( float refractive_index ) : m_refractive_index( refractive_index ) {}
 
-    virtual bool scatter( const Rayf& ray_in, const hit_record& rec, Vec3f& attenuation, Rayf& scattered )
+    virtual bool scatter( const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered )
     {
         // clean-up, especially all the "scattered ="
         Vec3f outward_normal;
@@ -122,7 +123,7 @@ public:
 
 private:
     float m_refractive_index;
-};
+}; */
 
 
 
