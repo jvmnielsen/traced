@@ -1,23 +1,7 @@
 #include "Polygon.h"
 #include <cmath>
 
-bool inside_outside_test( const Vec3f& vertx, const Vec3f& intersection, const Vec3f& point, const Vec3f& normal )
-{
-    /* The inside-outside test simply checks that the point is to the left of every vertex
-    * by taking the dot product of the plane's normal and the vector formed by taking the
-    * cross product of the vertex and a vector to the point in question. If they point
-    * in the same direction the dot product will be > 0 ( cos(0) ).
-    *
-    * We are doing them one at a time, as we want to terminate immediately if the test fails
-    * even once.
-    */
-    const auto point_to_intersect = intersection - point;
-    const auto perpendicular_to_plane = cross( vertx, point_to_intersect );
-
-    return normal.dot(perpendicular_to_plane) >= 0;
-}
-
-bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t ) const
+bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t )
 {
     // back-face culling
     if ( dot( ray.direction(), m_normal ) > 0 && m_is_single_sided )
@@ -44,20 +28,56 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t ) const
 
     const auto intersection = ray.origin() + t * ray.direction();
 
-    // inside-outside test for all vertices
-    if (!(inside_outside_test( m_vertx0, intersection, m_point0, m_normal )))
+    Vec3f perpendicular_to_plane;
+
+    /* The inside-outside test simply checks that the point is to the left of every vertex
+    * by taking the dot product of the plane's normal and the vector formed by taking the
+    * cross product of the vertex and a vector to the point in question. If they point
+    * in the same direction the dot product will be > 0 ( cos(0) ).
+    *
+    * We are doing them one at a time as we want to terminate immediately if the test fails.
+    */
+
+    // edge 0
+    const auto vertx0_to_intersect = intersection - m_vertx0;
+    perpendicular_to_plane = m_edge0.cross( vertx0_to_intersect );
+
+    if ( m_normal.dot( perpendicular_to_plane ) > 0 )
+         return false;
+
+    // edge 1
+    const auto vertx1_to_intersect = intersection - m_vertx1;
+    perpendicular_to_plane = m_edge1.cross( vertx1_to_intersect );
+
+    if ( ( m_barycentric_intercpt.m_x = m_normal.dot( perpendicular_to_plane ) > 0))
         return false;
 
-    if (!(inside_outside_test( m_vertx1, intersection, m_point1, m_normal )))
+    // edge 2
+    const auto vertx2_to_intersect = intersection - m_vertx2;
+    perpendicular_to_plane = m_edge2.cross( vertx2_to_intersect );
+
+    if ( ( m_barycentric_intercpt.m_y = m_normal.dot( perpendicular_to_plane ) ) > 0)
         return false;
 
-    if (!(inside_outside_test( m_vertx2, intersection, m_point2, m_normal )))
-        return false;
+    /* The barycentric coordinates are the ratio of the triangles formed when drawing
+     * lines from the vertices to the intercept point.
+     *
+     * They are calculated using the area of the parallelogram (cross product) they 
+     * form. 
+     * 
+     * for example: v = triangleABP_area / triangleABC_area = ( AB x AP ) . N / ( AB x AC ) . N
+     */
+    
+    const auto denom = m_normal.dot( m_normal );
+
+    m_barycentric_intercpt.m_x /= denom;
+    m_barycentric_intercpt.m_y /= denom;
+    m_barycentric_intercpt.m_z = 1 - m_barycentric_intercpt.m_x - m_barycentric_intercpt.m_y;
 
     return true;
 }
 
-bool Polygon::intersects( const Rayf& ray, float& t ) const
+bool Polygon::intersects( const Rayf& ray, float& t )
 {
     return geometric_triangle_intersect( ray, t );
 }

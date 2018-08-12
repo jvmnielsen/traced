@@ -137,12 +137,13 @@ T Vec3<T>::dot( const Vec3<T>& vec2 ) const
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::cross( const Vec3<T>& vec2 )
+Vec3<T> Vec3<T>::cross( const Vec3<T>& vec2 ) const
 {
-    m_x = m_y * vec2.m_z - m_z * vec2.m_y;
-    m_y = m_z * vec2.m_x - m_x * vec2.m_z;
-    m_z = m_x * vec2.m_y - m_y * vec2.m_x;
-    return *this;
+    
+    return Vec3<T>{
+        m_y * vec2.m_z - m_z * vec2.m_y,
+        m_z * vec2.m_x - m_x * vec2.m_z,
+        m_x * vec2.m_y - m_y * vec2.m_x };
 }
 
 template< typename T >
@@ -161,7 +162,7 @@ Vec3<T>& Vec3<T>::normalize()
 }
 
 template<typename T>
-const T Vec3<T>::operator [] ( const uint8_t i ) const
+T Vec3<T>::operator [] ( const uint8_t i ) const
 {
     return (&m_x)[i];
 }

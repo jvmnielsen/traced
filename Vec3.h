@@ -35,13 +35,13 @@ public:
     T dot( const Vec3& vec2 ) const;
     //static const inline T dotProduct( const Vec3& vec1, const Vec3& vec2 );
     
-    Vec3& cross( const Vec3& vec2 );
+    Vec3 cross( const Vec3& vec2 ) const;
     //static inline Vec3 crossProduct( const Vec3& vec1, const Vec3& vec2 );
     
     Vec3& normalize();
 
     // Accessors 
-    const T operator [] ( const uint8_t i ) const;
+    T operator [] ( const uint8_t i ) const;
     T& operator [] ( const uint8_t i );
 
 

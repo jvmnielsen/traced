@@ -58,7 +58,7 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -2.0f }, Vec3f{ 0.1f, -0.1f, -2.0f }, Vec3f{ 0.0f, 0.1f, -2.0f}) ) );
+    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -2.0f }, Vec3f{ 0.1f, -0.1f, -2.0f }, Vec3f{ 0.0f, 0.1f, -2.0f}, false) ) );
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {
