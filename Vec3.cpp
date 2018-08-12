@@ -146,7 +146,7 @@ Vec3<T>& Vec3<T>::cross( const Vec3<T>& vec2 )
 }
 
 template< typename T >
-void Vec3<T>::normalize()
+Vec3<T>& Vec3<T>::normalize()
 {
     T length = this->length();
     if (length > 0) // avoid division by 0
@@ -156,6 +156,8 @@ void Vec3<T>::normalize()
         m_y *= invertedLength;
         m_z *= invertedLength;
     }
+
+    return *this;
 }
 
 template<typename T>

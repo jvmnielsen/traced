@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Material.h"
 #include "Matrix44.h"
+#include "Polygon.h"
 
 
 inline float deg_to_rad(const float deg)
@@ -19,7 +20,7 @@ HitData Scene::trace( const Rayf& ray )
 
     for ( auto& renderable : m_scene_objects )
     {
-        if ( renderable->is_hit_by(ray, hit_data.m_t) )
+        if ( renderable->intersects(ray, hit_data.m_t) )
         {
             hit_data.update_closest_and_assign( renderable );
         }
@@ -47,7 +48,7 @@ void Scene::render( PixelBuffer& buffer )
 {
     Matrix44f camera_to_world;// { 0.945519f, 0.0f, -0.325569f, 0.0f, -0.179534f, 0.834209f, -0.521403f, 0.0f, 0.271593f, 0.551447f, 0.78876f, 0.0f, 4.208271f, 8.374532f, 17.932925f, 1.0f };
 
-    const float fov = 100;
+    const float fov = 90;
 
     const auto scale = tan( deg_to_rad( fov * 0.5 ) );
 
@@ -57,7 +58,7 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-    m_scene_objects.push_back( std::make_shared<Sphere>( Sphere( Vec3f{ 0.0f, 0.0f, 1.5f }, 0.4, nullptr ) ) );
+    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -2.0f }, Vec3f{ 0.1f, -0.1f, -2.0f }, Vec3f{ 0.0f, 0.1f, -2.0f}) ) );
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {

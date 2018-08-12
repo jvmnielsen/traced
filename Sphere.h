@@ -1,8 +1,8 @@
 #pragma once
-#include "Renderable.h"
+#include "RenderPrimitive.h"
 
 class Sphere :
-    public Renderable
+    public RenderPrimitive
 {
 public:
     Sphere( Vec3f& center, const float radius, Material* material ) 
@@ -12,7 +12,7 @@ public:
 		, m_material( material )
     {}
 
-    bool is_hit_by(const Rayf& ray, float& t) const override;
+    bool intersects(const Rayf& ray, float& t) const override;
 
     bool solve_quadratic( const float a, const float b, const float c, float& solu_one, float& solu_two ) const;
 

@@ -121,7 +121,8 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="Polygon.cpp" />
+    <ClCompile Include="RenderPrimitive.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Matrix44.cpp" />
@@ -137,7 +138,8 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="HitData.h" />
-    <ClInclude Include="Renderable.h" />
+    <ClInclude Include="Polygon.h" />
+    <ClInclude Include="RenderPrimitive.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix44.h" />
     <ClInclude Include="Pixel.h" />

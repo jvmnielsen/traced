@@ -3,17 +3,18 @@
 
 class Material;
 
-class Renderable
+class RenderPrimitive
 {
 public:
-    //virtual ~Renderable() = default;
-    virtual bool is_hit_by( const Rayf& ray, float& t ) const = 0;
+    virtual ~RenderPrimitive() = default;
+    //virtual ~RenderPrimitive() = default;
+    virtual bool intersects( const Rayf& ray, float& t ) const = 0;
 
     Vec3f m_surface_color = { 150, 20, 100 };
 };
 
 class Plane
-    : public Renderable
+    : public RenderPrimitive
 {
 public:
     Plane( const Vec3f& normal, const Vec3f& point )
@@ -21,7 +22,7 @@ public:
         , m_point_on_plane( point )
     {}
 
-    bool is_hit_by( const Rayf& ray, float& t ) const override
+    bool intersects( const Rayf& ray, float& t ) const override
     {
         const auto denom = dot( m_normal, ray.direction() );
         
@@ -44,7 +45,7 @@ private:
 
 
 class Disk
-    : public Renderable
+    : public RenderPrimitive
 {
 public:
     Disk( const Vec3f& normal, const Vec3f& point, const float radius )
@@ -54,7 +55,7 @@ public:
         , m_radius_squared( radius * radius )
     {}
 
-    bool is_hit_by( const Rayf& ray, float& t ) const override
+    bool intersects( const Rayf& ray, float& t ) const override
     {
 
         // first part is, unsurprisingly, the same as for a disk
@@ -62,7 +63,7 @@ public:
 
         const auto denom = dot( m_normal, ray.direction() );
 
-        if ( !denom > 1e-6 )
+        if ( !( denom > 1e-6 ) )
             return false;
 
         const auto recenter = m_point_on_plane - ray.origin();
@@ -76,7 +77,7 @@ public:
         const auto center_to_intercept = supposed_intercept - m_point_on_plane;
         const auto difference = dot( center_to_intercept, center_to_intercept );
 
-        return (difference <= m_radius_squared);
+        return ( difference <= m_radius_squared );
     }
 
 private:
@@ -86,4 +87,3 @@ private:
     float m_radius_squared;
 };
  
-

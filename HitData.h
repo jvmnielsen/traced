@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "Renderable.h"
+#include "RenderPrimitive.h"
 
 class HitData
 {
@@ -11,7 +11,7 @@ public:
         , m_has_been_hit( false )
     {}
 
-    HitData( const float t, std::shared_ptr<Renderable> ptr ) 
+    HitData( const float t, std::shared_ptr<RenderPrimitive> ptr ) 
         : m_t( t )
         , m_t_closest( std::numeric_limits<float>::max() )
         , m_renderable_ptr( std::move( ptr ) )
@@ -19,7 +19,7 @@ public:
     {}
     
     //~HitData();
-    void update_closest_and_assign( const std::shared_ptr<Renderable>& ptr )
+    void update_closest_and_assign( const std::shared_ptr<RenderPrimitive>& ptr )
     {
         if ( m_t < m_t_closest )
         {
@@ -39,7 +39,7 @@ public:
 
     float m_t;
     float m_t_closest;
-    std::shared_ptr<Renderable> m_renderable_ptr;
+    std::shared_ptr<RenderPrimitive> m_renderable_ptr;
 private:
     bool m_has_been_hit;
     

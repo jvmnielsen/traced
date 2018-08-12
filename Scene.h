@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Renderable.h"
+#include "RenderPrimitive.h"
 #include "Pixel.h"
 #include "Ray.h"
 #include <random>
@@ -25,12 +25,12 @@ public:
 		
 	}
 
-    //void add_object_to_scene( Renderable& hitable );
+    //void add_object_to_scene( RenderPrimitive& hitable );
     void render( PixelBuffer& buffer );
 
     
 
-    std::vector<std::shared_ptr<Renderable>> m_scene_objects;
+    std::vector<std::shared_ptr<RenderPrimitive>> m_scene_objects;
 
     unsigned int m_screen_width;
     unsigned int m_screen_height;

@@ -1,6 +1,6 @@
 #include "Sphere.h"
 
-bool Sphere::is_hit_by(const Rayf& ray, float& t) const
+bool Sphere::intersects(const Rayf& ray, float& t) const
 {
     float solu_one, solu_two;
 

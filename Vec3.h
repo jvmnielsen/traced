@@ -11,34 +11,34 @@ public:
     Vec3( T val );
     Vec3( T x, T y, T z );
 
-    inline T length_squared() const;
-    inline T length() const;
+    T length_squared() const;
+    T length() const;
 
-    inline Vec3 operator *  ( const T factor ) const;
-    inline Vec3& operator *= ( const T factor );
+    Vec3 operator *  ( const T factor ) const;
+    Vec3& operator *= ( const T factor );
 
-    inline Vec3 operator /  ( const T factor ) const;
-    inline Vec3& operator /= ( const T factor );
+    Vec3 operator /  ( const T factor ) const;
+    Vec3& operator /= ( const T factor );
 
-    inline Vec3 operator + ( const Vec3& vec2 ) const;
-    inline Vec3& operator += ( const Vec3& vec2 );
+    Vec3 operator + ( const Vec3& vec2 ) const;
+    Vec3& operator += ( const Vec3& vec2 );
 
-    inline Vec3 operator - ( const Vec3& vec2 ) const;
-    inline Vec3& operator -= ( const Vec3& vec2 );
+    Vec3 operator - ( const Vec3& vec2 ) const;
+    Vec3& operator -= ( const Vec3& vec2 );
 
-    inline Vec3 operator * ( const Vec3& vec2 ) const;
-    inline Vec3& operator *= ( const Vec3& vec2 );
+    Vec3 operator * ( const Vec3& vec2 ) const;
+    Vec3& operator *= ( const Vec3& vec2 );
 
-    inline Vec3 operator / ( const Vec3& vec2 ) const;
-    inline Vec3& operator /= ( const Vec3& vec2 );
+    Vec3 operator / ( const Vec3& vec2 ) const;
+    Vec3& operator /= ( const Vec3& vec2 );
 
-    inline T dot( const Vec3& vec2 ) const;
+    T dot( const Vec3& vec2 ) const;
     //static const inline T dotProduct( const Vec3& vec1, const Vec3& vec2 );
     
-    inline Vec3& cross( const Vec3& vec2 );
+    Vec3& cross( const Vec3& vec2 );
     //static inline Vec3 crossProduct( const Vec3& vec1, const Vec3& vec2 );
     
-    inline void normalize();
+    Vec3& normalize();
 
     // Accessors 
     const T operator [] ( const uint8_t i ) const;
