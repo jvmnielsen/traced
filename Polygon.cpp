@@ -1,7 +1,7 @@
 #include "Polygon.h"
 #include <cmath>
 
-bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t )
+bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord )
 {
     // back-face culling
     if ( dot( ray.direction(), m_normal ) > 0 && m_is_single_sided )
@@ -42,21 +42,21 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t )
     const auto vertx0_to_intersect = intersection - m_vertx0;
     perpendicular_to_plane = m_edge0.cross( vertx0_to_intersect );
 
-    if ( m_normal.dot( perpendicular_to_plane ) > 0 )
+    if ( m_normal.dot( perpendicular_to_plane ) < 0 )
          return false;
 
     // edge 1
     const auto vertx1_to_intersect = intersection - m_vertx1;
     perpendicular_to_plane = m_edge1.cross( vertx1_to_intersect );
 
-    if ( ( m_barycentric_intercpt.m_x = m_normal.dot( perpendicular_to_plane ) > 0))
+    if ( ( intercpt_coord.m_x = m_normal.dot( perpendicular_to_plane ) < 0))
         return false;
 
     // edge 2
     const auto vertx2_to_intersect = intersection - m_vertx2;
     perpendicular_to_plane = m_edge2.cross( vertx2_to_intersect );
 
-    if ( ( m_barycentric_intercpt.m_y = m_normal.dot( perpendicular_to_plane ) ) > 0)
+    if ( ( intercpt_coord.m_y = m_normal.dot( perpendicular_to_plane ) ) < 0)
         return false;
 
     /* The barycentric coordinates are the ratio of the triangles formed when drawing
@@ -70,14 +70,14 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t )
     
     const auto denom = m_normal.dot( m_normal );
 
-    m_barycentric_intercpt.m_x /= denom;
-    m_barycentric_intercpt.m_y /= denom;
-    m_barycentric_intercpt.m_z = 1 - m_barycentric_intercpt.m_x - m_barycentric_intercpt.m_y;
+    intercpt_coord.m_x /= denom;
+    intercpt_coord.m_y /= denom;
+    intercpt_coord.m_z = 1 - intercpt_coord.m_x - intercpt_coord.m_y;
 
     return true;
 }
 
-bool Polygon::intersects( const Rayf& ray, float& t )
+bool Polygon::intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord)
 {
-    return geometric_triangle_intersect( ray, t );
+    return geometric_triangle_intersect( ray, t, intercpt_coord );
 }

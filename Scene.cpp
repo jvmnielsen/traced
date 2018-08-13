@@ -20,7 +20,7 @@ HitData Scene::trace( const Rayf& ray )
 
     for ( auto& renderable : m_scene_objects )
     {
-        if ( renderable->intersects(ray, hit_data.m_t) )
+        if ( renderable->intersects(ray, hit_data.m_t, hit_data.m_coordinates) )
         {
             hit_data.update_closest_and_assign( renderable );
         }
@@ -37,7 +37,7 @@ Vec3f Scene::cast_ray( const Rayf& ray )
 
     if ( hit_data.has_been_hit() )
     {
-        return hit_data.m_renderable_ptr->m_surface_color;
+        return hit_data.m_renderable_ptr->get_surface_color( hit_data.m_coordinates );
     }
 
     return {250, 110, 10};
@@ -58,7 +58,7 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -2.0f }, Vec3f{ 0.1f, -0.1f, -2.0f }, Vec3f{ 0.0f, 0.1f, -2.0f}, false) ) );
+    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {

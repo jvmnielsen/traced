@@ -8,9 +8,11 @@ class RenderPrimitive
 public:
     virtual ~RenderPrimitive() = default;
     //virtual ~RenderPrimitive() = default;
-    virtual bool intersects( const Rayf& ray, float& t ) = 0;
+    virtual bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) = 0;
 
-    Vec3f m_surface_color = { 150, 20, 100 };
+    virtual Vec3f get_surface_color( const Vec3f& coordinates ) const = 0;
+
+    //Vec3f m_surface_color = { 150, 20, 100 };
 };
 
 class Plane
@@ -22,7 +24,7 @@ public:
         , m_point_on_plane( point )
     {}
 
-    bool intersects( const Rayf& ray, float& t ) override
+    bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override
     {
         const auto denom = dot( m_normal, ray.direction() );
         
@@ -55,7 +57,7 @@ public:
         , m_radius_squared( radius * radius )
     {}
 
-    bool intersects( const Rayf& ray, float& t ) override
+    bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override
     {
 
         // first part is, unsurprisingly, the same as for a disk

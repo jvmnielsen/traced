@@ -8,6 +8,7 @@ public:
     HitData() 
         : m_t( -1.0 ), m_t_closest( std::numeric_limits<float>::max() )
         , m_renderable_ptr( nullptr )
+        , m_coordinates( 0 )
         , m_has_been_hit( false )
     {}
 
@@ -15,6 +16,7 @@ public:
         : m_t( t )
         , m_t_closest( std::numeric_limits<float>::max() )
         , m_renderable_ptr( std::move( ptr ) )
+        , m_coordinates( 0 )
         , m_has_been_hit( false )
     {}
     
@@ -36,10 +38,11 @@ public:
     }
 
     
-
+    
     float m_t;
     float m_t_closest;
     std::shared_ptr<RenderPrimitive> m_renderable_ptr;
+    Vec3f m_coordinates;
 private:
     bool m_has_been_hit;
     

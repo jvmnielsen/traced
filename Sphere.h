@@ -12,7 +12,7 @@ public:
 		, m_material( material )
     {}
 
-    bool intersects(const Rayf& ray, float& t) override;
+    bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override;
 
     bool solve_quadratic( const float a, const float b, const float c, float& solu_one, float& solu_two ) const;
 
