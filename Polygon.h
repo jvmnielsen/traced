@@ -11,6 +11,7 @@ public:
         , m_vertx1( vertx1 )
         , m_vertx2( vertx2 )
         , m_edge0( vertx1 - vertx0 )
+        , m_edge0_2( vertx2 - vertx0 )
         , m_edge1( vertx2 - vertx1 )
         , m_edge2( vertx0 - vertx2 )
         , m_normal( cross( vertx1 - vertx0, vertx2 - vertx0 ) ) // not normalized: area needed for baycentric coordinates
@@ -22,6 +23,8 @@ public:
 
         
     bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override;
+
+
 
     Vec3f get_surface_color( const Vec3f& coordinates ) const override
     {
@@ -37,12 +40,15 @@ public:
 private:
 
     bool geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord );
+    bool moller_trumbore_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord ) const;
+
 
     Vec3f m_vertx0;
     Vec3f m_vertx1;
     Vec3f m_vertx2;
 
     Vec3f m_edge0;
+    Vec3f m_edge0_2; // from vertx 0 to vertx 2. used for normal
     Vec3f m_edge1;
     Vec3f m_edge2;
     

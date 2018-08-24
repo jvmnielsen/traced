@@ -13,8 +13,6 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& in
     if ( fabs( normal_dot_ray_dir ) < m_epsilon )
         return false;
 
-    
-
     /* Derived by substituting ray equation ( O + t R ) into the equation for a plane ( Ax + By + Cz + D = 0 ) 
      * and solving for parameter t.
      * 
@@ -77,7 +75,40 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& in
     return true;
 }
 
+bool Polygon::moller_trumbore_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord ) const
+{
+    const auto p_vec = ray.direction().cross( m_edge0_2 );
+    const auto det = m_edge0.dot( p_vec );
+
+    // back-face culling
+    // do fabs( det ) to include back-face
+    if ( det < m_epsilon)
+        return false;
+
+    // precompute for performance
+    const auto inverted_det = 1 / det;
+
+    // barycentric coordinate u
+    const auto t_vec = ray.origin() - m_vertx0;
+    intercpt_coord.m_x = t_vec.dot( p_vec ) * inverted_det;
+    if (intercpt_coord.m_x < 0 || intercpt_coord.m_x > 1)
+        return false;
+
+    // barycentric coordinate v
+    const auto q_vec = t_vec.cross( m_edge0 );
+    intercpt_coord.m_y = ray.direction().dot( q_vec ) * inverted_det;
+    if (intercpt_coord.m_y < 0 || intercpt_coord.m_y + intercpt_coord.m_x > 1)
+        return false;
+
+
+    intercpt_coord.m_z = m_edge0_2.dot( q_vec ) * inverted_det;
+
+    return true;
+
+}
+
+
 bool Polygon::intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord)
 {
-    return geometric_triangle_intersect( ray, t, intercpt_coord );
+    return moller_trumbore_intersect( ray, t, intercpt_coord );
 }
