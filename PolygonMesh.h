@@ -9,37 +9,14 @@ class PolygonMesh :
     public RenderPrimitive
 {
 public:
-    PolygonMesh();
-    ~PolygonMesh();
+	PolygonMesh() = default;
+	~PolygonMesh() = default;
 
-    bool intersects( const Rayf& ray, float& t, Vec3f& intercpt_coord ) override
-    {
-		static const float infinity = std::numeric_limits<float>::max();
+	bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override;
 
-		HitData hit_data;
+	void add_polygon(const std::shared_ptr<Polygon>& polygon);
 
-		for (auto& polygon : m_mesh)
-		{
-			if (polygon->intersects(ray, hit_data.m_t, hit_data.m_coordinates))
-			{
-				hit_data.update_closest_and_assign(polygon);
-			}
-		}
-
-		if (hit_data.has_been_hit())
-		{
-			t = hit_data.m_t;
-			intercpt_coord = hit_data.m_coordinates;
-			return true;
-		}
-
-		return false;  
-    }
-
-	void add_polygon(const std::shared_ptr<Polygon>& polygon)
-    {
-		m_mesh.emplace_back(polygon);
-    }
+	void transform_object_to_world(const Matrix44f& object_to_world) override;
 
 private:
     std::vector<std::shared_ptr<Polygon>> m_mesh;

@@ -6,8 +6,12 @@ class Polygon :
     public RenderPrimitive
 {
 public:
-    Polygon( const Vec3f& vertx0, const Vec3f& vertx1, const Vec3f& vertx2, bool is_single_sided )
-        : m_vertx0( vertx0 )
+    Polygon( 
+			const Vec3f& vertx0, 
+			const Vec3f& vertx1, 
+			const Vec3f& vertx2, 
+			bool is_single_sided )
+        : m_vertices { vertx0, vertx1, vertx2 }
         , m_vertx1( vertx1 )
         , m_vertx2( vertx2 )
         , m_edge0( vertx1 - vertx0 )
@@ -24,6 +28,7 @@ public:
         
     bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override;
 
+	void transform_object_to_world(const Matrix44f& object_to_world) override;
 
 	/*
     Vec3f get_surface_color( const Vec3f& coordinates ) const override
@@ -39,10 +44,10 @@ public:
 
 private:
 
-    bool geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord );
+    bool geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord ) const;
     bool moller_trumbore_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord ) const;
 
-
+	Vec3f m_vertices[3];
     Vec3f m_vertx0;
     Vec3f m_vertx1;
     Vec3f m_vertx2;

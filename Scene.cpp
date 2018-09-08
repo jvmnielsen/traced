@@ -22,7 +22,7 @@ void Scene::add_object_to_scene(const std::shared_ptr<RenderPrimitive>& render_p
 void Scene::load_objects_from_file(const std::string& file_name)
 {
 	Parser parser;
-	std::shared_ptr<RenderPrimitive> renderable_ptr = parser.parse(file_name);
+	const std::shared_ptr<RenderPrimitive> renderable_ptr = parser.parse(file_name);
 	add_object_to_scene(renderable_ptr);
 }
 
@@ -48,16 +48,16 @@ Vec3f Scene::cast_ray( const Rayf& ray )
     if ( hit_data.has_been_hit() )
     {
        // return hit_data.m_renderable_ptr->get_surface_color( hit_data.m_coordinates );
-		return { 100, 100, 100 };
+		return { 230, 150, 80 };
     }
 
-    return {250, 110, 10};
+    return {0, 0, 0};
 }
 
 
 void Scene::render( PixelBuffer& buffer )
 {
-    Matrix44f camera_to_world;// { 0.945519f, 0.0f, -0.325569f, 0.0f, -0.179534f, 0.834209f, -0.521403f, 0.0f, 0.271593f, 0.551447f, 0.78876f, 0.0f, 4.208271f, 8.374532f, 17.932925f, 1.0f };
+	Matrix44f camera_to_world;// { 0.945519f, 0.0f, -0.325569f, 0.0f, -0.179534f, 0.834209f, -0.521403f, 0.0f, 0.271593f, 0.551447f, 0.78876f, 0.0f, 4.208271f, 8.374532f, 17.932925f, 1.0f };
 
     const float fov = 90;
 
@@ -69,9 +69,16 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-	load_objects_from_file("cow-nonormals.obj");
+	//load_objects_from_file("cow-nonormals.obj");
 
-    //m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
+	Matrix44f objectToWorld = Matrix44f(0.1, 0, 0, 0,
+										0, 0.1, 0, 0, 
+										0, 0, 0.1, -20, 
+										0, 0, 0, 0.1);
+
+	//m_scene_objects[0]->transform_object_to_world(objectToWorld);
+
+    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {

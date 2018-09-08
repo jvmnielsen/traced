@@ -1,7 +1,17 @@
 #include "Polygon.h"
 #include <cmath>
 
-bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord )
+void Polygon::transform_object_to_world(const Matrix44f& object_to_world)
+{
+	for(auto& vertex : m_vertices)
+	{
+		const auto tmp_vertex = object_to_world.multiply_with_point(vertex);
+		vertex = tmp_vertex;
+	}
+}
+
+
+bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord ) const
 {
     // back-face culling
     if ( dot( ray.direction(), m_normal ) > 0 && m_is_single_sided )

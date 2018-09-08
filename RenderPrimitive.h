@@ -1,26 +1,33 @@
 #pragma once
 #include "Ray.h"
+#include "Matrix44.h"
 
 class Material;
 
 class RenderPrimitive
 {
 public:
-    virtual ~RenderPrimitive() = default;
+	//RenderPrimitive(const Matrix44f& m_object_to_world) : m_object_to_world(m_object_to_world) {}
+    //virtual ~RenderPrimitive() = default;
     //virtual ~RenderPrimitive() = default;
     virtual bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) = 0;
+
+	virtual void transform_object_to_world(const Matrix44f& object_to_world) = 0;
 
     //virtual Vec3f get_surface_color( const Vec3f& coordinates ) const = 0;
 
     //Vec3f m_surface_color = { 150, 20, 100 };
+
+private:
+	//Matrix44f m_object_to_world;
 };
 
 class Plane
     : public RenderPrimitive
 {
 public:
-    Plane( const Vec3f& normal, const Vec3f& point )
-        : m_normal( normal )
+    Plane(const Vec3f& normal, const Vec3f& point, const Matrix44f& object_to_world)
+        : m_normal(normal)
         , m_point_on_plane( point )
     {}
 
@@ -40,9 +47,15 @@ public:
         return false;
     }
 
+	void transform_object_to_world(const Matrix44f& object_to_world) override
+    {
+	    
+    }
+
 private:
     Vec3f m_normal;
     Vec3f m_point_on_plane;
+	
 };
 
 
@@ -50,7 +63,7 @@ class Disk
     : public RenderPrimitive
 {
 public:
-    Disk( const Vec3f& normal, const Vec3f& point, const float radius )
+    Disk(const Vec3f& normal, const Vec3f& point, const float radius, const Matrix44f& object_to_world)
         : m_normal( normal )
         , m_point_on_plane( point )
         , m_radius( radius )
@@ -81,6 +94,11 @@ public:
 
         return ( difference <= m_radius_squared );
     }
+
+	void transform_object_to_world(const Matrix44f& object_to_world) override
+	{
+
+	}
 
 private:
     Vec3f m_normal;
