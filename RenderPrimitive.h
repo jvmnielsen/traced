@@ -10,7 +10,7 @@ public:
     //virtual ~RenderPrimitive() = default;
     virtual bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) = 0;
 
-    virtual Vec3f get_surface_color( const Vec3f& coordinates ) const = 0;
+    //virtual Vec3f get_surface_color( const Vec3f& coordinates ) const = 0;
 
     //Vec3f m_surface_color = { 150, 20, 100 };
 };

@@ -13,13 +13,18 @@ public:
 
     bool intersects( const Rayf& ray, float& t, Vec3f& intercpt_coord ) override
     {
-        for ( const auto& polygon : m_mesh )
+        for ( auto& polygon : m_mesh )
         {
-            polygon->intersects( ray, t, intercpt_coord );
+            polygon.intersects( ray, t, intercpt_coord );
         }
     }
 
+	void add_polygon(const Polygon& polygon)
+    {
+		m_mesh.emplace_back(polygon);
+    }
+
 private:
-    std::vector<std::unique_ptr<Polygon>> m_mesh;
+    std::vector<Polygon> m_mesh;
 };
 

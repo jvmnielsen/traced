@@ -25,7 +25,7 @@ public:
     bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override;
 
 
-
+	/*
     Vec3f get_surface_color( const Vec3f& coordinates ) const override
     {
         Vec3f color_profile[3]{ {0.6f, 0.4f, 0.1f}, {0.1f, 0.5f, 0.3f}, {0.1f, 0.3f, 0.7f} };
@@ -35,7 +35,7 @@ public:
             color[i] *= 255;
         }
         return color;
-    }
+    } */
 
 private:
 
