@@ -48,7 +48,7 @@ Vec3f Scene::cast_ray( const Rayf& ray )
     if ( hit_data.has_been_hit() )
     {
        // return hit_data.m_renderable_ptr->get_surface_color( hit_data.m_coordinates );
-		return { 230, 150, 80 };
+		return { 255, 51, 255 };
     }
 
     return {0, 0, 0};
@@ -69,16 +69,17 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-	//load_objects_from_file("cow-nonormals.obj");
+	load_objects_from_file("cow-nonormals.obj");
 
-	Matrix44f objectToWorld = Matrix44f(0.1, 0, 0, 0,
-										0, 0.1, 0, 0, 
-										0, 0, 0.1, -20, 
-										0, 0, 0, 0.1);
+	
+	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
+										0, 1, 0, 0, 
+										0, 0, 1, 0, 
+										0, 0, -10, 1); 
 
-	//m_scene_objects[0]->transform_object_to_world(objectToWorld);
+	m_scene_objects[0]->transform_object_to_world(objectToWorld);
 
-    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
+    //m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {
@@ -97,7 +98,9 @@ void Scene::render( PixelBuffer& buffer )
              * Lastly the screen is scaled by the FOV, resulting in a uniform zoom.
              */
 
-            const float x = (2 * (i + 0.5) / m_screen_width - 1) * image_aspect_ratio * scale;
+
+			//figure out if this can be moved to a matrix partially
+            const float x = (2 * (i + 0.5) / m_screen_width - 1) * image_aspect_ratio * scale; 
             const float y = (1 - 2 * (j + 0.5) / m_screen_height) * scale;
 
             auto dir = camera_to_world.multiply_with_point( Vec3f( x, y, -1 ) );

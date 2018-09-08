@@ -78,7 +78,7 @@ public:
 
         Vec3<S> tmp;
 
-        return tmp = { a / w, b / w, c / w };
+        return tmp = { a, b, c };
     }
 
     Matrix44 inverse() const

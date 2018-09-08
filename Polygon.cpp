@@ -1,6 +1,16 @@
 #include "Polygon.h"
 #include <cmath>
 
+void Polygon::update_edges()
+{
+	m_edge0 = m_vertices[1] - m_vertices[0];
+	m_edge0_2 = m_vertices[2] - m_vertices[0];
+	m_edge1 = m_vertices[2] - m_vertices[1];
+	m_edge2 = m_vertices[0] - m_vertices[2];
+	m_normal = cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]); 
+	m_dist_origin_to_plane = m_normal.dot(m_vertices[0]);
+}
+
 void Polygon::transform_object_to_world(const Matrix44f& object_to_world)
 {
 	for(auto& vertex : m_vertices)
@@ -8,6 +18,7 @@ void Polygon::transform_object_to_world(const Matrix44f& object_to_world)
 		const auto tmp_vertex = object_to_world.multiply_with_point(vertex);
 		vertex = tmp_vertex;
 	}
+	update_edges();
 }
 
 
@@ -47,21 +58,21 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& in
     */
 
     // edge 0
-    const auto vertx0_to_intersect = intersection - m_vertx0;
+    const auto vertx0_to_intersect = intersection - m_vertices[0];
     perpendicular_to_plane = m_edge0.cross( vertx0_to_intersect );
 
     if ( m_normal.dot( perpendicular_to_plane ) < 0 )
          return false;
 
     // edge 1
-    const auto vertx1_to_intersect = intersection - m_vertx1;
+    const auto vertx1_to_intersect = intersection - m_vertices[1];
     perpendicular_to_plane = m_edge1.cross( vertx1_to_intersect );
 
     if ( ( intercpt_coord.m_x = m_normal.dot( perpendicular_to_plane ) < 0))
         return false;
 
     // edge 2
-    const auto vertx2_to_intersect = intersection - m_vertx2;
+    const auto vertx2_to_intersect = intersection - m_vertices[2];
     perpendicular_to_plane = m_edge2.cross( vertx2_to_intersect );
 
     if ( ( intercpt_coord.m_y = m_normal.dot( perpendicular_to_plane ) ) < 0)
@@ -99,7 +110,7 @@ bool Polygon::moller_trumbore_intersect( const Rayf& ray, float& t, Vec3f& inter
     const auto inverted_det = 1 / det;
 
     // barycentric coordinate u
-    const auto t_vec = ray.origin() - m_vertx0;
+    const auto t_vec = ray.origin() - m_vertices[0];
     intercpt_coord.m_x = t_vec.dot( p_vec ) * inverted_det;
     if (intercpt_coord.m_x < 0 || intercpt_coord.m_x > 1)
         return false;
