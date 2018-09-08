@@ -29,6 +29,8 @@ std::vector<std::string> split_string( std::string& subject, const std::string& 
 		subject.erase( 0, pos + delimiter.length() );
 	}
 
+	container.emplace_back(subject);
+
 	return container;
 }
 
@@ -40,51 +42,51 @@ void Parser::load_file(const std::string& filename)
 
 	while (getline(infile, line))
 	{
-		auto split_str = split_string(line);
+		auto split_str = split_string(line, " ");
 
 		if (split_str[0] == "v") // vertex
 		{
-			m_vertex.emplace_back(Vec3f(std::stof(split_str[1]),
+			m_vertex.push_back(Vec3f(std::stof(split_str[1]),
 				std::stof(split_str[2]),
 				std::stof(split_str[3])));
 		}
 		else if (split_str[0] == "vt") // texture coordinate
 		{
-			m_texture_coord.emplace_back(Vec2f(std::stof(split_str[1]),
-				std::stof(split_str[2])));
+			//m_texture_coord.emplace_back(Vec2f(std::stof(split_str[1]),
+			//	std::stof(split_str[2])));
 
 		}
 		else if (split_str[0] == "vn") // normal
 		{
-			m_normals.emplace_back(Vec3f(std::stof(split_str[1]),
+			m_normals.push_back(Vec3f(std::stof(split_str[1]),
 				std::stof(split_str[2]),
 				std::stof(split_str[3])));
 		}
 		else if (split_str[0] == "f") // face declaration, we assume only triangles are used
 		{
-			//std::vector<std::vector<int>> face;
-			std::vector<std::string> temp;
-			for (size_t i = 1; i < split_str.size(); ++i) // skip first
-			{
-				temp = split_string(split_str[i], "/");
+			//std::vector<Vec3i> face;
+			//std::vector<int> face;
+			
+			m_faces.push_back( // assuming triangles
+				Vec3i(std::stol(split_str[1]),
+					  std::stol(split_str[2]),
+					  std::stol(split_str[3])));
 
-				m_faces.emplace_back(Vec3f(std::stol(temp[0]),
-					std::stol(temp[1]),
-					std::stol(temp[2])));
-
-			}
+			
+			//m_faces.emplace_back(face);
 		}
 	}
 }
 std::unique_ptr<PolygonMesh> Parser::construct_mesh()
 {
 	auto mesh_ptr = std::make_unique<PolygonMesh>();
-	for (size_t i = 0; i < m_faces.size(); i += 3)
+	
+	for (auto& face : m_faces)
 	{
-		mesh_ptr->add_polygon(Polygon(
-			m_vertex[m_faces[i][0]],
-			m_vertex[m_faces[i + 1][0]],
-			m_vertex[m_faces[i + 2][0]], true));
+		mesh_ptr->add_polygon(std::make_shared<Polygon>( // first element of each Vec3i
+			m_vertex[face[0]-1], // WARNING: .obj is 1-indexed
+			m_vertex[face[1]-1],
+			m_vertex[face[2]-1], true)); 
 	}
 
 	return mesh_ptr;

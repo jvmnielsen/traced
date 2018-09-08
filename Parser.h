@@ -10,8 +10,8 @@ class Parser
 
 
 public:
-    Parser();
-    ~Parser();
+    //Parser();
+    //~Parser() = default;
 
     std::unique_ptr<PolygonMesh> parse( const std::string& filename );
 	
@@ -24,6 +24,6 @@ private:
 	std::vector<Vec3f> m_vertex;
 	std::vector<Vec3f> m_texture_coord;
 	std::vector<Vec3f> m_normals;
-	std::vector<Vec3f> m_faces;
+	std::vector<Vec3i> m_faces;
 };
 
