@@ -46,9 +46,9 @@ public:
 };
 
 template< typename T >
-Vec2 operator * ( const T f, const Vec2<T> &vec )
+Vec2<T> operator * ( const T f, const Vec2<T> &vec )
 {
-    return Vec2( vec.m_x * f, vec.m_y * f );
+    return Vec2<T>( vec.m_x * f, vec.m_y * f );
 }
 
 typedef Vec2<float> Vec2f;

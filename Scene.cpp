@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "Matrix44.h"
 #include "Polygon.h"
+#include "Parser.h"
 
 
 inline float deg_to_rad(const float deg)
@@ -13,6 +14,17 @@ inline float deg_to_rad(const float deg)
     return deg * M_PI / 280;
 }
 
+void Scene::add_object_to_scene(const std::shared_ptr<RenderPrimitive>& render_ptr)
+{
+	m_scene_objects.emplace_back(render_ptr);
+}
+
+void Scene::load_objects_from_file(const std::string& file_name)
+{
+	Parser parser;
+	std::shared_ptr<RenderPrimitive> renderable_ptr = parser.parse(file_name);
+	add_object_to_scene(renderable_ptr);
+}
 
 HitData Scene::trace( const Rayf& ray )
 {
@@ -29,15 +41,14 @@ HitData Scene::trace( const Rayf& ray )
     return hit_data;
 }
 
-
-
 Vec3f Scene::cast_ray( const Rayf& ray )
 {
     auto hit_data = trace( ray );
 
     if ( hit_data.has_been_hit() )
     {
-        return hit_data.m_renderable_ptr->get_surface_color( hit_data.m_coordinates );
+       // return hit_data.m_renderable_ptr->get_surface_color( hit_data.m_coordinates );
+		return { 100, 100, 100 };
     }
 
     return {250, 110, 10};
@@ -58,7 +69,9 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-    m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
+	load_objects_from_file("cow-nonormals.obj");
+
+    //m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {

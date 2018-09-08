@@ -28,9 +28,9 @@ public:
     //void add_object_to_scene( RenderPrimitive& hitable );
     void render( PixelBuffer& buffer );
 
-    
+	void add_object_to_scene(const std::shared_ptr<RenderPrimitive>& render_ptr);
 
-    std::vector<std::shared_ptr<RenderPrimitive>> m_scene_objects;
+    
 
     unsigned int m_screen_width;
     unsigned int m_screen_height;
@@ -45,10 +45,14 @@ private:
     std::mt19937 m_gen;
     std::uniform_real_distribution<> m_dist;
 
+	std::vector<std::shared_ptr<RenderPrimitive>> m_scene_objects;
+
     const float m_infinity = std::numeric_limits<float>::max();
 
     HitData trace( const Rayf& ray );
 	
     Vec3f cast_ray( const Rayf& ray );
+
+	void load_objects_from_file(const std::string& file_name);
 };
 

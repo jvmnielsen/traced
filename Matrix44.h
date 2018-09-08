@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec3.h"
+#include <vector>
 
 template<typename T>
 class Matrix44
@@ -68,7 +69,7 @@ public:
 
     // multiply direction and matrix (don't divide coefficients)
     template< typename S >
-    Vec3<S> multply_with_dir( const Vec3<S>& src )
+    Vec3<S> multiply_with_dir( const Vec3<S>& src )
     {
         S a = src[0] * m_arr[0][0] + src[1] * m_arr[1][0] + src[2] * m_arr[2][0] + m_arr[3][0];
         S b = src[0] * m_arr[0][1] + src[1] * m_arr[1][1] + src[2] * m_arr[2][1] + m_arr[3][1];
@@ -182,6 +183,26 @@ public:
         return *this;
     }
 
+
+
+
 };
+
+template< typename T >
+void gaussian_elimination( std::vector< std::vector< T >>& matrix )
+{
+	if ( matrix[0][0] != T(0))
+	{
+		for (auto i = 1; i < matrix.size(); ++i) 
+		{
+			if ( matrix[i][0] == 0 )
+			{
+				const auto temp_vec = matrix[i][0];
+				matrix[i] = matrix[0];
+				matrix[0] = temp_vec;
+			}
+		}
+	}
+}
 
 typedef Matrix44<float> Matrix44f;
