@@ -122,7 +122,7 @@ bool Polygon::moller_trumbore_intersect(const Rayf& ray, HitData& hit_data) cons
         return false;
 
 
-	hit_data.m_coordinates.m_z = m_edge0_2.dot( q_vec ) * inverted_det;
+	hit_data.m_t = m_edge0_2.dot( q_vec ) * inverted_det;
 
     return true;
 

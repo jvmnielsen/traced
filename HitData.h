@@ -56,7 +56,7 @@ public:
     
     float m_t;
     float m_t_closest;
-	float m_t_closest_global;
+	//float m_t_closest_global;
 
     std::shared_ptr<RenderPrimitive> m_closest_ptr;
 	//std::shared_ptr<RenderPrimitive> m_closest_global_ptr;
