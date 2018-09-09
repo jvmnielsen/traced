@@ -101,8 +101,10 @@ void Window::render_buffer( PixelBuffer &pixelBuffer )
                 running = false;
             }
 
-            update_texture( pixelBuffer );
+            
         }
+
+        update_texture( pixelBuffer );
     } 
 }
 
