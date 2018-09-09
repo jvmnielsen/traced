@@ -42,7 +42,10 @@ void Parser::load_file(const std::string& filename)
 
 	while (getline(infile, line))
 	{
-		auto split_str = split_string(line, " ");
+		auto split_str = split_string(line);
+
+        if (split_str.empty()) // checks will crash with empty vector
+            continue;
 
 		if (split_str[0] == "v") // vertex
 		{
@@ -50,12 +53,13 @@ void Parser::load_file(const std::string& filename)
 				std::stof(split_str[2]),
 				std::stof(split_str[3])));
 		}
-		else if (split_str[0] == "vt") // texture coordinate
+		/*
+	    else if (split_str[0] == "vt") // texture coordinate
 		{
 			//m_texture_coord.emplace_back(Vec2f(std::stof(split_str[1]),
 			//	std::stof(split_str[2])));
 
-		}
+		} */
 		else if (split_str[0] == "vn") // normal
 		{
 			m_normals.push_back(

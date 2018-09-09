@@ -70,13 +70,13 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-	load_objects_from_file("cube.obj");
+	load_objects_from_file("teapot.obj");
 
 	
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
 										0, 1, 0, 0, 
 										0, 0, 1, 0, 
-										0, 0, -11, 1); 
+										0, 0, -100, 1); 
 
 	m_scene_objects[0]->transform_object_to_world(objectToWorld);
 
