@@ -10,7 +10,7 @@ public:
     HitData() 
         : m_t( -1.0 ), m_t_closest( std::numeric_limits<float>::max() )
         , m_closest_ptr( nullptr )
-        , m_coordinates( 0 )
+        , m_coord( 0 )
         , m_has_been_hit( false )
     {}
 
@@ -18,7 +18,7 @@ public:
         : m_t( t )
         , m_t_closest( std::numeric_limits<float>::max() )
         , m_closest_ptr( std::move( ptr ) )
-        , m_coordinates( 0 )
+        , m_coord( 0 )
         , m_has_been_hit( false )
     {}
     
@@ -28,6 +28,7 @@ public:
         if (m_t < m_t_closest)
         {
             m_t_closest = m_t;
+            m_coord_closest = m_coord;
             m_closest_ptr = ptr;
             m_has_been_hit = true; // optimise, is done every time
         }
@@ -63,7 +64,8 @@ public:
 	//std::shared_ptr<RenderPrimitive> m_recent_sub_ptr;
 	//std::shared_ptr<RenderPrimitive> m_recent_global_ptr;
 
-    Vec3f m_coordinates;
+    Vec3f m_coord;
+    Vec3f m_coord_closest;
 private:
     bool m_has_been_hit;
     

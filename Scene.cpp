@@ -76,7 +76,7 @@ void Scene::render( PixelBuffer& buffer )
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
 										0, 1, 0, 0, 
 										0, 0, 1, 0, 
-										0, 0, -100, 1); 
+										0, 0, -30, 1); 
 
 	m_scene_objects[0]->transform_object_to_world(objectToWorld);
 
