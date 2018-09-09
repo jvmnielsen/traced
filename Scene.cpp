@@ -70,7 +70,7 @@ void Scene::render( PixelBuffer& buffer )
 
     int counter = 0;
 
-	load_objects_from_file("cow-nonormals.obj");
+	load_objects_from_file("cube.obj");
 
 	
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,

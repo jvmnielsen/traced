@@ -58,35 +58,61 @@ void Parser::load_file(const std::string& filename)
 		}
 		else if (split_str[0] == "vn") // normal
 		{
-			m_normals.push_back(Vec3f(std::stof(split_str[1]),
-				std::stof(split_str[2]),
-				std::stof(split_str[3])));
+			m_normals.push_back(
+                Vec3f(
+                    std::stof(split_str[1]),
+				    std::stof(split_str[2]),
+				    std::stof(split_str[3])));
 		}
 		else if (split_str[0] == "f") // face declaration, we assume only triangles are used
 		{
-			//std::vector<Vec3i> face;
+
+            //auto separated_str = split_string(split_str, "/");
+			std::vector<int> vertex_ordering;
+            std::vector<int> texture_coord_ordering;
+		    std::vector<int> normal_ordering;
+            
 			//std::vector<int> face;
-			
+
+            for (size_t i = 1; i < split_str.size(); i++) // skip first
+            {
+                auto ordering = split_string(split_str[i], "/");
+                // faces are ordered 1/1/1 (vertex, texture, normal)
+                m_vertex_ordering.push_back( std::stol(ordering[0]) );
+                m_texture_coord_ordering.push_back( std::stol( ordering[1] ) );
+                m_normal_ordering.push_back( std::stol( ordering[2] ) );
+            }
+
+            /*
 			m_faces.push_back( // assuming triangles
 				Vec3i(std::stol(split_str[1]),
 					  std::stol(split_str[2]),
-					  std::stol(split_str[3])));
+					  std::stol(split_str[3]))); */
 
-			
+
+
+
 			//m_faces.emplace_back(face);
 		}
+        
 	}
 }
 std::unique_ptr<PolygonMesh> Parser::construct_mesh()
 {
 	auto mesh_ptr = std::make_unique<PolygonMesh>();
 	
-	for (auto& face : m_faces)
+	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3)
 	{
-		mesh_ptr->add_polygon(std::make_shared<Polygon>( // first element of each Vec3i
-			m_vertex[face[0]-1], // WARNING: .obj is 1-indexed
-			m_vertex[face[1]-1],
-			m_vertex[face[2]-1], true)); 
+        // WARNING: .obj is 1-indexed
+        mesh_ptr->add_polygon(
+            std::make_shared<Polygon>( // first element of each Vec3i
+                m_vertex[m_vertex_ordering[i]-1],
+                m_vertex[m_vertex_ordering[i + 1]-1],
+                m_vertex[m_vertex_ordering[i + 2]-1],
+                m_normals[m_normal_ordering[i]-1],
+                m_normals[m_normal_ordering[i + 1]-1],
+                m_normals[m_normal_ordering[i + 2]-1],
+                true)); 
 	}
 
 	return mesh_ptr;

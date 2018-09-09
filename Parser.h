@@ -25,5 +25,10 @@ private:
 	std::vector<Vec3f> m_texture_coord;
 	std::vector<Vec3f> m_normals;
 	std::vector<Vec3i> m_faces;
+
+    std::vector<int> m_vertex_ordering;
+    std::vector<int> m_texture_coord_ordering;
+    std::vector<int> m_normal_ordering;
+   
 };
 
