@@ -32,10 +32,10 @@ HitData Scene::trace( const Rayf& ray )
 
     for ( auto& renderable : m_scene_objects )
     {
-        if ( renderable->intersects(ray, hit_data.m_t, hit_data.m_coordinates) )
-        {
-            hit_data.update_closest_and_assign( renderable );
-        }
+		renderable->intersects(ray, hit_data);
+        
+            //hit_data.update_closest_global( renderable );
+        
     }
 
     return hit_data;
@@ -47,8 +47,9 @@ Vec3f Scene::cast_ray( const Rayf& ray )
 
     if ( hit_data.has_been_hit() )
     {
-       // return hit_data.m_renderable_ptr->get_surface_color( hit_data.m_coordinates );
-		return { 255, 51, 255 };
+        auto normal = hit_data.m_closest_ptr->get_surface_properties( hit_data );
+		const auto ratio = std::max(0.0f, normal.dot(-1*ray.direction()));
+    	return { 255*ratio, 255*ratio, 255*ratio };
     }
 
     return {0, 0, 0};

@@ -1,6 +1,6 @@
 #include "Sphere.h"
 
-bool Sphere::intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord)
+bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
 {
     float solu_one, solu_two;
 
@@ -16,7 +16,7 @@ bool Sphere::intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord)
     if (!(solu_one > 0 || solu_two > 0))
         return false;
 
-    t = (solu_one > solu_two) ?
+    hit_data.m_t = (solu_one > solu_two) ?
         solu_one :
         solu_two;
 

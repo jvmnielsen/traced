@@ -7,7 +7,7 @@ void Polygon::update_edges()
 	m_edge0_2 = m_vertices[2] - m_vertices[0];
 	m_edge1 = m_vertices[2] - m_vertices[1];
 	m_edge2 = m_vertices[0] - m_vertices[2];
-	m_normal = cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]); 
+	m_normal = cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).normalize(); 
 	m_dist_origin_to_plane = m_normal.dot(m_vertices[0]);
 }
 
@@ -22,7 +22,7 @@ void Polygon::transform_object_to_world(const Matrix44f& object_to_world)
 }
 
 
-bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord ) const
+bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) const
 {
     // back-face culling
     if ( dot( ray.direction(), m_normal ) > 0 && m_is_single_sided )
@@ -40,12 +40,12 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& in
      * Because the camera by default is oriented along the negative z-axis we have cancelled
      * the minus from the equation.
      */
-    t = ( m_normal.dot( ray.origin() ) + m_dist_origin_to_plane ) / normal_dot_ray_dir; 
+    hit_data.m_t = ( m_normal.dot( ray.origin() ) + m_dist_origin_to_plane ) / normal_dot_ray_dir; 
 
-    if (t < 0) // triangle is behind ray
+    if (hit_data.m_t < 0) // triangle is behind ray
         return false;
 
-    const auto intersection = ray.origin() + t * ray.direction();
+    const auto intersection = ray.origin() + hit_data.m_t * ray.direction();
 
     Vec3f perpendicular_to_plane;
 
@@ -68,14 +68,14 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& in
     const auto vertx1_to_intersect = intersection - m_vertices[1];
     perpendicular_to_plane = m_edge1.cross( vertx1_to_intersect );
 
-    if ( ( intercpt_coord.m_x = m_normal.dot( perpendicular_to_plane ) < 0))
+    if ( ( hit_data.m_coordinates.m_x = m_normal.dot( perpendicular_to_plane ) < 0))
         return false;
 
     // edge 2
     const auto vertx2_to_intersect = intersection - m_vertices[2];
     perpendicular_to_plane = m_edge2.cross( vertx2_to_intersect );
 
-    if ( ( intercpt_coord.m_y = m_normal.dot( perpendicular_to_plane ) ) < 0)
+    if ( ( hit_data.m_coordinates.m_y = m_normal.dot( perpendicular_to_plane ) ) < 0)
         return false;
 
     /* The barycentric coordinates are the ratio of the triangles formed when drawing
@@ -89,14 +89,14 @@ bool Polygon::geometric_triangle_intersect( const Rayf& ray, float& t, Vec3f& in
     
     const auto denom = m_normal.dot( m_normal );
 
-    intercpt_coord.m_x /= denom;
-    intercpt_coord.m_y /= denom;
-    intercpt_coord.m_z = 1 - intercpt_coord.m_x - intercpt_coord.m_y;
+    hit_data.m_coordinates.m_x /= denom;
+    hit_data.m_coordinates.m_y /= denom;
+	hit_data.m_coordinates.m_z = 1 - hit_data.m_coordinates.m_x - hit_data.m_coordinates.m_y;
 
     return true;
 }
 
-bool Polygon::moller_trumbore_intersect( const Rayf& ray, float& t, Vec3f& intercpt_coord ) const
+bool Polygon::moller_trumbore_intersect(const Rayf& ray, HitData& hit_data) const
 {
     const auto p_vec = ray.direction().cross( m_edge0_2 );
     const auto det = m_edge0.dot( p_vec );
@@ -111,25 +111,31 @@ bool Polygon::moller_trumbore_intersect( const Rayf& ray, float& t, Vec3f& inter
 
     // barycentric coordinate u
     const auto t_vec = ray.origin() - m_vertices[0];
-    intercpt_coord.m_x = t_vec.dot( p_vec ) * inverted_det;
-    if (intercpt_coord.m_x < 0 || intercpt_coord.m_x > 1)
+	hit_data.m_coordinates.m_x = t_vec.dot( p_vec ) * inverted_det;
+    if (hit_data.m_coordinates.m_x < 0 || hit_data.m_coordinates.m_x > 1)
         return false;
 
     // barycentric coordinate v
     const auto q_vec = t_vec.cross( m_edge0 );
-    intercpt_coord.m_y = ray.direction().dot( q_vec ) * inverted_det;
-    if (intercpt_coord.m_y < 0 || intercpt_coord.m_y + intercpt_coord.m_x > 1)
+	hit_data.m_coordinates.m_y = ray.direction().dot( q_vec ) * inverted_det;
+    if (hit_data.m_coordinates.m_y < 0 || hit_data.m_coordinates.m_y + hit_data.m_coordinates.m_x > 1)
         return false;
 
 
-    intercpt_coord.m_z = m_edge0_2.dot( q_vec ) * inverted_det;
+	hit_data.m_coordinates.m_z = m_edge0_2.dot( q_vec ) * inverted_det;
 
     return true;
 
 }
 
 
-bool Polygon::intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord)
+bool Polygon::intersects(const Rayf& ray, HitData& hit_data)
 {
-    return moller_trumbore_intersect( ray, t, intercpt_coord );
+    return moller_trumbore_intersect( ray, hit_data );
 }
+
+
+Vec3f Polygon::get_surface_properties(HitData& hit_data) const
+{
+	return m_normal;
+} 

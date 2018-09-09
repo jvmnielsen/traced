@@ -1,6 +1,7 @@
 #pragma once
 #include "Ray.h"
 #include "Matrix44.h"
+#include "HitData.h"
 
 class Material;
 
@@ -10,11 +11,11 @@ public:
 	//RenderPrimitive(const Matrix44f& m_object_to_world) : m_object_to_world(m_object_to_world) {}
     //virtual ~RenderPrimitive() = default;
     //virtual ~RenderPrimitive() = default;
-    virtual bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) = 0;
+    virtual bool intersects(const Rayf& ray, HitData& hit_data) = 0;
 
 	virtual void transform_object_to_world(const Matrix44f& object_to_world) = 0;
 
-    //virtual Vec3f get_surface_color( const Vec3f& coordinates ) const = 0;
+    virtual Vec3f get_surface_properties(HitData& hit_data) const = 0;
 
     //Vec3f m_surface_color = { 150, 20, 100 };
 
@@ -31,7 +32,7 @@ public:
         , m_point_on_plane( point )
     {}
 
-    bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override
+    bool intersects(const Rayf& ray, HitData& hit_data) override
     {
         const auto denom = dot( m_normal, ray.direction() );
         
@@ -39,9 +40,9 @@ public:
         {
             const auto center_to_intercept = m_point_on_plane - ray.origin();
 
-            t = dot( center_to_intercept, m_normal ) / denom;
+            hit_data.m_t = dot( center_to_intercept, m_normal ) / denom;
 
-            return ( t >= 0 );
+            return ( hit_data.m_t >= 0 );
         }
 
         return false;
@@ -50,6 +51,11 @@ public:
 	void transform_object_to_world(const Matrix44f& object_to_world) override
     {
 	    
+    }
+
+	Vec3f get_surface_properties(HitData& hit_data) const override
+    {
+		return { 255,255,255 };
     }
 
 private:
@@ -70,7 +76,7 @@ public:
         , m_radius_squared( radius * radius )
     {}
 
-    bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override
+    bool intersects(const Rayf& ray, HitData& hit_data) override
     {
 
         // first part is, unsurprisingly, the same as for a disk
@@ -83,12 +89,12 @@ public:
 
         const auto recenter = m_point_on_plane - ray.origin();
 
-        t = dot( recenter, m_normal ) / denom;
+        hit_data.m_t = dot( recenter, m_normal ) / denom;
 
-        if ( t < 0 )
+        if ( hit_data.m_t < 0 )
             return false;
 
-        const auto supposed_intercept = ray.point_at_parameter( t );
+        const auto supposed_intercept = ray.point_at_parameter( hit_data.m_t );
         const auto center_to_intercept = supposed_intercept - m_point_on_plane;
         const auto difference = dot( center_to_intercept, center_to_intercept );
 
@@ -98,6 +104,11 @@ public:
 	void transform_object_to_world(const Matrix44f& object_to_world) override
 	{
 
+	}
+
+	Vec3f get_surface_properties(HitData& hit_data) const override
+	{
+		return { 255,255,255 };
 	}
 
 private:

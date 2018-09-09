@@ -12,13 +12,18 @@ public:
 		, m_material( material )
     {}
 
-    bool intersects(const Rayf& ray, float& t, Vec3f& intercpt_coord) override;
+    bool intersects(const Rayf& ray, HitData& hit_data) override;
 
     bool solve_quadratic( const float a, const float b, const float c, float& solu_one, float& solu_two ) const;
 
 	void transform_object_to_world(const Matrix44f& object_to_world) override
 	{
 
+	}
+
+	Vec3f get_surface_properties(HitData& hit_data) const override
+	{
+		return { 255,255,255 };
 	}
 
 private:
