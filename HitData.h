@@ -1,20 +1,20 @@
 #pragma once
 #include <memory>
-#include "RenderPrimitive.h"
+#include "Renderable.h"
 
-class RenderPrimitive;
+class Renderable;
 
 class HitData
 {
 public:
     HitData() 
-        : m_t( -1.0 ), m_t_closest( std::numeric_limits<float>::max() )
+        : m_t( -1 ), m_t_closest( std::numeric_limits<float>::max() )
         , m_closest_ptr( nullptr )
         , m_coord( 0 )
         , m_has_been_hit( false )
     {}
 
-    HitData( const float t, std::shared_ptr<RenderPrimitive> ptr ) 
+    HitData( const float t, std::shared_ptr<Renderable> ptr ) 
         : m_t( t )
         , m_t_closest( std::numeric_limits<float>::max() )
         , m_closest_ptr( std::move( ptr ) )
@@ -23,7 +23,7 @@ public:
     {}
     
     //~HitData();
-    void update_closest( const std::shared_ptr<RenderPrimitive>& ptr )
+    void update_closest( const std::shared_ptr<Renderable>& ptr )
     {
         if (m_t < m_t_closest)
         {
@@ -35,8 +35,19 @@ public:
             
     }
 
+    void update_closest_in_mesh(const std::shared_ptr<Renderable>& ptr)
+    {
+        if (m_t < m_t_closest)
+        {
+            m_t_closest = m_t;
+            m_coord_closest = m_coord;
+            m_mesh_ptr = ptr;
+            m_has_been_hit = true; // optimise, is done every time
+        }
+    }
+
 	/*
-	void update_closest_global(const std::shared_ptr<RenderPrimitive>& ptr)
+	void update_closest_global(const std::shared_ptr<Renderable>& ptr)
 	{
 		m_recent_global_ptr = ptr;
 
@@ -59,10 +70,10 @@ public:
     float m_t_closest;
 	//float m_t_closest_global;
 
-    std::shared_ptr<RenderPrimitive> m_closest_ptr;
-	//std::shared_ptr<RenderPrimitive> m_closest_global_ptr;
-	//std::shared_ptr<RenderPrimitive> m_recent_sub_ptr;
-	//std::shared_ptr<RenderPrimitive> m_recent_global_ptr;
+    std::shared_ptr<Renderable> m_closest_ptr;
+	std::shared_ptr<Renderable> m_mesh_ptr;
+	//std::shared_ptr<Renderable> m_recent_sub_ptr;
+	//std::shared_ptr<Renderable> m_recent_global_ptr;
 
     Vec3f m_coord;
     Vec3f m_coord_closest;

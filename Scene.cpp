@@ -14,42 +14,62 @@ inline float deg_to_rad(const float deg)
     return deg * M_PI / 280;
 }
 
-void Scene::add_object_to_scene(const std::shared_ptr<RenderPrimitive>& render_ptr)
+void Scene::add_object_to_scene(const std::shared_ptr<Renderable>& render_ptr)
 {
-	m_scene_objects.emplace_back(render_ptr);
+	m_simple_scene_objects.emplace_back(render_ptr);
 }
 
 void Scene::load_objects_from_file(const std::string& file_name)
 {
 	Parser parser;
-	const std::shared_ptr<RenderPrimitive> renderable_ptr = parser.parse(file_name);
-	add_object_to_scene(renderable_ptr);
+	const std::shared_ptr<Renderable> renderable_ptr = parser.parse(file_name);
+	//add_object_to_scene(renderable_ptr);
+    m_scene_meshes.push_back(renderable_ptr);
 }
 
-HitData Scene::trace( const Rayf& ray )
+void Scene::trace_simple_objects(const Rayf& ray, HitData& hit_data)
 {
-    HitData hit_data = { };
-
-    for ( auto& renderable : m_scene_objects )
+    for (auto& renderable : m_simple_scene_objects)
     {
-		renderable->intersects(ray, hit_data);
-        
-            //hit_data.update_closest_global( renderable );
-        
+        if (renderable->intersects(ray, hit_data))
+        {
+            hit_data.update_closest(renderable);
+        }
     }
+}
+
+void Scene::trace_meshes(const Rayf& ray, HitData& hit_data)
+{
+    for (auto& renderable : m_scene_meshes)
+    {
+        renderable->intersects(ray, hit_data); // meshes handle it themselves internally for now, find a better solution
+    }
+}
+
+HitData Scene::trace(const Rayf& ray)
+{
+    HitData hit_data;
+
+    if (!m_simple_scene_objects.empty())
+        trace_simple_objects(ray, hit_data);
+
+    if (!m_scene_meshes.empty())
+        trace_meshes(ray, hit_data);
 
     return hit_data;
 }
 
-Vec3f Scene::cast_ray( const Rayf& ray )
+Vec3f Scene::cast_ray(const Rayf& ray)
 {
-    auto hit_data = trace( ray );
+    auto hit_data = trace(ray);
 
-    if ( hit_data.has_been_hit() )
+    if (hit_data.has_been_hit())
     {
+        
         auto normal = hit_data.m_closest_ptr->get_surface_properties( hit_data );
 		const auto ratio = std::max(0.0f, normal.dot(-1*ray.direction()));
-    	return { 255*ratio, 255*ratio, 255*ratio };
+    	return { 255*ratio, 255*ratio, 255*ratio }; 
+        //return {255, 255, 255};
     }
 
     return {0, 0, 0};
@@ -76,11 +96,11 @@ void Scene::render(PixelBuffer& buffer)
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
 										0, 1, 0, 0, 
 										0, 0, 1, 0, 
-										0, 0, -30, 1); 
+										0, 0, -20, 1); 
 
-	m_scene_objects[0]->transform_object_to_world(objectToWorld);
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld);
 
-    //m_scene_objects.push_back( std::make_shared<Polygon>( Polygon( Vec3f{ -0.1f, -0.1f, -1.0f }, Vec3f{ 0.1f, -0.1f, -1.0f }, Vec3f{ 0.0f, 0.1f, -1.0f}, false) ) );
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.3), 0.1, nullptr));
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {

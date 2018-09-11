@@ -4,7 +4,7 @@ struct hit_data;
 
 #include "Scene.h"
 #include "Ray.h"
-#include "RenderPrimitive.h"
+#include "Renderable.h"
 
 Vec3f reflect( const Vec3f& v, const Vec3f& n );
 

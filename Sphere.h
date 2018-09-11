@@ -1,8 +1,8 @@
 #pragma once
-#include "RenderPrimitive.h"
+#include "Renderable.h"
 
 class Sphere :
-    public RenderPrimitive
+    public Renderable
 {
 public:
     Sphere(Vec3f& center, const float radius, Material* material) 

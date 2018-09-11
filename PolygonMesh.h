@@ -1,12 +1,12 @@
 #pragma once
-#include "RenderPrimitive.h"
+#include "Renderable.h"
 #include <memory>
 #include <vector>
 #include "Polygon.h"
 #include "Material.h"
 
 class PolygonMesh :
-    public RenderPrimitive
+    public Renderable
 {
 public:
 	PolygonMesh() = default;

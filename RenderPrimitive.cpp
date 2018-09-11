@@ -1,3 +1,0 @@
-#include "RenderPrimitive.h"
-
-

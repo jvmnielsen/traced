@@ -2,7 +2,7 @@
 
 bool PolygonMesh::intersects(const Rayf& ray, HitData& hit_data)
 {
-	for (auto& polygon : m_mesh)
+	for (const auto& polygon : m_mesh)
 	{
 		if (polygon->intersects(ray, hit_data))
 		{

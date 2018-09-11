@@ -1,9 +1,9 @@
 #pragma once
-#include "RenderPrimitive.h"
+#include "Renderable.h"
 #include "Vec3.h"
 
 class Polygon :
-    public RenderPrimitive
+    public Renderable
 {
 public:
     Polygon( 

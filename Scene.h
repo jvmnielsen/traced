@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "RenderPrimitive.h"
+#include "Renderable.h"
 #include "Pixel.h"
 #include "Ray.h"
 #include <random>
@@ -27,10 +27,10 @@ public:
 		
 	}
 
-    //void add_object_to_scene( RenderPrimitive& hitable );
+    //void add_object_to_scene( Renderable& hitable );
     void render(PixelBuffer& buffer);
 
-	void add_object_to_scene(const std::shared_ptr<RenderPrimitive>& render_ptr);
+	void add_object_to_scene(const std::shared_ptr<Renderable>& render_ptr);
 
     
 
@@ -47,13 +47,17 @@ private:
     std::mt19937 m_gen;
     std::uniform_real_distribution<> m_dist;
 
-	std::vector<std::shared_ptr<RenderPrimitive>> m_scene_objects;
+	std::vector<std::shared_ptr<Renderable>> m_simple_scene_objects;
+    std::vector<std::shared_ptr<Renderable>> m_scene_meshes;
 
     const float m_infinity = std::numeric_limits<float>::max();
 
-    HitData trace( const Rayf& ray );
+    HitData trace(const Rayf& ray);
+
+    void trace_simple_objects(const Rayf& ray, HitData& hit_data);
+    void trace_meshes(const Rayf& ray, HitData& hit_data);
 	
-    Vec3f cast_ray( const Rayf& ray );
+    Vec3f cast_ray(const Rayf& ray);
 
 	void load_objects_from_file(const std::string& file_name);
 };
