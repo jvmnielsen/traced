@@ -78,7 +78,10 @@ Vec3f Scene::cast_ray(const Rayf& ray)
 
 void Scene::render(PixelBuffer& buffer)
 {
-	Matrix44f camera_to_world;// { 0.945519f, 0.0f, -0.325569f, 0.0f, -0.179534f, 0.834209f, -0.521403f, 0.0f, 0.271593f, 0.551447f, 0.78876f, 0.0f, 4.208271f, 8.374532f, 17.932925f, 1.0f };
+    Matrix44f camera_to_world;/* { 1, 0, 0, 0.0f,
+	                            0, 1,  0,  0.0f, 
+	                            0, 0,   1,   0.0f, 
+	                            0, 0,  -30000.0f,  1.0f };*/
 
     const float fov = 90;
 
@@ -90,17 +93,19 @@ void Scene::render(PixelBuffer& buffer)
 
     int counter = 0;
 
+    
 	load_objects_from_file("teapot.obj");
     std::cout << "parsing done";
 	
-	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
-										0, 1, 0, 0, 
-										0, 0, 1, 0, 
-										0, 0, -20, 1); 
+	Matrix44f objectToWorld = Matrix44f(0.1, 0, 0, 0,
+										0, 0.1, 0, 0, 
+										0, 0, 0.1, 0, 
+										0, 0, -2, 1); 
 
-	m_scene_meshes[0]->transform_object_to_world(objectToWorld);
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld); 
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.3), 0.1, nullptr));
+    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.3), 0.1, nullptr));
+    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(0, 0, 1), Vec3f(0, 0, 0)));
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {

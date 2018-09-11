@@ -121,6 +121,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="PolygonMesh.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="HitData.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="PolygonMesh.h" />
