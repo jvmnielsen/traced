@@ -141,6 +141,8 @@ Vec3f Polygon::get_surface_properties(HitData& hit_data) const
         + hit_data.m_coord_closest.m_x * m_vertex_normals[1] 
         + hit_data.m_coord_closest.m_y * m_vertex_normals[2];
 
+    // for flat shading simply return the face normal
+
     hit_normal.normalize();
 
 	return hit_normal;

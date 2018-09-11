@@ -14,7 +14,7 @@ public:
 
 	bool initializeWindow();
 
-    void render_buffer( PixelBuffer &pixelBuffer );
+    void check_for_input( PixelBuffer &pixelBuffer );
     void update_texture( PixelBuffer& buffer );
    
 private:

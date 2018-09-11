@@ -56,7 +56,7 @@ Vec3f Scene::cast_ray( const Rayf& ray )
 }
 
 
-void Scene::render( PixelBuffer& buffer )
+void Scene::render(PixelBuffer& buffer)
 {
 	Matrix44f camera_to_world;// { 0.945519f, 0.0f, -0.325569f, 0.0f, -0.179534f, 0.834209f, -0.521403f, 0.0f, 0.271593f, 0.551447f, 0.78876f, 0.0f, 4.208271f, 8.374532f, 17.932925f, 1.0f };
 
@@ -71,7 +71,7 @@ void Scene::render( PixelBuffer& buffer )
     int counter = 0;
 
 	load_objects_from_file("teapot.obj");
-
+    std::cout << "parsing done";
 	
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
 										0, 1, 0, 0, 
@@ -113,6 +113,8 @@ void Scene::render( PixelBuffer& buffer )
             buffer.m_pixel_data[counter++] = color[1];
             buffer.m_pixel_data[counter++] = color[2];
             buffer.m_pixel_data[counter++] = 255;
+
+            
         }
     }
 

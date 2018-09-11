@@ -8,6 +8,8 @@
 #include <memory>
 #include <limits>
 #include "HitData.h"
+#include "Window.h"
+
 
 class Scene
 {
@@ -26,7 +28,7 @@ public:
 	}
 
     //void add_object_to_scene( RenderPrimitive& hitable );
-    void render( PixelBuffer& buffer );
+    void render(PixelBuffer& buffer);
 
 	void add_object_to_scene(const std::shared_ptr<RenderPrimitive>& render_ptr);
 
