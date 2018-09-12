@@ -9,12 +9,15 @@
 #include <limits>
 #include "HitData.h"
 #include "Window.h"
+#include "Light.h"
 
 
 class Scene
 {
 public:
-    Scene() {}
+    Scene() : m_light(Vec3f(255, 255, 255), 10.0f, Vec3f(0, 0, -1)) {}
+
+
     Scene( //Pixel& background_color,
             const unsigned int screen_width,
             const unsigned int screen_height ) 
@@ -23,6 +26,7 @@ public:
         , m_screen_height( screen_height )
         , m_gen( std::random_device()() )
         , m_dist( 0, 1 )
+		, m_light(Vec3f(200,100,200),20.0f,Vec3f(0,0,-1))
     {
 		
 	}
@@ -36,6 +40,8 @@ public:
 
     unsigned int m_screen_width;
     unsigned int m_screen_height;
+
+	
 
 
 private:
@@ -60,5 +66,7 @@ private:
     Vec3f cast_ray(const Rayf& ray);
 
 	void load_objects_from_file(const std::string& file_name);
+
+	DistantLight m_light;
 };
 

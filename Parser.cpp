@@ -116,7 +116,7 @@ std::unique_ptr<PolygonMesh> Parser::construct_mesh()
                 m_normals[m_normal_ordering[i]-1],
                 m_normals[m_normal_ordering[i + 1]-1],
                 m_normals[m_normal_ordering[i + 2]-1],
-                true)); 
+                true, 0.18f)); 
 	}
 
 	return mesh_ptr;

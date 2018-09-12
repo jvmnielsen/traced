@@ -10,18 +10,21 @@ public:
 			const Vec3f& vertx0, 
 			const Vec3f& vertx1, 
 			const Vec3f& vertx2, 
-			bool is_single_sided )
-        : m_vertices { vertx0, vertx1, vertx2 }
+			bool is_single_sided,
+			const float albedo)
+        : Renderable(albedo)
+		, m_vertices { vertx0, vertx1, vertx2 }
 		//, m_vertices0(vertx0)
         //, m_vertices1( vertx1 )
         //, m_vertices2( vertx2 )
-        , m_edge0( vertx1 - vertx0 )
-        , m_edge0_2( vertx2 - vertx0 )
-        , m_edge1( vertx2 - vertx1 )
-        , m_edge2( vertx0 - vertx2 )
+        , m_edge0(vertx1 - vertx0)
+        , m_edge0_2(vertx2 - vertx0)
+        , m_edge1(vertx2 - vertx1)
+        , m_edge2(vertx0 - vertx2)
+		, m_is_single_sided(is_single_sided)
         , m_normal(cross(vertx1 - vertx0, vertx2 - vertx0).normalize()) // not normalized: area needed for baycentric coordinates
     {
-        m_dist_origin_to_plane = m_normal.dot( m_vertices[0] );// precompute for performance, remember every point is in reality P_vec = P - 0
+        m_dist_origin_to_plane = m_normal.dot(m_vertices[0]);// precompute for performance, remember every point is in reality P_vec = P - 0
     }
 
     Polygon(
@@ -31,13 +34,16 @@ public:
         const Vec3f& vertx_normal0,
         const Vec3f& vertx_normal1,
         const Vec3f& vertx_normal2,
-        bool is_single_sided )
-        : m_vertices{ vertx0, vertx1, vertx2 }
+        bool is_single_sided,
+		const float albedo)
+        : Renderable(albedo)
+		, m_vertices{ vertx0, vertx1, vertx2 }
         , m_vertex_normals{ vertx_normal0, vertx_normal1, vertx_normal2 }
         , m_edge0( vertx1 - vertx0 )
         , m_edge0_2( vertx2 - vertx0 )
         , m_edge1( vertx2 - vertx1 )
         , m_edge2( vertx0 - vertx2 )
+		, m_is_single_sided(is_single_sided)
         , m_normal( cross( vertx1 - vertx0, vertx2 - vertx0 ).normalize() ) // not normalized: area needed for baycentric coordinates
     {
         m_dist_origin_to_plane = m_normal.dot( m_vertices[0] );// precompute for performance, remember every point is in reality P_vec = P - 0

@@ -67,9 +67,13 @@ Vec3f Scene::cast_ray(const Rayf& ray)
     {
         
         auto normal = hit_data.m_closest_ptr->get_surface_properties( hit_data );
-		const auto ratio = std::max(0.0f, normal.dot(-1*ray.direction()));
-    	return { 255*ratio, 255*ratio, 255*ratio }; 
-        //return {255, 255, 255};
+
+		auto L = -1*m_light.m_direction;
+		//const auto ratio = std::max(0.0f, normal.dot(-1*ray.direction()));
+    	//return { 255*ratio, 255*ratio, 255*ratio }; 
+        
+		const auto hit_color = hit_data.m_closest_ptr->m_albedo / M_PI * m_light.m_intensity * m_light.m_color * std::max(0.f, normal.dot(L));
+    	return hit_color;
     }
 
     return {0, 0, 0};
@@ -97,14 +101,14 @@ void Scene::render(PixelBuffer& buffer)
 	load_objects_from_file("teapot.obj");
     std::cout << "parsing done";
 	
-	Matrix44f objectToWorld = Matrix44f(0.1, 0, 0, 0,
-										0, 0.1, 0, 0, 
-										0, 0, 0.1, 0, 
-										0, 0, -2, 1); 
+	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
+										0, 1, 0.5, 0, 
+										0, 0, 1, 0, 
+										0, 0, -30, 1); 
 
-	m_scene_meshes[0]->transform_object_to_world(objectToWorld); 
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.3), 0.1, nullptr));
+    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.3f), 0.1f, 0.18f));
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(0, 0, 1), Vec3f(0, 0, 0)));
 
     for (size_t j = 0; j < m_screen_height; ++j)

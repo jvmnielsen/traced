@@ -8,7 +8,9 @@ class Material;
 class Renderable
 {
 public:
-	//Renderable(const Matrix44f& m_object_to_world) : m_object_to_world(m_object_to_world) {}
+	explicit Renderable(const float albedo) : m_albedo(albedo) {}
+
+	//Renderable(const Vec3f& albedo) : m_albedo(albedo) {}
     //virtual ~Renderable() = default;
     //virtual ~Renderable() = default;
     virtual bool intersects(const Rayf& ray, HitData& hit_data) = 0;
@@ -17,7 +19,7 @@ public:
 
     virtual Vec3f get_surface_properties(HitData& hit_data) const = 0;
 
-    //Vec3f m_surface_color = { 150, 20, 100 };
+	float m_albedo;
 
 private:
 	//Matrix44f m_object_to_world;
@@ -27,8 +29,9 @@ class Plane
     : public Renderable
 {
 public:
-    Plane(const Vec3f& normal, const Vec3f& point)
-        : m_normal(normal)
+    Plane(const Vec3f& normal, const Vec3f& point, const float albedo)
+        : Renderable(albedo)
+		, m_normal(normal)
         , m_point_on_plane( point )
     {}
 
@@ -69,11 +72,12 @@ class Disk
     : public Renderable
 {
 public:
-    Disk(const Vec3f& normal, const Vec3f& point, const float radius, const Matrix44f& object_to_world)
-        : m_normal( normal )
-        , m_point_on_plane( point )
-        , m_radius( radius )
-        , m_radius_squared( radius * radius )
+    Disk(const Vec3f& normal, const Vec3f& point, const float radius, const float albedo)
+        : Renderable(albedo)
+		, m_normal(normal)
+        , m_point_on_plane(point)
+        , m_radius(radius)
+        , m_radius_squared(radius * radius)
     {}
 
     bool intersects(const Rayf& ray, HitData& hit_data) override

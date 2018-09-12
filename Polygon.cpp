@@ -137,6 +137,7 @@ bool Polygon::intersects(const Rayf& ray, HitData& hit_data)
 
 Vec3f Polygon::get_surface_properties(HitData& hit_data) const
 {
+	
     auto hit_normal = (1 - hit_data.m_coord_closest.m_x - hit_data.m_coord_closest.m_y) * m_vertex_normals[0]
         + hit_data.m_coord_closest.m_x * m_vertex_normals[1] 
         + hit_data.m_coord_closest.m_y * m_vertex_normals[2];
@@ -145,5 +146,7 @@ Vec3f Polygon::get_surface_properties(HitData& hit_data) const
 
     hit_normal.normalize();
 
-	return hit_normal;
+	return hit_normal; 
+
+	//return m_normal;
 } 
