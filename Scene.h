@@ -26,7 +26,7 @@ public:
         , m_screen_height( screen_height )
         , m_gen( std::random_device()() )
         , m_dist( 0, 1 )
-		, m_light(Vec3f(200,100,200),20.0f,Vec3f(0,0,-1))
+		, m_light(Vec3f(200,100,200),14.0f,Vec3f(0,0,1))
     {
 		
 	}

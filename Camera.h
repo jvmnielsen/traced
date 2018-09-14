@@ -5,13 +5,16 @@
 
 #define _USE_MATH_DEFINES // for C++  
 #include <cmath>  
-
-
+#include "Matrix44.h"
 
 
 class Camera
 {
 public:
+
+    explicit Camera() = default;
+
+    /*
     Camera( Vec3f look_from, Vec3f look_at, Vec3f view_up, float vFOV, float aspect, float aperture, float focus_dist )
 		: m_lens_radius( aperture / 2 )
 		, m_origin( look_from )
@@ -32,7 +35,41 @@ public:
 		m_horizontal = 2 * half_width * focus_dist * m_u;
 		m_vertical = 2 * half_height * focus_dist * m_v;
 	}
-	
+    */
+
+    Matrix44f look_at(const Vec3f& from, const Vec3f& to)
+    {
+        Vec3f tmp(0, 1, 0);
+
+        const auto forward = (from - to).normalize();
+
+        const auto right = cross(tmp, forward);
+
+        const auto up = cross(forward, right);
+
+        Matrix44f cam_to_world;
+
+        cam_to_world[0][0] = right.m_x;
+        cam_to_world[0][1] = right.m_y;
+        cam_to_world[0][2] = right.m_z;
+
+        cam_to_world[1][0] = up.m_x;
+        cam_to_world[1][1] = up.m_y;
+        cam_to_world[1][2] = up.m_z;
+
+        cam_to_world[2][0] = forward.m_x;
+        cam_to_world[2][1] = forward.m_y;
+        cam_to_world[2][2] = forward.m_z;
+        
+        cam_to_world[3][0] = from.m_x;
+        cam_to_world[3][1] = from.m_y;
+        cam_to_world[3][2] = from.m_z;
+
+        return cam_to_world;
+    }
+
+    /*
+
     Vec3f random_in_unit_disk();
 
 	Rayf get_ray( float s, float t ) 
@@ -53,6 +90,6 @@ public:
     // to generate random numbers [0,1]
     //std::random_device m_seed;
     std::mt19937 m_gen;
-    std::uniform_real_distribution<> m_dist;
+    std::uniform_real_distribution<> m_dist; */
 };
 

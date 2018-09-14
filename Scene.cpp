@@ -82,11 +82,8 @@ Vec3f Scene::cast_ray(const Rayf& ray)
 
 void Scene::render(PixelBuffer& buffer)
 {
-    Matrix44f camera_to_world;/* { 1, 0, 0, 0.0f,
-	                            0, 1,  0,  0.0f, 
-	                            0, 0,   1,   0.0f, 
-	                            0, 0,  -30000.0f,  1.0f };*/
-
+    Camera camera;
+    Matrix44f camera_to_world = camera.look_at(Vec3f(0, 0, 50), Vec3f(0, 0, 0));
     const float fov = 90;
 
     const auto scale = tan( deg_to_rad( fov * 0.5 ) );
@@ -100,16 +97,17 @@ void Scene::render(PixelBuffer& buffer)
     
 	load_objects_from_file("teapot.obj");
     std::cout << "parsing done";
-	
+
+    
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
-										0, 1, 0.5, 0, 
+										0, 1, 0, 0, 
 										0, 0, 1, 0, 
-										0, 0, -30, 1); 
+										0, 0, 0, 1); 
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.3f), 0.1f, 0.18f));
-    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(0, 0, 1), Vec3f(0, 0, 0)));
+    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.1), 1.0f, 0.18f));
+    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(0, 0, 1), Vec3f(0, 0, 0), 0.18f));
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {
@@ -133,7 +131,7 @@ void Scene::render(PixelBuffer& buffer)
             const float x = (2 * (i + 0.5) / m_screen_width - 1) * image_aspect_ratio * scale; 
             const float y = (1 - 2 * (j + 0.5) / m_screen_height) * scale;
 
-            auto dir = camera_to_world.multiply_with_point( Vec3f( x, y, -1 ) );
+            auto dir = camera_to_world.multiply_with_dir( Vec3f( x, y, -1 ) );
             dir.normalize();
 
             auto color = cast_ray( Rayf( origin, dir ) );
