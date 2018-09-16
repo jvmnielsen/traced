@@ -4,11 +4,11 @@ bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
 {
     float solu_one, solu_two;
 
-    auto center_at_orig = m_center - ray.origin();
+    auto center_at_orig = ray.origin() - m_center;
 
-    const auto a = ray.direction().dot( ray.direction() );
-    const auto b = 2 * ray.direction().dot( center_at_orig );
-    const auto c = center_at_orig.dot( center_at_orig ) - m_radius_squared;
+    const auto a = ray.direction().dot(ray.direction());
+    const auto b = 2 * ray.direction().dot(center_at_orig);
+    const auto c = center_at_orig.dot(center_at_orig) - m_radius_squared;
 
     if ( !solve_quadratic( a, b, c, solu_one, solu_two ) )
         return false;
@@ -16,14 +16,14 @@ bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
     if (!(solu_one > 0 || solu_two > 0))
         return false;
 
-    hit_data.m_t = (solu_one > solu_two) ?
+    hit_data.m_t = (solu_one < solu_two) ?
         solu_one :
         solu_two;
 
     return true;
 
 
-}
+ }
 
 bool Sphere::solve_quadratic(const float a, const float b, const float c, float& solu_one, float& solu_two) const
 {
