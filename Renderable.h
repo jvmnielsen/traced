@@ -121,4 +121,62 @@ private:
     float m_radius;
     float m_radius_squared;
 };
+
+
+class AABB 
+    : public Renderable
+{
+   
+    AABB(const Vec3f& low_bound, const Vec3f& high_bound, const float albedo)
+        : Renderable(albedo)
+    {
+        m_bounds[0] = low_bound;
+        m_bounds[1] = high_bound;
+    }
+    
+    bool intersects(const Rayf& ray, HitData& hit_data) override
+    {
+        float t_min, t_max, ty_min, ty_max, tz_min, tz_max;
+
+        t_min = (m_bounds[ray.m_sign[0]].x() - ray.origin().x()) * ray.m_inv_dir.x();
+        t_max = (m_bounds[1 - ray.m_sign[0]].x() - ray.origin().x()) * ray.m_inv_dir.x();
+        ty_min = (m_bounds[ray.m_sign[1]].y() - ray.origin().y()) * ray.m_inv_dir.y();
+        ty_max = (m_bounds[1 - ray.m_sign[1]].y() - ray.origin().y()) * ray.m_inv_dir.y();
+
+
+        if (t_min > ty_max || ty_min > t_max)
+            return false;
+        if (ty_min > t_min)
+            t_min = ty_min;
+        if (ty_max < t_max)
+            t_max = ty_max;
+
+        tz_min = (m_bounds[ray.m_sign[2]].z() - ray.origin().z()) * ray.m_inv_dir.z();
+        tz_max = (m_bounds[1 - ray.m_sign[2]].z() - ray.origin().z()) * ray.m_inv_dir.z();
+
+        if (t_min > tz_max || tz_min > t_max)
+            return false;
+        if (tz_min > t_min)
+            t_min = tz_min;
+        if (tz_max < t_max)
+            t_max = tz_max;
+
+        return true;
+        
+    }
+
+    void transform_object_to_world(const Matrix44f& object_to_world) override
+    {
+
+    }
+
+    Vec3f get_surface_properties(HitData& hit_data) const override
+    {
+        return {255,255,255};
+    }
+
+private:
+
+    Vec3f m_bounds[2];
+};
  

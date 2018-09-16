@@ -106,8 +106,8 @@ void color_clamp(Vec3f& color)
 void Scene::render(PixelBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 6000.0f, Vec3f(-2, 1, -1)));
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 6000.0f, Vec3f(5, -2, -2)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 4000.0f, Vec3f(-2, 1, -1)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 4000.0f, Vec3f(5, -2, -2)));
 
     Camera camera;
 	Matrix44f camera_to_world; // = camera.look_at(Vec3f(0, 5, 0), Vec3f(0, 0, -30));
@@ -123,22 +123,22 @@ void Scene::render(PixelBuffer& buffer)
 
 	m_background_color = { 30, 30, 30 };
 
-	/*
-	load_objects_from_file("teapot.obj");
+	
+	load_objects_from_file("plane.obj");
     std::cout << "parsing done";
 
     
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
 										0, 1, 0, 0, 
 										0, 0, 1, 0, 
-										0, 0, -30, 1);  
+										0, 0, 0, 1);  
 
-	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  */
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,-12), 2.0f, 0.18f));
-	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-2, -3, -25), 8.0f, 0.18f));
-	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(1, 7, -30), 3.0f, 0.18f));
-    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(0, 0, 1), Vec3f(0, 0, 0), 0.18f));
+    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,-12), 2.0f, 0.5f));
+	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-2, -3, -25), 8.0f, 0.5f));
+	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(1, 7, -30), 3.0f, 0.5f));
+    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(1, 0, 0), Vec3f(0, 0, 0), 0.18f));
 
     for (size_t j = 0; j < m_screen_height; ++j)
     {

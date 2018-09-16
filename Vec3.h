@@ -11,6 +11,14 @@ public:
     Vec3( T val );
     Vec3( T x, T y, T z );
 
+    T x() const { return m_x; }
+    T y() const { return m_y; }
+    T z() const { return m_z; }
+
+    T r() const { return m_x; }
+    T g() const { return m_y; }
+    T b() const { return m_z; }
+
     T length_squared() const;
     T length() const;
 

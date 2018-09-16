@@ -83,7 +83,10 @@ void Parser::load_file(const std::string& filename)
                 auto ordering = split_string(split_str[i], "/");
                 // faces are ordered 1/1/1 (vertex, texture, normal)
                 m_vertex_ordering.push_back( std::stol(ordering[0]) );
-                m_texture_coord_ordering.push_back( std::stol( ordering[1] ) );
+                if (!ordering[1].empty())
+                    m_texture_coord_ordering.push_back( std::stol( ordering[1] ) );
+      
+
                 m_normal_ordering.push_back( std::stol( ordering[2] ) );
             }
 
