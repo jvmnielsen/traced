@@ -6,10 +6,10 @@
 class Controller
 {
 public:
-    Controller( Scene& scene ) 
-        : m_scene( scene ) 
-        , m_window ( scene.m_screen_width, scene.m_screen_height )
-        , m_buffer ( 4, scene.m_screen_width, scene.m_screen_height )
+    Controller(Scene& scene) 
+        : m_scene(scene) 
+        , m_window(scene.m_screen_width, scene.m_screen_height)
+        , m_buffer(4, scene.m_screen_width, scene.m_screen_height)
     {
     }
 

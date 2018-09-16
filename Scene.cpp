@@ -33,7 +33,7 @@ void Scene::trace_simple_objects(const Rayf& ray, HitData& hit_data)
     {
         if (renderable->intersects(ray, hit_data))
         {
-            hit_data.update_closest(renderable);
+            hit_data.update_closest(renderable, ray);
         }
     }
 }
@@ -61,29 +61,55 @@ HitData Scene::trace(const Rayf& ray)
 
 Vec3f Scene::cast_ray(const Rayf& ray)
 {
+	Vec3f hit_color;
     auto hit_data = trace(ray);
 
     if (hit_data.has_been_hit())
     {
-        
-        auto normal = hit_data.m_closest_ptr->get_surface_properties( hit_data );
+        auto normal = hit_data.m_closest_ptr->get_surface_properties(hit_data);
 
-		auto L = -1*m_light.m_direction;
-		//const auto ratio = std::max(0.0f, normal.dot(-1*ray.direction()));
-    	//return { 255*ratio, 255*ratio, 255*ratio }; 
-        
-		const auto hit_color = hit_data.m_closest_ptr->m_albedo / M_PI * m_light.m_intensity * m_light.m_color * std::max(0.f, normal.dot(L));
-    	return hit_color;
+		for (const auto& light : m_scene_lights)
+		{
+			LightingInfo info;
+			light->illuminate(hit_data.m_coord, info);
+
+			auto shadow_intersect = trace(Rayf(hit_data.m_coord + normal * m_shadow_bias, -1*info.direction));
+			hit_color += !shadow_intersect.has_been_hit() 
+							* hit_data.m_closest_ptr->m_albedo
+							* info.intensity
+							* std::max(0.f, normal.dot(-1*info.direction));
+		}
+    	
     }
+	else
+	{
+		hit_color = m_background_color;
+	}
 
-    return {0, 0, 0};
+
+	return hit_color;
 }
 
 
+void color_clamp(Vec3f& color)
+{
+	for (auto i = 0; i < 3; i++)
+	{
+		if (color[i] > 255)
+			color[i] = 255;
+
+		if (color[i] < 0)
+			color[i] = 0;
+	}
+}
+
 void Scene::render(PixelBuffer& buffer)
 {
+
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 1000.f, Vec3f(0.1, 4, -10)));
+
     Camera camera;
-    Matrix44f camera_to_world = camera.look_at(Vec3f(0, 0, 50), Vec3f(0, 0, 0));
+	Matrix44f camera_to_world; // = camera.look_at(Vec3f(0, 5, 0), Vec3f(0, 0, -30));
     const float fov = 90;
 
     const auto scale = tan( deg_to_rad( fov * 0.5 ) );
@@ -94,7 +120,9 @@ void Scene::render(PixelBuffer& buffer)
 
     int counter = 0;
 
-    
+	m_background_color = { 30, 30, 30 };
+
+	/*
 	load_objects_from_file("teapot.obj");
     std::cout << "parsing done";
 
@@ -102,11 +130,11 @@ void Scene::render(PixelBuffer& buffer)
 	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
 										0, 1, 0, 0, 
 										0, 0, 1, 0, 
-										0, 0, 0, 1); 
+										0, 0, -30, 1);  
 
-	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  */
 
-    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,0.1), 1.0f, 0.18f));
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,-20), 5.0f, 0.18f));
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(0, 0, 1), Vec3f(0, 0, 0), 0.18f));
 
     for (size_t j = 0; j < m_screen_height; ++j)
@@ -134,14 +162,14 @@ void Scene::render(PixelBuffer& buffer)
             auto dir = camera_to_world.multiply_with_dir( Vec3f( x, y, -1 ) );
             dir.normalize();
 
-            auto color = cast_ray( Rayf( origin, dir ) );
+            auto color = cast_ray(Rayf(origin, dir));
+
+			color_clamp(color);
 
             buffer.m_pixel_data[counter++] = color[0];
             buffer.m_pixel_data[counter++] = color[1];
             buffer.m_pixel_data[counter++] = color[2];
-            buffer.m_pixel_data[counter++] = 255;
-
-            
+            buffer.m_pixel_data[counter++] = 255;  
         }
     }
 

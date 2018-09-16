@@ -40,6 +40,11 @@ public:
     
     Vec3& normalize();
 
+	T norm() const
+	{
+		return m_x * m_x + m_y * m_y + m_z * m_z;
+	}
+
     // Accessors 
     T operator [] ( const uint8_t i ) const;
     T& operator [] ( const uint8_t i );

@@ -6,7 +6,7 @@ bool PolygonMesh::intersects(const Rayf& ray, HitData& hit_data)
 	{
 		if (polygon->intersects(ray, hit_data))
 		{
-			hit_data.update_closest(polygon);
+			hit_data.update_closest(polygon, ray);
 		}
 	}
 

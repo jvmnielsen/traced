@@ -23,49 +23,34 @@ public:
     {}
     
     //~HitData();
-    void update_closest( const std::shared_ptr<Renderable>& ptr )
+    void update_closest(const std::shared_ptr<Renderable>& ptr, const Rayf& ray)
     {
         if (m_t < m_t_closest)
         {
+			m_barycentric_closest = m_barycentric_coord;
             m_t_closest = m_t;
-            m_coord_closest = m_coord;
+			m_coord = ray.point_at_parameter(m_t_closest);
             m_closest_ptr = ptr;
             m_has_been_hit = true; // optimise, is done every time
         }
             
     }
 
-    void update_closest_in_mesh(const std::shared_ptr<Renderable>& ptr)
-    {
-        if (m_t < m_t_closest)
-        {
-            m_t_closest = m_t;
-            m_coord_closest = m_coord;
-            m_mesh_ptr = ptr;
-            m_has_been_hit = true; // optimise, is done every time
-        }
-    }
-
-	/*
-	void update_closest_global(const std::shared_ptr<Renderable>& ptr)
-	{
-		m_recent_global_ptr = ptr;
-
-		if (m_t_closest_sub < m_t_closest_global)
-		{
-			m_t_closest_global = m_t_closest_sub;
-			m_closest_global_ptr = m_recent_sub_ptr;
-		}
-
-	} */
-
     bool has_been_hit() const
     {
         return m_has_been_hit;
     }
 
-    
-    
+	Vec3f coord() const
+    {
+		return m_coord;
+    }
+
+	Vec3f barycentric() const
+    {
+		return m_barycentric_closest; 
+    }
+
     float m_t;
     float m_t_closest;
 	//float m_t_closest_global;
@@ -76,7 +61,11 @@ public:
 	//std::shared_ptr<Renderable> m_recent_global_ptr;
 
     Vec3f m_coord;
-    Vec3f m_coord_closest;
+    //Vec3f m_coord_closest;
+
+	Vec3f m_barycentric_coord;
+	Vec3f m_barycentric_closest;
+
 private:
     bool m_has_been_hit;
     

@@ -23,7 +23,7 @@ public:
 
 	Vec3f get_surface_properties(HitData& hit_data) const override
 	{
-		auto normal = hit_data.m_coord_closest - m_center;
+		auto normal = hit_data.coord() - m_center;
 		normal.normalize();
 		return normal;
 	}

@@ -15,10 +15,10 @@
 class Scene
 {
 public:
-    Scene() : m_light(Vec3f(255, 255, 255), 10.0f, Vec3f(0, 0, -1)) {}
+	//Scene() = default; // : m_light(Vec3f(255, 255, 255), 10.0f, Vec3f(0, 0, -1)) {}
 
 
-    Scene( //Pixel& background_color,
+    Scene( 
             const unsigned int screen_width,
             const unsigned int screen_height ) 
         //: m_background_color( background_color )
@@ -26,7 +26,7 @@ public:
         , m_screen_height( screen_height )
         , m_gen( std::random_device()() )
         , m_dist( 0, 1 )
-		, m_light(Vec3f(200,100,200),14.0f,Vec3f(0,0,1))
+		//, m_light(Vec3f(200,120,210), 9.0f, Vec3f(0,0,-1))
     {
 		
 	}
@@ -43,10 +43,10 @@ public:
 
 	
 
-
+	Vec3f m_background_color;
 private:
     
-    Pixel m_background_color;
+	std::vector<std::shared_ptr<Light>> m_scene_lights;
     
     // to generate random numbers [0,1]
     //std::random_device m_seed;
@@ -67,6 +67,8 @@ private:
 
 	void load_objects_from_file(const std::string& file_name);
 
-	DistantLight m_light;
+	//DistantLight m_light;
+
+	float m_shadow_bias = 1e-4;
 };
 

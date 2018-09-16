@@ -111,14 +111,14 @@ bool Polygon::moller_trumbore_intersect(const Rayf& ray, HitData& hit_data) cons
 
     // barycentric coordinate u
     const auto t_vec = ray.origin() - m_vertices[0];
-	hit_data.m_coord.m_x = t_vec.dot( p_vec ) * inverted_det;
-    if (hit_data.m_coord.m_x < 0 || hit_data.m_coord.m_x > 1)
+	hit_data.m_barycentric_coord.m_x = t_vec.dot( p_vec ) * inverted_det;
+    if (hit_data.m_barycentric_coord.m_x < 0 || hit_data.m_barycentric_coord.m_x > 1)
         return false;
 
     // barycentric coordinate v
     const auto q_vec = t_vec.cross( m_edge0 );
-	hit_data.m_coord.m_y = ray.direction().dot( q_vec ) * inverted_det;
-    if (hit_data.m_coord.m_y < 0 || hit_data.m_coord.m_y + hit_data.m_coord.m_x > 1)
+	hit_data.m_barycentric_coord.m_y = ray.direction().dot( q_vec ) * inverted_det;
+    if (hit_data.m_barycentric_coord.m_y < 0 || hit_data.m_barycentric_coord.m_y + hit_data.m_barycentric_coord.m_x > 1)
         return false;
 
 
@@ -138,11 +138,13 @@ bool Polygon::intersects(const Rayf& ray, HitData& hit_data)
 Vec3f Polygon::get_surface_properties(HitData& hit_data) const
 {
 	
-    auto hit_normal = (1 - hit_data.m_coord_closest.m_x - hit_data.m_coord_closest.m_y) * m_vertex_normals[0]
-        + hit_data.m_coord_closest.m_x * m_vertex_normals[1] 
-        + hit_data.m_coord_closest.m_y * m_vertex_normals[2];
+    auto hit_normal = (1 - hit_data.barycentric().m_x - hit_data.barycentric().m_y) * m_vertex_normals[0]
+        + hit_data.barycentric().m_x * m_vertex_normals[1] 
+        + hit_data.barycentric().m_y * m_vertex_normals[2];
 
     // for flat shading simply return the face normal
+
+
 
     hit_normal.normalize();
 
