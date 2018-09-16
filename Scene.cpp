@@ -70,14 +70,14 @@ Vec3f Scene::cast_ray(const Rayf& ray)
 
 		for (const auto& light : m_scene_lights)
 		{
-			LightingInfo info;
-			light->illuminate(hit_data.m_coord, info);
+			LightingInfo light_info;
+			light->illuminate(hit_data.m_coord, light_info);
 
-			auto shadow_intersect = trace(Rayf(hit_data.m_coord + normal * m_shadow_bias, -1*info.direction));
+			auto shadow_intersect = trace(Rayf(hit_data.m_coord + normal * m_shadow_bias, -1*light_info.direction));
 			hit_color += !shadow_intersect.has_been_hit() 
 							* hit_data.m_closest_ptr->m_albedo
-							* info.intensity
-							* std::max(0.f, normal.dot(-1*info.direction));
+							* light_info.intensity
+							* std::max(0.f, normal.dot(-1*light_info.direction));
 		}
     	
     }
@@ -106,7 +106,8 @@ void color_clamp(Vec3f& color)
 void Scene::render(PixelBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 1000.f, Vec3f(0.1, 4, -10)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 6000.0f, Vec3f(-2, 1, -1)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 6000.0f, Vec3f(5, -2, -2)));
 
     Camera camera;
 	Matrix44f camera_to_world; // = camera.look_at(Vec3f(0, 5, 0), Vec3f(0, 0, -30));
@@ -134,7 +135,9 @@ void Scene::render(PixelBuffer& buffer)
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  */
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,-20), 5.0f, 0.18f));
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,-12), 2.0f, 0.18f));
+	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-2, -3, -25), 8.0f, 0.18f));
+	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(1, 7, -30), 3.0f, 0.18f));
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(0, 0, 1), Vec3f(0, 0, 0), 0.18f));
 
     for (size_t j = 0; j < m_screen_height; ++j)
