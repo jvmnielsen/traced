@@ -25,7 +25,7 @@ public:
     //~HitData();
     void update_closest(const std::shared_ptr<Renderable>& ptr, const Rayf& ray)
     {
-        if (m_t < m_t_closest)
+        if (m_t < m_t_closest && m_t > 0)
         {
 			m_barycentric_closest = m_barycentric_coord;
             m_t_closest = m_t;
@@ -56,7 +56,7 @@ public:
 	//float m_t_closest_global;
 
     std::shared_ptr<Renderable> m_closest_ptr;
-	std::shared_ptr<Renderable> m_mesh_ptr;
+	//std::shared_ptr<Renderable> m_mesh_ptr;
 	//std::shared_ptr<Renderable> m_recent_sub_ptr;
 	//std::shared_ptr<Renderable> m_recent_global_ptr;
 
