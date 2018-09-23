@@ -41,7 +41,7 @@ public:
     {
         Vec3f tmp(0, 1, 0);
 
-        const auto forward = (from - to).normalize();
+        const auto forward = normalize(from - to);
 
         const auto right = cross(tmp, forward);
 

@@ -106,11 +106,21 @@ void color_clamp(Vec3f& color)
 void Scene::render(PixelBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 4000.0f, Vec3f(-2, 1, -1)));
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 4000.0f, Vec3f(5, -2, -2)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 2000.0f, Vec3f(-2, 1, -1)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 2000.0f, Vec3f(5, -2, -2)));
 
     Camera camera;
-	Matrix44f camera_to_world; // = camera.look_at(Vec3f(0, 5, 0), Vec3f(0, 0, -30));
+    Matrix44f camera_to_world = Matrix44f(1, 0, 0, 0, 
+                                          0, 1, 0, 0, 
+                                          0, 0, 1, 0, 
+                                          0, 0, 0, 1); // = camera.look_at(Vec3f(0, 0.9, 0), Vec3f(0, -9, -5));
+    
+    Matrix44f(0.707107, 0, -0.707107, 0, 
+              -0.331295, 0.883452, -0.331295, 0, 
+              0.624695, 0.468521, 0.624695, 0, 
+              28, 21, 28, 1);
+    
+    
     const float fov = 90;
 
     const auto scale = tan( deg_to_rad( fov * 0.5 ) );
@@ -128,14 +138,14 @@ void Scene::render(PixelBuffer& buffer)
     std::cout << "parsing done";
 
     
-	Matrix44f objectToWorld = Matrix44f(1, 0, 0, 0,
+	Matrix44f objectToWorld = Matrix44f(2, 0, 0, 0,
 										0, 1, 0, 0, 
-										0, 0, 1, 0, 
-										0, 0, 0, 1);  
+										0, 0, 2, 0, 
+										0, 0, -5, 1);  
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0,-12), 2.0f, 0.5f));
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0.5f,-5.0f), 0.5f, 0.18f));
 	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-2, -3, -25), 8.0f, 0.5f));
 	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(1, 7, -30), 3.0f, 0.5f));
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(1, 0, 0), Vec3f(0, 0, 0), 0.18f));

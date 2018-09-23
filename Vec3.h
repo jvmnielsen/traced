@@ -105,3 +105,18 @@ typedef Vec3<float> Vec3f;
 typedef Vec3<int> Vec3i;
 typedef Vec3<double> Vec3d;
 
+template<typename T>
+Vec3<T> normalize(const Vec3<T>& vec)
+{
+    auto tmp = vec;
+    auto length = tmp.length();
+
+    if (length > 0)
+    {
+        auto inv_length = 1 / length;
+        tmp.m_x *= inv_length;
+        tmp.m_y *= inv_length;
+        tmp.m_z *= inv_length;
+    }
+    return tmp;
+}

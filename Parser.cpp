@@ -80,6 +80,9 @@ void Parser::load_file(const std::string& filename)
 
             for (size_t i = 1; i < split_str.size(); i++) // skip first
             {
+                if (split_str.size() > 4)
+                    throw std::string("Loaded  face is not a triangle!");
+
                 auto ordering = split_string(split_str[i], "/");
                 // faces are ordered 1/1/1 (vertex, texture, normal)
                 m_vertex_ordering.push_back( std::stol(ordering[0]) );
@@ -127,7 +130,15 @@ std::unique_ptr<PolygonMesh> Parser::construct_mesh()
 
 std::unique_ptr<PolygonMesh> Parser::parse( const std::string& filename )
 {
-	load_file(filename);
+    try
+    {
+        load_file(filename);
+    } 
+    catch (std::string& msg)
+    {
+        std::cout << msg << '\n';
+    }
+	
 	auto mesh_ptr = construct_mesh();
 
 	return mesh_ptr;
