@@ -11,7 +11,7 @@
 
 inline float deg_to_rad(const float deg)
 {
-    return deg * M_PI / 280;
+    return deg * M_PI / 180;
 }
 
 void Scene::add_object_to_scene(const std::shared_ptr<Renderable>& render_ptr)
@@ -95,7 +95,7 @@ void color_clamp(Vec3f& color)
 {
 	for (auto i = 0; i < 3; i++)
 	{
-		if (color[i] > 255)
+        if (color[i] > 255)
 			color[i] = 255;
 
 		if (color[i] < 0)
@@ -106,10 +106,12 @@ void color_clamp(Vec3f& color)
 void Scene::render(PixelBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 2000.0f, Vec3f(-2, 1, -1)));
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 2000.0f, Vec3f(5, -2, -2)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 400.0f, Vec3f(-2, 1, 0)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 400.0f, Vec3f(5, -2, 0)));
 
-    Camera camera;
+    Camera camera = {Vec3f(0, 3, 1), Vec3f(0,0,-1), Vec3f(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
+
+    /*
     Matrix44f camera_to_world = Matrix44f(1, 0, 0, 0, 
                                           0, 1, 0, 0, 
                                           0, 0, 1, 0, 
@@ -118,7 +120,7 @@ void Scene::render(PixelBuffer& buffer)
     Matrix44f(0.707107, 0, -0.707107, 0, 
               -0.331295, 0.883452, -0.331295, 0, 
               0.624695, 0.468521, 0.624695, 0, 
-              28, 21, 28, 1);
+              28, 21, 28, 1); 
     
     
     const float fov = 90;
@@ -127,7 +129,7 @@ void Scene::render(PixelBuffer& buffer)
 
     const auto image_aspect_ratio = m_screen_width / static_cast<float>(m_screen_height); // without cast the decimals are discarded resulting in distortion
 
-    const auto origin = camera_to_world.multiply_with_point( Vec3f(0) );
+    const auto origin = camera_to_world.multiply_with_point( Vec3f(0) ); */
 
     int counter = 0;
 
@@ -139,19 +141,20 @@ void Scene::render(PixelBuffer& buffer)
 
     
 	Matrix44f objectToWorld = Matrix44f(2, 0, 0, 0,
-										0, 1, 0, 0, 
+										0, 2, 0, 0, 
 										0, 0, 2, 0, 
-										0, 0, -5, 1);  
+										0, 0, -2.5, 1);  
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0.5f,-5.0f), 0.5f, 0.18f));
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0.5f,-2.0f), 0.5f, 0.18f));
 	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-2, -3, -25), 8.0f, 0.5f));
 	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(1, 7, -30), 3.0f, 0.5f));
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(1, 0, 0), Vec3f(0, 0, 0), 0.18f));
 
-    for (size_t j = 0; j < m_screen_height; ++j)
+    for (int j = m_screen_height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
+        
         for (size_t i = 0; i < m_screen_width; ++i)
         {
             /* We first convert from raster space to NDC space by dividing the relevant coordinate
@@ -169,23 +172,31 @@ void Scene::render(PixelBuffer& buffer)
 
 
 			//figure out if this can be moved to a matrix partially
+            /*
             const float x = (2 * (i + 0.5) / m_screen_width - 1) * image_aspect_ratio * scale; 
             const float y = (1 - 2 * (j + 0.5) / m_screen_height) * scale;
 
             auto dir = camera_to_world.multiply_with_dir( Vec3f( x, y, -1 ) );
-            dir.normalize();
+            dir.normalize(); 
+            */
+            
+            const auto u = float(i) / float(m_screen_width); // maybe precompute
+            const auto v = float(j) / float(m_screen_height);
 
-            auto color = cast_ray(Rayf(origin, dir));
+            const auto ray = camera.get_ray(u, v);
+
+            auto color = cast_ray(ray);
 
 			color_clamp(color);
 
+            
             buffer.m_pixel_data[counter++] = color[0];
             buffer.m_pixel_data[counter++] = color[1];
             buffer.m_pixel_data[counter++] = color[2];
-            buffer.m_pixel_data[counter++] = 255;  
+            buffer.m_pixel_data[counter++] = 255; 
         }
     }
-
+    std::cout << "is done";
 
     
 }

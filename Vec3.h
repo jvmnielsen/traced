@@ -8,7 +8,7 @@ public:
     T m_x, m_y, m_z;
 
     Vec3();
-    Vec3( T val );
+    explicit Vec3( T val );
     Vec3( T x, T y, T z );
 
     T x() const { return m_x; }
