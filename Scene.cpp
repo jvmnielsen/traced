@@ -117,6 +117,8 @@ void Scene::render(PixelBuffer& buffer)
 	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(1, 7, -30), 3.0f, 0.5f));
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(1, 0, 0), Vec3f(0, 0, 0), 0.18f));
 
+    int aa_factor = 10;
+
     for (int j = m_screen_height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
         
@@ -144,23 +146,22 @@ void Scene::render(PixelBuffer& buffer)
             auto dir = camera_to_world.multiply_with_dir( Vec3f( x, y, -1 ) );
             dir.normalize(); 
             */
+
+            Vec3f color(0, 0, 0);
+
+            for (int s = 0; s < aa_factor; s++)  // AA loop
+            {
+                const auto u = float(i + m_dist(m_gen)) / float(m_screen_width); // maybe precompute
+                const auto v = float(j + m_dist(m_gen)) / float(m_screen_height);
+
+                const auto ray = camera.get_ray(u, v);
+
+                color += cast_ray(ray);
+            }
             
-            const auto u = float(i) / float(m_screen_width); // maybe precompute
-            const auto v = float(j) / float(m_screen_height);
-
-            const auto ray = camera.get_ray(u, v);
-
-            auto color = cast_ray(ray);
-
-			//color_clamp(color);
-
+            color /= float(aa_factor);
+		
             buffer.add_pixel(color);
-
-            /*
-            buffer.m_pixel_data[counter++] = color[0];
-            buffer.m_pixel_data[counter++] = color[1];
-            buffer.m_pixel_data[counter++] = color[2];
-            buffer.m_pixel_data[counter++] = 255; */
         }
     }
     std::cout << "is done";
