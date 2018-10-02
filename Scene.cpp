@@ -90,48 +90,13 @@ Vec3f Scene::cast_ray(const Rayf& ray)
 	return hit_color;
 }
 
-
-void color_clamp(Vec3f& color)
-{
-	for (auto i = 0; i < 3; i++)
-	{
-        if (color[i] > 255)
-			color[i] = 255;
-
-		if (color[i] < 0)
-			color[i] = 0;
-	}
-}
-
 void Scene::render(PixelBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 400.0f, Vec3f(-2, 1, 0)));
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 400.0f, Vec3f(5, -2, 0)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 200.0f, Vec3f(-2, 2, -1)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(200, 50, 100), 200.0f, Vec3f(2, 2, -1)));
 
     Camera camera = {Vec3f(0, 3, 1), Vec3f(0,0,-1), Vec3f(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
-
-    /*
-    Matrix44f camera_to_world = Matrix44f(1, 0, 0, 0, 
-                                          0, 1, 0, 0, 
-                                          0, 0, 1, 0, 
-                                          0, 0, 0, 1); // = camera.look_at(Vec3f(0, 0.9, 0), Vec3f(0, -9, -5));
-    
-    Matrix44f(0.707107, 0, -0.707107, 0, 
-              -0.331295, 0.883452, -0.331295, 0, 
-              0.624695, 0.468521, 0.624695, 0, 
-              28, 21, 28, 1); 
-    
-    
-    const float fov = 90;
-
-    const auto scale = tan( deg_to_rad( fov * 0.5 ) );
-
-    const auto image_aspect_ratio = m_screen_width / static_cast<float>(m_screen_height); // without cast the decimals are discarded resulting in distortion
-
-    const auto origin = camera_to_world.multiply_with_point( Vec3f(0) ); */
-
-    int counter = 0;
 
 	m_background_color = { 30, 30, 30 };
 
@@ -147,8 +112,8 @@ void Scene::render(PixelBuffer& buffer)
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0.5f,-2.0f), 0.5f, 0.18f));
-	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-2, -3, -25), 8.0f, 0.5f));
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0,0.50f,-2.0f), 0.5f, 0.18f));
+	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0.0f, 0.3f, -1.0f), 0.3f, 0.18f));
 	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(1, 7, -30), 3.0f, 0.5f));
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(1, 0, 0), Vec3f(0, 0, 0), 0.18f));
 
@@ -187,13 +152,15 @@ void Scene::render(PixelBuffer& buffer)
 
             auto color = cast_ray(ray);
 
-			color_clamp(color);
+			//color_clamp(color);
 
-            
+            buffer.add_pixel(color);
+
+            /*
             buffer.m_pixel_data[counter++] = color[0];
             buffer.m_pixel_data[counter++] = color[1];
             buffer.m_pixel_data[counter++] = color[2];
-            buffer.m_pixel_data[counter++] = 255; 
+            buffer.m_pixel_data[counter++] = 255; */
         }
     }
     std::cout << "is done";

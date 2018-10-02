@@ -6,7 +6,7 @@ void Controller::run()
     // window thread
     m_window.initializeWindow();
 
-    //m_scene.render( m_buffer, m_window );
+    //m_scene.render(m_buffer);
 
     std::thread render_thread{ &Scene::render, m_scene, std::ref( m_buffer ) };
 
