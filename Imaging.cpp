@@ -1,6 +1,6 @@
-#include "PixelBuffer.h"
+#include "ImageBuffer.h"
 
-PixelBuffer::PixelBuffer( const int channels, 
+ImageBuffer::ImageBuffer( const int channels, 
                           const int screenWidth,
                           const int screenHeight )
     : m_channels( channels )
@@ -32,7 +32,7 @@ void color_clamp(Vec3f& color)
     }
 }
 
-void PixelBuffer::add_pixel(Vec3f& pixel)
+void ImageBuffer::add_pixel(Vec3f& pixel)
 {
     color_clamp(pixel);
 
