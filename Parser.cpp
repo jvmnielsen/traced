@@ -122,7 +122,7 @@ std::unique_ptr<PolygonMesh> Parser::construct_mesh()
                 m_normals[m_normal_ordering[i]-1],
                 m_normals[m_normal_ordering[i + 1]-1],
                 m_normals[m_normal_ordering[i + 2]-1],
-                true, Vec3f(0.18f))); 
+                true, Vec3f(0.18f), Reflective)); 
 	}
 
 	return mesh_ptr;

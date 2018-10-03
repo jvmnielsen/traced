@@ -64,7 +64,7 @@ bool Window::initializeWindow()
     return true;
 }
 
-void Window::update_texture( PixelBuffer& buffer )
+void Window::update_texture( ImageBuffer& buffer )
 {
     void *data = &buffer.m_pixel_data[0];
 
@@ -92,7 +92,7 @@ void Window::update_texture( PixelBuffer& buffer )
         SDL_DestroyTexture( texture );
 }
 
-void Window::check_for_input( PixelBuffer &pixelBuffer )
+void Window::check_for_input( ImageBuffer &pixelBuffer )
 {
     bool running = true;
 

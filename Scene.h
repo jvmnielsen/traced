@@ -26,6 +26,7 @@ public:
         , m_screen_height( screen_height )
         , m_gen( std::random_device()() )
         , m_dist( 0, 1 )
+        , m_max_depth(5)
 		//, m_light(Vec3f(200,120,210), 9.0f, Vec3f(0,0,-1))
     {
 		
@@ -45,7 +46,10 @@ public:
 
 	Vec3f m_background_color;
 private:
-    
+
+    uint32_t m_max_depth;
+
+
 	std::vector<std::shared_ptr<Light>> m_scene_lights;
     
     // to generate random numbers [0,1]
@@ -63,11 +67,13 @@ private:
     void trace_simple_objects(const Rayf& ray, HitData& hit_data);
     void trace_meshes(const Rayf& ray, HitData& hit_data);
 	
-    Vec3f cast_ray(const Rayf& ray);
+    Vec3f cast_ray(const Rayf& ray, uint32_t depth);
 
 	void load_objects_from_file(const std::string& file_name);
 
 	//DistantLight m_light;
+
+    Vec3f random_in_unit_sphere();
 
 	float m_shadow_bias = 1e-4;
 };

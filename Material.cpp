@@ -1,10 +1,5 @@
 #include "Material.h"
 
-Vec3f reflect(const Vec3f& v, const Vec3f& n)
-{
-	return v - 2 * dot(v, n) * n;
-}
-
 bool refract( const Vec3f& v, const Vec3f& n, float ni_over_nt, Vec3f& refracted )
 {
     Vec3f uv = unit_vector( v );
@@ -25,6 +20,17 @@ float schlick( float cosine, float refractive_index )
     r0 = r0 * r0;
     return r0 + (1 - r0) * pow( (1 - cosine), 5 );
 }
+
+Rayf Lambertian::scatter(const Rayf& ray, const HitData& hit_data) const
+{
+    /*
+    Vec3f target = rec.m_point + rec.normal + random_in_unit_sphere();
+    scattered = Rayf(rec.p, target - rec.p);
+    attenuation = m_albedo;
+    return true; */
+    return {};
+}
+
 
 /*
 Vec3f Lambertian::random_in_unit_sphere()

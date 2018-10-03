@@ -11,8 +11,9 @@ public:
 			const Vec3f& vertx1, 
 			const Vec3f& vertx2, 
 			bool is_single_sided,
-			const Vec3f& albedo)
-        : Renderable(albedo)
+			const Vec3f& albedo,
+            MaterialType material)
+        : Renderable(albedo, material)
 		, m_vertices { vertx0, vertx1, vertx2 }
 		//, m_vertices0(vertx0)
         //, m_vertices1( vertx1 )
@@ -35,8 +36,9 @@ public:
         const Vec3f& vertx_normal1,
         const Vec3f& vertx_normal2,
         bool is_single_sided,
-		const Vec3f& albedo)
-        : Renderable(albedo)
+		const Vec3f& albedo,
+        MaterialType material)
+        : Renderable(albedo, material)
 		, m_vertices{ vertx0, vertx1, vertx2 }
         , m_vertex_normals{ vertx_normal0, vertx_normal1, vertx_normal2 }
         , m_edge0( vertx1 - vertx0 )

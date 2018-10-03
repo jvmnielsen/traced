@@ -1,6 +1,6 @@
 #include "Window.h"
 #include <vector>
-#include "PixelBuffer.h"
+#include "ImageBuffer.h"
 #include "Vec3.h"
 #include "Ray.h"
 #include "Scene.h"

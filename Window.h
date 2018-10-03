@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <memory>
 #include <vector>
-#include "PixelBuffer.h"
+#include "ImageBuffer.h"
 
 class Window
 {
@@ -14,8 +14,8 @@ public:
 
 	bool initializeWindow();
 
-    void check_for_input( PixelBuffer &pixelBuffer );
-    void update_texture( PixelBuffer& buffer );
+    void check_for_input( ImageBuffer &pixelBuffer );
+    void update_texture( ImageBuffer& buffer );
    
 private:
 	SDL_Window *m_windowHandle;

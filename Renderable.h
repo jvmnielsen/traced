@@ -1,10 +1,11 @@
 #pragma once
 #include "Ray.h"
 #include "Matrix44.h"
+#include <memory>
+#include <utility>
 //#include "HitData.h"
 
 class Material;
-
 class Renderable;
 
 class HitData
@@ -53,10 +54,16 @@ private:
 
 };
 
+enum MaterialType { Diffuse, Reflective, ReflectAndRefract };
+
 class Renderable
 {
 public:
-	explicit Renderable(const Vec3f& albedo) : m_albedo(albedo) {}
+    Renderable(const Vec3f& albedo, MaterialType material)
+        : m_albedo(albedo)
+        , m_material(material) {}
+    
+	                                                                               
 
 	//Renderable(const Vec3f& albedo) : m_albedo(albedo) {}
     //virtual ~Renderable() = default;
@@ -68,16 +75,19 @@ public:
     virtual void set_normal(HitData& hit_data) const = 0;
 
 	Vec3f m_albedo;
+    MaterialType m_material;
 
 private:
 	//Matrix44f m_object_to_world;
 };
 
+/*
+
 class Plane
     : public Renderable
 {
 public:
-    Plane(const Vec3f& normal, const Vec3f& point, const Vec3f& albedo)
+    Plane(const Vec3f& normal, const Vec3f& point, const Vec3f& albedo, )
         : Renderable(albedo)
 		, m_normal(normal)
         , m_point_on_plane( point )
@@ -228,3 +238,4 @@ private:
     Vec3f m_bounds[2];
 };
  
+ */

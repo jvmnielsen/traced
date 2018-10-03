@@ -4,16 +4,16 @@
 #include "Ray.h"
 #include "Renderable.h"
 
-Vec3f reflect( const Vec3f& v, const Vec3f& n );
+//Vec3f reflect(const Vec3f& v, const Vec3f& n);
 
-bool refract( const Vec3f& v, const Vec3f& n, float ni_over_nt, Vec3f& refracted );
+bool refract(const Vec3f& v, const Vec3f& n, float ni_over_nt, Vec3f& refracted);
 
-float schlick( float cosine, float refractive_index );
+float schlick(float cosine, float refractive_index);
 
 class Material
 {
 public:
-	virtual bool scatter(const Rayf& ray_in, const HitData& rec, Vec3f& attenuation, Rayf& scattered) = 0;
+	virtual Rayf scatter(const Rayf& ray, const HitData& hit_data) const = 0;
 };
 
 
@@ -29,14 +29,8 @@ public:
 
     Vec3f random_in_unit_sphere();
 
-	virtual bool scatter(const Rayf& ray_in, const HitData& rec, Vec3f& attenuation, Rayf& scattered)
-	{
-        /*
-		Vec3f target = rec.m_point + rec.normal + random_in_unit_sphere();
-		scattered = Rayf(rec.p, target - rec.p);
-		attenuation = m_albedo;
-		return true; */
-	}
+    Rayf scatter(const Rayf& ray, const HitData& hit_data) const override;
+	
 
 	Vec3f m_albedo;
     // to generate random numbers [0,1]
@@ -54,7 +48,7 @@ class Metal :
 public:
 	Metal(const Vec3f& albedo) : m_albedo(albedo) {}
 
-	virtual bool scatter(const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered)
+	virtual bool color_point(const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered)
 	{
 		Vec3f reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
 		scattered = Rayf(rec.p, reflected);
@@ -71,7 +65,7 @@ class Dielectric
 public: 
     Dielectric( float refractive_index ) : m_refractive_index( refractive_index ) {}
 
-    virtual bool scatter( const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered )
+    virtual bool color_point( const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered )
     {
         // clean-up, especially all the "scattered ="
         Vec3f outward_normal;

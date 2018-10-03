@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "Window.h"
-#include "PixelBuffer.h"
+#include "ImageBuffer.h"
 
 class Controller
 {
@@ -20,7 +20,7 @@ public:
 private:
     Scene m_scene;
     Window m_window;
-    PixelBuffer m_buffer;
+    ImageBuffer m_buffer;
     int m_screen_channels;
 };
 
