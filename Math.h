@@ -6,49 +6,38 @@
 template<typename T>
 struct Vec
 {
-    T m_x, m_y, m_z;
+    T x, y, z;
 
     Vec();
     explicit Vec( T val );
-    Vec( T x, T y, T z );
+    Vec( T _x, T _y, T _z );
 
-    T x() const { return m_x; }
-    T y() const { return m_y; }
-    T z() const { return m_z; }
+    T MagnitudeSquared() const;
+    T Magnitude() const;
 
-    T length_squared() const;
-    T length() const;
+    Vec operator *  (const T factor) const;
+    Vec& operator *= (const T factor);
 
-    Vec operator *  ( const T factor ) const;
-    Vec& operator *= ( const T factor );
+    Vec operator /  (const T factor) const;
+    Vec& operator /= (const T factor);
 
-    Vec operator /  ( const T factor ) const;
-    Vec& operator /= ( const T factor );
+    Vec operator + (const Vec& vec2) const;
+    Vec& operator += (const Vec& vec2);
 
-    Vec operator + ( const Vec& vec2 ) const;
-    Vec& operator += ( const Vec& vec2 );
+    Vec operator - (const Vec& vec2) const;
+    Vec& operator -= (const Vec& vec2);
 
-    Vec operator - ( const Vec& vec2 ) const;
-    Vec& operator -= ( const Vec& vec2 );
+    Vec operator * (const Vec& vec2) const;
+    Vec& operator *= (const Vec& vec2);
 
-    Vec operator * ( const Vec& vec2 ) const;
-    Vec& operator *= ( const Vec& vec2 );
+    Vec operator / (const Vec& vec2) const;
+    Vec& operator /= (const Vec& vec2);
 
-    Vec operator / ( const Vec& vec2 ) const;
-    Vec& operator /= ( const Vec& vec2 );
-
-    T dot( const Vec& vec2 ) const;
-    //static const inline T dotProduct( const Vec& vec1, const Vec& vec2 );
+    T DotProduct(const Vec& vec2) const;
     
-    Vec cross( const Vec& vec2 ) const;
-    //static inline Vec crossProduct( const Vec& vec1, const Vec& vec2 );
+    Vec CrossProduct(const Vec& vec2) const;
     
-    Vec& normalize();
-
-	T norm() const
-	{
-		return m_x * m_x + m_y * m_y + m_z * m_z;
-	}
+    Vec& Normalize();
 
     // Accessors 
     T operator [] ( const uint8_t i ) const;
@@ -60,42 +49,42 @@ struct Vec
 template< typename T >
 inline T dot( const Vec<T>& vec1, const Vec<T>& vec2 )
 {
-    return vec1.m_x * vec2.m_x + vec1.m_y * vec2.m_y + vec1.m_z * vec2.m_z;
+    return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 }
 // ---------------------------------------------------------------------------
 template< typename T >
 Vec<T> cross( const Vec<T>& vec1, const Vec<T>& vec2 ) 
 {
     return Vec<T>(
-        vec1.m_y * vec2.m_z - vec1.m_z * vec2.m_y,
-        vec1.m_z * vec2.m_x - vec1.m_x * vec2.m_z,
-        vec1.m_x * vec2.m_y - vec1.m_y * vec2.m_x );
+        vec1.y * vec2.z - vec1.z * vec2.y,
+        vec1.z * vec2.x - vec1.x * vec2.z,
+        vec1.x * vec2.y - vec1.y * vec2.x );
 }
 // ---------------------------------------------------------------------------
 template< typename T >
 inline std::istream& operator >> ( std::istream &is, Vec<T> &vec )
 {
-    is >> vec.m_x >> vec.m_y >> vec.m_z;
+    is >> vec.x >> vec.y >> vec.z;
     return is;
 }
 // ---------------------------------------------------------------------------
 template< typename T >
-inline std::ostream& operator >> ( std::ostream &os, Vec<T> &vec )
+inline std::ostream& operator << ( std::ostream &os, Vec<T> &vec )
 {
-    os << vec.m_x << vec.m_y << vec.m_z;
+    os << vec.x << vec.y << vec.z;
     return os;
 }
 // ---------------------------------------------------------------------------
 template< typename T >
 inline Vec<T> unit_vector( Vec<T> vec )
 {
-    return vec / vec.length();
+    return vec / vec.Magnitude();
 }
 // ---------------------------------------------------------------------------
 template< typename T >
 inline Vec<T> operator * ( const float t, const Vec<T> &vec )
 {
-    return Vec<T>( t * vec.m_x, t*vec.m_y, t*vec.m_z );
+    return Vec<T>( t * vec.x, t*vec.y, t*vec.z );
 }
 // ---------------------------------------------------------------------------
 
@@ -104,21 +93,21 @@ template<typename T>
 Vec<T> normalize(const Vec<T>& vec)
 {
     auto tmp = vec;
-    auto length = tmp.length();
+    auto length = tmp.Magnitude();
 
     if (length > 0)
     {
         auto inv_length = 1 / length;
-        tmp.m_x *= inv_length;
-        tmp.m_y *= inv_length;
-        tmp.m_z *= inv_length;
+        tmp.x *= inv_length;
+        tmp.y *= inv_length;
+        tmp.z *= inv_length;
     }
     return tmp;
 }
 // ---------------------------------------------------------------------------
 typedef Vec<float> Vec3f;
 typedef Vec<int> Vec3i;
-typedef Vec<double> Vec3d;
+typedef Vec<double> Vecd;
 // ---------------------------------------------------------------------------
 template<typename T>
 class Matrix44

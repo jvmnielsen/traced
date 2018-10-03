@@ -95,7 +95,7 @@ public:
 
     bool intersects(const Rayf& ray, HitData& hit_data) override
     {
-        const auto denom = dot( m_normal, ray.direction() );
+        const auto denom = DotProduct( m_normal, ray.direction() );
         
         if ( denom > 1e-6 )
         {
@@ -144,21 +144,21 @@ public:
         // first part is, unsurprisingly, the same as for a disk
         // consider inheriting from disk
 
-        const auto denom = dot( m_normal, ray.direction() );
+        const auto denom = DotProduct( m_normal, ray.direction() );
 
         if ( !( denom > 1e-6 ) )
             return false;
 
         const auto recenter = m_point_on_plane - ray.origin();
 
-        hit_data.m_t = dot( recenter, m_normal ) / denom;
+        hit_data.m_t = DotProduct( recenter, m_normal ) / denom;
 
         if ( hit_data.m_t < 0 )
             return false;
 
         const auto supposed_intercept = ray.point_at_parameter( hit_data.m_t );
         const auto center_to_intercept = supposed_intercept - m_point_on_plane;
-        const auto difference = dot( center_to_intercept, center_to_intercept );
+        const auto difference = DotProduct( center_to_intercept, center_to_intercept );
 
         return ( difference <= m_radius_squared );
     }

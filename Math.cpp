@@ -2,160 +2,160 @@
 #include <math.h>
 
 template< typename T >
-T Vec< T >::length_squared() const
+T Vec< T >::MagnitudeSquared() const
 {
-    return m_x * m_x + m_y * m_y + m_z * m_z;
+    return x * x + y * y + z * z;
 }
 
 template< typename T >
-T Vec<T>::length() const
+T Vec<T>::Magnitude() const
 {
     // sqrt returns a double, so we can only cast 
     // 'down' to float or int -- no loss in precision
     // from sqrt itself
-    return (T)sqrt( m_x * m_x + m_y * m_y + m_z * m_z );
+    return (T)sqrt( x * x + y * y + z * z );
 }
 
 template< typename T >
 Vec<T>::Vec( T val )
-    : m_x( val )
-    , m_y( val )
-    , m_z( val )
+    : x( val )
+    , y( val )
+    , z( val )
 {
 }
 
 template< typename T >
 Vec<T> ::Vec()
-    : m_x( T( 0 ) )
-    , m_y( T( 0 ) )
-    , m_z( T( 0 ) )
+    : x( T( 0 ) )
+    , y( T( 0 ) )
+    , z( T( 0 ) )
 {
 }
 
 template< typename T >
 Vec<T>::Vec( T x, T y, T z )
-    : m_x( x )
-    , m_y( y )
-    , m_z( z )
+    : x( x )
+    , y( y )
+    , z( z )
 {
 }
 
 template<typename T >
 Vec<T> Vec<T>::operator * ( const T factor ) const
 {
-    return Vec<T>( m_x * factor, m_y * factor, m_z * factor );
+    return Vec<T>( x * factor, y * factor, z * factor );
 }
 
 template< typename T >
 Vec<T>& Vec<T>::operator *= ( const T factor )
 {
-    m_x *= factor;
-    m_y *= factor;
-    m_z *= factor;
+    x *= factor;
+    y *= factor;
+    z *= factor;
     return *this;
 }
 
 template< typename T >
 Vec<T> Vec<T>::operator / ( const T factor ) const
 {
-    return Vec( m_x / factor, m_y / factor, m_z / factor );
+    return Vec( x / factor, y / factor, z / factor );
 }
 
 template< typename T >
 Vec<T>& Vec<T>::operator /= ( const T factor )
 {
-    m_x /= factor;
-    m_y /= factor;
-    m_z /= factor;
+    x /= factor;
+    y /= factor;
+    z /= factor;
     return *this;
 }
 
 template< typename T >
 Vec<T> Vec<T>::operator + ( const Vec<T>& vec2 ) const
 {
-    return Vec<T>( m_x + vec2.m_x, m_y + vec2.m_y, m_z + vec2.m_z );
+    return Vec<T>( x + vec2.x, y + vec2.y, z + vec2.z );
 }
 
 template< typename T >
 Vec<T>& Vec<T>::operator += ( const Vec& vec2 )
 {
-    m_x += vec2.m_x;
-    m_y += vec2.m_y;
-    m_z += vec2.m_z;
+    x += vec2.x;
+    y += vec2.y;
+    z += vec2.z;
     return *this;
 }
 
 template< typename T >
 Vec<T> Vec<T>::operator - ( const Vec<T>& vec2 ) const
 {
-    return Vec<T>( m_x - vec2.m_x, m_y - vec2.m_y, m_z - vec2.m_z );
+    return Vec<T>( x - vec2.x, y - vec2.y, z - vec2.z );
 }
 
 template< typename T >
 Vec<T>& Vec<T>::operator -= ( const Vec<T>& vec2 )
 {
-    m_x -= vec2.m_x;
-    m_y -= vec2.m_y;
-    m_z -= vec2.m_z;
+    x -= vec2.x;
+    y -= vec2.y;
+    z -= vec2.z;
     return *this;
 }
 
 template< typename T >
 Vec<T> Vec<T>::operator * ( const Vec<T>& vec2 ) const
 {
-    return Vec<T>( m_x * vec2.m_x, m_y * vec2.m_y, m_z * vec2.m_z );
+    return Vec<T>( x * vec2.x, y * vec2.y, z * vec2.z );
 }
 
 template< typename T >
 Vec<T>& Vec<T>::operator *= ( const Vec<T>& vec2 )
 {
-    m_x *= vec2.m_x;
-    m_y *= vec2.m_y;
-    m_z *= vec2.m_z;
+    x *= vec2.x;
+    y *= vec2.y;
+    z *= vec2.z;
     return *this;
 }
 
 template< typename T >
 Vec<T> Vec<T>::operator / ( const Vec<T>& vec2 ) const
 {
-    return Vec<T>( m_x / vec2.m_x, m_y / vec2.m_y, m_z / vec2.m_z );
+    return Vec<T>( x / vec2.x, y / vec2.y, z / vec2.z );
 }
 
 template< typename T >
 Vec<T>& Vec<T>::operator /= ( const Vec<T>& vec2 )
 {
-    m_x /= vec2.m_x;
-    m_y /= vec2.m_y;
-    m_z /= vec2.m_z;
+    x /= vec2.x;
+    y /= vec2.y;
+    z /= vec2.z;
     return *this;
 }
 
 template< typename T >
-T Vec<T>::dot( const Vec<T>& vec2 ) const
+T Vec<T>::DotProduct( const Vec<T>& vec2 ) const
 {
-    return m_x * vec2.m_x + m_y * vec2.m_y + m_z * vec2.m_z;
+    return x * vec2.x + y * vec2.y + z * vec2.z;
 }
 
 template< typename T >
-Vec<T> Vec<T>::cross( const Vec<T>& vec2 ) const
+Vec<T> Vec<T>::CrossProduct( const Vec<T>& vec2 ) const
 {
     
     return Vec<T>{
-        m_y * vec2.m_z - m_z * vec2.m_y,
-        m_z * vec2.m_x - m_x * vec2.m_z,
-        m_x * vec2.m_y - m_y * vec2.m_x };
+        y * vec2.z - z * vec2.y,
+        z * vec2.x - x * vec2.z,
+        x * vec2.y - y * vec2.x };
 }
 
 template< typename T >
-Vec<T>& Vec<T>::normalize()
+Vec<T>& Vec<T>::Normalize()
 {
-    T length = this->length();
+    T length = this->Magnitude();
     if (length > 0) // avoid division by 0
     {
         T invertedLength = 1 / length;
-        m_x *= invertedLength;
-        m_y *= invertedLength;
-        m_z *= invertedLength;
+        x *= invertedLength;
+        y *= invertedLength;
+        z *= invertedLength;
     }
 
     return *this;
@@ -164,13 +164,13 @@ Vec<T>& Vec<T>::normalize()
 template<typename T>
 T Vec<T>::operator [] ( const uint8_t i ) const
 {
-    return (&m_x)[i];
+    return (&x)[i];
 }
 
 template<typename T>
 T& Vec<T>::operator [] ( const uint8_t i )
 {
-    return (&m_x)[i];
+    return (&x)[i];
 }
 
 template class Vec<int>;

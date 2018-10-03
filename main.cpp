@@ -28,7 +28,7 @@ Scene random_scene()
         {
             float choose_mat = dist( gen );
             Vec3f center( a + 0.9 * dist( gen ), 0.2, b + 0.9 * dist( gen ));
-            if ((center - Vec3f( 4, 0.2, 0 )).length() > 0.9)
+            if ((center - Vec3f( 4, 0.2, 0 )).Magnitude() > 0.9)
             {
                 if (choose_mat < 0.8)
                 {

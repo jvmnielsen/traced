@@ -53,7 +53,7 @@ public:
 		Vec3f reflected = reflect(unit_vector(ray_in.direction()), rec.normal);
 		scattered = Rayf(rec.p, reflected);
 		attenuation = m_albedo;
-		return (dot(scattered.direction(), rec.normal) > 0);
+		return (DotProduct(scattered.direction(), rec.normal) > 0);
 	}
 
 	Vec3f m_albedo;
@@ -77,17 +77,17 @@ public:
         float reflect_prob;
         float cosine;
 
-        if (dot( ray_in.direction(), rec.normal ) > 0)
+        if (DotProduct( ray_in.direction(), rec.normal ) > 0)
         {
             outward_normal = -1 * rec.normal; // fix to allow -rec.normal
             ni_over_nt = m_refractive_index;
-            cosine = m_refractive_index * dot( ray_in.direction(), rec.normal ) / ray_in.direction().length();
+            cosine = m_refractive_index * DotProduct( ray_in.direction(), rec.normal ) / ray_in.direction().Magnitude();
         }
         else
         {
             outward_normal = rec.normal;
             ni_over_nt = 1.0 / m_refractive_index;
-            cosine = -1 * dot( ray_in.direction(), rec.normal ) / ray_in.direction().length();
+            cosine = -1 * DotProduct( ray_in.direction(), rec.normal ) / ray_in.direction().Magnitude();
         }
 
         if (refract( ray_in.direction(), outward_normal, ni_over_nt, refracted ))

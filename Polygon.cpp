@@ -50,9 +50,9 @@ bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) c
     Vec3f perpendicular_to_plane;
 
     /* The inside-outside test simply checks that the point is to the left of every vertex
-    * by taking the dot product of the plane's normal and the vector formed by taking the
-    * cross product of the vertex and a vector to the point in question. If they point
-    * in the same direction the dot product will be > 0 ( cos(0) ).
+    * by taking the DotProduct product of the plane's normal and the vector formed by taking the
+    * CrossProduct product of the vertex and a vector to the point in question. If they point
+    * in the same direction the DotProduct product will be > 0 ( cos(0) ).
     *
     * We are doing them one at a time as we want to terminate immediately if the test fails.
     */
@@ -81,7 +81,7 @@ bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) c
     /* The barycentric coordinates are the ratio of the triangles formed when drawing
      * lines from the vertices to the intercept point.
      *
-     * They are calculated using the area of the parallelogram (cross product) they 
+     * They are calculated using the area of the parallelogram (CrossProduct product) they 
      * form. 
      * 
      * for example: v = triangleABP_area / triangleABC_area = ( AB x AP ) . N / ( AB x AC ) . N

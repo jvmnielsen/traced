@@ -39,6 +39,6 @@ Vec3f Lambertian::random_in_unit_sphere()
     do
     {
         p = 2.0 * Vec3f( m_dist( m_gen ), m_dist( m_gen ), m_dist( m_gen ) ) - Vec3f( 1, 1, 1 );
-    } while (p.length_squared() >= 1.0);
+    } while (p.MagnitudeSquared() >= 1.0);
     return p;
 } */
