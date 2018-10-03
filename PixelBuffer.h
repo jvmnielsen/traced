@@ -8,16 +8,20 @@ class PixelBuffer
 {
 public:
     PixelBuffer( const int channels, const int screenWidth, const int screenHeight );
-    PixelBuffer();
+    
 
 
-    void add_pixel( Pixel& pixel );
-    const int channels() { return m_channels; }
+    void add_pixel(Vec3f& pixel);
+    //int channels() { return m_channels; }
+
+
 
     std::vector<unsigned char> m_pixel_data;
 
     //std::vector<Pixel> m_pixel_data;
-    
+
+    int m_counter = 0;
+
     const int m_channels;
 
     const int m_screenWidth;

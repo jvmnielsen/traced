@@ -111,7 +111,7 @@ void Window::check_for_input( PixelBuffer &pixelBuffer )
             //User requests quit
             if (eventHandler.type == SDL_QUIT)
             {
-                SDL_SaveBMP( m_screenSurface, "test.bmp" );
+                //SDL_SaveBMP( m_screenSurface, "test.bmp" );
                 running = false;
             }
 
