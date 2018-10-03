@@ -11,7 +11,7 @@ public:
 			const Vec3f& vertx1, 
 			const Vec3f& vertx2, 
 			bool is_single_sided,
-			const float albedo)
+			const Vec3f& albedo)
         : Renderable(albedo)
 		, m_vertices { vertx0, vertx1, vertx2 }
 		//, m_vertices0(vertx0)
@@ -35,7 +35,7 @@ public:
         const Vec3f& vertx_normal1,
         const Vec3f& vertx_normal2,
         bool is_single_sided,
-		const float albedo)
+		const Vec3f& albedo)
         : Renderable(albedo)
 		, m_vertices{ vertx0, vertx1, vertx2 }
         , m_vertex_normals{ vertx_normal0, vertx_normal1, vertx_normal2 }
@@ -58,8 +58,8 @@ public:
 
 	void update_edges();
 
-	
-	Vec3f get_surface_properties(HitData& hit_data) const override;
+
+    void set_normal(HitData& hit_data) const override;
 
     Vec3f m_vertices[3];
 

@@ -1,4 +1,11 @@
 #include "Sphere.h"
+//#include "Material.h"
+
+void Sphere::set_normal(HitData& hit_data) const
+{
+    hit_data.m_normal = hit_data.point() - m_center;
+    hit_data.m_normal.normalize();
+}
 
 bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
 {
@@ -10,7 +17,7 @@ bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
     const auto b = 2 * ray.direction().dot(center_at_orig);
     const auto c = center_at_orig.dot(center_at_orig) - m_radius_squared;
 
-    if ( !solve_quadratic( a, b, c, solu_one, solu_two ) )
+    if (!solve_quadratic(a, b, c, solu_one, solu_two))
         return false;
 
     if (!(solu_one > 0 || solu_two > 0))
@@ -21,8 +28,6 @@ bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
         solu_two;
 
     return true;
-
-
  }
 
 bool Sphere::solve_quadratic(const float a, const float b, const float c, float& solu_one, float& solu_two) const

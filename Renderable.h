@@ -1,14 +1,62 @@
 #pragma once
 #include "Ray.h"
 #include "Matrix44.h"
-#include "HitData.h"
+//#include "HitData.h"
 
 class Material;
+
+class Renderable;
+
+class HitData
+{
+public:
+    HitData()
+        : m_t(-1)
+        , m_t_closest(std::numeric_limits<float>::max())
+        , m_point(0)
+        , m_ptr(nullptr)
+        , m_has_been_hit(false)
+    {}
+
+    //~HitData();
+    void update_closest(Renderable* ptr, const Rayf& ray);
+
+    void set_normal(const Rayf& ray);
+
+    bool has_been_hit() const { return m_has_been_hit; }
+
+    Vec3f point() const { return m_point; }
+
+    Vec3f barycentric() const { return m_barycentric_closest; }
+
+    Vec3f normal() const { return m_normal; }
+
+    Renderable* ptr_to_rndrble() const { return m_ptr; }
+
+
+
+    float m_t;
+
+    Vec3f m_point;
+    Vec3f m_barycentric_coord;
+    
+    Vec3f m_normal;
+private:
+    
+    float m_t_closest;
+    Vec3f m_barycentric_closest;
+    //Vec3f m_normal_closest;
+
+    Renderable* m_ptr; // observing
+
+    bool m_has_been_hit;
+
+};
 
 class Renderable
 {
 public:
-	explicit Renderable(const float albedo) : m_albedo(albedo) {}
+	explicit Renderable(const Vec3f& albedo) : m_albedo(albedo) {}
 
 	//Renderable(const Vec3f& albedo) : m_albedo(albedo) {}
     //virtual ~Renderable() = default;
@@ -17,9 +65,9 @@ public:
 
 	virtual void transform_object_to_world(const Matrix44f& object_to_world) = 0;
 
-    virtual Vec3f get_surface_properties(HitData& hit_data) const = 0;
+    virtual void set_normal(HitData& hit_data) const = 0;
 
-	float m_albedo;
+	Vec3f m_albedo;
 
 private:
 	//Matrix44f m_object_to_world;
@@ -29,7 +77,7 @@ class Plane
     : public Renderable
 {
 public:
-    Plane(const Vec3f& normal, const Vec3f& point, const float albedo)
+    Plane(const Vec3f& normal, const Vec3f& point, const Vec3f& albedo)
         : Renderable(albedo)
 		, m_normal(normal)
         , m_point_on_plane( point )
@@ -56,9 +104,9 @@ public:
 	    
     }
 
-	Vec3f get_surface_properties(HitData& hit_data) const override
+    void set_normal(HitData& hit_data) const override
     {
-		return { 255,255,255 };
+		
     }
 
 private:
@@ -72,7 +120,7 @@ class Disk
     : public Renderable
 {
 public:
-    Disk(const Vec3f& normal, const Vec3f& point, const float radius, const float albedo)
+    Disk(const Vec3f& normal, const Vec3f& point, const float radius, const Vec3f& albedo)
         : Renderable(albedo)
 		, m_normal(normal)
         , m_point_on_plane(point)
@@ -110,9 +158,9 @@ public:
 
 	}
 
-	Vec3f get_surface_properties(HitData& hit_data) const override
+    void set_normal(HitData& hit_data) const override
 	{
-		return { 255,255,255 };
+		
 	}
 
 private:
@@ -127,7 +175,7 @@ class AABB
     : public Renderable
 {
    
-    AABB(const Vec3f& low_bound, const Vec3f& high_bound, const float albedo)
+    AABB(const Vec3f& low_bound, const Vec3f& high_bound, const Vec3f& albedo)
         : Renderable(albedo)
     {
         m_bounds[0] = low_bound;
@@ -170,9 +218,9 @@ class AABB
 
     }
 
-    Vec3f get_surface_properties(HitData& hit_data) const override
+    void set_normal(HitData& hit_data) const override
     {
-        return {255,255,255};
+        
     }
 
 private:

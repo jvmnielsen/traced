@@ -68,14 +68,14 @@ bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) c
     const auto vertx1_to_intersect = intersection - m_vertices[1];
     perpendicular_to_plane = m_edge1.cross( vertx1_to_intersect );
 
-    if ( ( hit_data.m_coord.m_x = m_normal.dot( perpendicular_to_plane ) < 0))
+    if ( ( hit_data.m_point.m_x = m_normal.dot( perpendicular_to_plane ) < 0))
         return false;
 
     // edge 2
     const auto vertx2_to_intersect = intersection - m_vertices[2];
     perpendicular_to_plane = m_edge2.cross( vertx2_to_intersect );
 
-    if ( ( hit_data.m_coord.m_y = m_normal.dot( perpendicular_to_plane ) ) < 0)
+    if ( ( hit_data.m_point.m_y = m_normal.dot( perpendicular_to_plane ) ) < 0)
         return false;
 
     /* The barycentric coordinates are the ratio of the triangles formed when drawing
@@ -89,9 +89,9 @@ bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) c
     
     const auto denom = m_normal.dot( m_normal );
 
-    hit_data.m_coord.m_x /= denom;
-    hit_data.m_coord.m_y /= denom;
-	hit_data.m_coord.m_z = 1 - hit_data.m_coord.m_x - hit_data.m_coord.m_y;
+    hit_data.m_point.m_x /= denom;
+    hit_data.m_point.m_y /= denom;
+	hit_data.m_point.m_z = 1 - hit_data.m_point.m_x - hit_data.m_point.m_y;
 
     return true;
 }
@@ -134,21 +134,12 @@ bool Polygon::intersects(const Rayf& ray, HitData& hit_data)
     return moller_trumbore_intersect( ray, hit_data );
 }
 
-
-Vec3f Polygon::get_surface_properties(HitData& hit_data) const
+void Polygon::set_normal(HitData& hit_data) const
 {
-	
-    auto hit_normal = (1 - hit_data.barycentric().m_x - hit_data.barycentric().m_y) * m_vertex_normals[0]
-        + hit_data.barycentric().m_x * m_vertex_normals[1] 
+    hit_data.m_normal = (1 - hit_data.barycentric().m_x - hit_data.barycentric().m_y) * m_vertex_normals[0]
+        + hit_data.barycentric().m_x * m_vertex_normals[1]
         + hit_data.barycentric().m_y * m_vertex_normals[2];
 
     // for flat shading simply return the face normal
-
-
-
-    hit_normal.normalize();
-
-	return hit_normal; 
-
-	//return m_normal;
-} 
+    hit_data.m_normal.normalize();
+}

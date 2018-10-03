@@ -1,7 +1,5 @@
 #pragma once
 
-struct hit_data;
-
 #include "Scene.h"
 #include "Ray.h"
 #include "Renderable.h"
@@ -15,10 +13,11 @@ float schlick( float cosine, float refractive_index );
 class Material
 {
 public:
-	virtual bool scatter(const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered) = 0;
+	virtual bool scatter(const Rayf& ray_in, const HitData& rec, Vec3f& attenuation, Rayf& scattered) = 0;
 };
 
-/*
+
+
 class Lambertian :
 	public Material
 {
@@ -30,12 +29,13 @@ public:
 
     Vec3f random_in_unit_sphere();
 
-	virtual bool scatter(const Rayf& ray_in, const hit_data& rec, Vec3f& attenuation, Rayf& scattered)
+	virtual bool scatter(const Rayf& ray_in, const HitData& rec, Vec3f& attenuation, Rayf& scattered)
 	{
-		Vec3f target = rec.p + rec.normal + random_in_unit_sphere();
+        /*
+		Vec3f target = rec.m_point + rec.normal + random_in_unit_sphere();
 		scattered = Rayf(rec.p, target - rec.p);
 		attenuation = m_albedo;
-		return true;
+		return true; */
 	}
 
 	Vec3f m_albedo;
@@ -47,7 +47,7 @@ public:
 };
 
 
-
+/*
 class Metal :
 	public Material
 {
@@ -123,7 +123,7 @@ public:
 
 private:
     float m_refractive_index;
-}; */
+}; */ 
 
 
 

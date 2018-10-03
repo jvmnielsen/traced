@@ -5,7 +5,7 @@ class Sphere :
     public Renderable
 {
 public:
-    Sphere(Vec3f& center, const float radius, const float albedo) 
+    Sphere(Vec3f& center, const float radius, const Vec3f& albedo) 
         : Renderable(albedo)
 		, m_center(center) 
         , m_radius(radius)
@@ -16,17 +16,10 @@ public:
 
     bool solve_quadratic( const float a, const float b, const float c, float& solu_one, float& solu_two ) const;
 
-	void transform_object_to_world(const Matrix44f& object_to_world) override
-	{
+    void transform_object_to_world(const Matrix44f& object_to_world) override { }
 
-	}
-
-	Vec3f get_surface_properties(HitData& hit_data) const override
-	{
-		auto normal = hit_data.coord() - m_center;
-		normal.normalize();
-		return normal;
-	}
+    void set_normal(HitData& hit_data) const override;
+	
 
 private:
     Vec3f m_center;
