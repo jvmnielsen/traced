@@ -1,14 +1,14 @@
-#include "Vec3.h"
+#include "Math.h"
 #include <math.h>
 
 template< typename T >
-T Vec3< T >::length_squared() const
+T Vec< T >::length_squared() const
 {
     return m_x * m_x + m_y * m_y + m_z * m_z;
 }
 
 template< typename T >
-T Vec3<T>::length() const
+T Vec<T>::length() const
 {
     // sqrt returns a double, so we can only cast 
     // 'down' to float or int -- no loss in precision
@@ -17,7 +17,7 @@ T Vec3<T>::length() const
 }
 
 template< typename T >
-Vec3<T>::Vec3( T val )
+Vec<T>::Vec( T val )
     : m_x( val )
     , m_y( val )
     , m_z( val )
@@ -25,7 +25,7 @@ Vec3<T>::Vec3( T val )
 }
 
 template< typename T >
-Vec3<T> ::Vec3()
+Vec<T> ::Vec()
     : m_x( T( 0 ) )
     , m_y( T( 0 ) )
     , m_z( T( 0 ) )
@@ -33,7 +33,7 @@ Vec3<T> ::Vec3()
 }
 
 template< typename T >
-Vec3<T>::Vec3( T x, T y, T z )
+Vec<T>::Vec( T x, T y, T z )
     : m_x( x )
     , m_y( y )
     , m_z( z )
@@ -41,13 +41,13 @@ Vec3<T>::Vec3( T x, T y, T z )
 }
 
 template<typename T >
-Vec3<T> Vec3<T>::operator * ( const T factor ) const
+Vec<T> Vec<T>::operator * ( const T factor ) const
 {
-    return Vec3<T>( m_x * factor, m_y * factor, m_z * factor );
+    return Vec<T>( m_x * factor, m_y * factor, m_z * factor );
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::operator *= ( const T factor )
+Vec<T>& Vec<T>::operator *= ( const T factor )
 {
     m_x *= factor;
     m_y *= factor;
@@ -56,13 +56,13 @@ Vec3<T>& Vec3<T>::operator *= ( const T factor )
 }
 
 template< typename T >
-Vec3<T> Vec3<T>::operator / ( const T factor ) const
+Vec<T> Vec<T>::operator / ( const T factor ) const
 {
-    return Vec3( m_x / factor, m_y / factor, m_z / factor );
+    return Vec( m_x / factor, m_y / factor, m_z / factor );
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::operator /= ( const T factor )
+Vec<T>& Vec<T>::operator /= ( const T factor )
 {
     m_x /= factor;
     m_y /= factor;
@@ -71,13 +71,13 @@ Vec3<T>& Vec3<T>::operator /= ( const T factor )
 }
 
 template< typename T >
-Vec3<T> Vec3<T>::operator + ( const Vec3<T>& vec2 ) const
+Vec<T> Vec<T>::operator + ( const Vec<T>& vec2 ) const
 {
-    return Vec3<T>( m_x + vec2.m_x, m_y + vec2.m_y, m_z + vec2.m_z );
+    return Vec<T>( m_x + vec2.m_x, m_y + vec2.m_y, m_z + vec2.m_z );
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::operator += ( const Vec3& vec2 )
+Vec<T>& Vec<T>::operator += ( const Vec& vec2 )
 {
     m_x += vec2.m_x;
     m_y += vec2.m_y;
@@ -86,13 +86,13 @@ Vec3<T>& Vec3<T>::operator += ( const Vec3& vec2 )
 }
 
 template< typename T >
-Vec3<T> Vec3<T>::operator - ( const Vec3<T>& vec2 ) const
+Vec<T> Vec<T>::operator - ( const Vec<T>& vec2 ) const
 {
-    return Vec3<T>( m_x - vec2.m_x, m_y - vec2.m_y, m_z - vec2.m_z );
+    return Vec<T>( m_x - vec2.m_x, m_y - vec2.m_y, m_z - vec2.m_z );
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::operator -= ( const Vec3<T>& vec2 )
+Vec<T>& Vec<T>::operator -= ( const Vec<T>& vec2 )
 {
     m_x -= vec2.m_x;
     m_y -= vec2.m_y;
@@ -101,13 +101,13 @@ Vec3<T>& Vec3<T>::operator -= ( const Vec3<T>& vec2 )
 }
 
 template< typename T >
-Vec3<T> Vec3<T>::operator * ( const Vec3<T>& vec2 ) const
+Vec<T> Vec<T>::operator * ( const Vec<T>& vec2 ) const
 {
-    return Vec3<T>( m_x * vec2.m_x, m_y * vec2.m_y, m_z * vec2.m_z );
+    return Vec<T>( m_x * vec2.m_x, m_y * vec2.m_y, m_z * vec2.m_z );
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::operator *= ( const Vec3<T>& vec2 )
+Vec<T>& Vec<T>::operator *= ( const Vec<T>& vec2 )
 {
     m_x *= vec2.m_x;
     m_y *= vec2.m_y;
@@ -116,13 +116,13 @@ Vec3<T>& Vec3<T>::operator *= ( const Vec3<T>& vec2 )
 }
 
 template< typename T >
-Vec3<T> Vec3<T>::operator / ( const Vec3<T>& vec2 ) const
+Vec<T> Vec<T>::operator / ( const Vec<T>& vec2 ) const
 {
-    return Vec3<T>( m_x / vec2.m_x, m_y / vec2.m_y, m_z / vec2.m_z );
+    return Vec<T>( m_x / vec2.m_x, m_y / vec2.m_y, m_z / vec2.m_z );
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::operator /= ( const Vec3<T>& vec2 )
+Vec<T>& Vec<T>::operator /= ( const Vec<T>& vec2 )
 {
     m_x /= vec2.m_x;
     m_y /= vec2.m_y;
@@ -131,23 +131,23 @@ Vec3<T>& Vec3<T>::operator /= ( const Vec3<T>& vec2 )
 }
 
 template< typename T >
-T Vec3<T>::dot( const Vec3<T>& vec2 ) const
+T Vec<T>::dot( const Vec<T>& vec2 ) const
 {
     return m_x * vec2.m_x + m_y * vec2.m_y + m_z * vec2.m_z;
 }
 
 template< typename T >
-Vec3<T> Vec3<T>::cross( const Vec3<T>& vec2 ) const
+Vec<T> Vec<T>::cross( const Vec<T>& vec2 ) const
 {
     
-    return Vec3<T>{
+    return Vec<T>{
         m_y * vec2.m_z - m_z * vec2.m_y,
         m_z * vec2.m_x - m_x * vec2.m_z,
         m_x * vec2.m_y - m_y * vec2.m_x };
 }
 
 template< typename T >
-Vec3<T>& Vec3<T>::normalize()
+Vec<T>& Vec<T>::normalize()
 {
     T length = this->length();
     if (length > 0) // avoid division by 0
@@ -162,17 +162,17 @@ Vec3<T>& Vec3<T>::normalize()
 }
 
 template<typename T>
-T Vec3<T>::operator [] ( const uint8_t i ) const
+T Vec<T>::operator [] ( const uint8_t i ) const
 {
     return (&m_x)[i];
 }
 
 template<typename T>
-T& Vec3<T>::operator [] ( const uint8_t i )
+T& Vec<T>::operator [] ( const uint8_t i )
 {
     return (&m_x)[i];
 }
 
-template class Vec3<int>;
-template class Vec3<float>;
-template class Vec3<double>;
+template class Vec<int>;
+template class Vec<float>;
+template class Vec<double>;

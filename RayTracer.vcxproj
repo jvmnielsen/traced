@@ -129,12 +129,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Matrix44.cpp" />
-    <ClCompile Include="Pixel.cpp" />
-    <ClCompile Include="PixelBuffer.cpp" />
-    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="Imaging.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sphere.cpp" />
-    <ClCompile Include="Vec3.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,13 +146,11 @@
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix44.h" />
-    <ClInclude Include="Pixel.h" />
-    <ClInclude Include="PixelBuffer.h" />
+    <ClInclude Include="Imaging.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sphere.h" />
-    <ClInclude Include="Vec2.h" />
-    <ClInclude Include="Vec3.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
