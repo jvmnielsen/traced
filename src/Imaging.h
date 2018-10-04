@@ -9,13 +9,14 @@
 // Class for RGB color
 struct Color
 {
-    double  m_red;
-    double  green;
-    double  blue;
-    double  alpha;
+    float  m_red;
+    float  m_green;
+    float  m_blue;
+    float  m_alpha;
 
     Color();
-    Color(double red, double green, double blue);
+    Color(float red, float green, float blue);
+    Color(float red, float green, float blue, float alpha);
 
     void Validate() const; // ensure color values are non-negative
 
@@ -29,12 +30,10 @@ struct Color
 
 inline Color operator * (const Color& aColor, const Color& bColor)
 {
-    return 
-    {
+    return Color(
         aColor.m_red   * bColor.m_red,
-        aColor.green * bColor.green,
-        aColor.blue  * bColor.blue
-    };
+        aColor.m_green * bColor.m_green,
+        aColor.m_blue  * bColor.m_blue);
 }
 
 inline Color operator * (double scalar, const Color &color)
@@ -42,8 +41,8 @@ inline Color operator * (double scalar, const Color &color)
     return 
     {
         scalar * color.m_red,
-        scalar * color.green,
-        scalar * color.blue
+        scalar * color.m_green,
+        scalar * color.m_blue
     };
 }
 
@@ -52,8 +51,8 @@ inline Color operator + (const Color& a, const Color& b)
     return 
     {
         a.m_red   + b.m_red,
-        a.green + b.green,
-        a.blue  + b.blue
+        a.m_green + b.m_green,
+        a.m_blue  + b.m_blue
     };
 }
 
