@@ -79,12 +79,13 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
     if (depth > m_max_depth)
         return m_background_color;
 
-	Vecf hit_color(0);
+	Vecf hit_color = {};
     auto hit_data = trace(ray);
 
     if (hit_data.has_been_hit())
     {
         hit_data.set_normal(ray);
+		
 
         switch (hit_data.ptr_to_rndrble()->m_material)
         {
@@ -136,12 +137,12 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
 void Scene::render(ImageBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(102, 204, 255), 200.0f, Vecf(-2, 2, -1)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.5f, 0.6f, 0.8f), 200.0f, Vecf(-1.4, 2, -0.3)));
 	//m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(255, 69, 0), 250.0f, Vecf(2, 2, -1)));
 
     Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-1), Vecf(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
 
-	m_background_color = { 125, 206, 250 };
+	m_background_color = { 0.01f, 0.1f, 0.15f };
 
 	
 	load_objects_from_file("plane.obj");
@@ -155,8 +156,8 @@ void Scene::render(ImageBuffer& buffer)
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-2.6f), 0.5f, Vecf(0.18f), Diffuse));
-	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse));
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-1.0f), 0.5f, Vecf(0.18f), Diffuse));
+	//m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse));
     //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, -5.0f, -3.0f), 5.0f, Vecf(0.18f), Diffuse));
 	
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vecf(1, 0, 0), Vecf(0, 0, 0), 0.18f));
@@ -168,7 +169,7 @@ void Scene::render(ImageBuffer& buffer)
         
         for (size_t i = 0; i < m_screen_width; ++i)
         {
-            Color color(0, 0, 0);
+            Vecf color(0, 0, 0);
 
             for (int s = 0; s < aa_factor; s++)  // AA loop
             {

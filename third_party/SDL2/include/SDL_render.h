@@ -280,7 +280,7 @@ extern DECLSPEC int SDLCALL SDL_QueryTexture(SDL_Texture * texture,
  *  \brief Set an additional color value used in render copy operations.
  *
  *  \param texture The texture to update.
- *  \param r       The m_red color value multiplied into copy operations.
+ *  \param r       The red color value multiplied into copy operations.
  *  \param g       The green color value multiplied into copy operations.
  *  \param b       The blue color value multiplied into copy operations.
  *
@@ -297,7 +297,7 @@ extern DECLSPEC int SDLCALL SDL_SetTextureColorMod(SDL_Texture * texture,
  *  \brief Get the additional color value used in render copy operations.
  *
  *  \param texture The texture to query.
- *  \param r         A pointer filled in with the current m_red color value.
+ *  \param r         A pointer filled in with the current red color value.
  *  \param g         A pointer filled in with the current green color value.
  *  \param b         A pointer filled in with the current blue color value.
  *
@@ -627,7 +627,7 @@ extern DECLSPEC void SDLCALL SDL_RenderGetScale(SDL_Renderer * renderer,
  *  \brief Set the color used for drawing operations (Rect, Line and Clear).
  *
  *  \param renderer The renderer for which drawing color should be set.
- *  \param r The m_red value used to draw on the rendering target.
+ *  \param r The red value used to draw on the rendering target.
  *  \param g The green value used to draw on the rendering target.
  *  \param b The blue value used to draw on the rendering target.
  *  \param a The alpha value used to draw on the rendering target, usually
@@ -643,7 +643,7 @@ extern DECLSPEC int SDLCALL SDL_SetRenderDrawColor(SDL_Renderer * renderer,
  *  \brief Get the color used for drawing operations (Rect, Line and Clear).
  *
  *  \param renderer The renderer from which drawing color should be queried.
- *  \param r A pointer to the m_red value used to draw on the rendering target.
+ *  \param r A pointer to the red value used to draw on the rendering target.
  *  \param g A pointer to the green value used to draw on the rendering target.
  *  \param b A pointer to the blue value used to draw on the rendering target.
  *  \param a A pointer to the alpha value used to draw on the rendering target,

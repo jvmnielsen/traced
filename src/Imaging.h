@@ -1,9 +1,12 @@
 #pragma once
 #include <vector>
 #include <cstddef>
+#include "MathUtil.h"
 
 // ---------------------------------------------------------------------------
+float clamp(const float &lo, const float &hi, const float &v);
 
+void ConvertToRGB(Vecf& color);
 
 // ---------------------------------------------------------------------------
 // Class for RGB color
@@ -15,11 +18,12 @@ struct Color
     float  m_alpha;
 
     Color();
+	Color(const float arg) : m_red(arg), m_green(arg), m_blue(arg), m_alpha(arg) {}
     Color(float red, float green, float blue);
     Color(float red, float green, float blue, float alpha);
 
     void Validate() const; // ensure color values are non-negative
-	void ConvertToRGBA();
+	//void ConvertToRGBA();
 
     Color& operator *= (float factor);
     Color& operator /= (float factor);
@@ -70,7 +74,7 @@ class ImageBuffer
 public:
     ImageBuffer(size_t screenWidth, size_t screenHeight);
 
-    void AddPixelAt(Color& color, size_t i, size_t j); // read/write for pixel at specified location
+    void AddPixelAt(Vecf& color, size_t i, size_t j); // read/write for pixel at specified location
 
 	//void AddPixel(const Color& color);
 
@@ -81,12 +85,12 @@ public:
 	int Channels() const { return m_channels; }
 
 	std::vector<unsigned char>* PtrToBuffer() { return &m_buffer; }
-
+	std::vector<unsigned char> m_buffer;   // flattened raw RGB array used by SDL
 private:
     size_t  m_screenWidth;                      // width of screen in pixels
     size_t  m_screenHeight;                     // height of screen in pixels 
     // std::vector<Color>         m_backBuffer;    // array filled during rendering
-    std::vector<unsigned char> m_buffer;   // flattened raw RGB array used by SDL
+    
 
     const int m_channels;		// number of channels per pixel (4 for RGBA)
 	const int m_bitsPerByte;	// bits per byte, used by SDL

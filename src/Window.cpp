@@ -66,7 +66,7 @@ bool Window::initializeWindow()
 
 void Window::update_texture(ImageBuffer& buffer)
 {
-	void* data = buffer.PtrToBuffer(); //&buffer.m_pixel_data[0];
+	void* data = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
 
     auto screen_surface = 
 		SDL_CreateRGBSurfaceWithFormatFrom(
@@ -80,8 +80,8 @@ void Window::update_texture(ImageBuffer& buffer)
 
     //SDL_SaveBMP( m_screenSurface, "test.bmp" );
 
-    auto texture = SDL_CreateTextureFromSurface( m_renderer,
-                                              screen_surface );
+    auto texture = SDL_CreateTextureFromSurface(m_renderer,
+                                                screen_surface);
 
     SDL_RenderClear( m_renderer );
     SDL_RenderCopy( m_renderer, texture, NULL, NULL );

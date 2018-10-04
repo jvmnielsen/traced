@@ -3,7 +3,7 @@
 #include <vector>
 
 
-float clamp(const float &lo, const float &hi, const float &v);
+
 
 template<typename T>
 struct Point
@@ -27,40 +27,44 @@ typedef Point<double> Pointd;
 
 // ---------------------------------------------------------------------------
 template<typename T>
-struct Vec
+struct Vec3
 {
     T x, y, z;
 
-    Vec();
-    explicit Vec(T val);
-    Vec(T x_, T y_, T z_);
+    Vec3();
+    explicit Vec3(T val);
+    Vec3(T x_, T y_, T z_);
+
+	T& r() { return x; }
+	T& g() { return y; }
+	T& b() { return z; }
 
     T MagnitudeSquared() const;
     T Magnitude() const;
 
-    Vec operator *  (const T factor) const;
-    Vec& operator *= (const T factor);
+    Vec3 operator *  (const T factor) const;
+    Vec3& operator *= (const T factor);
 
-    Vec operator /  (const T factor) const;
-    Vec& operator /= (const T factor);
+    Vec3 operator /  (const T factor) const;
+    Vec3& operator /= (const T factor);
 
-    Vec operator + (const Vec& other) const;
-    Vec& operator += (const Vec& other);
+    Vec3 operator + (const Vec3& other) const;
+    Vec3& operator += (const Vec3& other);
 
-    Vec operator - (const Vec& other) const;
-    Vec& operator -= (const Vec& other);
+    Vec3 operator - (const Vec3& other) const;
+    Vec3& operator -= (const Vec3& other);
 
-    Vec operator * (const Vec& other) const;
-    Vec& operator *= (const Vec& other);
+    Vec3 operator * (const Vec3& other) const;
+    Vec3& operator *= (const Vec3& other);
 
-    Vec operator / (const Vec& other) const;
-    Vec& operator /= (const Vec& other);
+    Vec3 operator / (const Vec3& other) const;
+    Vec3& operator /= (const Vec3& other);
 
-    T DotProduct(const Vec& other) const;
+    T DotProduct(const Vec3& other) const;
     
-    Vec CrossProduct(const Vec& other) const;
+    Vec3 CrossProduct(const Vec3& other) const;
     
-    Vec& Normalize();
+    Vec3& Normalize();
 
     // Accessors 
     T operator [] (const uint8_t i) const;
@@ -68,52 +72,225 @@ struct Vec
 
 
 };
-// ---------------------------------------------------------------------------
+
+template<typename T>
+T Vec3<T>::MagnitudeSquared() const
+{
+	return x * x + y * y + z * z;
+}
+
+template<typename T>
+T Vec3<T>::Magnitude() const
+{
+	// sqrt returns a double, so we can only cast 
+	// 'down' to float or int -- no loss in precision
+	// from sqrt itself
+	return (T)sqrt(x * x + y * y + z * z);
+}
+
+template<typename T>
+Vec3<T>::Vec3(T val)
+	: x(val)
+	, y(val)
+	, z(val)
+{
+}
+
+template<typename T>
+Vec3<T> ::Vec3()
+	: x(T(0))
+	, y(T(0))
+	, z(T(0))
+{
+}
+
+template<typename T>
+Vec3<T>::Vec3(T x, T y, T z)
+	: x(x)
+	, y(y)
+	, z(z)
+{
+}
+
+template<typename T>
+Vec3<T> Vec3<T>::operator * (const T factor) const
+{
+	return Vec3<T>(x * factor, y * factor, z * factor);
+}
+
+template<typename T>
+Vec3<T>& Vec3<T>::operator *= (const T factor)
+{
+	x *= factor;
+	y *= factor;
+	z *= factor;
+	return *this;
+}
+
+template<typename T>
+Vec3<T> Vec3<T>::operator / (const T factor) const
+{
+	return Vec3(x / factor, y / factor, z / factor);
+}
+
+template<typename T>
+Vec3<T>& Vec3<T>::operator /= (const T factor)
+{
+	x /= factor;
+	y /= factor;
+	z /= factor;
+	return *this;
+}
+
+template<typename T>
+Vec3<T> Vec3<T>::operator + (const Vec3<T>& vec2) const
+{
+	return Vec3<T>(x + vec2.x, y + vec2.y, z + vec2.z);
+}
+
+template<typename T>
+Vec3<T>& Vec3<T>::operator += (const Vec3<T>& vec2)
+{
+	x += vec2.x;
+	y += vec2.y;
+	z += vec2.z;
+	return *this;
+}
+
 template< typename T >
-inline T DotProduct(const Vec<T>& vec1, const Vec<T>& vec2)
+Vec3<T> Vec3<T>::operator - (const Vec3<T>& vec2) const
+{
+	return Vec3<T>(x - vec2.x, y - vec2.y, z - vec2.z);
+}
+
+template<typename T>
+Vec3<T>& Vec3<T>::operator -= (const Vec3<T>& vec2)
+{
+	x -= vec2.x;
+	y -= vec2.y;
+	z -= vec2.z;
+	return *this;
+}
+
+template< typename T >
+Vec3<T> Vec3<T>::operator * (const Vec3<T>& vec2) const
+{
+	return Vec3<T>(x * vec2.x, y * vec2.y, z * vec2.z);
+}
+
+template<typename T>
+Vec3<T>& Vec3<T>::operator *= (const Vec3<T>& vec2)
+{
+	x *= vec2.x;
+	y *= vec2.y;
+	z *= vec2.z;
+	return *this;
+}
+
+template<typename T>
+Vec3<T> Vec3<T>::operator / (const Vec3<T>& vec2) const
+{
+	return Vec3<T>(x / vec2.x, y / vec2.y, z / vec2.z);
+}
+
+template< typename T >
+Vec3<T>& Vec3<T>::operator /= (const Vec3<T>& vec2)
+{
+	x /= vec2.x;
+	y /= vec2.y;
+	z /= vec2.z;
+	return *this;
+}
+
+template<typename T>
+T Vec3<T>::DotProduct(const Vec3<T>& vec2) const
+{
+	return x * vec2.x + y * vec2.y + z * vec2.z;
+}
+
+template< typename T >
+Vec3<T> Vec3<T>::CrossProduct(const Vec3<T>& vec2) const
+{
+
+	return Vec3<T>{
+		y * vec2.z - z * vec2.y,
+			z * vec2.x - x * vec2.z,
+			x * vec2.y - y * vec2.x };
+}
+
+template<typename T>
+Vec3<T>& Vec3<T>::Normalize()
+{
+	T length = this->Magnitude();
+	if (length > 0) // avoid division by 0
+	{
+		T invertedLength = 1 / length;
+		x *= invertedLength;
+		y *= invertedLength;
+		z *= invertedLength;
+	}
+
+	return *this;
+}
+
+template<typename T>
+T Vec3<T>::operator [] (const uint8_t i) const
+{
+	return (&x)[i];
+}
+
+template<typename T>
+T& Vec3<T>::operator [] (const uint8_t i)
+{
+	return (&x)[i];
+}
+
+// ---------------------------------------------------------------------------
+template<typename T>
+inline T DotProduct(const Vec3<T>& vec1, const Vec3<T>& vec2)
 {
     return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 }
 // ---------------------------------------------------------------------------
 template< typename T >
-Vec<T> CrossProduct( const Vec<T>& vec1, const Vec<T>& vec2 ) 
+Vec3<T> CrossProduct(const Vec3<T>& vec1, const Vec3<T>& vec2) 
 {
-    return Vec<T>(
+    return Vec3<T>(
         vec1.y * vec2.z - vec1.z * vec2.y,
         vec1.z * vec2.x - vec1.x * vec2.z,
         vec1.x * vec2.y - vec1.y * vec2.x );
 }
 // ---------------------------------------------------------------------------
-template< typename T >
-inline std::istream& operator >> ( std::istream &is, Vec<T> &vec )
+template<typename T>
+inline std::istream& operator >> (std::istream &is, Vec3<T> &vec)
 {
     is >> vec.x >> vec.y >> vec.z;
     return is;
 }
 // ---------------------------------------------------------------------------
-template< typename T >
-inline std::ostream& operator << ( std::ostream &os, Vec<T> &vec )
+template<typename T>
+inline std::ostream& operator << (std::ostream &os, Vec3<T> &vec)
 {
     os << vec.x << vec.y << vec.z;
     return os;
 }
 // ---------------------------------------------------------------------------
 template< typename T >
-inline Vec<T> UnitVector( Vec<T> vec )
+inline Vec3<T> UnitVector(Vec3<T> vec)
 {
     return vec / vec.Magnitude();
 }
 // ---------------------------------------------------------------------------
 template< typename T >
-inline Vec<T> operator * ( const float t, const Vec<T> &vec )
+inline Vec3<T> operator * (const float t, const Vec3<T> &vec)
 {
-    return Vec<T>( t * vec.x, t*vec.y, t*vec.z );
+    return Vec3<T>(t * vec.x, t*vec.y, t*vec.z);
 }
 // ---------------------------------------------------------------------------
 
 
 template<typename T>
-Vec<T> Normalize(const Vec<T>& vec)
+Vec3<T> Normalize(const Vec3<T>& vec)
 {
     auto tmp = vec;
     auto length = tmp.Magnitude();
@@ -128,9 +305,9 @@ Vec<T> Normalize(const Vec<T>& vec)
     return tmp;
 }
 // ---------------------------------------------------------------------------
-typedef Vec<float> Vecf;
-typedef Vec<int> Veci;
-typedef Vec<double> Vecd;
+typedef Vec3<float> Vecf;
+typedef Vec3<int> Veci;
+typedef Vec3<double> Vecd;
 // ---------------------------------------------------------------------------
 template<typename T>
 class Matrix44
@@ -185,21 +362,21 @@ public:
 
     // multiply point and matrix
     template< typename S >
-    Vec<S> multiply_with_point(const Vec<S>& src) const
+    Vec3<S> multiply_with_point(const Vec3<S>& src) const
     {
         S a = src[0] * m_arr[0][0] + src[1] * m_arr[1][0] + src[2] * m_arr[2][0] + m_arr[3][0];
         S b = src[0] * m_arr[0][1] + src[1] * m_arr[1][1] + src[2] * m_arr[2][1] + m_arr[3][1];
         S c = src[0] * m_arr[0][2] + src[1] * m_arr[1][2] + src[2] * m_arr[2][2] + m_arr[3][2];
         S w = src[0] * m_arr[0][3] + src[1] * m_arr[1][3] + src[2] * m_arr[2][3] + m_arr[3][3];
 
-        Vec<S> tmp;
+        Vec3<S> tmp;
 
         return  tmp = {a / w, b / w, c / w};
     }
 
     // multiply direction and matrix (don't divide coefficients)
     template< typename S >
-    Vec<S> multiply_with_dir(const Vec<S>& src)
+    Vec3<S> multiply_with_dir(const Vec3<S>& src)
     {
         S a = src[0] * m_arr[0][0] + src[1] * m_arr[1][0] + src[2] * m_arr[2][0] + m_arr[3][0];
         S b = src[0] * m_arr[0][1] + src[1] * m_arr[1][1] + src[2] * m_arr[2][1] + m_arr[3][1];
@@ -325,20 +502,20 @@ class Ray
 {
 public:
     Ray() {}
-    Ray(const Vec<T>& origin,
-        const Vec<T>& direction)
+    Ray(const Vec3<T>& origin,
+        const Vec3<T>& direction)
         : m_origin(origin)
         , m_direction(direction)
     {
     }
 
-    Vec<T> origin() const { return m_origin; }
-    Vec<T> direction() const { return m_direction; }
-    Vec<T> point_at_parameter(const float t) const { return m_origin + m_direction * t; }
+    Vec3<T> origin() const { return m_origin; }
+    Vec3<T> direction() const { return m_direction; }
+    Vec3<T> point_at_parameter(const float t) const { return m_origin + m_direction * t; }
 
 private:
-    Vec<T> m_origin;
-    Vec<T> m_direction;
+    Vec3<T> m_origin;
+    Vec3<T> m_direction;
 };
 
 typedef Ray<float> Rayf;

@@ -11,6 +11,7 @@
 #include "Window.h"
 #include "Light.h"
 #include "Imaging.h"
+#include "MathUtil.h"
 
 
 class Scene

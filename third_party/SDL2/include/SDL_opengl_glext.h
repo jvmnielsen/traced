@@ -424,21 +424,21 @@ GLAPI void APIENTRY glFogCoordfv (const GLfloat *coord);
 GLAPI void APIENTRY glFogCoordd (GLdouble coord);
 GLAPI void APIENTRY glFogCoorddv (const GLdouble *coord);
 GLAPI void APIENTRY glFogCoordPointer (GLenum type, GLsizei stride, const void *pointer);
-GLAPI void APIENTRY glSecondaryColor3b (GLbyte m_red, GLbyte green, GLbyte blue);
+GLAPI void APIENTRY glSecondaryColor3b (GLbyte red, GLbyte green, GLbyte blue);
 GLAPI void APIENTRY glSecondaryColor3bv (const GLbyte *v);
-GLAPI void APIENTRY glSecondaryColor3d (GLdouble m_red, GLdouble green, GLdouble blue);
+GLAPI void APIENTRY glSecondaryColor3d (GLdouble red, GLdouble green, GLdouble blue);
 GLAPI void APIENTRY glSecondaryColor3dv (const GLdouble *v);
-GLAPI void APIENTRY glSecondaryColor3f (GLfloat m_red, GLfloat green, GLfloat blue);
+GLAPI void APIENTRY glSecondaryColor3f (GLfloat red, GLfloat green, GLfloat blue);
 GLAPI void APIENTRY glSecondaryColor3fv (const GLfloat *v);
-GLAPI void APIENTRY glSecondaryColor3i (GLint m_red, GLint green, GLint blue);
+GLAPI void APIENTRY glSecondaryColor3i (GLint red, GLint green, GLint blue);
 GLAPI void APIENTRY glSecondaryColor3iv (const GLint *v);
-GLAPI void APIENTRY glSecondaryColor3s (GLshort m_red, GLshort green, GLshort blue);
+GLAPI void APIENTRY glSecondaryColor3s (GLshort red, GLshort green, GLshort blue);
 GLAPI void APIENTRY glSecondaryColor3sv (const GLshort *v);
-GLAPI void APIENTRY glSecondaryColor3ub (GLubyte m_red, GLubyte green, GLubyte blue);
+GLAPI void APIENTRY glSecondaryColor3ub (GLubyte red, GLubyte green, GLubyte blue);
 GLAPI void APIENTRY glSecondaryColor3ubv (const GLubyte *v);
-GLAPI void APIENTRY glSecondaryColor3ui (GLuint m_red, GLuint green, GLuint blue);
+GLAPI void APIENTRY glSecondaryColor3ui (GLuint red, GLuint green, GLuint blue);
 GLAPI void APIENTRY glSecondaryColor3uiv (const GLuint *v);
-GLAPI void APIENTRY glSecondaryColor3us (GLushort m_red, GLushort green, GLushort blue);
+GLAPI void APIENTRY glSecondaryColor3us (GLushort red, GLushort green, GLushort blue);
 GLAPI void APIENTRY glSecondaryColor3usv (const GLushort *v);
 GLAPI void APIENTRY glSecondaryColorPointer (GLint size, GLenum type, GLsizei stride, const void *pointer);
 GLAPI void APIENTRY glWindowPos2d (GLdouble x, GLdouble y);
@@ -457,7 +457,7 @@ GLAPI void APIENTRY glWindowPos3i (GLint x, GLint y, GLint z);
 GLAPI void APIENTRY glWindowPos3iv (const GLint *v);
 GLAPI void APIENTRY glWindowPos3s (GLshort x, GLshort y, GLshort z);
 GLAPI void APIENTRY glWindowPos3sv (const GLshort *v);
-GLAPI void APIENTRY glBlendColor (GLfloat m_red, GLfloat green, GLfloat blue, GLfloat alpha);
+GLAPI void APIENTRY glBlendColor (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 GLAPI void APIENTRY glBlendEquation (GLenum mode);
 #endif
 #endif /* GL_VERSION_1_4 */
@@ -4600,10 +4600,10 @@ typedef void (APIENTRYP PFNGLVERTEX4XOESPROC) (GLfixed x, GLfixed y, GLfixed z);
 typedef void (APIENTRYP PFNGLVERTEX4XVOESPROC) (const GLfixed *coords);
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glAlphaFuncxOES (GLenum func, GLfixed ref);
-GLAPI void APIENTRY glClearColorxOES (GLfixed m_red, GLfixed green, GLfixed blue, GLfixed alpha);
+GLAPI void APIENTRY glClearColorxOES (GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha);
 GLAPI void APIENTRY glClearDepthxOES (GLfixed depth);
 GLAPI void APIENTRY glClipPlanexOES (GLenum plane, const GLfixed *equation);
-GLAPI void APIENTRY glColor4xOES (GLfixed m_red, GLfixed green, GLfixed blue, GLfixed alpha);
+GLAPI void APIENTRY glColor4xOES (GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha);
 GLAPI void APIENTRY glDepthRangexOES (GLfixed n, GLfixed f);
 GLAPI void APIENTRY glFogxOES (GLenum pname, GLfixed param);
 GLAPI void APIENTRY glFogxvOES (GLenum pname, const GLfixed *param);
@@ -4637,9 +4637,9 @@ GLAPI void APIENTRY glTexParameterxvOES (GLenum target, GLenum pname, const GLfi
 GLAPI void APIENTRY glTranslatexOES (GLfixed x, GLfixed y, GLfixed z);
 GLAPI void APIENTRY glAccumxOES (GLenum op, GLfixed value);
 GLAPI void APIENTRY glBitmapxOES (GLsizei width, GLsizei height, GLfixed xorig, GLfixed yorig, GLfixed xmove, GLfixed ymove, const GLubyte *bitmap);
-GLAPI void APIENTRY glBlendColorxOES (GLfixed m_red, GLfixed green, GLfixed blue, GLfixed alpha);
-GLAPI void APIENTRY glClearAccumxOES (GLfixed m_red, GLfixed green, GLfixed blue, GLfixed alpha);
-GLAPI void APIENTRY glColor3xOES (GLfixed m_red, GLfixed green, GLfixed blue);
+GLAPI void APIENTRY glBlendColorxOES (GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha);
+GLAPI void APIENTRY glClearAccumxOES (GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha);
+GLAPI void APIENTRY glColor3xOES (GLfixed red, GLfixed green, GLfixed blue);
 GLAPI void APIENTRY glColor3xvOES (const GLfixed *components);
 GLAPI void APIENTRY glColor4xvOES (const GLfixed *components);
 GLAPI void APIENTRY glConvolutionParameterxOES (GLenum target, GLenum pname, GLfixed param);
@@ -5818,7 +5818,7 @@ GLAPI GLintptr APIENTRY glGetUniformOffsetEXT (GLuint program, GLint location);
 #define GL_BLEND_COLOR_EXT                0x8005
 typedef void (APIENTRYP PFNGLBLENDCOLOREXTPROC) (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 #ifdef GL_GLEXT_PROTOTYPES
-GLAPI void APIENTRY glBlendColorEXT (GLfloat m_red, GLfloat green, GLfloat blue, GLfloat alpha);
+GLAPI void APIENTRY glBlendColorEXT (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 #endif
 #endif /* GL_EXT_blend_color */
 
@@ -7168,21 +7168,21 @@ typedef void (APIENTRYP PFNGLSECONDARYCOLOR3USEXTPROC) (GLushort red, GLushort g
 typedef void (APIENTRYP PFNGLSECONDARYCOLOR3USVEXTPROC) (const GLushort *v);
 typedef void (APIENTRYP PFNGLSECONDARYCOLORPOINTEREXTPROC) (GLint size, GLenum type, GLsizei stride, const void *pointer);
 #ifdef GL_GLEXT_PROTOTYPES
-GLAPI void APIENTRY glSecondaryColor3bEXT (GLbyte m_red, GLbyte green, GLbyte blue);
+GLAPI void APIENTRY glSecondaryColor3bEXT (GLbyte red, GLbyte green, GLbyte blue);
 GLAPI void APIENTRY glSecondaryColor3bvEXT (const GLbyte *v);
-GLAPI void APIENTRY glSecondaryColor3dEXT (GLdouble m_red, GLdouble green, GLdouble blue);
+GLAPI void APIENTRY glSecondaryColor3dEXT (GLdouble red, GLdouble green, GLdouble blue);
 GLAPI void APIENTRY glSecondaryColor3dvEXT (const GLdouble *v);
-GLAPI void APIENTRY glSecondaryColor3fEXT (GLfloat m_red, GLfloat green, GLfloat blue);
+GLAPI void APIENTRY glSecondaryColor3fEXT (GLfloat red, GLfloat green, GLfloat blue);
 GLAPI void APIENTRY glSecondaryColor3fvEXT (const GLfloat *v);
-GLAPI void APIENTRY glSecondaryColor3iEXT (GLint m_red, GLint green, GLint blue);
+GLAPI void APIENTRY glSecondaryColor3iEXT (GLint red, GLint green, GLint blue);
 GLAPI void APIENTRY glSecondaryColor3ivEXT (const GLint *v);
-GLAPI void APIENTRY glSecondaryColor3sEXT (GLshort m_red, GLshort green, GLshort blue);
+GLAPI void APIENTRY glSecondaryColor3sEXT (GLshort red, GLshort green, GLshort blue);
 GLAPI void APIENTRY glSecondaryColor3svEXT (const GLshort *v);
-GLAPI void APIENTRY glSecondaryColor3ubEXT (GLubyte m_red, GLubyte green, GLubyte blue);
+GLAPI void APIENTRY glSecondaryColor3ubEXT (GLubyte red, GLubyte green, GLubyte blue);
 GLAPI void APIENTRY glSecondaryColor3ubvEXT (const GLubyte *v);
-GLAPI void APIENTRY glSecondaryColor3uiEXT (GLuint m_red, GLuint green, GLuint blue);
+GLAPI void APIENTRY glSecondaryColor3uiEXT (GLuint red, GLuint green, GLuint blue);
 GLAPI void APIENTRY glSecondaryColor3uivEXT (const GLuint *v);
-GLAPI void APIENTRY glSecondaryColor3usEXT (GLushort m_red, GLushort green, GLushort blue);
+GLAPI void APIENTRY glSecondaryColor3usEXT (GLushort red, GLushort green, GLushort blue);
 GLAPI void APIENTRY glSecondaryColor3usvEXT (const GLushort *v);
 GLAPI void APIENTRY glSecondaryColorPointerEXT (GLint size, GLenum type, GLsizei stride, const void *pointer);
 #endif
@@ -7558,8 +7558,8 @@ GLAPI void APIENTRY glTexParameterIivEXT (GLenum target, GLenum pname, const GLi
 GLAPI void APIENTRY glTexParameterIuivEXT (GLenum target, GLenum pname, const GLuint *params);
 GLAPI void APIENTRY glGetTexParameterIivEXT (GLenum target, GLenum pname, GLint *params);
 GLAPI void APIENTRY glGetTexParameterIuivEXT (GLenum target, GLenum pname, GLuint *params);
-GLAPI void APIENTRY glClearColorIiEXT (GLint m_red, GLint green, GLint blue, GLint alpha);
-GLAPI void APIENTRY glClearColorIuiEXT (GLuint m_red, GLuint green, GLuint blue, GLuint alpha);
+GLAPI void APIENTRY glClearColorIiEXT (GLint red, GLint green, GLint blue, GLint alpha);
+GLAPI void APIENTRY glClearColorIuiEXT (GLuint red, GLuint green, GLuint blue, GLuint alpha);
 #endif
 #endif /* GL_EXT_texture_integer */
 
@@ -8910,9 +8910,9 @@ GLAPI void APIENTRY glVertex4hNV (GLhalfNV x, GLhalfNV y, GLhalfNV z, GLhalfNV w
 GLAPI void APIENTRY glVertex4hvNV (const GLhalfNV *v);
 GLAPI void APIENTRY glNormal3hNV (GLhalfNV nx, GLhalfNV ny, GLhalfNV nz);
 GLAPI void APIENTRY glNormal3hvNV (const GLhalfNV *v);
-GLAPI void APIENTRY glColor3hNV (GLhalfNV m_red, GLhalfNV green, GLhalfNV blue);
+GLAPI void APIENTRY glColor3hNV (GLhalfNV red, GLhalfNV green, GLhalfNV blue);
 GLAPI void APIENTRY glColor3hvNV (const GLhalfNV *v);
-GLAPI void APIENTRY glColor4hNV (GLhalfNV m_red, GLhalfNV green, GLhalfNV blue, GLhalfNV alpha);
+GLAPI void APIENTRY glColor4hNV (GLhalfNV red, GLhalfNV green, GLhalfNV blue, GLhalfNV alpha);
 GLAPI void APIENTRY glColor4hvNV (const GLhalfNV *v);
 GLAPI void APIENTRY glTexCoord1hNV (GLhalfNV s);
 GLAPI void APIENTRY glTexCoord1hvNV (const GLhalfNV *v);
@@ -8932,7 +8932,7 @@ GLAPI void APIENTRY glMultiTexCoord4hNV (GLenum target, GLhalfNV s, GLhalfNV t, 
 GLAPI void APIENTRY glMultiTexCoord4hvNV (GLenum target, const GLhalfNV *v);
 GLAPI void APIENTRY glFogCoordhNV (GLhalfNV fog);
 GLAPI void APIENTRY glFogCoordhvNV (const GLhalfNV *fog);
-GLAPI void APIENTRY glSecondaryColor3hNV (GLhalfNV m_red, GLhalfNV green, GLhalfNV blue);
+GLAPI void APIENTRY glSecondaryColor3hNV (GLhalfNV red, GLhalfNV green, GLhalfNV blue);
 GLAPI void APIENTRY glSecondaryColor3hvNV (const GLhalfNV *v);
 GLAPI void APIENTRY glVertexWeighthNV (GLhalfNV weight);
 GLAPI void APIENTRY glVertexWeighthvNV (const GLhalfNV *weight);
@@ -10477,7 +10477,7 @@ GLAPI void APIENTRY glTexSubImage4DSGIS (GLenum target, GLint level, GLint xoffs
 #define GL_TEXTURE_COLOR_WRITEMASK_SGIS   0x81EF
 typedef void (APIENTRYP PFNGLTEXTURECOLORMASKSGISPROC) (GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
 #ifdef GL_GLEXT_PROTOTYPES
-GLAPI void APIENTRY glTextureColorMaskSGIS (GLboolean m_red, GLboolean green, GLboolean blue, GLboolean alpha);
+GLAPI void APIENTRY glTextureColorMaskSGIS (GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
 #endif
 #endif /* GL_SGIS_texture_color_mask */
 

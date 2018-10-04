@@ -121,7 +121,7 @@ typedef enum
  *  \param width The width in pixels of the surface to create.
  *  \param height The height in pixels of the surface to create.
  *  \param depth The depth in bits of the surface to create.
- *  \param Rmask The m_red mask of the surface to create.
+ *  \param Rmask The red mask of the surface to create.
  *  \param Gmask The green mask of the surface to create.
  *  \param Bmask The blue mask of the surface to create.
  *  \param Amask The alpha mask of the surface to create.
@@ -265,7 +265,7 @@ extern DECLSPEC int SDLCALL SDL_GetColorKey(SDL_Surface * surface,
  *  \brief Set an additional color value used in blit operations.
  *
  *  \param surface The surface to update.
- *  \param r The m_red color value multiplied into blit operations.
+ *  \param r The red color value multiplied into blit operations.
  *  \param g The green color value multiplied into blit operations.
  *  \param b The blue color value multiplied into blit operations.
  *
@@ -281,7 +281,7 @@ extern DECLSPEC int SDLCALL SDL_SetSurfaceColorMod(SDL_Surface * surface,
  *  \brief Get the additional color value used in blit operations.
  *
  *  \param surface The surface to query.
- *  \param r A pointer filled in with the current m_red color value.
+ *  \param r A pointer filled in with the current red color value.
  *  \param g A pointer filled in with the current green color value.
  *  \param b A pointer filled in with the current blue color value.
  *

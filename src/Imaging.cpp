@@ -1,6 +1,21 @@
 #include "Imaging.h"
 #include "MathUtil.h"
+#include <algorithm>
+#include <cmath>
 // ---------------------------------------------------------------------------
+inline
+float clamp(const float &lo, const float &hi, const float &v)
+{
+	return std::max(lo, std::min(hi, v));
+}
+
+void ConvertToRGB(Vecf& color)
+{
+	color.r() = 255 * clamp(0, 1, color.r());
+	color.g() = 255 * clamp(0, 1, color.g());
+	color.b() = 255 * clamp(0, 1, color.b());
+}
+
 Color::Color()
     : m_red(0.0)
     , m_green(0.0)
@@ -79,30 +94,35 @@ ImageBuffer::ImageBuffer(
     , m_channels(4)
 	, m_bitsPerByte(8)
 {
-    m_buffer.reserve(screenWidth * screenHeight * m_channels);
+	const auto total = screenWidth * screenHeight * m_channels;
+    m_buffer.reserve(total);
+
+	for (unsigned int i = 0; i < total; i++)
+	{
+		m_buffer.emplace_back(255);
+	}
 }
 
-void ImageBuffer::AddPixelAt(Color& color, size_t i, size_t j)
+void ImageBuffer::AddPixelAt(Vecf& color, size_t i, size_t j)
 {
+	auto corrected_j = std::abs((int)j - (int)m_screenHeight) - 1; // to correct for j starting at screen_height and decrementing
+
     if ((i < m_screenWidth) && (j < m_screenHeight))
     {
-		color.ConvertToRGBA();
-        m_buffer[(j * m_screenWidth) + i    ] = color.m_red;
-		m_buffer[(j * m_screenWidth) + i + 1] = color.m_green;
-		m_buffer[(j * m_screenWidth) + i + 2] = color.m_blue;
-		m_buffer[(j * m_screenWidth) + i + 3] = color.m_blue;
+		ConvertToRGB(color);
+        m_buffer[(corrected_j * m_screenWidth + i) * 4    ] = color.r();
+		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 1] = color.g();
+		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 2] = color.b();
+		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 3] = 255;
     }
-
-    throw ImagerException("Pixel coordinate out of bounds.");
+	else
+	{
+		throw ImagerException("Pixel coordinate out of bounds.");
+	}
 }
 // ---------------------------------------------------------------------------
-void Color::ConvertToRGBA()
-{
-	m_red	= 255 * clamp(0, 1, m_red);
-	m_green	= 255 * clamp(0, 1, m_green);
-	m_blue	= 255 * clamp(0, 1, m_blue);
-	m_alpha = 255 * clamp(0, 1, m_alpha);
-}
+
+
 
 
 float Color::operator [] (const uint8_t i) const

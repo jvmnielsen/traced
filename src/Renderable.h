@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 #include "MathUtil.h"
+#include "Imaging.h"
 //#include "HitData.h"
 
 class Material;

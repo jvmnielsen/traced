@@ -946,13 +946,13 @@ extern DECLSPEC int SDLCALL SDL_SetWindowInputFocus(SDL_Window * window);
  *  \brief Set the gamma ramp for a window.
  *
  *  \param window The window for which the gamma ramp should be set.
- *  \param red The translation table for the m_red channel, or NULL.
+ *  \param red The translation table for the red channel, or NULL.
  *  \param green The translation table for the green channel, or NULL.
  *  \param blue The translation table for the blue channel, or NULL.
  *
  *  \return 0 on success, or -1 if gamma ramps are unsupported.
  *
- *  Set the gamma translation table for the m_red, green, and blue channels
+ *  Set the gamma translation table for the red, green, and blue channels
  *  of the video hardware.  Each table is an array of 256 16-bit quantities,
  *  representing a mapping between the input and output for that channel.
  *  The input is the index into the array, and the output is the 16-bit
@@ -970,7 +970,7 @@ extern DECLSPEC int SDLCALL SDL_SetWindowGammaRamp(SDL_Window * window,
  *
  *  \param window The window from which the gamma ramp should be queried.
  *  \param red   A pointer to a 256 element array of 16-bit quantities to hold
- *               the translation table for the m_red channel, or NULL.
+ *               the translation table for the red channel, or NULL.
  *  \param green A pointer to a 256 element array of 16-bit quantities to hold
  *               the translation table for the green channel, or NULL.
  *  \param blue  A pointer to a 256 element array of 16-bit quantities to hold
