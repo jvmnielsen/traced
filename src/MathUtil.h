@@ -2,6 +2,29 @@
 #include <iostream>
 #include <vector>
 
+
+float clamp(const float &lo, const float &hi, const float &v);
+
+template<typename T>
+struct Point
+{
+	T x, y, z;
+
+	Point();
+	explicit Point(T val);
+	Point(T x_, T y_, T z_);
+
+	Point operator + (const Point& other) const;
+	Point& operator += (const Point& other);
+
+	Point operator - (const Point& other) const;
+	Point& operator -= (const Point& other);
+};
+
+typedef Point<float> Pointf;
+typedef Point<int> Pointi;
+typedef Point<double> Pointd;
+
 // ---------------------------------------------------------------------------
 template<typename T>
 struct Vec
@@ -9,8 +32,8 @@ struct Vec
     T x, y, z;
 
     Vec();
-    explicit Vec( T val );
-    Vec( T _x, T _y, T _z );
+    explicit Vec(T val);
+    Vec(T x_, T y_, T z_);
 
     T MagnitudeSquared() const;
     T Magnitude() const;
@@ -21,39 +44,39 @@ struct Vec
     Vec operator /  (const T factor) const;
     Vec& operator /= (const T factor);
 
-    Vec operator + (const Vec& vec2) const;
-    Vec& operator += (const Vec& vec2);
+    Vec operator + (const Vec& other) const;
+    Vec& operator += (const Vec& other);
 
-    Vec operator - (const Vec& vec2) const;
-    Vec& operator -= (const Vec& vec2);
+    Vec operator - (const Vec& other) const;
+    Vec& operator -= (const Vec& other);
 
-    Vec operator * (const Vec& vec2) const;
-    Vec& operator *= (const Vec& vec2);
+    Vec operator * (const Vec& other) const;
+    Vec& operator *= (const Vec& other);
 
-    Vec operator / (const Vec& vec2) const;
-    Vec& operator /= (const Vec& vec2);
+    Vec operator / (const Vec& other) const;
+    Vec& operator /= (const Vec& other);
 
-    T DotProduct(const Vec& vec2) const;
+    T DotProduct(const Vec& other) const;
     
-    Vec CrossProduct(const Vec& vec2) const;
+    Vec CrossProduct(const Vec& other) const;
     
     Vec& Normalize();
 
     // Accessors 
-    T operator [] ( const uint8_t i ) const;
-    T& operator [] ( const uint8_t i );
+    T operator [] (const uint8_t i) const;
+    T& operator [] (const uint8_t i);
 
 
 };
 // ---------------------------------------------------------------------------
 template< typename T >
-inline T dot( const Vec<T>& vec1, const Vec<T>& vec2 )
+inline T DotProduct(const Vec<T>& vec1, const Vec<T>& vec2)
 {
     return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 }
 // ---------------------------------------------------------------------------
 template< typename T >
-Vec<T> cross( const Vec<T>& vec1, const Vec<T>& vec2 ) 
+Vec<T> CrossProduct( const Vec<T>& vec1, const Vec<T>& vec2 ) 
 {
     return Vec<T>(
         vec1.y * vec2.z - vec1.z * vec2.y,
@@ -76,7 +99,7 @@ inline std::ostream& operator << ( std::ostream &os, Vec<T> &vec )
 }
 // ---------------------------------------------------------------------------
 template< typename T >
-inline Vec<T> unit_vector( Vec<T> vec )
+inline Vec<T> UnitVector( Vec<T> vec )
 {
     return vec / vec.Magnitude();
 }
@@ -90,7 +113,7 @@ inline Vec<T> operator * ( const float t, const Vec<T> &vec )
 
 
 template<typename T>
-Vec<T> normalize(const Vec<T>& vec)
+Vec<T> Normalize(const Vec<T>& vec)
 {
     auto tmp = vec;
     auto length = tmp.Magnitude();
@@ -105,8 +128,8 @@ Vec<T> normalize(const Vec<T>& vec)
     return tmp;
 }
 // ---------------------------------------------------------------------------
-typedef Vec<float> Vec3f;
-typedef Vec<int> Vec3i;
+typedef Vec<float> Vecf;
+typedef Vec<int> Veci;
 typedef Vec<double> Vecd;
 // ---------------------------------------------------------------------------
 template<typename T>
@@ -306,27 +329,16 @@ public:
         const Vec<T>& direction)
         : m_origin(origin)
         , m_direction(direction)
-        //, m_inv_dir(1 / direction)
     {
-        /*
-        m_sign[0] = m_inv_dir.x() < 0;
-        m_sign[1] = m_inv_dir.y() < 0;
-        m_sign[2] = m_inv_dir.z() < 0; */
     }
 
     Vec<T> origin() const { return m_origin; }
     Vec<T> direction() const { return m_direction; }
     Vec<T> point_at_parameter(const float t) const { return m_origin + m_direction * t; }
 
-    int m_sign[3]; // used for AABB optimisation
-    Vec3f m_inv_dir;
-    //~Ray();
-
 private:
     Vec<T> m_origin;
     Vec<T> m_direction;
-
-
 };
 
 typedef Ray<float> Rayf;

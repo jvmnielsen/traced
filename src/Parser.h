@@ -21,10 +21,10 @@ private:
 	std::unique_ptr<PolygonMesh> construct_mesh();
 
     //std::ifstream m_file_in;
-	std::vector<Vec3f> m_vertex;
-	std::vector<Vec3f> m_texture_coord;
-	std::vector<Vec3f> m_normals;
-	std::vector<Vec3i> m_faces;
+	std::vector<Vecf> m_vertex;
+	std::vector<Vecf> m_texture_coord;
+	std::vector<Vecf> m_normals;
+	std::vector<Veci> m_faces;
 
     std::vector<int> m_vertex_ordering;
     std::vector<int> m_texture_coord_ordering;

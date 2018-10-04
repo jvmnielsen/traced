@@ -10,6 +10,7 @@
 #include "HitData.h"
 #include "Window.h"
 #include "Light.h"
+#include "Imaging.h"
 
 
 class Scene
@@ -33,7 +34,7 @@ public:
 	}
 
     //void add_object_to_scene( Renderable& hitable );
-    void render(PixelBuffer& buffer);
+    void render(ImageBuffer& buffer);
 
 	void add_object_to_scene(const std::shared_ptr<Renderable>& render_ptr);
 
@@ -44,7 +45,7 @@ public:
 
 	
 
-	Vec3f m_background_color;
+	Vecf m_background_color;
 private:
 
     uint32_t m_max_depth;
@@ -67,14 +68,14 @@ private:
     void trace_simple_objects(const Rayf& ray, HitData& hit_data);
     void trace_meshes(const Rayf& ray, HitData& hit_data);
 	
-    Vec3f cast_ray(const Rayf& ray, uint32_t depth);
+    Vecf CastRay(const Rayf& ray, uint32_t depth);
 
 	void load_objects_from_file(const std::string& file_name);
 
 	//DistantLight m_light;
 
-    Vec3f random_in_unit_sphere();
+    Vecf random_in_unit_sphere();
 
-	float m_shadow_bias = 1e-4;
+	float m_shadow_bias = 1e-4f;
 };
 

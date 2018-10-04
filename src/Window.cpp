@@ -64,16 +64,18 @@ bool Window::initializeWindow()
     return true;
 }
 
-void Window::update_texture( ImageBuffer& buffer )
+void Window::update_texture(ImageBuffer& buffer)
 {
-    void *data = &buffer.m_pixel_data[0];
+	void* data = buffer.PtrToBuffer(); //&buffer.m_pixel_data[0];
 
-    auto screen_surface = SDL_CreateRGBSurfaceWithFormatFrom( data,
-                                                          buffer.m_screenWidth,
-                                                          buffer.m_screenHeight,
-                                                          buffer.m_channels * 8,                         // bits per byte
-                                                          buffer.m_screenWidth * buffer.m_channels, // how many pixels per line (depth * width)
-                                                          SDL_PIXELFORMAT_RGBA32 );
+    auto screen_surface = 
+		SDL_CreateRGBSurfaceWithFormatFrom(
+			data,
+            buffer.Width(),
+			buffer.Height(),
+			buffer.Channels() * buffer.BitsPerByte(),   // bits per byte
+			buffer.Width() * buffer.Channels(),			// how many pixels per line (depth * width)
+			SDL_PIXELFORMAT_RGBA32);
 
 
     //SDL_SaveBMP( m_screenSurface, "test.bmp" );

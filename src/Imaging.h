@@ -19,31 +19,37 @@ struct Color
     Color(float red, float green, float blue, float alpha);
 
     void Validate() const; // ensure color values are non-negative
+	void ConvertToRGBA();
 
-    Color& operator *= (double factor);
-    Color& operator /= (double factor);
+    Color& operator *= (float factor);
+    Color& operator /= (float factor);
 
     Color& operator += (const Color& other);
     Color& operator -= (const Color& other);
+
+	float operator [] (const uint8_t i) const;
+	float& operator [] (const uint8_t i);
 
 };
 
 inline Color operator * (const Color& aColor, const Color& bColor)
 {
-    return Color(
-        aColor.m_red   * bColor.m_red,
-        aColor.m_green * bColor.m_green,
-        aColor.m_blue  * bColor.m_blue);
+	return
+	{
+		aColor.m_red   * bColor.m_red,
+		aColor.m_green * bColor.m_green,
+		aColor.m_blue  * bColor.m_blue
+	};
 }
 
-inline Color operator * (double scalar, const Color &color)
+inline Color operator * (float scalar, const Color &color)
 {
-    return 
-    {
-        scalar * color.m_red,
-        scalar * color.m_green,
-        scalar * color.m_blue
-    };
+	return
+	{
+		scalar * color.m_red,
+		scalar * color.m_green,
+		scalar * color.m_blue
+	};
 }
 
 inline Color operator + (const Color& a, const Color& b)
@@ -64,21 +70,26 @@ class ImageBuffer
 public:
     ImageBuffer(size_t screenWidth, size_t screenHeight);
 
-    Color& PixelAt(size_t i, size_t j); // read/write for pixel at specified location
+    void AddPixelAt(Color& color, size_t i, size_t j); // read/write for pixel at specified location
+
+	//void AddPixel(const Color& color);
 
     size_t Width() const { return m_screenWidth; }
     size_t Height() const { return m_screenHeight; }
 
-    int BitsPerByte() const { return m_channels; }
+    int BitsPerByte() const { return m_bitsPerByte; }
+	int Channels() const { return m_channels; }
 
+	std::vector<unsigned char>* PtrToBuffer() { return &m_buffer; }
 
 private:
     size_t  m_screenWidth;                      // width of screen in pixels
     size_t  m_screenHeight;                     // height of screen in pixels 
-    std::vector<Color>         m_backBuffer;    // array filled during rendering
-    std::vector<unsigned char> m_screenBuffer;   // flattened raw RGB array used by SDL
+    // std::vector<Color>         m_backBuffer;    // array filled during rendering
+    std::vector<unsigned char> m_buffer;   // flattened raw RGB array used by SDL
 
-    const int m_channels; // bits per byte, used by SDL
+    const int m_channels;		// number of channels per pixel (4 for RGBA)
+	const int m_bitsPerByte;	// bits per byte, used by SDL
 };
 
 // ---------------------------------------------------------------------------

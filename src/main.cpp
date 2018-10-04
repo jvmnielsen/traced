@@ -1,7 +1,7 @@
 #include "Window.h"
 #include <vector>
-#include "ImageBuffer.h"
-#include "Vec3.h"
+#include "Imaging.h"
+#include "MathUtil.h"
 #include "Ray.h"
 #include "Scene.h"
 #include "Material.h"

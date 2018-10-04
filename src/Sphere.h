@@ -5,7 +5,7 @@ class Sphere :
     public Renderable
 {
 public:
-    Sphere(Vec3f& center, const float radius, const Vec3f& albedo, MaterialType material) 
+    Sphere(Vecf& center, const float radius, const Vecf& albedo, MaterialType material) 
         : Renderable(albedo, material)
 		, m_center(center) 
         , m_radius(radius)
@@ -22,7 +22,7 @@ public:
 	
 
 private:
-    Vec3f m_center;
+    Vecf m_center;
     float m_radius;
     float m_radius_squared;
 	//Material* m_material;

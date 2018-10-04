@@ -7,8 +7,8 @@ void Polygon::update_edges()
 	m_edge0_2 = m_vertices[2] - m_vertices[0];
 	m_edge1 = m_vertices[2] - m_vertices[1];
 	m_edge2 = m_vertices[0] - m_vertices[2];
-	m_normal = cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).normalize(); 
-	m_dist_origin_to_plane = m_normal.dot(m_vertices[0]);
+	m_normal = CrossProduct(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).Normalize(); 
+	m_dist_origin_to_plane = m_normal.DotProduct(m_vertices[0]);
 }
 
 void Polygon::transform_object_to_world(const Matrix44f& object_to_world)
@@ -25,11 +25,11 @@ void Polygon::transform_object_to_world(const Matrix44f& object_to_world)
 bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) const
 {
     // back-face culling
-    if ( dot( ray.direction(), m_normal ) > 0 && m_is_single_sided )
+    if (DotProduct( ray.direction(), m_normal ) > 0 && m_is_single_sided )
         return false;
 
     // ray & plane parallel?
-    const auto normal_dot_ray_dir = dot( m_normal, ray.direction() );
+    const auto normal_dot_ray_dir = DotProduct( m_normal, ray.direction() );
     
     if ( fabs( normal_dot_ray_dir ) < m_epsilon )
         return false;
@@ -40,14 +40,14 @@ bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) c
      * Because the camera by default is oriented along the negative z-axis we have cancelled
      * the minus from the equation.
      */
-    hit_data.m_t = ( m_normal.dot( ray.origin() ) + m_dist_origin_to_plane ) / normal_dot_ray_dir; 
+    hit_data.m_t = ( m_normal.DotProduct( ray.origin() ) + m_dist_origin_to_plane ) / normal_dot_ray_dir; 
 
     if (hit_data.m_t < 0) // triangle is behind ray
         return false;
 
     const auto intersection = ray.origin() + hit_data.m_t * ray.direction();
 
-    Vec3f perpendicular_to_plane;
+    Vecf perpendicular_to_plane;
 
     /* The inside-outside test simply checks that the point is to the left of every vertex
     * by taking the DotProduct product of the plane's normal and the vector formed by taking the
@@ -59,23 +59,23 @@ bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) c
 
     // edge 0
     const auto vertx0_to_intersect = intersection - m_vertices[0];
-    perpendicular_to_plane = m_edge0.cross( vertx0_to_intersect );
+    perpendicular_to_plane = m_edge0.CrossProduct( vertx0_to_intersect );
 
-    if ( m_normal.dot( perpendicular_to_plane ) < 0 )
+    if ( m_normal.DotProduct( perpendicular_to_plane ) < 0 )
          return false;
 
     // edge 1
     const auto vertx1_to_intersect = intersection - m_vertices[1];
-    perpendicular_to_plane = m_edge1.cross( vertx1_to_intersect );
+    perpendicular_to_plane = m_edge1.CrossProduct( vertx1_to_intersect );
 
-    if ( ( hit_data.m_point.m_x = m_normal.dot( perpendicular_to_plane ) < 0))
+    if ( ( hit_data.m_point.x = m_normal.DotProduct( perpendicular_to_plane ) < 0))
         return false;
 
     // edge 2
     const auto vertx2_to_intersect = intersection - m_vertices[2];
-    perpendicular_to_plane = m_edge2.cross( vertx2_to_intersect );
+    perpendicular_to_plane = m_edge2.CrossProduct( vertx2_to_intersect );
 
-    if ( ( hit_data.m_point.m_y = m_normal.dot( perpendicular_to_plane ) ) < 0)
+    if ( ( hit_data.m_point.y = m_normal.DotProduct( perpendicular_to_plane ) ) < 0)
         return false;
 
     /* The barycentric coordinates are the ratio of the triangles formed when drawing
@@ -87,19 +87,19 @@ bool Polygon::geometric_triangle_intersect(const Rayf& ray, HitData& hit_data) c
      * for example: v = triangleABP_area / triangleABC_area = ( AB x AP ) . N / ( AB x AC ) . N
      */
     
-    const auto denom = m_normal.dot( m_normal );
+    const auto denom = m_normal.DotProduct( m_normal );
 
-    hit_data.m_point.m_x /= denom;
-    hit_data.m_point.m_y /= denom;
-	hit_data.m_point.m_z = 1 - hit_data.m_point.m_x - hit_data.m_point.m_y;
+    hit_data.m_point.x /= denom;
+    hit_data.m_point.y /= denom;
+	hit_data.m_point.z = 1 - hit_data.m_point.x - hit_data.m_point.y;
 
     return true;
 }
 
 bool Polygon::moller_trumbore_intersect(const Rayf& ray, HitData& hit_data) const
 {
-    const auto p_vec = ray.direction().cross( m_edge0_2 );
-    const auto det = m_edge0.dot( p_vec );
+    const auto p_vec = ray.direction().CrossProduct( m_edge0_2 );
+    const auto det = m_edge0.DotProduct( p_vec );
 
     // back-face culling
     // do fabs( det ) to include back-face
@@ -111,18 +111,18 @@ bool Polygon::moller_trumbore_intersect(const Rayf& ray, HitData& hit_data) cons
 
     // barycentric coordinate u
     const auto t_vec = ray.origin() - m_vertices[0];
-	hit_data.m_barycentric_coord.m_x = t_vec.dot( p_vec ) * inverted_det;
-    if (hit_data.m_barycentric_coord.m_x < 0 || hit_data.m_barycentric_coord.m_x > 1)
+	hit_data.m_barycentric_coord.x = t_vec.DotProduct( p_vec ) * inverted_det;
+    if (hit_data.m_barycentric_coord.x < 0 || hit_data.m_barycentric_coord.x > 1)
         return false;
 
     // barycentric coordinate v
-    const auto q_vec = t_vec.cross( m_edge0 );
-	hit_data.m_barycentric_coord.m_y = ray.direction().dot( q_vec ) * inverted_det;
-    if (hit_data.m_barycentric_coord.m_y < 0 || hit_data.m_barycentric_coord.m_y + hit_data.m_barycentric_coord.m_x > 1)
+    const auto q_vec = t_vec.CrossProduct( m_edge0 );
+	hit_data.m_barycentric_coord.y = ray.direction().DotProduct( q_vec ) * inverted_det;
+    if (hit_data.m_barycentric_coord.y < 0 || hit_data.m_barycentric_coord.y + hit_data.m_barycentric_coord.x > 1)
         return false;
 
 
-	hit_data.m_t = m_edge0_2.dot( q_vec ) * inverted_det;
+	hit_data.m_t = m_edge0_2.DotProduct( q_vec ) * inverted_det;
 
     return true;
 
@@ -136,10 +136,10 @@ bool Polygon::intersects(const Rayf& ray, HitData& hit_data)
 
 void Polygon::set_normal(HitData& hit_data) const
 {
-    hit_data.m_normal = (1 - hit_data.barycentric().m_x - hit_data.barycentric().m_y) * m_vertex_normals[0]
-        + hit_data.barycentric().m_x * m_vertex_normals[1]
-        + hit_data.barycentric().m_y * m_vertex_normals[2];
+    hit_data.m_normal = (1 - hit_data.barycentric().x - hit_data.barycentric().y) * m_vertex_normals[0]
+        + hit_data.barycentric().x * m_vertex_normals[1]
+        + hit_data.barycentric().y * m_vertex_normals[2];
 
     // for flat shading simply return the face normal
-    hit_data.m_normal.normalize();
+    hit_data.m_normal.Normalize();
 }

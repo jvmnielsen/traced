@@ -59,27 +59,27 @@ HitData Scene::trace(const Rayf& ray)
     return hit_data;
 }
 
-inline Vec3f reflect(const Vec3f& v, const Vec3f& n)
+inline Vecf reflect(const Vecf& v, const Vecf& n)
 {
-    return v - 2 * dot(v, n) * n;
+    return v - 2 * DotProduct(v, n) * n;
 }
 
-Vec3f Scene::random_in_unit_sphere()
+Vecf Scene::random_in_unit_sphere()
 {
-    Vec3f p;
+    Vecf p;
     do
     {
-        p = 2.0 * Vec3f(m_dist(m_gen), m_dist(m_gen), m_dist(m_gen)) - Vec3f(1, 1, 1);
-    } while (p.length_squared() >= 1.0);
+        p = 2.0 * Vecf(m_dist(m_gen), m_dist(m_gen), m_dist(m_gen)) - Vecf(1, 1, 1);
+    } while (p.MagnitudeSquared() >= 1.0);
     return p;
 } 
 
-Vec3f Scene::cast_ray(const Rayf& ray, uint32_t depth)
+Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
 {
     if (depth > m_max_depth)
         return m_background_color;
 
-	Vec3f hit_color(0);
+	Vecf hit_color(0);
     auto hit_data = trace(ray);
 
     if (hit_data.has_been_hit())
@@ -101,7 +101,7 @@ Vec3f Scene::cast_ray(const Rayf& ray, uint32_t depth)
                     hit_color += !shadow_intersect.has_been_hit()
                         * hit_data.ptr_to_rndrble()->m_albedo
                         * light_info.intensity
-                        * std::max(0.f, hit_data.m_normal.dot(-1 * light_info.direction));
+                        * std::max(0.f, hit_data.m_normal.DotProduct(-1 * light_info.direction));
                 } 
                 //hit_color = {100, 100, 100};
                 break;
@@ -110,7 +110,7 @@ Vec3f Scene::cast_ray(const Rayf& ray, uint32_t depth)
             {
                 const auto reflected = reflect(ray.direction(), hit_data.point());
                 
-                hit_color += 0.8 * cast_ray(Rayf(hit_data.point() + hit_data.normal() * m_shadow_bias, reflected), depth + 1); //  + 0.4 * random_in_unit_sphere()
+                hit_color += 0.8 * CastRay(Rayf(hit_data.point() + hit_data.normal() * m_shadow_bias, reflected), depth + 1); //  + 0.4 * random_in_unit_sphere()
                 break;
             }
             case ReflectAndRefract:
@@ -133,13 +133,13 @@ Vec3f Scene::cast_ray(const Rayf& ray, uint32_t depth)
 	return hit_color;
 }
 
-void Scene::render(PixelBuffer& buffer)
+void Scene::render(ImageBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(102, 204, 255), 200.0f, Vec3f(-2, 2, -1)));
-	//m_scene_lights.emplace_back(std::make_unique<PointLight>(Vec3f(255, 69, 0), 250.0f, Vec3f(2, 2, -1)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(102, 204, 255), 200.0f, Vecf(-2, 2, -1)));
+	//m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(255, 69, 0), 250.0f, Vecf(2, 2, -1)));
 
-    Camera camera = {Vec3f(0, 2, 1), Vec3f(0,0,-1), Vec3f(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
+    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-1), Vecf(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
 
 	m_background_color = { 125, 206, 250 };
 
@@ -155,11 +155,11 @@ void Scene::render(PixelBuffer& buffer)
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(0.1f, 0.50f,-2.6f), 0.5f, Vec3f(0.18f), Diffuse));
-	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-0.5f, 0.5f, -2.0f), 0.5f, Vec3f(0.18f), Diffuse));
-    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vec3f(-0.5f, -5.0f, -3.0f), 5.0f, Vec3f(0.18f), Diffuse));
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-2.6f), 0.5f, Vecf(0.18f), Diffuse));
+	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse));
+    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, -5.0f, -3.0f), 5.0f, Vecf(0.18f), Diffuse));
 	
-    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vec3f(1, 0, 0), Vec3f(0, 0, 0), 0.18f));
+    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vecf(1, 0, 0), Vecf(0, 0, 0), 0.18f));
 
     const int aa_factor = 5;
 
@@ -168,21 +168,21 @@ void Scene::render(PixelBuffer& buffer)
         
         for (size_t i = 0; i < m_screen_width; ++i)
         {
-            Vec3f color(0, 0, 0);
+            Color color(0, 0, 0);
 
             for (int s = 0; s < aa_factor; s++)  // AA loop
             {
                 const auto u = float(i + m_dist(m_gen)) / float(m_screen_width); // maybe precompute
                 const auto v = float(j + m_dist(m_gen)) / float(m_screen_height);
 
-                const auto ray = camera.get_ray(u, v);
+                const auto ray = camera.GetRay(u, v);
 
-                color += cast_ray(ray, 0);
+                color += CastRay(ray, 0);
             }
             
             color /= float(aa_factor);
 		
-            buffer.add_pixel(color);
+            buffer.AddPixelAt(color, i, j);
         }
     }
     std::cout << "is done";

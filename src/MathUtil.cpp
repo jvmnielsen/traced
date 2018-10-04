@@ -1,13 +1,78 @@
 #include "MathUtil.h"
 #include <math.h>
+#include <algorithm>
 
-template< typename T >
+inline
+float clamp(const float &lo, const float &hi, const float &v)
+{
+	return std::max(lo, std::min(hi, v));
+}
+
+template<typename T>
+Point<T>::Point(T val)
+	: x(val)
+	, y(val)
+	, z(val)
+{
+}
+
+template<typename T>
+Point<T> ::Point()
+	: x(T(0))
+	, y(T(0))
+	, z(T(0))
+{
+}
+
+template<typename T>
+Point<T>::Point(T x, T y, T z)
+	: x(x)
+	, y(y)
+	, z(z)
+{
+}
+
+template<typename T>
+Point<T> Point<T>::operator + (const Point<T>& other) const
+{
+	return Vec<T>(x + other.x, y + other.y, z + other.z);
+}
+
+template<typename T>
+Point<T>& Point<T>::operator += (const Point<T>& other)
+{
+	x += other.x;
+	y += other.y;
+	z += other.z;
+	return *this;
+}
+
+template<typename T>
+Point<T> Point<T>::operator - (const Point<T>& other) const
+{
+	return Vec<T>(x - other.x, y - other.y, z - other.z);
+}
+
+template<typename T>
+Point<T>& Point<T>::operator -= (const Point<T>& other)
+{
+	x -= other.x;
+	y -= other.y;
+	z -= other.z;
+	return *this;
+}
+
+template class Point<int>;
+template class Point<float>;
+template class Point<double>;
+
+template<typename T>
 T Vec< T >::MagnitudeSquared() const
 {
     return x * x + y * y + z * z;
 }
 
-template< typename T >
+template<typename T>
 T Vec<T>::Magnitude() const
 {
     // sqrt returns a double, so we can only cast 
@@ -16,38 +81,38 @@ T Vec<T>::Magnitude() const
     return (T)sqrt( x * x + y * y + z * z );
 }
 
-template< typename T >
-Vec<T>::Vec( T val )
-    : x( val )
-    , y( val )
-    , z( val )
+template<typename T>
+Vec<T>::Vec(T val)
+    : x(val)
+    , y(val)
+    , z(val)
 {
 }
 
-template< typename T >
+template<typename T>
 Vec<T> ::Vec()
-    : x( T( 0 ) )
-    , y( T( 0 ) )
-    , z( T( 0 ) )
+    : x(T(0))
+    , y(T(0))
+    , z(T(0))
 {
 }
 
-template< typename T >
-Vec<T>::Vec( T x, T y, T z )
-    : x( x )
-    , y( y )
-    , z( z )
+template<typename T>
+Vec<T>::Vec(T x, T y, T z)
+    : x(x)
+    , y(y)
+    , z(z)
 {
 }
 
-template<typename T >
-Vec<T> Vec<T>::operator * ( const T factor ) const
+template<typename T>
+Vec<T> Vec<T>::operator * (const T factor) const
 {
-    return Vec<T>( x * factor, y * factor, z * factor );
+    return Vec<T>(x * factor, y * factor, z * factor);
 }
 
-template< typename T >
-Vec<T>& Vec<T>::operator *= ( const T factor )
+template<typename T>
+Vec<T>& Vec<T>::operator *= (const T factor)
 {
     x *= factor;
     y *= factor;
@@ -55,14 +120,14 @@ Vec<T>& Vec<T>::operator *= ( const T factor )
     return *this;
 }
 
-template< typename T >
-Vec<T> Vec<T>::operator / ( const T factor ) const
+template<typename T>
+Vec<T> Vec<T>::operator / (const T factor) const
 {
-    return Vec( x / factor, y / factor, z / factor );
+    return Vec(x / factor, y / factor, z / factor);
 }
 
-template< typename T >
-Vec<T>& Vec<T>::operator /= ( const T factor )
+template<typename T>
+Vec<T>& Vec<T>::operator /= (const T factor)
 {
     x /= factor;
     y /= factor;
@@ -70,14 +135,14 @@ Vec<T>& Vec<T>::operator /= ( const T factor )
     return *this;
 }
 
-template< typename T >
-Vec<T> Vec<T>::operator + ( const Vec<T>& vec2 ) const
+template<typename T>
+Vec<T> Vec<T>::operator + (const Vec<T>& vec2) const
 {
-    return Vec<T>( x + vec2.x, y + vec2.y, z + vec2.z );
+    return Vec<T>(x + vec2.x, y + vec2.y, z + vec2.z);
 }
 
-template< typename T >
-Vec<T>& Vec<T>::operator += ( const Vec& vec2 )
+template<typename T>
+Vec<T>& Vec<T>::operator += (const Vec& vec2)
 {
     x += vec2.x;
     y += vec2.y;
@@ -86,13 +151,13 @@ Vec<T>& Vec<T>::operator += ( const Vec& vec2 )
 }
 
 template< typename T >
-Vec<T> Vec<T>::operator - ( const Vec<T>& vec2 ) const
+Vec<T> Vec<T>::operator - (const Vec<T>& vec2) const
 {
-    return Vec<T>( x - vec2.x, y - vec2.y, z - vec2.z );
+    return Vec<T>(x - vec2.x, y - vec2.y, z - vec2.z);
 }
 
 template< typename T >
-Vec<T>& Vec<T>::operator -= ( const Vec<T>& vec2 )
+Vec<T>& Vec<T>::operator -= (const Vec<T>& vec2)
 {
     x -= vec2.x;
     y -= vec2.y;
@@ -101,9 +166,9 @@ Vec<T>& Vec<T>::operator -= ( const Vec<T>& vec2 )
 }
 
 template< typename T >
-Vec<T> Vec<T>::operator * ( const Vec<T>& vec2 ) const
+Vec<T> Vec<T>::operator * (const Vec<T>& vec2) const
 {
-    return Vec<T>( x * vec2.x, y * vec2.y, z * vec2.z );
+    return Vec<T>(x * vec2.x, y * vec2.y, z * vec2.z);
 }
 
 template< typename T >

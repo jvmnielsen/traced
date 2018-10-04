@@ -3,6 +3,7 @@
 #include "Matrix44.h"
 #include <memory>
 #include <utility>
+#include "MathUtil.h"
 //#include "HitData.h"
 
 class Material;
@@ -26,11 +27,11 @@ public:
 
     bool has_been_hit() const { return m_has_been_hit; }
 
-    Vec3f point() const { return m_point; }
+    Vecf point() const { return m_point; }
 
-    Vec3f barycentric() const { return m_barycentric_closest; }
+    Vecf barycentric() const { return m_barycentric_closest; }
 
-    Vec3f normal() const { return m_normal; }
+    Vecf normal() const { return m_normal; }
 
     Renderable* ptr_to_rndrble() const { return m_ptr; }
 
@@ -38,14 +39,14 @@ public:
 
     float m_t;
 
-    Vec3f m_point;
-    Vec3f m_barycentric_coord;
+    Vecf m_point;
+    Vecf m_barycentric_coord;
     
-    Vec3f m_normal;
+    Vecf m_normal;
 private:
     
     float m_t_closest;
-    Vec3f m_barycentric_closest;
+    Vecf m_barycentric_closest;
     //Vec3f m_normal_closest;
 
     Renderable* m_ptr; // observing
@@ -59,7 +60,7 @@ enum MaterialType { Diffuse, Reflective, ReflectAndRefract };
 class Renderable
 {
 public:
-    Renderable(const Vec3f& albedo, MaterialType material)
+    Renderable(const Vecf& albedo, MaterialType material)
         : m_albedo(albedo)
         , m_material(material) {}
     
@@ -74,7 +75,7 @@ public:
 
     virtual void set_normal(HitData& hit_data) const = 0;
 
-	Vec3f m_albedo;
+	Vecf m_albedo;
     MaterialType m_material;
 
 private:

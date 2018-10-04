@@ -4,7 +4,7 @@
 void Sphere::set_normal(HitData& hit_data) const
 {
     hit_data.m_normal = hit_data.point() - m_center;
-    hit_data.m_normal.normalize();
+    hit_data.m_normal.Normalize();
 }
 
 bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
@@ -13,9 +13,9 @@ bool Sphere::intersects(const Rayf& ray, HitData& hit_data)
 
     auto center_at_orig = ray.origin() - m_center;
 
-    const auto a = ray.direction().dot(ray.direction());
-    const auto b = 2 * ray.direction().dot(center_at_orig);
-    const auto c = center_at_orig.dot(center_at_orig) - m_radius_squared;
+    const auto a = ray.direction().DotProduct(ray.direction());
+    const auto b = 2 * ray.direction().DotProduct(center_at_orig);
+    const auto c = center_at_orig.DotProduct(center_at_orig) - m_radius_squared;
 
     if (!solve_quadratic(a, b, c, solu_one, solu_two))
         return false;
