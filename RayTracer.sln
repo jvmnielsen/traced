@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RayTracer", "RayTracer.vcxproj", "{77EECF8E-3729-4306-98A6-E681FCA82B1E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RayTracer", "RayTracer.vcxproj", "{74CB1999-C3D9-459B-8CF8-E00DA553902E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +13,19 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Debug|x64.ActiveCfg = Debug|x64
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Debug|x64.Build.0 = Debug|x64
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Debug|x86.ActiveCfg = Debug|Win32
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Debug|x86.Build.0 = Debug|Win32
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Release|x64.ActiveCfg = Release|x64
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Release|x64.Build.0 = Release|x64
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Release|x86.ActiveCfg = Release|Win32
-		{77EECF8E-3729-4306-98A6-E681FCA82B1E}.Release|x86.Build.0 = Release|Win32
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Debug|x64.ActiveCfg = Debug|x64
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Debug|x64.Build.0 = Debug|x64
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Debug|x86.ActiveCfg = Debug|Win32
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Debug|x86.Build.0 = Debug|Win32
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Release|x64.ActiveCfg = Release|x64
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Release|x64.Build.0 = Release|x64
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Release|x86.ActiveCfg = Release|Win32
+		{74CB1999-C3D9-459B-8CF8-E00DA553902E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B40D2080-7937-40E1-9261-AAC3F042FD94}
+		SolutionGuid = {EE67AAA1-44ED-433C-9DEA-894547E61E97}
 	EndGlobalSection
 EndGlobal
