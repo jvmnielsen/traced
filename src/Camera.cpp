@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include <SDL_stdinc.h>
 #include <math.h>
 
 Camera::Camera(const float v_fov, const float aspect)

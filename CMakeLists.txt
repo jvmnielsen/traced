@@ -1,20 +1,28 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(RayTracer CXX)
+project(RAYS CXX)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${RAYS_SOURCE_DIR}/cmake")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
-
-find_package(SDL2 REQUIRED)
-
-include_directories(${SDL2_INCLUDE_DIR})
-
-add_executable(RayTracer src/main.cpp src/Camera.h src/Camera.cpp src/Controller.h src/Controller.cpp
+set(SOURCE_FILES src/main.cpp src/Camera.h src/Camera.cpp src/Controller.h src/Controller.cpp
         src/HitData.h src/Imaging.h src/Imaging.cpp src/Light.cpp src/Light.h src/Material.cpp
         src/Material.cpp src/MathUtil.cpp src/MathUtil.h src/Parser.cpp src/Parser.h src/Polygon.cpp
         src/Polygon.h src/PolygonMesh.cpp src/PolygonMesh.h src/Renderable.h src/Renderable.cpp
         src/Scene.cpp src/Scene.h src/Sphere.cpp src/Sphere.h src/Window.cpp src/Window.h)
-SET_TARGET_PROPERTIES(RayTracer PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(RayTracer ${SDL2_LIBRARIES})
+add_executable(RAYS ${SOURCE_FILES})
+
+find_package(SDL2 REQUIRED)
+
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
+
+include_directories(${SDL2_INCLUDE_DIR}
+        ${SDL2_IMAGE_INCLUDE_DIR}
+        ${SDL2_TTF_INCLUDE_DIR})
+
+
+target_link_libraries(RAYS ${SDL2_LIBRARY}
+        ${SDL2_IMAGE_LIBRARIES}
+        ${SDL2_TTF_LIBRARIES})

@@ -1,12 +1,12 @@
 #include "Scene.h"
 #include "Window.h"
-//#include <float.h>
 #include "Sphere.h"
 #include "Camera.h"
 #include "Material.h"
 #include "Matrix44.h"
 #include "Polygon.h"
 #include "Parser.h"
+#include <memory>
 
 
 inline float deg_to_rad(const float deg)
@@ -145,7 +145,7 @@ void Scene::render(ImageBuffer& buffer)
 	m_background_color = { 0.01f, 0.1f, 0.15f };
 
 	
-	load_objects_from_file("plane.obj");
+	load_objects_from_file("../assets/plane.obj");
     std::cout << "parsing done";
 
     
@@ -156,13 +156,15 @@ void Scene::render(ImageBuffer& buffer)
 
 	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-1.0f), 0.5f, Vecf(0.18f), Diffuse));
-	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse));
+	const auto test = std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-1.0f), 0.5f, Vecf(0.18f), Diffuse);
+	const auto test2 = std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse);
+    m_simple_scene_objects.emplace_back(test);
+	m_simple_scene_objects.emplace_back(test);
     //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, -5.0f, -3.0f), 5.0f, Vecf(0.18f), Diffuse));
 	
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vecf(1, 0, 0), Vecf(0, 0, 0), 0.18f));
 
-    const int aa_factor = 5;
+    const int aa_factor = 10;
 
     for (int j = m_screen_height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {

@@ -49,7 +49,7 @@ bool Window::initializeWindow()
     }
 
     // create renderer here for now
-    m_renderer = SDL_CreateRenderer( m_windowHandle, -1, 0 );
+    m_renderer = SDL_CreateRenderer(m_windowHandle, -1, SDL_RENDERER_SOFTWARE);
 
     
     // get surface of window 

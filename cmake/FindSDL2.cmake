@@ -65,8 +65,6 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-# message("<FindSDL2.cmake>")
-
 SET(SDL2_SEARCH_PATHS
 	~/Library/Frameworks
 	/Library/Frameworks
@@ -76,7 +74,6 @@ SET(SDL2_SEARCH_PATHS
 	/opt/local # DarwinPorts
 	/opt/csw # Blastwave
 	/opt
-	${SDL2_PATH}
 )
 
 FIND_PATH(SDL2_INCLUDE_DIR SDL.h
@@ -86,17 +83,11 @@ FIND_PATH(SDL2_INCLUDE_DIR SDL.h
 	PATHS ${SDL2_SEARCH_PATHS}
 )
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8) 
-	set(PATH_SUFFIXES lib64 lib/x64 lib)
-else() 
-	set(PATH_SUFFIXES lib/x86 lib)
-endif() 
-
 FIND_LIBRARY(SDL2_LIBRARY_TEMP
 	NAMES SDL2
 	HINTS
 	$ENV{SDL2DIR}
-	PATH_SUFFIXES ${PATH_SUFFIXES}
+	PATH_SUFFIXES lib64 lib
 	PATHS ${SDL2_SEARCH_PATHS}
 )
 
@@ -110,7 +101,7 @@ IF(NOT SDL2_BUILDING_LIBRARY)
 			NAMES SDL2main
 			HINTS
 			$ENV{SDL2DIR}
-			PATH_SUFFIXES ${PATH_SUFFIXES}
+			PATH_SUFFIXES lib64 lib
 			PATHS ${SDL2_SEARCH_PATHS}
 		)
 	ENDIF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")
@@ -124,10 +115,11 @@ IF(NOT APPLE)
 	FIND_PACKAGE(Threads)
 ENDIF(NOT APPLE)
 
-# MinGW needs an additional link flag, -mwindows
-# It's total link flags should look like -lmingw32 -lSDL2main -lSDL2 -mwindows
+# MinGW needs an additional library, mwindows
+# It's total link flags should look like -lmingw32 -lSDL2main -lSDL2 -lmwindows
+# (Actually on second look, I think it only needs one of the m* libraries.)
 IF(MINGW)
-	SET(MINGW32_LIBRARY mingw32 "-mwindows" CACHE STRING "mwindows for MinGW")
+	SET(MINGW32_LIBRARY mingw32 CACHE STRING "mwindows for MinGW")
 ENDIF(MINGW)
 
 IF(SDL2_LIBRARY_TEMP)
@@ -166,8 +158,7 @@ IF(SDL2_LIBRARY_TEMP)
 	SET(SDL2_LIBRARY_TEMP "${SDL2_LIBRARY_TEMP}" CACHE INTERNAL "")
 ENDIF(SDL2_LIBRARY_TEMP)
 
-# message("</FindSDL2.cmake>")
-
 INCLUDE(FindPackageHandleStandardArgs)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)
+
