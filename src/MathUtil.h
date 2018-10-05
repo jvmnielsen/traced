@@ -1,9 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
-
-
-
+#include <math.h>
 
 template<typename T>
 struct Point
@@ -383,7 +381,7 @@ public:
         S c = src[0] * m_arr[0][2] + src[1] * m_arr[1][2] + src[2] * m_arr[2][2] + m_arr[3][2];
         S w = src[0] * m_arr[0][3] + src[1] * m_arr[1][3] + src[2] * m_arr[2][3] + m_arr[3][3];
 
-        Vec<S> tmp;
+        Vec3<S> tmp;
 
         return tmp = {a, b, c};
     }

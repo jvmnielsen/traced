@@ -1,8 +1,8 @@
 #pragma once
-#include <SDL.h>
 #include <memory>
 #include <vector>
 #include "Imaging.h"
+#include <SDL.h>
 
 class Window
 {
