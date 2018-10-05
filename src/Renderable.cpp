@@ -8,6 +8,9 @@ void HitData::set_normal(const Rayf& ray)
 
 void HitData::update_closest(Renderable* ptr, const Rayf& ray)
 {
+    if (ptr->m_material == ReflectAndRefract && ray.m_rayType == ShadowRay) // we skip in this case
+        return;
+
     if (m_t < m_t_closest && m_t > 0)
     {
 

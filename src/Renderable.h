@@ -56,7 +56,7 @@ private:
 
 };
 
-enum MaterialType { Diffuse, Reflective, ReflectAndRefract };
+enum MaterialType { Diffuse, Reflective, Refract, ReflectAndRefract };
 
 class Renderable
 {
@@ -75,6 +75,8 @@ public:
 	virtual void transform_object_to_world(const Matrix44f& object_to_world) = 0;
 
     virtual void set_normal(HitData& hit_data) const = 0;
+
+    virtual void SetMaterialType(const MaterialType& type) = 0;
 
 	Vecf m_albedo;
     MaterialType m_material;

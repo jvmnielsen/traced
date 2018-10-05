@@ -1,12 +1,14 @@
 #include "Scene.h"
 #include "Window.h"
-//#include <float.h>
 #include "Sphere.h"
 #include "Camera.h"
 #include "Material.h"
 #include "Matrix44.h"
 #include "Polygon.h"
 #include "Parser.h"
+#include <memory>
+
+
 
 
 inline float deg_to_rad(const float deg)
@@ -59,7 +61,7 @@ HitData Scene::trace(const Rayf& ray)
     return hit_data;
 }
 
-inline Vecf reflect(const Vecf& v, const Vecf& n)
+inline Vecf Reflect(const Vecf &v, const Vecf &n)
 {
     return v - 2 * DotProduct(v, n) * n;
 }
@@ -72,7 +74,40 @@ Vecf Scene::random_in_unit_sphere()
         p = 2.0 * Vecf(m_dist(m_gen), m_dist(m_gen), m_dist(m_gen)) - Vecf(1, 1, 1);
     } while (p.MagnitudeSquared() >= 1.0);
     return p;
-} 
+}
+
+Vecf Refracted(const Vecf &I, const Vecf &N, const float ior)
+{
+    float cosi = clamp(-1, 1, DotProduct(I, N));
+    float etai = 1, etat = ior;
+    Vecf n = N;
+    if (cosi < 0) { cosi = -cosi; } else { std::swap(etai, etat); n= -1 * N; }
+    float eta = etai / etat;
+    float k = 1 - eta * eta * (1 - cosi * cosi);
+    return k < 0 ? Vecf(0) : eta * I + (eta * cosi - sqrtf(k)) * n;
+}
+
+void Fresnel(const Vecf &I, const Vecf &N, const float &ior, float &kr)
+{
+    float cosi = clamp(-1, 1, I.DotProduct(N));
+    float etai = 1, etat = ior;
+    if (cosi > 0) { std::swap(etai, etat); }
+    // Compute sini using Snell's law
+    float sint = etai / etat * sqrtf(std::max(0.f, 1 - cosi * cosi));
+    // Total internal reflection
+    if (sint >= 1) {
+        kr = 1;
+    }
+    else {
+        float cost = sqrtf(std::max(0.f, 1 - sint * sint));
+        cosi = fabsf(cosi);
+        float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+        float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+        kr = (Rs * Rs + Rp * Rp) / 2;
+    }
+    // As a consequence of the conservation of energy, transmittance is given by:
+    // kt = 1 - kr;
+}
 
 Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
 {
@@ -98,7 +133,7 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
                     LightingInfo light_info;
                     light->illuminate(hit_data.m_point, light_info);
 
-                    auto shadow_intersect = trace(Rayf(hit_data.m_point + hit_data.m_normal * m_shadow_bias, -1 * light_info.direction));
+                    auto shadow_intersect = trace(Rayf(hit_data.m_point + hit_data.m_normal * m_shadow_bias, -1 * light_info.direction, ShadowRay));
                     hit_color += !shadow_intersect.has_been_hit()
                         * hit_data.ptr_to_rndrble()->m_albedo
                         * light_info.intensity
@@ -109,14 +144,35 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
             }
             case Reflective:
             {
-                const auto reflected = reflect(ray.direction(), hit_data.point());
+                const auto reflected = Reflect(ray.direction(), hit_data.m_normal);
                 
-                hit_color += 0.8 * CastRay(Rayf(hit_data.point() + hit_data.normal() * m_shadow_bias, reflected), depth + 1); //  + 0.4 * random_in_unit_sphere()
+                hit_color += 0.8 * CastRay(Rayf(hit_data.point() + hit_data.normal() * m_shadow_bias, reflected, PrimaryRay), depth + 1); // fuzzines: + 0.05 * random_in_unit_sphere()
                 break;
             }
             case ReflectAndRefract:
             {
+                Vecf reflectColor = {};
+                Vecf refractColor = {};
+                float kr;
+                Fresnel(ray.direction(), hit_data.m_normal, 0.9, kr);
+                bool outside = ray.direction().DotProduct(hit_data.m_normal) < 0;
+                Vecf bias = m_shadow_bias * hit_data.m_normal;
+
+                if (kr < 1)
+                {
+                    Vecf refractionDirection = Refracted(ray.direction(), hit_data.m_normal, 0.9).Normalize();
+                    Vecf refractionRayOrig = outside ? hit_data.point() - bias : hit_data.point() + bias;
+                    refractColor = CastRay(Rayf(refractionRayOrig, refractionDirection, PrimaryRay), depth + 1);
+                }
+
+                Vecf reflectionDirection = Reflect(ray.direction(), hit_data.m_normal).Normalize();
+                Vecf reflectionRayOrig = outside ? hit_data.point() + bias : hit_data.point() - bias;
+                reflectColor = CastRay(Rayf(reflectionRayOrig, reflectionDirection, PrimaryRay), depth + 1);
+
+                hit_color += reflectColor * kr + refractColor * (1 - kr);
+
                 break;
+
             }
             default:
             {
@@ -134,31 +190,40 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
 	return hit_color;
 }
 
-void Scene::render(ImageBuffer& buffer)
+void Scene::Render(ImageBuffer &buffer)
 {
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.2f, 0.9f, 0.5f), 300.0f, Vecf(-1.4, 2, -2.0)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.9f, 0.5f, 0.1f), 400.0f, Vecf(2, 2, -1)));
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.1f, 0.6f, 0.8f), 200.0f, Vecf(-1.4, 2, -0.3)));
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.3f, 0.9f, 0.344f), 250.0f, Vecf(2, 2, -1)));
+    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-4), Vecf(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
 
-    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-1), Vecf(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
+    m_background_color = { 0.25f, 0.30f, 0.27f };
 
-	m_background_color = { 0.01f, 0.1f, 0.15f };
-
-	
-	load_objects_from_file("plane.obj");
-    std::cout << "parsing done";
-
+    /*
+	load_objects_from_file("../assets/teapot.obj");
     
-	Matrix44f objectToWorld = Matrix44f(2, 0, 0, 0,
-										0, 2, 0, 0, 
-										0, 0, 2, 0, 
-										0, 0, -2.5, 1);  
+	Matrix44f objectToWorld = Matrix44f(0.15, 0, 0, 0,
+										0, 0.15, 0, 0,
+										0, 0, 0.15, 0,
+										0, 0, -3.8f, 1);
 
-	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld); */
 
-    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-1.0f), 0.5f, Vecf(0.18f), Diffuse));
-	m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse));
-    //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, -5.0f, -3.0f), 5.0f, Vecf(0.18f), Diffuse));
+    load_objects_from_file("../assets/plane.obj");
+
+    Matrix44f objectToWorld1 = Matrix44f(6, 0, 0, 0,
+                                        0, 6, 0, 0,
+                                        0, 0, 6, 0,
+                                        0, 0.0f, -2.5f, 1);
+
+    m_scene_meshes[0]->transform_object_to_world(objectToWorld1);
+    //m_scene_meshes[0]->SetMaterialType(Reflective);
+
+    const auto test = std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-2.0f), 0.5f, Vecf(0.18f), ReflectAndRefract);
+	const auto test2 = std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -3.0f), 0.5f, Vecf(0.18f), Diffuse);
+    m_simple_scene_objects.emplace_back(test);
+	m_simple_scene_objects.emplace_back(test2);
+    m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(0.7f, 0.5f, -2.6f), 0.40f, Vecf(0.18f), Reflective));
 	
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vecf(1, 0, 0), Vecf(0, 0, 0), 0.18f));
 
@@ -166,7 +231,6 @@ void Scene::render(ImageBuffer& buffer)
 
     for (int j = m_screen_height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
-        
         for (size_t i = 0; i < m_screen_width; ++i)
         {
             Vecf color(0, 0, 0);
@@ -186,7 +250,4 @@ void Scene::render(ImageBuffer& buffer)
             buffer.AddPixelAt(color, i, j);
         }
     }
-    std::cout << "is done";
-
-    
 }

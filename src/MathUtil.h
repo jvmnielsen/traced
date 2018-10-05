@@ -1,9 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
-
-
-
+#include <math.h>
 
 template<typename T>
 struct Point
@@ -383,7 +381,7 @@ public:
         S c = src[0] * m_arr[0][2] + src[1] * m_arr[1][2] + src[2] * m_arr[2][2] + m_arr[3][2];
         S w = src[0] * m_arr[0][3] + src[1] * m_arr[1][3] + src[2] * m_arr[2][3] + m_arr[3][3];
 
-        Vec<S> tmp;
+        Vec3<S> tmp;
 
         return tmp = {a, b, c};
     }
@@ -497,21 +495,29 @@ public:
 
 typedef Matrix44<float> Matrix44f;
 // ---------------------------------------------------------------------------
+
+enum RayType {PrimaryRay, ShadowRay};
+
 template< typename T >
 class Ray
 {
 public:
-    Ray() {}
+    Ray() = default;
+
     Ray(const Vec3<T>& origin,
-        const Vec3<T>& direction)
+        const Vec3<T>& direction,
+        const RayType& rayType)
         : m_origin(origin)
         , m_direction(direction)
+        , m_rayType(rayType)
     {
     }
 
     Vec3<T> origin() const { return m_origin; }
     Vec3<T> direction() const { return m_direction; }
     Vec3<T> point_at_parameter(const float t) const { return m_origin + m_direction * t; }
+
+    RayType m_rayType;
 
 private:
     Vec3<T> m_origin;

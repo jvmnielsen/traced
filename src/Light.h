@@ -1,6 +1,5 @@
 #pragma once
 #include "MathUtil.h"
-#include "SDL_stdinc.h"
 #include "Imaging.h"
 
 struct LightingInfo

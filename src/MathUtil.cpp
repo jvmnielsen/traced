@@ -31,7 +31,7 @@ Point<T>::Point(T x, T y, T z)
 template<typename T>
 Point<T> Point<T>::operator + (const Point<T>& other) const
 {
-	return Vec<T>(x + other.x, y + other.y, z + other.z);
+	return Point<T>(x + other.x, y + other.y, z + other.z);
 }
 
 template<typename T>
@@ -46,7 +46,7 @@ Point<T>& Point<T>::operator += (const Point<T>& other)
 template<typename T>
 Point<T> Point<T>::operator - (const Point<T>& other) const
 {
-	return Vec<T>(x - other.x, y - other.y, z - other.z);
+	return Point<T>(x - other.x, y - other.y, z - other.z);
 }
 
 template<typename T>

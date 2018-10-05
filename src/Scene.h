@@ -14,6 +14,7 @@
 #include "MathUtil.h"
 
 
+
 class Scene
 {
 public:
@@ -35,7 +36,7 @@ public:
 	}
 
     //void add_object_to_scene( Renderable& hitable );
-    void render(ImageBuffer& buffer);
+    void Render(ImageBuffer &buffer);
 
 	void add_object_to_scene(const std::shared_ptr<Renderable>& render_ptr);
 

@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include <SDL_stdinc.h>
+#include <math.h>
 
 Camera::Camera(const float v_fov, const float aspect)
 {
@@ -37,7 +37,7 @@ Camera::Camera(
 Rayf Camera::GetRay(const float u, const float v) const
 {
     return {origin, 
-        lowerLeftCorner + u * horizontal + v * vertical - origin};
+        lowerLeftCorner + u * horizontal + v * vertical - origin, PrimaryRay};
 }
 
 /*
