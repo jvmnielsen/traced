@@ -137,34 +137,45 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
 void Scene::render(ImageBuffer& buffer)
 {
 
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.1f, 0.6f, 0.8f), 200.0f, Vecf(-1.4, 2, -0.3)));
-	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.3f, 0.9f, 0.344f), 250.0f, Vecf(2, 2, -1)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.2f, 0.9f, 0.5f), 300.0f, Vecf(-1.4, 2, -3.0)));
+	m_scene_lights.emplace_back(std::make_unique<PointLight>(Vecf(0.9f, 0.5f, 0.1f), 650.0f, Vecf(2, 2, -1)));
 
-    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-1), Vecf(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
+    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-4), Vecf(0,1,0), 90, float(m_screen_width)/float(m_screen_height)};
 
-	m_background_color = { 0.01f, 0.1f, 0.15f };
+    m_background_color = { 0.03f, 0.3f, 0.35f };
 
 	
-	load_objects_from_file("../assets/plane.obj");
+	load_objects_from_file("../assets/teapot.obj");
     std::cout << "parsing done";
 
     
-	Matrix44f objectToWorld = Matrix44f(2, 0, 0, 0,
-										0, 2, 0, 0, 
-										0, 0, 2, 0, 
-										0, 0, -2.5, 1);  
+	Matrix44f objectToWorld = Matrix44f(0.15, 0, 0, 0,
+										0, 0.15, 0, 0,
+										0, 0, 0.15, 0,
+										0, 0, -3.8, 1);
 
-	m_scene_meshes[0]->transform_object_to_world(objectToWorld);  
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld);
 
-	const auto test = std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-1.0f), 0.5f, Vecf(0.18f), Diffuse);
-	const auto test2 = std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse);
-    m_simple_scene_objects.emplace_back(test);
-	m_simple_scene_objects.emplace_back(test);
+    load_objects_from_file("../assets/plane.obj");
+    std::cout << "parsing done";
+
+
+    Matrix44f objectToWorld1 = Matrix44f(6, 0, 0, 0,
+                                        0, 6, 0, 0,
+                                        0, 0, 6, 0,
+                                        0, -1.0, -2.5, 1);
+
+    m_scene_meshes[1]->transform_object_to_world(objectToWorld1);
+
+    //const auto test = std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-1.0f), 0.5f, Vecf(0.18f), Diffuse);
+	//const auto test2 = std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -2.0f), 0.5f, Vecf(0.18f), Diffuse);
+    //m_simple_scene_objects.emplace_back(test);
+	//m_simple_scene_objects.emplace_back(test);
     //m_simple_scene_objects.push_back(std::make_shared<Sphere>(Vecf(-0.5f, -5.0f, -3.0f), 5.0f, Vecf(0.18f), Diffuse));
 	
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vecf(1, 0, 0), Vecf(0, 0, 0), 0.18f));
 
-    const int aa_factor = 10;
+    const int aa_factor = 1;
 
     for (int j = m_screen_height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {

@@ -4,7 +4,7 @@
 void Controller::run()
 {
     // window thread
-    m_window.initializeWindow();
+    m_window.initializeWindow(m_buffer);
 
     //m_scene.render(m_buffer);
 
@@ -17,8 +17,8 @@ void Controller::run()
    
     //m_scene.render( m_buffer );
 
-    m_window.check_for_input( m_buffer );
+    m_window.check_for_input(m_buffer);
 
     //window_thread.join();
-    render_thread.join();
+    //render_thread.join();
 }

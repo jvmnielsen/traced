@@ -30,7 +30,7 @@ Window::~Window()
     SDL_Quit();
 }
 
-bool Window::initializeWindow()
+bool Window::initializeWindow(ImageBuffer& buffer)
 {
     // initalize window
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0)
@@ -60,7 +60,10 @@ bool Window::initializeWindow()
         std::cout << "SDL surface could not be created. Error: " << SDL_GetError();
         return false;
     }
-    
+
+    m_texture =
+            SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, buffer.Width(), buffer.Height());
+
     return true;
 }
 
@@ -68,6 +71,7 @@ void Window::update_texture(ImageBuffer& buffer)
 {
 	void* data = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
 
+	/*
     auto screen_surface = 
 		SDL_CreateRGBSurfaceWithFormatFrom(
 			data,
@@ -81,47 +85,48 @@ void Window::update_texture(ImageBuffer& buffer)
     //SDL_SaveBMP( m_screenSurface, "test.bmp" );
 
     auto texture = SDL_CreateTextureFromSurface(m_renderer,
-                                                screen_surface);
+                                                screen_surface); */
+
+    SDL_UpdateTexture(m_texture, NULL, data, buffer.Width() * sizeof(uint32_t));
 
     SDL_RenderClear( m_renderer );
-    SDL_RenderCopy( m_renderer, texture, NULL, NULL );
+    SDL_RenderCopy( m_renderer, m_texture, NULL, NULL );
     SDL_RenderPresent( m_renderer );
 
+    /*
     if (screen_surface != nullptr)
         SDL_FreeSurface( screen_surface );
 
     if (texture != nullptr)
-        SDL_DestroyTexture( texture );
+        SDL_DestroyTexture( texture ); */
 }
 
-void Window::check_for_input( ImageBuffer &pixelBuffer )
+void Window::check_for_input(ImageBuffer& pixelBuffer)
 {
     bool running = true;
 
     //Event handler
     SDL_Event eventHandler;
 
-
     //While application is running 
     while (running)
     {
+        update_texture(pixelBuffer);
 
         //Handle events on queue
         while (SDL_PollEvent( &eventHandler ) != 0)
         {
-       
+
+
             //User requests quit
-            if (eventHandler.type == SDL_QUIT)
-            {
+            if (eventHandler.type == SDL_QUIT) {
                 //SDL_SaveBMP( m_screenSurface, "test.bmp" );
                 running = false;
             }
-
-            
             
         }
 
-        update_texture( pixelBuffer );
+
     } 
 }
 
