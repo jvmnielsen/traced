@@ -7,15 +7,15 @@
 class Window
 {
 public:
-	Window( const int screenHeight, const int screenWidth );
+	Window(const int screenHeight, const int screenWidth);
 	
     Window();
 	~Window();
 
-	bool initializeWindow(ImageBuffer& buffer);
+	bool InitializeWindow(ImageBuffer &buffer);
 
-    void check_for_input( ImageBuffer &pixelBuffer );
-    void update_texture( ImageBuffer& buffer );
+    void CheckForInput(ImageBuffer &pixelBuffer);
+    void UpdateTexture(ImageBuffer &buffer);
    
 private:
 	SDL_Window *m_windowHandle;
@@ -23,7 +23,12 @@ private:
     SDL_Renderer *m_renderer;
     SDL_Texture *m_texture;
 
+
+    //Event handler
+    SDL_Event m_eventHandler;
+
     void* m_pixels; // buffer that holds pixels for screen
+
 
     int m_screenHeight;
     int m_screenWidth;

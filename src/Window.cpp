@@ -16,21 +16,18 @@ Window::Window( const int screenWidth,
 
 Window::~Window()
 {
-    // deallocate surface
     SDL_FreeSurface( m_screenSurface );
 
     SDL_DestroyTexture( m_texture );
 
-    // destroy window
     SDL_DestroyWindow( m_windowHandle );
 
     SDL_DestroyRenderer( m_renderer );
 
-    // terminate SDL
     SDL_Quit();
 }
 
-bool Window::initializeWindow(ImageBuffer& buffer)
+bool Window::InitializeWindow(ImageBuffer &buffer)
 {
     // initalize window
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0)
@@ -40,7 +37,13 @@ bool Window::initializeWindow(ImageBuffer& buffer)
     }
 
     // get handle
-    m_windowHandle = SDL_CreateWindow( "Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_screenWidth, m_screenHeight, SDL_WINDOW_SHOWN );
+    m_windowHandle = SDL_CreateWindow(
+            "Ray Tracer",
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            m_screenWidth,
+            m_screenHeight,
+            SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
 
     if (m_windowHandle == NULL)
     {
@@ -51,7 +54,6 @@ bool Window::initializeWindow(ImageBuffer& buffer)
     // create renderer here for now
     m_renderer = SDL_CreateRenderer(m_windowHandle, -1, SDL_RENDERER_SOFTWARE);
 
-    
     // get surface of window 
     m_screenSurface = SDL_GetWindowSurface( m_windowHandle );
 
@@ -61,72 +63,45 @@ bool Window::initializeWindow(ImageBuffer& buffer)
         return false;
     }
 
-    m_texture =
-            SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, buffer.Width(), buffer.Height());
+    m_texture = SDL_CreateTexture(
+            m_renderer,
+            SDL_PIXELFORMAT_RGBA32,
+            SDL_TEXTUREACCESS_STREAMING,
+            buffer.Width(),
+            buffer.Height());
+
+    m_pixels = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
 
     return true;
 }
 
-void Window::update_texture(ImageBuffer& buffer)
+void Window::UpdateTexture(ImageBuffer &buffer)
 {
-	void* data = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
+    SDL_UpdateTexture(m_texture, NULL, m_pixels, buffer.Width() * sizeof(uint32_t));
 
-	/*
-    auto screen_surface = 
-		SDL_CreateRGBSurfaceWithFormatFrom(
-			data,
-            buffer.Width(),
-			buffer.Height(),
-			buffer.Channels() * buffer.BitsPerByte(),   // bits per byte
-			buffer.Width() * buffer.Channels(),			// how many pixels per line (depth * width)
-			SDL_PIXELFORMAT_RGBA32);
-
-
-    //SDL_SaveBMP( m_screenSurface, "test.bmp" );
-
-    auto texture = SDL_CreateTextureFromSurface(m_renderer,
-                                                screen_surface); */
-
-    SDL_UpdateTexture(m_texture, NULL, data, buffer.Width() * sizeof(uint32_t));
-
-    SDL_RenderClear( m_renderer );
-    SDL_RenderCopy( m_renderer, m_texture, NULL, NULL );
-    SDL_RenderPresent( m_renderer );
-
-    /*
-    if (screen_surface != nullptr)
-        SDL_FreeSurface( screen_surface );
-
-    if (texture != nullptr)
-        SDL_DestroyTexture( texture ); */
+    //SDL_RenderClear( m_renderer ); // might not be necessary
+    SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);
+    SDL_RenderPresent(m_renderer);
 }
 
-void Window::check_for_input(ImageBuffer& pixelBuffer)
+void Window::CheckForInput(ImageBuffer &pixelBuffer)
 {
     bool running = true;
-
-    //Event handler
-    SDL_Event eventHandler;
 
     //While application is running 
     while (running)
     {
-        update_texture(pixelBuffer);
+        UpdateTexture(pixelBuffer);
 
         //Handle events on queue
-        while (SDL_PollEvent( &eventHandler ) != 0)
+        if (SDL_PollEvent(&m_eventHandler))
         {
-
-
             //User requests quit
-            if (eventHandler.type == SDL_QUIT) {
+            if (m_eventHandler.type == SDL_QUIT) {
                 //SDL_SaveBMP( m_screenSurface, "test.bmp" );
                 running = false;
             }
-            
         }
-
-
     } 
 }
 

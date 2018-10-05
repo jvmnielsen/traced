@@ -175,7 +175,7 @@ void Scene::render(ImageBuffer& buffer)
 	
     //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vecf(1, 0, 0), Vecf(0, 0, 0), 0.18f));
 
-    const int aa_factor = 1;
+    const int aa_factor = 5;
 
     for (int j = m_screen_height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
