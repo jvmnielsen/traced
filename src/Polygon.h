@@ -60,6 +60,11 @@ public:
 
 	void update_edges();
 
+	void SetMaterialType(const MaterialType& type) override
+	{
+		m_material = type;
+	}
+
 
     void set_normal(HitData& hit_data) const override;
 

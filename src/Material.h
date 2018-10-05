@@ -4,7 +4,7 @@
 #include "Ray.h"
 #include "Renderable.h"
 
-//Vecf reflect(const Vecf& v, const Vecf& n);
+//Vecf Reflect(const Vecf& v, const Vecf& n);
 
 bool refract(const Vecf& v, const Vecf& n, float ni_over_nt, Vecf& refracted);
 
@@ -69,7 +69,7 @@ public:
     {
         // clean-up, especially all the "scattered ="
         Vecf outward_normal;
-        Vecf reflected = reflect( ray_in.direction(), rec.normal );
+        Vecf reflected = Reflect( ray_in.direction(), rec.normal );
         float ni_over_nt;
         attenuation = Vecf( 1.0, 1.0, 1.0 );
         Vecf refracted;

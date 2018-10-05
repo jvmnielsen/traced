@@ -23,6 +23,13 @@ public:
         hit_data.ptr_to_rndrble()->set_normal(hit_data);
     }
 
+	void SetMaterialType(const MaterialType& type) override
+	{
+    	for (auto& polygon : m_mesh)
+		{
+    		polygon->SetMaterialType(type);
+		}
+	}
 
 private:
     std::vector<std::shared_ptr<Polygon>> m_mesh;

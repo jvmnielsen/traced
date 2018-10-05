@@ -19,7 +19,11 @@ public:
     void transform_object_to_world(const Matrix44f& object_to_world) override { }
 
     void set_normal(HitData& hit_data) const override;
-	
+
+    void SetMaterialType(const MaterialType& type) override
+    {
+        m_material = type;
+    }
 
 private:
     Vecf m_center;

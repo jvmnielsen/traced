@@ -4,7 +4,7 @@
 void Controller::run()
 {
 
-    std::thread render_thread{ &Scene::render, m_scene, std::ref( m_buffer ) };
+    std::thread render_thread{&Scene::Render, m_scene, std::ref( m_buffer ) };
 
     // window thread
     m_window.InitializeWindow(m_buffer);

@@ -43,7 +43,7 @@ bool Window::InitializeWindow(ImageBuffer &buffer)
             SDL_WINDOWPOS_CENTERED,
             m_screenWidth,
             m_screenHeight,
-            SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+            0);
 
     if (m_windowHandle == NULL)
     {
