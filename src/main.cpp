@@ -63,14 +63,13 @@ int main(int argc, char * argv[])
     //auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
     //auto buffer = std::make_unique<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    //std::thread RenderThread{ &Scene::Render, scene, *buffer };
-    scene.Render(buffer);
-    std::cout << "finished rendering\n";
+    std::thread RenderThread{ &Scene::Render, std::ref(scene), std::ref(buffer) };
+    //scene.Render(buffer);
 
     window.InitializeWindow(buffer);
     window.CheckForInput(buffer);
 
-    //RenderThread.join();
+    RenderThread.join();
 
     //ThreadManager manager{ std::move(window), std::move(buffer) };
     //manager.Run(*scene);
