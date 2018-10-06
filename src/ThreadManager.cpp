@@ -1,15 +1,15 @@
 #include "ThreadManager.h"
 #include <thread>
 
-void ThreadManager::run()
+void ThreadManager::Run(const Scene& scene)
 {
 
-    std::thread render_thread{&Scene::Render, m_scene, std::ref( m_buffer ) };
+    //std::thread render_thread{ &Scene::Render, scene, *m_buffer };
 
     // window thread
-    m_window.InitializeWindow(m_buffer);
+    m_window->InitializeWindow(*m_buffer);
 
-    //m_scene.render(m_buffer);
+    //m_scene->Render(*m_buffer);
 
 
 
@@ -20,8 +20,8 @@ void ThreadManager::run()
    
     //m_scene.render( m_buffer );
 
-    m_window.CheckForInput(m_buffer);
+    m_window->CheckForInput(*m_buffer);
 
     //window_thread.join();
-    render_thread.join();
+    //render_thread.join();
 }

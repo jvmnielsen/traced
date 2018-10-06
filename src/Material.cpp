@@ -22,17 +22,6 @@ float schlick( float cosine, float refractive_index )
     return r0 + (1 - r0) * pow( (1 - cosine), 5 );
 }
 
-Rayf Lambertian::scatter(const Rayf& ray, const HitData& hit_data) const
-{
-    /*
-    Vec3f target = rec.m_point + rec.normal + random_in_unit_sphere();
-    scattered = Rayf(rec.p, target - rec.p);
-    attenuation = m_albedo;
-    return true; */
-    return {};
-}
-
-
 /*
 Vec3f Lambertian::random_in_unit_sphere()
 {

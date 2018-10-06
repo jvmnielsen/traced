@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Scene.h"
-#include "Renderable.h"
+/*
 
 //Vecf Reflect(const Vecf& v, const Vecf& n);
 
@@ -12,7 +11,7 @@ float schlick(float cosine, float refractive_index);
 class Material
 {
 public:
-	virtual Rayf scatter(const Rayf& ray, const HitData& hit_data) const = 0;
+	virtual Rayf scatter(const Rayf& ray, const Intersection& hit_data) const = 0;
 };
 
 
@@ -28,7 +27,7 @@ public:
 
     Vecf random_in_unit_sphere();
 
-    Rayf scatter(const Rayf& ray, const HitData& hit_data) const override;
+    Rayf scatter(const Rayf& ray, const Intersection& hit_data) const override;
 	
 
 	Vecf m_albedo;
@@ -37,7 +36,7 @@ public:
     std::mt19937 m_gen;
     std::uniform_real_distribution<> m_dist;
 
-};
+}; */
 
 
 /*

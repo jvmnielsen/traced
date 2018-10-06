@@ -3,6 +3,11 @@
 #include <vector>
 #include <math.h>
 
+inline float DegToRad(const float deg)
+{
+    return (float)(deg * M_PI / 180);
+}
+
 template<typename T>
 struct Point
 {
@@ -335,10 +340,6 @@ public:
         m_arr[3][2] = o;
         m_arr[3][3] = p;
     }
-
-    // accessors
-    const T* operator [] (uint8_t i) const { return m_arr[i]; }
-    T* operator [] (uint8_t i) { return m_arr[i]; }
 
     static void multiply(const Matrix44& a, const Matrix44& b, Matrix44& c)
     {

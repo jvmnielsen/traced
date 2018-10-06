@@ -8,63 +8,87 @@ float clamp(const float &lo, const float &hi, const float &v);
 
 void ConvertToRGB(Vecf& color);
 
-// ---------------------------------------------------------------------------
-// Class for RGB color
-struct Color
+
+
+struct LightingInfo
 {
-    float  m_red;
-    float  m_green;
-    float  m_blue;
-    float  m_alpha;
-
-    Color();
-	Color(const float arg) : m_red(arg), m_green(arg), m_blue(arg), m_alpha(arg) {}
-    Color(float red, float green, float blue);
-    Color(float red, float green, float blue, float alpha);
-
-    void Validate() const; // ensure color values are non-negative
-	//void ConvertToRGBA();
-
-    Color& operator *= (float factor);
-    Color& operator /= (float factor);
-
-    Color& operator += (const Color& other);
-    Color& operator -= (const Color& other);
-
-	float operator [] (const uint8_t i) const;
-	float& operator [] (const uint8_t i);
-
+    Vecf direction;
+    Vecf intensity;
+    float distance;
 };
 
-inline Color operator * (const Color& aColor, const Color& bColor)
+class Light
 {
-	return
-	{
-		aColor.m_red   * bColor.m_red,
-		aColor.m_green * bColor.m_green,
-		aColor.m_blue  * bColor.m_blue
-	};
-}
+public:
+    Light(const Vecf& color, float intensity = 1);
 
-inline Color operator * (float scalar, const Color &color)
-{
-	return
-	{
-		scalar * color.m_red,
-		scalar * color.m_green,
-		scalar * color.m_blue
-	};
-}
+    virtual ~Light() = default;
+    virtual void illuminate(const Vecf& point, LightingInfo& info) const = 0;
 
-inline Color operator + (const Color& a, const Color& b)
+protected:
+    Vecf m_color;
+    float m_intensity;
+};
+
+class DistantLight : public Light
 {
-    return 
+public:
+    DistantLight(const Vecf& color, const float intensity, const Vecf& direction)
+            : Light(color, intensity)
+            , m_direction(direction)
+    {}
+
+    void illuminate(const Vecf& point, LightingInfo& info) const override
     {
-        a.m_red   + b.m_red,
-        a.m_green + b.m_green,
-        a.m_blue  + b.m_blue
-    };
-}
+        info.direction = m_direction;
+        info.intensity = m_color * m_intensity;
+        info.distance = -1;
+    }
+
+    Vecf m_direction;
+};
+
+class PointLight : public Light
+{
+public:
+    PointLight() = default;
+
+    PointLight(const Vecf& color, const float intensity, const Vecf& position)
+            : Light(color, intensity)
+            , m_position(position)
+    {}
+
+    void illuminate(const Vecf& point, LightingInfo& info) const override
+    {
+        info.direction = point - m_position;
+        const auto r2 = info.direction.MagnitudeSquared();
+        info.distance = sqrtf(r2);
+        info.direction /= info.distance;
+        info.intensity = m_intensity * m_color / (4 * M_PI * r2);
+    }
+
+    Vecf m_position;
+};
+
+
+class Camera
+{
+public:
+
+	Camera() = default;
+	~Camera() = default;
+
+	Camera(float v_fov, float aspect);
+	Camera(const Vecf& look_from, const Vecf& look_at, const Vecf& v_up, const float v_fov, const float aspect);
+
+	Rayf GetRay(const float u, const float v) const;
+
+private:
+	Vecf m_origin;
+	Vecf m_lowerLeftCorner;
+	Vecf m_horizontal;
+	Vecf m_vertical;
+};
 
 // ---------------------------------------------------------------------------
 // Buffer for the image (back and front) whose job it is to transform 

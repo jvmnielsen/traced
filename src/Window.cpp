@@ -27,7 +27,7 @@ Window::~Window()
     SDL_Quit();
 }
 
-bool Window::InitializeWindow(ImageBuffer &buffer)
+bool Window::InitializeWindow(ImageBuffer& buffer)
 {
     // initalize window
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0)

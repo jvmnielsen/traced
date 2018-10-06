@@ -10,17 +10,16 @@ class PolygonMesh :
 {
 public:
 	PolygonMesh() : Renderable(Vecf(0.18), Diffuse) {}
-	~PolygonMesh() = default;
 
-	bool intersects(const Rayf& ray, HitData& hit_data) override;
+	bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
 	void add_polygon(const std::shared_ptr<Polygon>& polygon);
 
-	void transform_object_to_world(const Matrix44f& object_to_world) override;
+	void TransformByMatrix(const Matrix44f &object_to_world) override;
 
-    void set_normal(HitData& hit_data) const override
+    void CalculateNormal(Intersection &hit_data) const override
     {
-        hit_data.ptr_to_rndrble()->set_normal(hit_data);
+        hit_data.RenderablePtr()->CalculateNormal(hit_data);
     }
 
 	void SetMaterialType(const MaterialType& type) override

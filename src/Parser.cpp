@@ -128,7 +128,7 @@ std::unique_ptr<PolygonMesh> Parser::construct_mesh()
 	return mesh_ptr;
 }
 
-std::unique_ptr<PolygonMesh> Parser::parse( const std::string& filename )
+std::unique_ptr<PolygonMesh> Parser::parse(const std::string& filename)
 {
     try
     {

@@ -12,13 +12,13 @@ public:
         , m_radius_squared(radius * radius)
     {}
 
-    bool intersects(const Rayf& ray, HitData& hit_data) override;
+    bool Intersects(const Rayf &ray, Intersection &intersection) override;
 
-    bool solve_quadratic( const float a, const float b, const float c, float& solu_one, float& solu_two ) const;
+    bool solve_quadratic(const float a, const float b, const float c, float& solutionOne, float& solutionTwo) const;
 
-    void transform_object_to_world(const Matrix44f& object_to_world) override { }
+    void TransformByMatrix(const Matrix44f &object_to_world) override { }
 
-    void set_normal(HitData& hit_data) const override;
+    void CalculateNormal(Intersection &intersection) const override;
 
     void SetMaterialType(const MaterialType& type) override
     {

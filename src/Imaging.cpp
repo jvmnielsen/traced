@@ -16,76 +16,52 @@ void ConvertToRGB(Vecf& color)
 	color.b() = 255 * clamp(0, 1, color.b());
 }
 
-Color::Color()
-    : m_red(0.0)
-    , m_green(0.0)
-    , m_blue(0.0)
-    , m_alpha(1.0)
+
+Light::Light(const Vecf& color, const float intensity)
+        : m_color(color)
+        , m_intensity(intensity)
 {
 }
 
-Color::Color(
-    const float red,
-    const float green,
-    const float blue)
-    : m_red(red)
-    , m_green(green)
-    , m_blue(blue)
+Camera::Camera(const float v_fov, const float aspect)
 {
+    const auto theta = v_fov * M_PI / 180; // degrees to radians
+    const auto half_height = tan(theta / 2);
+    const auto half_width = aspect * half_height;
+    m_lowerLeftCorner = Vecf(-half_width, -half_height, -1.0);
+    m_horizontal = Vecf(2 * half_width, 0.0f, 0.0f);
+    m_vertical = Vecf(0.0f, 2 * half_height, 0.0f);
+    m_origin = Vecf(0.0f);
 }
 
-Color::Color(
-    const float red,
-    const float green,
-    const float blue,
-    const float alpha)
-    : m_red(red)
-    , m_green(green)
-    , m_blue(blue)
-    , m_alpha(alpha)
-{ 
-}
-// ---------------------------------------------------------------------------
-void Color::Validate() const
+Camera::Camera(
+        const Vecf& look_from,
+        const Vecf& look_at,
+        const Vecf& v_up,
+        const float v_fov,
+        const float aspect)
 {
-    if ((m_red < 0.0) || (m_green < 0.0) || (m_blue < 0.0))
-    {
-        throw ImagerException("Negative color values not allowed.");
-    }
+    const auto theta = v_fov * M_PI / 180;
+    const auto half_height = tan(theta / 2);
+    const auto half_width = aspect * half_height;
+
+    m_origin = look_from;
+
+    const auto w = UnitVector(look_from - look_at);
+    const auto u = UnitVector(CrossProduct(v_up, w));
+    const auto v = CrossProduct(w, u);
+
+    m_lowerLeftCorner = m_origin - half_width * u - half_height * v - w;
+    m_horizontal = 2 * half_width * u;
+    m_vertical = 2 * half_height * v;
 }
-// ---------------------------------------------------------------------------
-Color& Color::operator *= (const float factor)
+
+Rayf Camera::GetRay(const float u, const float v) const
 {
-    m_red   *= factor;
-    m_green *= factor;
-    m_blue  *= factor;
-    return *this;
+    return {m_origin,
+            m_lowerLeftCorner + u * m_horizontal + v * m_vertical - m_origin, PrimaryRay};
 }
-// ---------------------------------------------------------------------------
-Color& Color::operator /= (const float factor)
-{
-    m_red   /= factor;
-    m_green /= factor;
-    m_blue  /= factor;
-    return *this;
-}
-// ---------------------------------------------------------------------------
-Color& Color::operator += (const Color& other)
-{
-    m_red   += other.m_red;
-    m_green += other.m_green;
-    m_blue  += other.m_blue;
-    return *this;
-}
-// ---------------------------------------------------------------------------
-Color& Color::operator -= (const Color& other)
-{
-    m_red   -= other.m_red;
-    m_green -= other.m_green;
-    m_blue  -= other.m_blue;
-    return *this;
-}
-// ---------------------------------------------------------------------------
+
 ImageBuffer::ImageBuffer(
     const size_t screenWidth, 
     const size_t screenHeight)
@@ -122,15 +98,3 @@ void ImageBuffer::AddPixelAt(Vecf& color, size_t i, size_t j)
 }
 // ---------------------------------------------------------------------------
 
-
-
-
-float Color::operator [] (const uint8_t i) const
-{
-	return (&m_red)[i];
-}
-
-float& Color::operator [] (const uint8_t i)
-{
-	return (&m_red)[i];
-}

@@ -23,12 +23,10 @@ private:
     SDL_Renderer *m_renderer;
     SDL_Texture *m_texture;
 
-
     //Event handler
     SDL_Event m_eventHandler;
 
     void* m_pixels; // buffer that holds pixels for screen
-
 
     int m_screenHeight;
     int m_screenWidth;

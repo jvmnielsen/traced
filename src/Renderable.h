@@ -7,10 +7,10 @@
 class Material;
 class Renderable;
 
-class HitData
+class Intersection
 {
 public:
-    HitData()
+    Intersection()
         : m_t(-1)
         , m_t_closest(std::numeric_limits<float>::max())
         , m_point(0)
@@ -18,39 +18,34 @@ public:
         , m_has_been_hit(false)
     {}
 
-    //~HitData();
-    void update_closest(Renderable* ptr, const Rayf& ray);
+    void UpdateClosest(Renderable *ptr, const Rayf &ray);
 
-    void set_normal(const Rayf& ray);
+    void CalculateNormal(const Rayf &ray);
 
-    bool has_been_hit() const { return m_has_been_hit; }
+    bool HasBeenHit() const { return m_has_been_hit; }
 
-    Vecf point() const { return m_point; }
+    const Vecf& Point() const { return m_point; }
 
-    Vecf barycentric() const { return m_barycentric_closest; }
+    void SetBarycentric(const Vecf& barycentric ) { m_barycentric_coord = barycentric; };
+    const Vecf& Barycentric() const { return m_barycentric_closest; }
 
-    Vecf normal() const { return m_normal; }
+    void SetNormal(const Vecf& normal) { m_normal = normal; }
+    const Vecf& Normal() const { return m_normal; }
 
-    Renderable* ptr_to_rndrble() const { return m_ptr; }
+    Renderable* RenderablePtr() const { return m_ptr; }
 
+    void SetParameter(const float t) { m_t = t; }
+    const float Parameter() { return m_t; }
 
-
-    float m_t;
-
-    Vecf m_point;
-    Vecf m_barycentric_coord;
-    
-    Vecf m_normal;
 private:
-    
-    float m_t_closest;
-    Vecf m_barycentric_closest;
-    //Vec3f m_normal_closest;
-
-    Renderable* m_ptr; // observing
-
-    bool m_has_been_hit;
-
+    float       m_t;
+    Vecf        m_point;
+    Vecf        m_barycentric_coord;
+    Vecf        m_normal;
+    float       m_t_closest;
+    Vecf        m_barycentric_closest;
+    Renderable* m_ptr;                  // observing
+    bool        m_has_been_hit;
 };
 
 enum MaterialType { Diffuse, Reflective, Refract, ReflectAndRefract };
@@ -61,25 +56,28 @@ public:
     Renderable(const Vecf& albedo, MaterialType material)
         : m_albedo(albedo)
         , m_material(material) {}
-    
-	                                                                               
 
-	//Renderable(const Vec3f& albedo) : m_albedo(albedo) {}
-    //virtual ~Renderable() = default;
-    //virtual ~Renderable() = default;
-    virtual bool intersects(const Rayf& ray, HitData& hit_data) = 0;
+	virtual ~Renderable() = default;
 
-	virtual void transform_object_to_world(const Matrix44f& object_to_world) = 0;
+    Renderable(const Renderable& other)
+        : m_albedo(other.m_albedo)
+        , m_material(other.m_material)
+    {}
 
-    virtual void set_normal(HitData& hit_data) const = 0;
+    virtual bool Intersects(const Rayf &ray, Intersection &hit_data) = 0;
+
+	virtual void TransformByMatrix(const Matrix44f &object_to_world) = 0;
+
+    virtual void CalculateNormal(Intersection &hit_data) const = 0;
 
     virtual void SetMaterialType(const MaterialType& type) = 0;
 
-	Vecf m_albedo;
-    MaterialType m_material;
+	MaterialType Material() const { return m_material; }
+	Vecf Albedo() const { return m_albedo; }
 
-private:
-	//Matrix44f m_object_to_world;
+protected:
+    Vecf m_albedo;
+    MaterialType m_material;
 };
 
 /*
@@ -193,7 +191,7 @@ class AABB
         m_bounds[1] = high_bound;
     }
     
-    bool intersects(const Rayf& ray, HitData& hit_data) override
+    bool Intersects(const Rayf& ray, HitData& hit_data) override
     {
         float t_min, t_max, ty_min, ty_max, tz_min, tz_max;
 
@@ -224,7 +222,7 @@ class AABB
         
     }
 
-    void transform_object_to_world(const Matrix44f& object_to_world) override
+    void TransformByMatrix(const Matrix44f& object_to_world) override
     {
 
     }

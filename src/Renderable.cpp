@@ -1,14 +1,14 @@
 #include "Renderable.h"
 
 
-void HitData::set_normal(const Rayf& ray)
+void Intersection::CalculateNormal(const Rayf &ray)
 {
-    m_ptr->set_normal(*this);
+    m_ptr->CalculateNormal(*this);
 }
 
-void HitData::update_closest(Renderable* ptr, const Rayf& ray)
+void Intersection::UpdateClosest(Renderable *ptr, const Rayf &ray)
 {
-    if (ptr->m_material == ReflectAndRefract && ray.m_rayType == ShadowRay) // we skip in this case
+    if (ptr->Material() == ReflectAndRefract && ray.m_rayType == ShadowRay) // we skip in this case
         return;
 
     if (m_t < m_t_closest && m_t > 0)
