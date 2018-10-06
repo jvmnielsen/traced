@@ -2,12 +2,10 @@
 #include <vector>
 #include "Renderable.h"
 #include "Pixel.h"
-#include "Ray.h"
 #include <random>
 #include "Imaging.h"
 #include <memory>
 #include <limits>
-#include "HitData.h"
 #include "Window.h"
 #include "Light.h"
 #include "Imaging.h"

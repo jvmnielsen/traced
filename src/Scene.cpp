@@ -3,7 +3,6 @@
 #include "Sphere.h"
 #include "Camera.h"
 #include "Material.h"
-#include "Matrix44.h"
 #include "Polygon.h"
 #include "Parser.h"
 #include <memory>
@@ -205,9 +204,10 @@ void Scene::Render(ImageBuffer &buffer)
 	Matrix44f objectToWorld = Matrix44f(0.15, 0, 0, 0,
 										0, 0.15, 0, 0,
 										0, 0, 0.15, 0,
-										0, 0, -3.8f, 1);
+										0, 0.8f, -2.0f, 1);
 
-	m_scene_meshes[0]->transform_object_to_world(objectToWorld); */
+	m_scene_meshes[0]->transform_object_to_world(objectToWorld);
+    m_scene_meshes[0]->SetMaterialType(ReflectAndRefract); */
 
     load_objects_from_file("../assets/plane.obj");
 
@@ -217,7 +217,7 @@ void Scene::Render(ImageBuffer &buffer)
                                         0, 0.0f, -2.5f, 1);
 
     m_scene_meshes[0]->transform_object_to_world(objectToWorld1);
-    //m_scene_meshes[0]->SetMaterialType(Reflective);
+    m_scene_meshes[0]->SetMaterialType(Diffuse);
 
     const auto test = std::make_shared<Sphere>(Vecf(0.1f, 0.50f,-2.0f), 0.5f, Vecf(0.18f), ReflectAndRefract);
 	const auto test2 = std::make_shared<Sphere>(Vecf(-0.5f, 0.5f, -3.0f), 0.5f, Vecf(0.18f), Diffuse);

@@ -1,12 +1,5 @@
 #pragma once
 #include "MathUtil.h"
-#include "Ray.h"
-
-
-#define _USE_MATH_DEFINES // for C++  
-
-#include "Matrix44.h"
-
 
 class Camera
 {

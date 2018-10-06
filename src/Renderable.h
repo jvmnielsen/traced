@@ -1,11 +1,8 @@
 #pragma once
-#include "Ray.h"
-#include "Matrix44.h"
 #include <memory>
 #include <utility>
 #include "MathUtil.h"
 #include "Imaging.h"
-//#include "HitData.h"
 
 class Material;
 class Renderable;

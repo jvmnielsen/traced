@@ -5,8 +5,8 @@ project(RayTracer CXX)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${RayTracer_SOURCE_DIR}/cmake")
 
-set(SOURCE_FILES src/main.cpp src/Camera.h src/Camera.cpp src/Controller.h src/Controller.cpp
-        src/HitData.h src/Imaging.h src/Imaging.cpp src/Light.cpp src/Light.h src/Material.cpp
+set(SOURCE_FILES src/main.cpp src/Camera.h src/Camera.cpp src/ThreadManager.h src/ThreadManager.cpp
+        src/Imaging.h src/Imaging.cpp src/Light.cpp src/Light.h src/Material.cpp
         src/Material.cpp src/MathUtil.cpp src/MathUtil.h src/Parser.cpp src/Parser.h src/Polygon.cpp
         src/Polygon.h src/PolygonMesh.cpp src/PolygonMesh.h src/Renderable.h src/Renderable.cpp
         src/Scene.cpp src/Scene.h src/Sphere.cpp src/Sphere.h src/Window.cpp src/Window.h)

@@ -3,10 +3,10 @@
 #include "Window.h"
 #include "Imaging.h"
 
-class Controller
+class ThreadManager
 {
 public:
-    Controller(Scene& scene) 
+    ThreadManager(Scene& scene)
         : m_scene(scene) 
         , m_window(scene.m_screen_width, scene.m_screen_height)
         , m_buffer(scene.m_screen_width, scene.m_screen_height)

@@ -132,7 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\Controller.cpp" />
+    <ClCompile Include="src\ThreadManager.cpp" />
     <ClCompile Include="src\Imaging.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -150,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\Controller.h" />
+    <ClInclude Include="src\ThreadManager.h" />
     <ClInclude Include="src\HitData.h" />
     <ClInclude Include="src\Imaging.h" />
     <ClInclude Include="src\Light.h" />

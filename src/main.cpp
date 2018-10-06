@@ -2,11 +2,10 @@
 #include <vector>
 #include "Imaging.h"
 #include "MathUtil.h"
-#include "Ray.h"
 #include "Scene.h"
 #include "Material.h"
 #include "Sphere.h"
-#include "Controller.h"
+#include "ThreadManager.h"
 
 /*
 Scene random_scene()
@@ -70,7 +69,7 @@ int main( int argc, char * argv[] )
     Scene scene{ SCREEN_WIDTH, SCREEN_HEIGHT };
 
 
-    Controller controller{ scene };
+    ThreadManager controller{ scene };
     controller.run();
     //scene.render();
 

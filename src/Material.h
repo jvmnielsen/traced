@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Scene.h"
-#include "Ray.h"
 #include "Renderable.h"
 
 //Vecf Reflect(const Vecf& v, const Vecf& n);

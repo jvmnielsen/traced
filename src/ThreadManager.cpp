@@ -1,7 +1,7 @@
-#include "Controller.h"
+#include "ThreadManager.h"
 #include <thread>
 
-void Controller::run()
+void ThreadManager::run()
 {
 
     std::thread render_thread{&Scene::Render, m_scene, std::ref( m_buffer ) };

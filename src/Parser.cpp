@@ -3,7 +3,6 @@
 #include <string>
 #include <iterator>
 #include <sstream>
-#include "Vec2.h"
 #include <memory>
 
 std::vector<std::string> split_string( const std::string& subject )
@@ -123,7 +122,7 @@ std::unique_ptr<PolygonMesh> Parser::construct_mesh()
                 m_normals[m_normal_ordering[i]-1],
                 m_normals[m_normal_ordering[i + 1]-1],
                 m_normals[m_normal_ordering[i + 2]-1],
-                true, Vecf(0.18f), Diffuse));
+                false, Vecf(0.18f), Diffuse));
 	}
 
 	return mesh_ptr;
