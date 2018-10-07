@@ -9,7 +9,7 @@ class PolygonMesh :
     public Renderable
 {
 public:
-	PolygonMesh() : Renderable(Vecf(0.18), Diffuse) {}
+	PolygonMesh() : Renderable(Vecf(0.18f), Diffuse) {}
 
 	bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 

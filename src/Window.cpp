@@ -4,8 +4,8 @@
 #include <chrono>
 #include <algorithm>
 
-Window::Window( const int screenWidth,
-                const int screenHeight )
+Window::Window( const uint32_t screenWidth,
+                const uint32_t screenHeight )
     : m_screenWidth( screenWidth )
     , m_screenHeight( screenHeight )
 {

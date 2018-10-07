@@ -64,7 +64,7 @@ public:
         const auto r2 = info.direction.MagnitudeSquared();
         info.distance = sqrtf(r2);
         info.direction /= info.distance;
-        info.intensity = m_intensity * m_color / (4 * M_PI * r2);
+        info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
     }
 
     Vecf m_position;

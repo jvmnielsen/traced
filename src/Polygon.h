@@ -74,6 +74,6 @@ private:
     Vecf m_edge2;
     Vecf m_normal;
     bool m_is_single_sided;
-    float m_epsilon = 1e-8;
+    float m_epsilon = 1e-8f;
 };
 
