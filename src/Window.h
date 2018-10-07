@@ -7,7 +7,7 @@
 class Window
 {
 public:
-	Window(const int screenHeight, const int screenWidth);
+	Window(const uint32_t screenHeight, const uint32_t screenWidth);
 	
     Window();
 	~Window();
@@ -28,7 +28,7 @@ private:
 
     void* m_pixels; // buffer that holds pixels for screen
 
-    int m_screenHeight;
-    int m_screenWidth;
+    uint32_t m_screenHeight;
+    uint32_t m_screenWidth;
 };
 

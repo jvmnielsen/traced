@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <vector>
+
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 inline float DegToRad(const float deg)

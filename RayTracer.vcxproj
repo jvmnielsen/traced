@@ -131,18 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\ThreadManager.cpp" />
     <ClCompile Include="src\Imaging.cpp" />
-    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
-    <ClCompile Include="src\Matrix44.cpp" />
     <ClCompile Include="src\Parser.cpp" />
-    <ClCompile Include="src\Pixel.cpp" />
     <ClCompile Include="src\Polygon.cpp" />
     <ClCompile Include="src\PolygonMesh.cpp" />
-    <ClCompile Include="src\Ray.cpp" />
     <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Sphere.cpp" />

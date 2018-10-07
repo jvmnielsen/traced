@@ -40,10 +40,10 @@ int main(int argc, char * argv[])
 
     auto teapot = parser.parse("../assets/teapot.obj");
 
-    Matrix44f objectToWorld = Matrix44f(0.15, 0, 0, 0,
-                                        0, 0.15, 0, 0,
-                                        0, 0, 0.15, 0,
-                                        0, 0.8f, -2.0f, 1);
+    Matrix44f objectToWorld = Matrix44f(0.15f, 0, 0, 0,
+                                        0, 0.15f, 0, 0,
+                                        0, 0, 0.15f, 0,
+                                        0, 0.8f, -2.0f, 1.0f);
 
     teapot->TransformByMatrix(objectToWorld);
     teapot->SetMaterialType(ReflectAndRefract);
