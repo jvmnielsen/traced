@@ -75,10 +75,10 @@ void Polygon::CalculateNormal(Intersection &hit_data) const
 void Polygon::TranslateBy(const Vecf& dir) 
 {
     const Matrix44f translation =
-    { dir.x,     0,     0, 0,
-          0, dir.y,     0, 0,
-          0,     0, dir.z, 0,
-          0,     0,     0, 1 };
+    {    1,      0,     0, 0,
+          0,     1,     0, 0,
+          0,     0,     1, 0,
+      dir.x, dir.y, dir.z, 1 };
 
     TransformByMatrix(translation);
 }
@@ -117,4 +117,16 @@ void Polygon::RotateAroundZ(float angle)
              0,         0, 0, 1};
 
     TransformByMatrix(rotation);
+}
+
+void Polygon::ScaleBy(float factor)
+{
+    
+    const Matrix44f scale =
+    {factor,      0,      0, 0,
+          0, factor,      0, 0,
+          0,      0, factor, 0,
+          0,      0,      0, 1};
+
+    TransformByMatrix(scale);
 }

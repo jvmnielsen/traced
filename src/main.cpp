@@ -34,12 +34,17 @@ int main(int argc, char * argv[])
     Parser parser;
     auto plane = parser.Parse("assets/plane.obj");
 
+    /*
     Matrix44f objectToWorld1 = Matrix44f(4, 0, 0, 0,
                                          0, 4, 0, 0,
                                          0, 0, 4, 0,
                                          0, 0.0f, -5.0f, 1);
 
-    plane->TransformByMatrix(objectToWorld1);
+    plane->TransformByMatrix(objectToWorld1); */
+
+    plane->ScaleBy(4.0f);
+    plane->TranslateBy({0,0,-5.0f});
+
     plane->SetMaterialType(Diffuse);
     scene.AddMesh(std::move(plane));
 

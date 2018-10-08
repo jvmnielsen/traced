@@ -60,11 +60,13 @@ public:
 
     void CalculateNormal(Intersection &hit_data) const override;
 
-    void TranslateBy(const Vecf& dir) override {}
+    void TranslateBy(const Vecf& dir) override;
 
-    void RotateAroundX(float dir) override {}
-    void RotateAroundY(float dir) override {}
-    void RotateAroundZ(float dir) override {}
+    void RotateAroundX(float angle) override;
+    void RotateAroundY(float angle) override;
+    void RotateAroundZ(float angle) override;
+
+    void ScaleBy(float factor) override;
 
 
     Vecf m_vertices[3];  // TODO: encapsulate

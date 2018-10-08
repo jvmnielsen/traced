@@ -77,6 +77,8 @@ public:
 
     virtual void TranslateBy(const Vecf& dir) = 0;
 
+    virtual void ScaleBy(float factor) = 0;
+
     virtual void RotateAroundX(float dir) = 0;
     virtual void RotateAroundY(float dir) = 0;
     virtual void RotateAroundZ(float dir) = 0;

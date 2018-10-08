@@ -54,6 +54,11 @@ public:
             polygon->RotateAroundZ(dir);
     }
 
+    void ScaleBy(float factor) override
+    {
+        for (auto& polygon : m_mesh)
+            polygon->ScaleBy(factor);
+    }
 
 private:
     std::vector<std::unique_ptr<Polygon>> m_mesh;

@@ -36,6 +36,11 @@ public:
     void RotateAroundY(float dir) override {}
     void RotateAroundZ(float dir) override {}
 
+    void ScaleBy(float factor) override
+    {
+        m_radius *= factor;
+    }
+
 
 private:
     Vecf m_center;
