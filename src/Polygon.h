@@ -64,6 +64,9 @@ public:
 
     Vecf m_vertex_normals[3];
 
+    bool moller_trumbore_intersect(const Rayf& ray, Intersection& hit_data);
+
+
 private:
 
 	void UpdateEdges();

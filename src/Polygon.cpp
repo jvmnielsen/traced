@@ -19,23 +19,15 @@ void Polygon::TransformByMatrix(const Matrix44f &object_to_world)
     UpdateEdges();
 }
 
-bool Polygon::Intersects(const Rayf &ray, Intersection &hit_data)
+bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
 {
     const auto p_vec = ray.direction().CrossProduct(m_edge0_2);
     const auto det = m_edge0.DotProduct(p_vec);
 
     // back-face culling
-    if (m_is_single_sided)
-    {
-        if (det < m_epsilon)
-            return false;
-    }
-    else
-    {
-        if (fabs(det) < m_epsilon)
-            return false;
-    }
-
+    if (fabs(det < m_epsilon) && m_is_single_sided)
+        return false;
+   
     // precompute for performance
     const auto inverted_det = 1 / det;
 
@@ -55,11 +47,11 @@ bool Polygon::Intersects(const Rayf &ray, Intersection &hit_data)
 
     const auto parameter = m_edge0_2.DotProduct(q_vec) * inverted_det;
 
-    hit_data.SetBarycentric(barycentric);
-    hit_data.SetParameter(parameter);
+    intersection.SetBarycentric(barycentric);
+    intersection.SetParameter(parameter);
 
     return true;
-}
+} 
 
 void Polygon::CalculateNormal(Intersection &hit_data) const
 {
@@ -68,5 +60,5 @@ void Polygon::CalculateNormal(Intersection &hit_data) const
         + hit_data.Barycentric().x * m_vertex_normals[1]
         + hit_data.Barycentric().y * m_vertex_normals[2];
 
-    hit_data.SetNormal(normal);
+    hit_data.SetNormal(Normalize(normal));
 }

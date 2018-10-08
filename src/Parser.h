@@ -13,6 +13,8 @@ private:
 	void load_file(const std::string& filename);
 	std::unique_ptr<PolygonMesh> construct_mesh();
 
+    void Reset();
+
     //std::ifstream m_file_in;
 	std::vector<Vecf> m_vertex;
 	std::vector<Vecf> m_texture_coord;

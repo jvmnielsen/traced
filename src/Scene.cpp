@@ -5,6 +5,7 @@
 #include "Polygon.h"
 #include "Parser.h"
 #include <memory>
+#include "Utility.h"
 
 
 void Scene::AddRenderable(std::unique_ptr<Renderable> renderPtr)
@@ -186,13 +187,23 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
 	return hit_color;
 }
 
+
+void Scene::load_objects_from_file(const std::string& file_name)
+{
+    Parser parser;
+    std::unique_ptr<PolygonMesh> renderable_ptr = parser.parse(file_name);
+    //add_object_to_scene(renderable_ptr);
+    m_scene_meshes.push_back(std::move(renderable_ptr));
+}
+
+
 void Scene::Render(ImageBuffer& buffer)
 {
-    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-4), Vecf(0,1,0), 90, float(buffer.Width())/float(buffer.Height())};
-	
-    //m_simple_scene_objects.push_back(std::make_shared<Plane>(Vecf(1, 0, 0), Vecf(0, 0, 0), 0.18f));
+    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-4), Vecf(0,1,0), 90, float(buffer.Width())/float(buffer.Height())};    
+    
+    const int aa_factor = 5; 
 
-    const int aa_factor = 5;
+    Timer timer = {"Rendering took: "};
 
     for (int j = (int)buffer.Height() - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {

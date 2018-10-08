@@ -122,10 +122,22 @@ std::unique_ptr<PolygonMesh> Parser::construct_mesh()
                 m_normals[m_normal_ordering[i]-1],
                 m_normals[m_normal_ordering[i + 1]-1],
                 m_normals[m_normal_ordering[i + 2]-1],
-                false, Vecf(0.18f), Diffuse));
+                true, Vecf(0.18f), Diffuse));
 	}
 
 	return mesh_ptr;
+}
+
+void Parser::Reset()
+{
+    m_vertex.clear();
+    m_texture_coord.clear();
+    m_normals.clear();
+    m_faces.clear();
+
+    m_vertex_ordering.clear();
+    m_texture_coord_ordering.clear();
+    m_normal_ordering.clear();
 }
 
 std::unique_ptr<PolygonMesh> Parser::parse(const std::string& filename)
@@ -140,6 +152,8 @@ std::unique_ptr<PolygonMesh> Parser::parse(const std::string& filename)
     }
 	
 	auto mesh_ptr = construct_mesh();
+
+    Reset(); // ready for next one
 
 	return mesh_ptr;
 }

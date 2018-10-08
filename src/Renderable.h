@@ -37,10 +37,13 @@ public:
     void SetParameter(const float t) { m_t = t; }
     const float Parameter() { return m_t; }
 
-private:
+
     float       m_t;
     Vecf        m_point;
     Vecf        m_barycentric_coord;
+
+private:
+   
     Vecf        m_normal;
     float       m_t_closest;
     Vecf        m_barycentric_closest;

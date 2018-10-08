@@ -55,6 +55,8 @@ private:
 
     Vecf random_in_unit_sphere();
 
+    void load_objects_from_file(const std::string& file_name);
+
 	float m_shadow_bias = 1e-4f;
 };
 
