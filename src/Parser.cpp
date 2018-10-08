@@ -34,7 +34,7 @@ std::vector<std::string> split_string( std::string& subject, const std::string& 
 	return container;
 }
 
-void Parser::load_file(const std::string& filename)
+void Parser::LoadFile(const std::string& filename)
 {
 	std::ifstream infile(filename);
 
@@ -107,22 +107,24 @@ void Parser::load_file(const std::string& filename)
         
 	}
 }
-std::unique_ptr<PolygonMesh> Parser::construct_mesh()
+std::unique_ptr<Mesh> Parser::ConstructMesh()
 {
-	auto mesh_ptr = std::make_unique<PolygonMesh>();
+	auto mesh_ptr = std::make_unique<Mesh>();
 	
 	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3)
 	{
         // WARNING: .obj is 1-indexed
-        mesh_ptr->add_polygon(
-            std::make_shared<Polygon>( // first element of each Vec3i
-                m_vertex[m_vertex_ordering[i]-1],
-                m_vertex[m_vertex_ordering[i + 1]-1],
-                m_vertex[m_vertex_ordering[i + 2]-1],
-                m_normals[m_normal_ordering[i]-1],
-                m_normals[m_normal_ordering[i + 1]-1],
-                m_normals[m_normal_ordering[i + 2]-1],
-                true, Vecf(0.18f), Diffuse));
+        auto polygon = 
+            std::make_unique<Polygon>( 
+                 m_vertex[m_vertex_ordering[i] - 1],
+                 m_vertex[m_vertex_ordering[i + 1] - 1],
+                 m_vertex[m_vertex_ordering[i + 2] - 1],
+                 m_normals[m_normal_ordering[i] - 1],
+                 m_normals[m_normal_ordering[i + 1] - 1],
+                 m_normals[m_normal_ordering[i + 2] - 1],
+                 true, Vecf(0.18f), Diffuse);
+	    
+        mesh_ptr->AddPolygon(std::move(polygon));       
 	}
 
 	return mesh_ptr;
@@ -140,18 +142,18 @@ void Parser::Reset()
     m_normal_ordering.clear();
 }
 
-std::unique_ptr<PolygonMesh> Parser::parse(const std::string& filename)
+std::unique_ptr<Mesh> Parser::Parse(const std::string& filename)
 {
     try
     {
-        load_file(filename);
+        LoadFile(filename);
     } 
     catch (std::string& msg)
     {
         std::cout << msg << '\n';
     }
 	
-	auto mesh_ptr = construct_mesh();
+	auto mesh_ptr = ConstructMesh();
 
     Reset(); // ready for next one
 

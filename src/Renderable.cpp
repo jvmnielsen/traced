@@ -13,7 +13,6 @@ void Intersection::UpdateClosest(Renderable *ptr, const Rayf &ray)
 
     if (m_t < m_t_closest && m_t > 0)
     {
-
         m_barycentric_closest = m_barycentric_coord;
         m_t_closest = m_t;
         //m_point_closest = m_point;

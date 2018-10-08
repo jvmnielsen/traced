@@ -7,7 +7,7 @@
 #include <limits>
 #include "Imaging.h"
 #include "MathUtil.h"
-#include "PolygonMesh.h"
+#include "Mesh.h"
 
 class Scene
 {
@@ -21,13 +21,14 @@ public:
 
 	//Scene(const Scene& other) = delete; // no copy-constructor for now
 
-
     void Render(ImageBuffer &buffer);
 
 	void AddRenderable(std::unique_ptr<Renderable> renderPtr);
-    void AddMesh(std::unique_ptr<PolygonMesh> meshPtr);
+    void AddMesh(std::unique_ptr<Mesh> meshPtr);
     void AddLight(std::unique_ptr<Light> lightPtr);
-	
+
+    void SetCamera(std::unique_ptr<Camera> camera);
+
     void SetBackgroundColor(const Vecf& color) { m_backgroundColor = color; }
     const Vecf& BackgroundColor() { return m_backgroundColor; }
 
@@ -43,7 +44,7 @@ private:
     std::uniform_real_distribution<> m_dist;
 
 	std::vector<std::unique_ptr<Renderable>> m_simple_scene_objects;
-    std::vector<std::unique_ptr<PolygonMesh>> m_scene_meshes;
+    std::vector<std::unique_ptr<Mesh>> m_scene_meshes;
     const float m_infinity = std::numeric_limits<float>::max();
 
     Intersection Trace(const Rayf &ray);
@@ -55,7 +56,7 @@ private:
 
     Vecf random_in_unit_sphere();
 
-    void load_objects_from_file(const std::string& file_name);
+    std::unique_ptr<Camera> m_camera;
 
 	float m_shadow_bias = 1e-4f;
 };

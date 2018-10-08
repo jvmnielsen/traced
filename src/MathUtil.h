@@ -320,7 +320,12 @@ class Matrix44
 public:
     T m_arr[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 
-    Matrix44() {}
+    Matrix44() = default;
+
+    ~Matrix44()
+    {
+        //delete m_arr;
+    }
 
     Matrix44(T a, T b, T c, T d, T e, T f, T g, T h,
              T i, T j, T k, T l, T m, T n, T o, T p)
@@ -377,7 +382,7 @@ public:
 
     // multiply direction and matrix (don't divide coefficients)
     template< typename S >
-    Vec3<S> multiply_with_dir(const Vec3<S>& src)
+    Vec3<S> multiply_with_dir(const Vec3<S>& src) const
     {
         S a = src[0] * m_arr[0][0] + src[1] * m_arr[1][0] + src[2] * m_arr[2][0] + m_arr[3][0];
         S b = src[0] * m_arr[0][1] + src[1] * m_arr[1][1] + src[2] * m_arr[2][1] + m_arr[3][1];
@@ -393,13 +398,13 @@ public:
     {
         int i, j, k;
         Matrix44 s;
-        Matrix44 t(*this);
+        Matrix44 t = *this;
 
         for (i = 0; i < 3; i++)
         {
             auto pivot = i;
 
-            T pivotsize = t[i][i];
+            T pivotsize = t.m_arr[i][i];
 
             if (pivotsize < 0)
             {
@@ -408,7 +413,7 @@ public:
 
             for (j = i + 1; j < 4; j++)
             {
-                T tmp = t[j][i];
+                T tmp = t.m_arr[j][i];
 
                 if (tmp < 0)
                 {
@@ -431,24 +436,24 @@ public:
             {
                 for (j = 0; j < 4; j++)
                 {
-                    T tmp = t[i][j];
-                    t[i][j] = t[pivot][j];
-                    t[pivot][j] = tmp;
+                    T tmp = t.m_arr[i][j];
+                    t.m_arr[i][j] = t.m_arr[pivot][j];
+                    t.m_arr[pivot][j] = tmp;
 
-                    tmp = s[i][j];
-                    s[i][j] = s[pivot][j];
-                    s[pivot][j] = tmp;
+                    tmp = s.m_arr[i][j];
+                    s.m_arr[i][j] = s.m_arr[pivot][j];
+                    s.m_arr[pivot][j] = tmp;
                 }
             }
 
             for (j = i + 1; j < 4; j++)
             {
-                T f = t[j][i] / t[i][i];
+                T f = t.m_arr[j][i] / t.m_arr[i][i];
 
                 for (k = 0; k < 4; k++)
                 {
-                    t[j][k] -= f * t[i][k];
-                    s[j][k] -= f * s[i][k];
+                    t.m_arr[j][k] -= f * t.m_arr[i][k];
+                    s.m_arr[j][k] -= f * s.m_arr[i][k];
                 }
             }
         }
@@ -458,7 +463,7 @@ public:
         {
             T f;
 
-            if ((f = t[i][i]) == 0)
+            if ((f = t.m_arr[i][i]) == 0)
             {
                 // Cannot invert singular matrix
                 return Matrix44();
@@ -466,18 +471,18 @@ public:
 
             for (j = 0; j < 4; j++)
             {
-                t[i][j] /= f;
-                s[i][j] /= f;
+                t.m_arr[i][j] /= f;
+                s.m_arr[i][j] /= f;
             }
 
             for (j = 0; j < i; j++)
             {
-                f = t[j][i];
+                f = t.m_arr[j][i];
 
                 for (k = 0; k < 4; k++)
                 {
-                    t[j][k] -= f * t[i][k];
-                    s[j][k] -= f * s[i][k];
+                    t.m_arr[j][k] -= f * t.m_arr[i][k];
+                    s.m_arr[j][k] -= f * s.m_arr[i][k];
                 }
             }
         }

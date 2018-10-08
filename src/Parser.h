@@ -2,16 +2,16 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "PolygonMesh.h"
+#include "Mesh.h"
 
 class Parser
 {
 public:
-    std::unique_ptr<PolygonMesh> parse(const std::string& filename);
+    std::unique_ptr<Mesh> Parse(const std::string& filename);
 
 private:
-	void load_file(const std::string& filename);
-	std::unique_ptr<PolygonMesh> construct_mesh();
+	void LoadFile(const std::string& filename);
+	std::unique_ptr<Mesh> ConstructMesh();
 
     void Reset();
 

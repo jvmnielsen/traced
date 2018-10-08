@@ -7,7 +7,7 @@ class Sphere :
 public:
     Sphere(const Vecf& center, const float radius, const Vecf& albedo, MaterialType material)
         : Renderable(albedo, material)
-		, m_center(center) 
+        , m_center(center)
         , m_radius(radius)
         , m_radius_squared(radius * radius)
     {}
@@ -24,6 +24,18 @@ public:
     {
         m_material = type;
     }
+
+    void TranslateBy(const Vecf& dir) override
+    {
+        m_center.x += dir.x;
+        m_center.y += dir.y;
+        m_center.z += dir.z;
+    } 
+
+    void RotateAroundX(float dir) override {} // do nothing (our representation of a sphere cannot meaningfully be rotated)
+    void RotateAroundY(float dir) override {}
+    void RotateAroundZ(float dir) override {}
+
 
 private:
     Vecf m_center;

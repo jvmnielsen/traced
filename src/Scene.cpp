@@ -13,7 +13,7 @@ void Scene::AddRenderable(std::unique_ptr<Renderable> renderPtr)
     m_simple_scene_objects.push_back(std::move(renderPtr));
 }
 
-void Scene::AddMesh(std::unique_ptr<PolygonMesh> meshPtr)
+void Scene::AddMesh(std::unique_ptr<Mesh> meshPtr)
 {
     m_scene_meshes.push_back(std::move(meshPtr));
 }
@@ -22,6 +22,11 @@ void Scene::AddMesh(std::unique_ptr<PolygonMesh> meshPtr)
 void Scene::AddLight(std::unique_ptr<Light> lightPtr)
 {
     m_scene_lights.push_back(std::move(lightPtr));
+}
+
+void Scene::SetCamera(std::unique_ptr<Camera> camera)
+{
+    m_camera = std::move(camera);
 }
 
 void Scene::TraceSimpleObjects(const Rayf &ray, Intersection &hit_data)
@@ -187,20 +192,8 @@ Vecf Scene::CastRay(const Rayf& ray, uint32_t depth)
 	return hit_color;
 }
 
-
-void Scene::load_objects_from_file(const std::string& file_name)
-{
-    Parser parser;
-    std::unique_ptr<PolygonMesh> renderable_ptr = parser.parse(file_name);
-    //add_object_to_scene(renderable_ptr);
-    m_scene_meshes.push_back(std::move(renderable_ptr));
-}
-
-
 void Scene::Render(ImageBuffer& buffer)
 {
-    Camera camera = {Vecf(0, 2, 1), Vecf(0,0,-4), Vecf(0,1,0), 90, float(buffer.Width())/float(buffer.Height())};    
-    
     const int aa_factor = 5; 
 
     Timer timer = {"Rendering took: "};
@@ -216,7 +209,7 @@ void Scene::Render(ImageBuffer& buffer)
                 const auto u = float(i + m_dist(m_gen)) / float(buffer.Width()); // maybe precompute
                 const auto v = float(j + m_dist(m_gen)) / float(buffer.Height());
 
-                const auto ray = camera.GetRay(u, v);
+                const auto ray = m_camera->GetRay(u, v);
 
                 color += CastRay(ray, 0);
             }

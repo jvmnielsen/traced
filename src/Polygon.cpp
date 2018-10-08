@@ -16,7 +16,15 @@ void Polygon::TransformByMatrix(const Matrix44f &object_to_world)
 	{
         vertex = object_to_world.multiply_with_point(vertex);
 	}
-    UpdateEdges();
+
+    const auto transformNormals = object_to_world.inverse(); // normals are transformed by the inverse matrix
+
+    for (auto& normal : m_vertex_normals)
+    {
+        normal = transformNormals.multiply_with_dir(normal);
+    }
+
+    UpdateEdges(); // precompute edges again
 }
 
 bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
@@ -61,4 +69,52 @@ void Polygon::CalculateNormal(Intersection &hit_data) const
         + hit_data.Barycentric().y * m_vertex_normals[2];
 
     hit_data.SetNormal(Normalize(normal));
+}
+
+
+void Polygon::TranslateBy(const Vecf& dir) 
+{
+    const Matrix44f translation =
+    { dir.x,     0,     0, 0,
+          0, dir.y,     0, 0,
+          0,     0, dir.z, 0,
+          0,     0,     0, 1 };
+
+    TransformByMatrix(translation);
+}
+
+void Polygon::RotateAroundX(float angle) 
+{
+    const auto rad = DegToRad(angle);
+    const Matrix44f rotation =
+    {   1,        0,         0, 0,
+        0, cos(rad), -sin(rad), 0,
+        0, sin(rad),  cos(rad), 0,
+        0,        0,         0, 1};
+    
+    TransformByMatrix(rotation);
+}
+
+void Polygon::RotateAroundY(float angle) 
+{
+    const auto rad = DegToRad(angle);
+    const Matrix44f rotation =
+    { cos(rad), 0, sin(rad), 0,
+             0, 1,        0, 0,
+     -sin(rad), 0, cos(rad), 0,
+             0, 0,        0, 1};
+
+    TransformByMatrix(rotation);
+}
+
+void Polygon::RotateAroundZ(float angle) 
+{
+    const auto rad = DegToRad(angle);
+    const Matrix44f rotation =
+    { cos(rad), -sin(rad), 0, 0,
+      sin(rad),  cos(rad), 0, 0,
+             0,         0, 1, 0,
+             0,         0, 0, 1};
+
+    TransformByMatrix(rotation);
 }

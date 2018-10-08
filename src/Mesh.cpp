@@ -1,6 +1,6 @@
-#include "PolygonMesh.h"
+#include "Mesh.h"
 
-bool PolygonMesh::Intersects(const Rayf &ray, Intersection &hit_data)
+bool Mesh::Intersects(const Rayf &ray, Intersection &hit_data)
 {
 	for (const auto& polygon : m_mesh)
 	{
@@ -13,12 +13,12 @@ bool PolygonMesh::Intersects(const Rayf &ray, Intersection &hit_data)
 	return hit_data.HasBeenHit();
 }
 
-void PolygonMesh::add_polygon(const std::shared_ptr<Polygon>& polygon)
+void Mesh::AddPolygon(std::unique_ptr<Polygon> polygon)
 {
-	m_mesh.push_back(polygon);
+	m_mesh.push_back(std::move(polygon));
 }
 
-void PolygonMesh::TransformByMatrix(const Matrix44f &object_to_world)
+void Mesh::TransformByMatrix(const Matrix44f &object_to_world)
 {
 	for (auto& polygon : m_mesh)
 	{

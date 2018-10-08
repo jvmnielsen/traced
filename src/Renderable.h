@@ -75,6 +75,12 @@ public:
 
     virtual void SetMaterialType(const MaterialType& type) = 0;
 
+    virtual void TranslateBy(const Vecf& dir) = 0;
+
+    virtual void RotateAroundX(float dir) = 0;
+    virtual void RotateAroundY(float dir) = 0;
+    virtual void RotateAroundZ(float dir) = 0;
+
 	MaterialType Material() const { return m_material; }
 	Vecf Albedo() const { return m_albedo; }
 
