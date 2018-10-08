@@ -1,6 +1,7 @@
 #include "Polygon.h"
 #include <cmath>
 
+
 void Polygon::UpdateEdges()
 {
 	m_edge0 = m_vertices[1] - m_vertices[0];

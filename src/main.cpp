@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
     //auto scene = std::make_unique<Scene>();
     Scene scene;
 
-    auto camera = std::make_unique<Camera>(Vecf(0.0f, 2.0f, -1.0f), Vecf(0.0f,0.0f,-3.0f), Vecf(0.0f,1.0f,0.0f), 90.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Vecf(0.0f, 2.0f, 1.0f), Vecf(0.0f,0.0f,-4.0f), Vecf(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     scene.SetCamera(std::move(camera));
 
     auto lightOne = std::make_unique<PointLight>(Vecf(0.3556f, 0.533f, 0.9f), 600.0f, Vecf(2, 2, -2));
@@ -34,30 +34,20 @@ int main(int argc, char * argv[])
     Parser parser;
     auto plane = parser.Parse("assets/plane.obj");
 
-    /*
-    Matrix44f objectToWorld1 = Matrix44f(4, 0, 0, 0,
-                                         0, 4, 0, 0,
-                                         0, 0, 4, 0,
-                                         0, 0.0f, -5.0f, 1);
-
-    plane->TransformByMatrix(objectToWorld1); */
-
+    
+   
+    plane->RotateAroundX(-90.0f);
     plane->ScaleBy(4.0f);
-    plane->TranslateBy({0,0,-5.0f});
+    plane->TranslateBy({0.0f,0,-20.0f});
 
     plane->SetMaterialType(Diffuse);
     scene.AddMesh(std::move(plane));
 
+    //std::unique_ptr<Mesh> plane2 = { plane };
 
     /*
     auto teapot = parser.Parse("assets/teapot.obj");
 
-    Matrix44f objectToWorld = Matrix44f(0.15, 0, 0, 0,
-                                        0, 0.15, 0, 0,
-                                        0, 0, 0.15, 0,
-                                        0, 0.8f, -2.0f, 1);
-
-    teapot->TransformByMatrix(objectToWorld);
     teapot->SetMaterialType(Reflective);
     scene.AddMesh(std::move(teapot));  */
     

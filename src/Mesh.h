@@ -36,22 +36,22 @@ public:
             polygon->TranslateBy(dir);
     }
 
-    void RotateAroundX(float dir) override
+    void RotateAroundX(float angle) override
     {
         for (auto& polygon : m_mesh)
-            polygon->RotateAroundX(dir);
+            polygon->RotateAroundX(angle);
     }
 
-    void RotateAroundY(float dir) override
+    void RotateAroundY(float angle) override
     {
         for (auto& polygon : m_mesh)
-            polygon->RotateAroundY(dir);
+            polygon->RotateAroundY(angle);
     }
 
-    void RotateAroundZ(float dir) override
+    void RotateAroundZ(float angle) override
     {
         for (auto& polygon : m_mesh)
-            polygon->RotateAroundZ(dir);
+            polygon->RotateAroundZ(angle);
     }
 
     void ScaleBy(float factor) override

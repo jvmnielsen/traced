@@ -15,15 +15,12 @@ public:
             MaterialType material)
         : Renderable(albedo, material)
         , m_vertices{vertx0, vertx1, vertx2}
-        //, m_vertices0(vertx0)
-        //, m_vertices1( vertx1 )
-        //, m_vertices2( vertx2 )
         , m_edge0(vertx1 - vertx0)
         , m_edge0_2(vertx2 - vertx0)
         , m_edge1(vertx2 - vertx1)
         , m_edge2(vertx0 - vertx2)
         , m_is_single_sided(is_single_sided)
-        , m_normal(CrossProduct(vertx1 - vertx0, vertx2 - vertx0).Normalize()) // not normalized: area needed for baycentric coordinates
+        , m_normal(CrossProduct(vertx1 - vertx0, vertx2 - vertx0).Normalize()) 
     {
     }
 
@@ -48,6 +45,8 @@ public:
         , m_normal(CrossProduct(vertx1 - vertx0, vertx2 - vertx0).Normalize())
     {
     }
+
+    //Polygon(const Polygon& other) = default;
 
     bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
