@@ -11,9 +11,9 @@ float clamp(const float &lo, const float &hi, const float &v)
 
 void ConvertToRGB(Vecf& color)
 {
-	color.r() = 255 * clamp(0, 1, color.r());
-	color.g() = 255 * clamp(0, 1, color.g());
-	color.b() = 255 * clamp(0, 1, color.b());
+	color.r() = 255 * sqrt(clamp(0, 1, color.r())); // gamma 2, i.e. sqrt
+	color.g() = 255 * sqrt(clamp(0, 1, color.g()));
+	color.b() = 255 * sqrt(clamp(0, 1, color.b()));
 }
 
 

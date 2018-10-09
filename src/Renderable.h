@@ -56,6 +56,8 @@ enum MaterialType { Diffuse, Reflective, Refract, ReflectAndRefract };
 class Renderable
 {
 public:
+    Renderable() : m_material(Diffuse) {}
+
     Renderable(const Vecf& albedo, MaterialType material)
         : m_albedo(albedo)
         , m_material(material) {}

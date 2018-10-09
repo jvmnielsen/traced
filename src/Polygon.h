@@ -6,6 +6,8 @@ class Polygon :
     public Renderable
 {
 public:
+    Polygon() = default;
+
     Polygon(
             const Vecf& vertx0,
             const Vecf& vertx1,

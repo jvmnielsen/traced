@@ -17,49 +17,21 @@ public:
 
 	void TransformByMatrix(const Matrix44f &object_to_world) override;
 
-    void CalculateNormal(Intersection &hit_data) const override
-    {
-        hit_data.RenderablePtr()->CalculateNormal(hit_data);
-    }
+    void CalculateNormal(Intersection &hit_data) const override;
 
-	void SetMaterialType(const MaterialType& type) override
-	{
-    	for (auto& polygon : m_mesh)
-		{
-    		polygon->SetMaterialType(type);
-		}
-	}
+	void SetMaterialType(const MaterialType& type) override;
 
-    void TranslateBy(const Vecf& dir) override
-    {
-        for (auto& polygon : m_mesh)
-            polygon->TranslateBy(dir);
-    }
+    void TranslateBy(const Vecf& dir) override;
 
-    void RotateAroundX(float angle) override
-    {
-        for (auto& polygon : m_mesh)
-            polygon->RotateAroundX(angle);
-    }
+    void RotateAroundX(float angle) override;
 
-    void RotateAroundY(float angle) override
-    {
-        for (auto& polygon : m_mesh)
-            polygon->RotateAroundY(angle);
-    }
+    void RotateAroundY(float angle) override;
 
-    void RotateAroundZ(float angle) override
-    {
-        for (auto& polygon : m_mesh)
-            polygon->RotateAroundZ(angle);
-    }
+    void RotateAroundZ(float angle) override;
 
-    void ScaleBy(float factor) override
-    {
-        for (auto& polygon : m_mesh)
-            polygon->ScaleBy(factor);
-    }
+    void ScaleBy(float factor) override;
 
+    std::unique_ptr<Mesh> CloneMesh(); // consider making ctor
 private:
     std::vector<std::unique_ptr<Polygon>> m_mesh;
 	

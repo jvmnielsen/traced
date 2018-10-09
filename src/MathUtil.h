@@ -29,7 +29,6 @@ struct Point
 typedef Point<float> Pointf;
 typedef Point<int> Pointi;
 typedef Point<double> Pointd;
-
 // ---------------------------------------------------------------------------
 template<typename T>
 struct Vec3
@@ -102,7 +101,7 @@ Vec3<T>::Vec3(T val)
 }
 
 template<typename T>
-Vec3<T> ::Vec3()
+Vec3<T>::Vec3()
 	: x(T(0))
 	, y(T(0))
 	, z(T(0))
