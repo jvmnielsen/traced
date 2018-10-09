@@ -28,6 +28,16 @@ void Polygon::TransformByMatrix(const Matrix44f &object_to_world)
     UpdateEdges(); // precompute edges again
 }
 
+void Polygon::TransformByMatrix2(const Matrix44f &object_to_world)
+{
+    for (auto& vertex : m_vertices)
+    {
+        vertex = object_to_world.multiply_with_point(vertex);
+    }
+
+    UpdateEdges(); // precompute edges again
+}
+
 bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
 {
     const auto p_vec = ray.direction().CrossProduct(m_edge0_2);
@@ -81,12 +91,12 @@ void Polygon::TranslateBy(const Vecf& dir)
           0,     0,     1, 0,
       dir.x, dir.y, dir.z, 1 };
 
-    TransformByMatrix(translation);
+    TransformByMatrix2(translation);
 }
 
 void Polygon::RotateAroundX(float angle) 
 {
-    const auto rad = DegToRad(angle);
+    const auto rad = Math::DegreeToRadian(angle);
     const Matrix44f rotation =
     {   1,        0,         0, 0,
         0, cos(rad), -sin(rad), 0,
@@ -98,7 +108,7 @@ void Polygon::RotateAroundX(float angle)
 
 void Polygon::RotateAroundY(float angle) 
 {
-    const auto rad = DegToRad(angle);
+    const auto rad = Math::DegreeToRadian(angle);
     const Matrix44f rotation =
     { cos(rad), 0, sin(rad), 0,
              0, 1,        0, 0,
@@ -110,7 +120,7 @@ void Polygon::RotateAroundY(float angle)
 
 void Polygon::RotateAroundZ(float angle) 
 {
-    const auto rad = DegToRad(angle);
+    const auto rad = Math::DegreeToRadian(angle);
     const Matrix44f rotation =
     { cos(rad), -sin(rad), 0, 0,
       sin(rad),  cos(rad), 0, 0,
@@ -129,5 +139,5 @@ void Polygon::ScaleBy(float factor)
           0,      0, factor, 0,
           0,      0,      0, 1};
 
-    TransformByMatrix(scale);
+    TransformByMatrix2(scale);
 }

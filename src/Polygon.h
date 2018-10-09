@@ -53,6 +53,7 @@ public:
     bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
     void TransformByMatrix(const Matrix44f &object_to_world) override;
+    void TransformByMatrix2(const Matrix44f &object_to_world);
 
     void SetMaterialType(const MaterialType& type) override
     {

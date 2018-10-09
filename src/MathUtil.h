@@ -5,9 +5,19 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-inline float DegToRad(const float deg)
+namespace Math
 {
-    return (float)(deg * M_PI / 180);
+    template<typename T>
+    inline T Clamp(const T &lo, const T &hi, const T &v)
+    {
+        return std::max(lo, std::min(hi, v));
+    }
+
+    template<typename T>
+    inline T DegreeToRadian(const T degree)
+    {
+        return (T)(degree * M_PI / 180);
+    }
 }
 
 template<typename T>

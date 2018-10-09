@@ -10,71 +10,110 @@
 #include <thread>
 #include "Utility.h"
 
+void ConstructStandardBox(Scene& scene)
+{
+    Parser parser;
+    auto plane = parser.Parse("assets/plane.obj");
+    auto leftPlane = plane->CloneMesh();
+    auto rightPlane = plane->CloneMesh();
+    auto backPlane = plane->CloneMesh();
+
+    plane->ScaleBy(5.0f);
+    plane->TranslateBy({0.0f,0,-9.0f});
+    plane->SetMaterialType(Diffuse);
+    scene.AddMesh(std::move(plane));
+
+    leftPlane->RotateAroundZ(90.0f);
+    leftPlane->ScaleBy(5.0f);
+    leftPlane->TranslateBy({-5.0f,2.0f,-9.0f});
+    leftPlane->SetMaterialType(Diffuse);
+    scene.AddMesh(std::move(leftPlane));
+
+    rightPlane->RotateAroundZ(-90.0f);
+    rightPlane->ScaleBy(5.0f);
+    rightPlane->TranslateBy({5.0f,2.0f,-9.0f});
+    rightPlane->SetMaterialType(Diffuse);
+    scene.AddMesh(std::move(rightPlane));
+
+    backPlane->RotateAroundX(-90.0f);
+    backPlane->ScaleBy(5.0f);
+    backPlane->TranslateBy({0.0f,2.0f,-14.0f});
+    backPlane->SetMaterialType(Diffuse);
+    scene.AddMesh(std::move(backPlane));
+}
+
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[])
 {
-
     const unsigned int SCREEN_WIDTH = 720;
     const unsigned int SCREEN_HEIGHT = 480;
 
     //auto scene = std::make_unique<Scene>();
     Scene scene;
 
-    auto camera = std::make_unique<Camera>(Vecf(0.0f, 2.5f, 0.0f), Vecf(0.0f,0.0f,-5.0f), Vecf(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Vecf(0.0f, 2.5f, 0.0f), Vecf(0.0f,0.0f,-10.0f), Vecf(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     scene.SetCamera(std::move(camera));
 
-    auto lightOne = std::make_unique<PointLight>(Vecf(0.3556f, 0.533f, 0.9f), 300.0f, Vecf(0.9, 1.5, -1));
+    auto lightOne = std::make_unique<PointLight>(Vecf(0.6, 0.2f, 0.8f), 900.0f, Vecf(-2.2f, 4.0f, -2.5f));
     scene.AddLight(std::move(lightOne));
 
     //auto lightTwo = std::make_unique<PointLight>(Vecf(0.533f, 0.8f, 0.6f), 40.0f, Vecf(-2, 2, -2));
     //scene.AddLight(std::move(lightTwo));
 
 
-    scene.SetBackgroundColor({0.05f, 0.05f, 0.05f});
+    scene.SetBackgroundColor({0.0f, 0.0f, 0.0f});
+
+    //ConstructStandardBox(scene);
 
     Parser parser;
-    auto plane = parser.Parse("../assets/plane.obj");
-    auto plane2 = plane->CloneMesh();
-    auto plane3 = plane->CloneMesh();
-    auto plane4 = plane->CloneMesh();
 
-    plane->ScaleBy(5.0f);
-    plane->TranslateBy({0.0f,0,-5.0f});
+    auto plane = parser.Parse("assets/plane.obj");
+    auto leftPlane = plane->CloneMesh();
+    auto rightPlane = plane->CloneMesh();
+    auto backPlane = plane->CloneMesh();
+
+    plane->ScaleBy(6.0f);
+    plane->TranslateBy({0.0f,-0.5f,-9.0f});
     plane->SetMaterialType(Diffuse);
     scene.AddMesh(std::move(plane));
 
-    plane2->RotateAroundZ(90.0f);
-    plane2->ScaleBy(5.0f);
-    plane2->TranslateBy({-5.0f,0,-5.0f});
-    plane2->SetMaterialType(Diffuse);
-    scene.AddMesh(std::move(plane2));
+    leftPlane->RotateAroundZ(80.0f);
+    leftPlane->ScaleBy(5.0f);
+    leftPlane->TranslateBy({-5.0f,0.0f,-9.0f});
+    leftPlane->SetMaterialType(Diffuse);
+    scene.AddMesh(std::move(leftPlane));
 
-    plane3->RotateAroundZ(-90.0f);
-    plane3->ScaleBy(5.0f);
-    plane3->TranslateBy({5.0f,0,-5.0f});
-    plane3->SetMaterialType(Diffuse);
-    scene.AddMesh(std::move(plane3));
+    rightPlane->RotateAroundZ(-90.0f);
+    rightPlane->ScaleBy(5.0f);
+    rightPlane->TranslateBy({5.0f,2.0f,-9.0f});
+    rightPlane->SetMaterialType(Diffuse);
+    scene.AddMesh(std::move(rightPlane));
 
-    plane4->RotateAroundX(-90.0f);
-    plane4->ScaleBy(5.0f);
-    plane4->TranslateBy({0.0f,0,-10.0f});
-    plane4->SetMaterialType(Diffuse);
-    scene.AddMesh(std::move(plane4));
+    backPlane->RotateAroundX(50.0f);
+    backPlane->ScaleBy(5.0f);
+    backPlane->TranslateBy({0.0f,10.0f,-14.0f});
+    backPlane->SetMaterialType(Diffuse);
+    scene.AddMesh(std::move(backPlane));
+
 
     /*
     auto teapot = parser.Parse("assets/teapot.obj");
 
-    teapot->SetMaterialType(Reflective);
+    
+    teapot->SetMaterialType(Diffuse);
+    teapot->RotateAroundY(30.0f);
+    teapot->ScaleBy(0.08f);
+    teapot->TranslateBy({0,0.8f,-7});
     scene.AddMesh(std::move(teapot));  */
     
 
-    
-    auto sphereOne = std::make_unique<Sphere>(Vecf(0.1f, 0.50f,-4.0f), 0.5f, Vecf(0.18f), ReflectAndRefract);
+    /*
+    auto sphereOne = std::make_unique<Sphere>(Vecf(0.1f, 0.50f,-7.0f), 0.5f, Vecf(0.18f), ReflectAndRefract);
     scene.AddRenderable(std::move(sphereOne));
-    auto sphereTwo = std::make_unique<Sphere>(Vecf(-0.5f, 0.5f, -4.6f), 0.5f, Vecf(0.18f), Reflective);
+    auto sphereTwo = std::make_unique<Sphere>(Vecf(-0.5f, 0.5f, -7.6f), 0.5f, Vecf(0.18f), Reflective);
     scene.AddRenderable(std::move(sphereTwo));
-    auto sphereThree = std::make_unique<Sphere>(Vecf(0.7f, 0.5f, -3.2f), 0.50f, Vecf(0.18f), Diffuse);
-    scene.AddRenderable(std::move(sphereThree)); 
+    auto sphereThree = std::make_unique<Sphere>(Vecf(0.7f, 0.5f, -6.2f), 0.50f, Vecf(0.18f), Diffuse);
+    scene.AddRenderable(std::move(sphereThree)); */
 
     Window window = {SCREEN_WIDTH, SCREEN_HEIGHT};
     ImageBuffer buffer = {SCREEN_WIDTH, SCREEN_HEIGHT};

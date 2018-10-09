@@ -3,17 +3,23 @@
 #include <algorithm>
 #include <cmath>
 // ---------------------------------------------------------------------------
-inline
-float clamp(const float &lo, const float &hi, const float &v)
+
+void GammaEncode(Vecf& color, float gamma)
 {
-	return std::max(lo, std::min(hi, v));
+    float gammaExponent = 1 / gamma;
+    color.r() = pow(color.r(), gammaExponent);
+    color.g() = pow(color.g(), gammaExponent);
+    color.b() = pow(color.b(), gammaExponent);
 }
+
 
 void ConvertToRGB(Vecf& color)
 {
-	color.r() = 255 * sqrt(clamp(0, 1, color.r())); // gamma 2, i.e. sqrt
-	color.g() = 255 * sqrt(clamp(0, 1, color.g()));
-	color.b() = 255 * sqrt(clamp(0, 1, color.b()));
+    GammaEncode(color, 2.2f);
+
+	color.r() = 255 * Math::Clamp(0.0f, 1.0f, color.r()); // gamma 2, i.e. sqrt
+	color.g() = 255 * Math::Clamp(0.0f, 1.0f, color.g());
+	color.b() = 255 * Math::Clamp(0.0f, 1.0f, color.b());
 }
 
 

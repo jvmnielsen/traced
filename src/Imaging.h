@@ -4,8 +4,9 @@
 #include "MathUtil.h"
 
 // ---------------------------------------------------------------------------
-float clamp(const float &lo, const float &hi, const float &v);
 
+
+void GammaEncode(Vecf& color, float gamma);
 void ConvertToRGB(Vecf& color);
 
 

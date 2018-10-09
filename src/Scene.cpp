@@ -78,7 +78,7 @@ Vecf Scene::random_in_unit_sphere()
 
 Vecf Refracted(const Vecf &I, const Vecf &N, const float ior)
 {
-    float cosi = clamp(-1, 1, DotProduct(I, N));
+    float cosi = Math::Clamp(-1.0f, 1.0f, DotProduct(I, N));
     float etai = 1, etat = ior;
     Vecf n = N;
     if (cosi < 0) { cosi = -cosi; } else { std::swap(etai, etat); n= -1 * N; }
@@ -89,7 +89,7 @@ Vecf Refracted(const Vecf &I, const Vecf &N, const float ior)
 
 void Fresnel(const Vecf &I, const Vecf &N, const float &ior, float &kr)
 {
-    float cosi = clamp(-1, 1, I.DotProduct(N));
+    float cosi = Math::Clamp(-1.0f, 1.0f, I.DotProduct(N));
     float etai = 1, etat = ior;
     if (cosi > 0) { std::swap(etai, etat); }
     // Compute sini using Snell's law
