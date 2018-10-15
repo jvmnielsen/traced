@@ -1,10 +1,10 @@
 #include "Material.h"
 #include "MathUtil.h"
 
-bool refract( const Vecf& v, const Vecf& n, float ni_over_nt, Vecf& refracted )
+bool refract( const Vec3f& v, const Vec3f& n, float ni_over_nt, Vec3f& refracted )
 {
-    Vecf uv = UnitVector(v);
-    float dt = DotProduct(uv, n);
+    Vec3f uv = Normalize(v);
+    float dt = uv.DotProduct(n);
     float discriminant = 1.0 - ni_over_nt * ni_over_nt * (1 - dt * dt);
     if (discriminant > 0)
     {

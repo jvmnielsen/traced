@@ -10,6 +10,7 @@
 #include <thread>
 #include "Utility.h"
 
+/*
 void ConstructStandardBox(Scene& scene)
 {
     Parser parser;
@@ -40,21 +41,22 @@ void ConstructStandardBox(Scene& scene)
     backPlane->TranslateBy({0.0f,2.0f,-14.0f});
     backPlane->SetMaterialType(Diffuse);
     scene.AddMesh(std::move(backPlane));
-}
+} */
 
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[])
 {
+    /*
     const unsigned int SCREEN_WIDTH = 720;
     const unsigned int SCREEN_HEIGHT = 480;
 
     //auto scene = std::make_unique<Scene>();
     Scene scene;
 
-    auto camera = std::make_unique<Camera>(Vecf(0.0f, 2.5f, 0.0f), Vecf(0.0f,0.0f,-10.0f), Vecf(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Vec3f(0.0f, 2.5f, 0.0f), Vec3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     scene.SetCamera(std::move(camera));
 
-    auto lightOne = std::make_unique<PointLight>(Vecf(0.6, 0.2f, 0.8f), 900.0f, Vecf(-2.2f, 4.0f, -2.5f));
+    auto lightOne = std::make_unique<PointLight>(Color3f(0.6, 0.2f, 0.8f), 900.0f, Vec3f(-2.2f, 4.0f, -2.5f));
     scene.AddLight(std::move(lightOne));
 
     //auto lightTwo = std::make_unique<PointLight>(Vecf(0.533f, 0.8f, 0.6f), 40.0f, Vecf(-2, 2, -2));
@@ -93,7 +95,7 @@ int main(int argc, char * argv[])
     backPlane->ScaleBy(5.0f);
     backPlane->TranslateBy({0.0f,10.0f,-14.0f});
     backPlane->SetMaterialType(Diffuse);
-    scene.AddMesh(std::move(backPlane));
+    scene.AddMesh(std::move(backPlane)); */
 
 
     /*
@@ -115,6 +117,7 @@ int main(int argc, char * argv[])
     auto sphereThree = std::make_unique<Sphere>(Vecf(0.7f, 0.5f, -6.2f), 0.50f, Vecf(0.18f), Diffuse);
     scene.AddRenderable(std::move(sphereThree)); */
 
+    /*
     Window window = {SCREEN_WIDTH, SCREEN_HEIGHT};
     ImageBuffer buffer = {SCREEN_WIDTH, SCREEN_HEIGHT};
     //auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -126,10 +129,23 @@ int main(int argc, char * argv[])
     window.InitializeWindow(buffer);
     window.CheckForInput(buffer);
 
-    RenderThread.join();
+    RenderThread.join(); */
     
     //ThreadManager manager{ std::move(window), std::move(buffer) };
-    //manager.Run(*scene);
+    //manager.Run(*scene); */
+
+    Matrix<3,3,float> test{};
+    test.m[0][0] = 3;
+    test.m[0][1] = 0;
+    test.m[0][2] = 2;
+    test.m[1][0] = 2;
+    test.m[1][1] = 0;
+    test.m[1][2] = -2;
+    test.m[2][0] = 0;
+    test.m[2][1] = 1;
+    test.m[2][2] = 1;
+
+    auto test2 = test.Invert2();
 
     return 0;
 }

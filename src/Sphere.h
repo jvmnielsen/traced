@@ -5,7 +5,7 @@ class Sphere :
     public Renderable
 {
 public:
-    Sphere(const Vecf& center, const float radius, const Vecf& albedo, MaterialType material)
+    Sphere(const Vec3f& center, const float radius, const Vec3f& albedo, MaterialType material)
         : Renderable(albedo, material)
         , m_center(center)
         , m_radius(radius)
@@ -25,7 +25,7 @@ public:
         m_material = type;
     }
 
-    void TranslateBy(const Vecf& dir) override
+    void TranslateBy(const Vec3f& dir) override
     {
         m_center.x += dir.x;
         m_center.y += dir.y;
@@ -43,7 +43,7 @@ public:
 
 
 private:
-    Vecf m_center;
+    Vec3f m_center;
     float m_radius;
     float m_radius_squared;
 	//Material* m_material;

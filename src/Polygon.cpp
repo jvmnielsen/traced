@@ -8,7 +8,7 @@ void Polygon::UpdateEdges()
 	m_edge0_2 = m_vertices[2] - m_vertices[0];
 	m_edge1 = m_vertices[2] - m_vertices[1];
 	m_edge2 = m_vertices[0] - m_vertices[2];
-	m_normal = CrossProduct(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).Normalize(); 
+	m_normal = m_vertices[1] - m_vertices[0].CrossProduct(m_vertices[2] - m_vertices[0]).Normalize();
 }
 
 void Polygon::TransformByMatrix(const Matrix44f &object_to_world)
@@ -50,7 +50,7 @@ bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
     // precompute for performance
     const auto inverted_det = 1 / det;
 
-    Vecf barycentric(0);
+    Vec3f barycentric(0);
 
     // barycentric coordinate u
     const auto t_vec = ray.origin() - m_vertices[0];
@@ -83,7 +83,7 @@ void Polygon::CalculateNormal(Intersection &hit_data) const
 }
 
 
-void Polygon::TranslateBy(const Vecf& dir) 
+void Polygon::TranslateBy(const Vec3f& dir)
 {
     const Matrix44f translation =
     {    1,      0,     0, 0,

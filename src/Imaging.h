@@ -3,50 +3,103 @@
 #include <cstddef>
 #include "MathUtil.h"
 
-// ---------------------------------------------------------------------------
+void GammaEncode(Vec3f& color, float gamma);
+void ConvertToRGB(Vec3f& color);
 
+template<typename T>
+class Color3
+{
+public:
+    T r, g, b;
 
-void GammaEncode(Vecf& color, float gamma);
-void ConvertToRGB(Vecf& color);
+    constexpr Color3() : r(0), g(0), b(0) { }
+    constexpr explicit Color3(T val) : r(val), g(val), b(val) { }
+    constexpr Color3(T r_, T g_, T b_) : r(r_), g(g_), b(b_) { }
 
+    constexpr auto
+    operator*(T factor) const -> Color3
+    {
+        return Color3{ r * factor, g * factor, b * factor };
+    }
+
+    constexpr auto
+    operator*=(T factor) -> Color3&
+    {
+        r *= factor;
+        g *= factor;
+        b *= factor;
+        return *this;
+    }
+
+    constexpr auto
+    operator/(T factor) const -> Color3
+    {
+        return Color3{ r * factor, g * factor, b * factor };
+    }
+
+    constexpr auto
+    operator/=(T factor) -> Color3&
+    {
+        r /= factor;
+        g /= factor;
+        b /= factor;
+        return *this;
+    }
+
+    constexpr auto
+    operator+(const Color3& other) const -> Color3
+    {
+        return Color3{ r + other.r, g + other.g, b + other.b };
+    }
+
+    constexpr auto
+    operator+=(const Color3& other) -> Color3&
+    {
+        r += other.r;
+        g += other.g;
+        b += other.b;
+        return *this;
+    }
+
+    constexpr auto
+    operator-(const Color3& other) const -> Color3
+    {
+        return Color3{ r - other.r, g - other.g, b - other.b };
+    }
+
+    constexpr auto
+    operator-=(const Color3& other) -> Color3&
+    {
+        r -= other.r;
+        g -= other.g;
+        b -= other.b;
+        return *this;
+    }
+};
+
+typedef Color3<float> Color3f;
+typedef Color3<uint8_t > Color3ui8;
+typedef Color3<unsigned short> Color3ui16;
 
 
 struct LightingInfo
 {
-    Vecf direction;
-    Vecf intensity;
+    Vec3f direction;
+    Color3f intensity;
     float distance;
 };
 
 class Light
 {
 public:
-    Light(const Vecf& color, float intensity = 1);
+    Light(const Color3f& color, float intensity = 1);
 
     virtual ~Light() = default;
-    virtual void illuminate(const Vecf& point, LightingInfo& info) const = 0;
+    virtual void illuminate(const Vec3f& point, LightingInfo& info) const = 0;
 
 protected:
-    Vecf m_color;
+    Color3f m_color;
     float m_intensity;
-};
-
-class DistantLight : public Light
-{
-public:
-    DistantLight(const Vecf& color, const float intensity, const Vecf& direction)
-            : Light(color, intensity)
-            , m_direction(direction)
-    {}
-
-    void illuminate(const Vecf& point, LightingInfo& info) const override
-    {
-        info.direction = m_direction;
-        info.intensity = m_color * m_intensity;
-        info.distance = -1;
-    }
-
-    Vecf m_direction;
 };
 
 class PointLight : public Light
@@ -54,21 +107,21 @@ class PointLight : public Light
 public:
     PointLight() = default;
 
-    PointLight(const Vecf& color, const float intensity, const Vecf& position)
+    PointLight(const Color3f& color, const float intensity, const Vec3f& position)
             : Light(color, intensity)
             , m_position(position)
     {}
 
-    void illuminate(const Vecf& point, LightingInfo& info) const override
+    void illuminate(const Vec3f& point, LightingInfo& info) const override
     {
         info.direction = point - m_position;
-        const auto r2 = info.direction.MagnitudeSquared();
+        const auto r2 = info.direction.LengthSquared();
         info.distance = sqrtf(r2);
         info.direction /= info.distance;
-        info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
+        //info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
     }
 
-    Vecf m_position;
+    Vec3f m_position;
 };
 
 
@@ -80,15 +133,15 @@ public:
 	~Camera() = default;
 
 	Camera(float v_fov, float aspect);
-	Camera(const Vecf& look_from, const Vecf& look_at, const Vecf& v_up, const float v_fov, const float aspect);
+	Camera(const Vec3f& look_from, const Vec3f& look_at, const Vec3f& v_up, const float v_fov, const float aspect);
 
 	Rayf GetRay(const float u, const float v) const;
 
 private:
-	Vecf m_origin;
-	Vecf m_lowerLeftCorner;
-	Vecf m_horizontal;
-	Vecf m_vertical;
+	Vec3f m_origin;
+	Vec3f m_lowerLeftCorner;
+	Vec3f m_horizontal;
+	Vec3f m_vertical;
 };
 
 // ---------------------------------------------------------------------------
@@ -99,15 +152,15 @@ class ImageBuffer
 public:
     ImageBuffer(size_t screenWidth, size_t screenHeight);
 
-    void AddPixelAt(Vecf& color, size_t i, size_t j); // read/write for pixel at specified location
+    auto AddPixelAt(Color3f& color, size_t i, size_t j) -> void; // read/write for pixel at specified location
 
 	//void AddPixel(const Color& color);
 
-    size_t Width() const { return m_screenWidth; }
-    size_t Height() const { return m_screenHeight; }
+    constexpr auto Width() -> size_t { return m_screenWidth;  }
+    constexpr auto Height() -> size_t { return m_screenHeight; }
 
-    int BitsPerByte() const { return m_bitsPerByte; }
-	int Channels() const { return m_channels; }
+    constexpr auto BitsPerByte() -> int { return m_bitsPerByte; }
+	constexpr auto Channels() -> int { return m_channels; }
 
 	std::vector<unsigned char>* PtrToBuffer() { return &m_buffer; }
 	std::vector<unsigned char> m_buffer;   // flattened raw RGB array used by SDL

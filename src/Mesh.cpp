@@ -39,7 +39,7 @@ void Mesh::SetMaterialType(const MaterialType& type)
     }
 }
 
-void Mesh::TranslateBy(const Vecf& dir)
+void Mesh::TranslateBy(const Vec3f& dir)
 {
     for (auto& polygon : m_mesh)
         polygon->TranslateBy(dir);

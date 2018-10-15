@@ -4,26 +4,26 @@
 #include <cmath>
 // ---------------------------------------------------------------------------
 
-void GammaEncode(Vecf& color, float gamma)
+void GammaEncode(Color3f& color, float gamma)
 {
     float gammaExponent = 1 / gamma;
-    color.r() = pow(color.r(), gammaExponent);
-    color.g() = pow(color.g(), gammaExponent);
-    color.b() = pow(color.b(), gammaExponent);
+    color.r = pow(color.r, gammaExponent);
+    color.g = pow(color.g, gammaExponent);
+    color.b = pow(color.b, gammaExponent);
 }
 
 
-void ConvertToRGB(Vecf& color)
+void ConvertToRGB(Color3f& color)
 {
     GammaEncode(color, 2.2f);
 
-	color.r() = 255 * Math::Clamp(0.0f, 1.0f, color.r()); // gamma 2, i.e. sqrt
-	color.g() = 255 * Math::Clamp(0.0f, 1.0f, color.g());
-	color.b() = 255 * Math::Clamp(0.0f, 1.0f, color.b());
+	color.r = 255 * Math::Clamp(0.0f, 1.0f, color.r); // gamma 2, i.e. sqrt
+	color.g = 255 * Math::Clamp(0.0f, 1.0f, color.g);
+	color.b = 255 * Math::Clamp(0.0f, 1.0f, color.b);
 }
 
 
-Light::Light(const Vecf& color, const float intensity)
+Light::Light(const Color3f& color, const float intensity)
         : m_color(color)
         , m_intensity(intensity)
 {
@@ -32,30 +32,30 @@ Light::Light(const Vecf& color, const float intensity)
 Camera::Camera(const float v_fov, const float aspect)
 {
     const auto theta = v_fov * M_PI / 180; // degrees to radians
-    const auto half_height = tan(theta / 2);
+    const auto half_height = static_cast<float>(tan(theta / 2));
     const auto half_width = aspect * half_height;
-    m_lowerLeftCorner = Vecf(-half_width, -half_height, -1.0);
-    m_horizontal = Vecf(2 * half_width, 0.0f, 0.0f);
-    m_vertical = Vecf(0.0f, 2 * half_height, 0.0f);
-    m_origin = Vecf(0.0f);
+    m_lowerLeftCorner = Vec3f(-half_width, -half_height, -1.0f);
+    m_horizontal = Vec3f(2.0f * half_width, 0.0f, 0.0f);
+    m_vertical = Vec3f(0.0f, 2.0f * half_height, 0.0f);
+    m_origin = Vec3f(0.0f);
 }
 
 Camera::Camera(
-        const Vecf& look_from,
-        const Vecf& look_at,
-        const Vecf& v_up,
+        const Vec3f& look_from,
+        const Vec3f& look_at,
+        const Vec3f& v_up,
         const float v_fov,
         const float aspect)
 {
     const auto theta = v_fov * M_PI / 180;
-    const auto half_height = tan(theta / 2);
+    const auto half_height = static_cast<float>(tan(theta / 2));
     const auto half_width = aspect * half_height;
 
     m_origin = look_from;
 
-    const auto w = UnitVector(look_from - look_at);
-    const auto u = UnitVector(CrossProduct(v_up, w));
-    const auto v = CrossProduct(w, u);
+    const auto w = (look_from - look_at).Normalize();
+    const auto u = (v_up.CrossProduct(w)).Normalize();
+    const auto v = w.CrossProduct(u);
 
     m_lowerLeftCorner = m_origin - half_width * u - half_height * v - w;
     m_horizontal = 2 * half_width * u;
@@ -65,7 +65,7 @@ Camera::Camera(
 Rayf Camera::GetRay(const float u, const float v) const
 {
     return {m_origin,
-            m_lowerLeftCorner + u * m_horizontal + v * m_vertical - m_origin, PrimaryRay};
+            m_lowerLeftCorner + u * m_horizontal + v * m_vertical - m_origin, RayType::PrimaryRay};
 }
 
 ImageBuffer::ImageBuffer(
@@ -85,16 +85,16 @@ ImageBuffer::ImageBuffer(
 	}
 }
 
-void ImageBuffer::AddPixelAt(Vecf& color, size_t i, size_t j)
+auto ImageBuffer::AddPixelAt(Color3f& color, size_t i, size_t j) -> void
 {
 	auto corrected_j = std::abs((int)j - (int)m_screenHeight) - 1; // to correct for j starting at screen_height and decrementing
 
     if ((i < m_screenWidth) && (j < m_screenHeight))
     {
 		ConvertToRGB(color);
-        m_buffer[(corrected_j * m_screenWidth + i) * 4    ] = color.r();
-		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 1] = color.g();
-		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 2] = color.b();
+        m_buffer[(corrected_j * m_screenWidth + i) * 4    ] = color.r;
+		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 1] = color.g;
+		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 2] = color.b;
 		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 3] = 255;
     }
 	else
