@@ -24,13 +24,13 @@ public:
 
     bool HasBeenHit() const { return m_has_been_hit; }
 
-    const Vecf& Point() const { return m_point; }
+    const Point3f& Point() const { return m_point; }
 
-    void SetBarycentric(const Vecf& barycentric ) { m_barycentric_coord = barycentric; };
-    const Vecf& Barycentric() const { return m_barycentric_closest; }
+    void SetBarycentric(const Vec3f& barycentric ) { m_barycentric_coord = barycentric; };
+    const Vec3f& Barycentric() const { return m_barycentric_closest; }
 
-    void SetNormal(const Vecf& normal) { m_normal = normal; }
-    const Vecf& Normal() const { return m_normal; }
+    void SetNormal(const Vec3f& normal) { m_normal = normal; }
+    const Vec3f& Normal() const { return m_normal; }
 
     Renderable* RenderablePtr() const { return m_ptr; }
 
@@ -39,14 +39,14 @@ public:
 
 
     float       m_t;
-    Vecf        m_point;
-    Vecf        m_barycentric_coord;
+    Point3f     m_point;
+    Vec3f       m_barycentric_coord;
 
 private:
    
-    Vecf        m_normal;
+    Vec3f        m_normal;
     float       m_t_closest;
-    Vecf        m_barycentric_closest;
+    Vec3f        m_barycentric_closest;
     Renderable* m_ptr;                  // observing
     bool        m_has_been_hit;
 };
@@ -58,7 +58,7 @@ class Renderable
 public:
     Renderable() : m_material(Diffuse) {}
 
-    Renderable(const Vecf& albedo, MaterialType material)
+    Renderable(const Color3f& albedo, MaterialType material)
         : m_albedo(albedo)
         , m_material(material) {}
 
@@ -71,13 +71,13 @@ public:
 
     virtual bool Intersects(const Rayf &ray, Intersection &hit_data) = 0;
 
-	virtual void TransformByMatrix(const Matrix44f &object_to_world) = 0;
+	virtual void TransformByMatrix(const Matrix4x4f &object_to_world) = 0;
 
     virtual void CalculateNormal(Intersection &hit_data) const = 0;
 
     virtual void SetMaterialType(const MaterialType& type) = 0;
 
-    virtual void TranslateBy(const Vecf& dir) = 0;
+    virtual void TranslateBy(const Vec3f& dir) = 0;
 
     virtual void ScaleBy(float factor) = 0;
 
@@ -86,10 +86,10 @@ public:
     virtual void RotateAroundZ(float dir) = 0;
 
 	MaterialType Material() const { return m_material; }
-	Vecf Albedo() const { return m_albedo; }
+	Color3f Albedo() const { return m_albedo; }
 
 protected:
-    Vecf m_albedo;
+    Color3f m_albedo;
     MaterialType m_material;
 };
 

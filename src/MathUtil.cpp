@@ -4,63 +4,6 @@
 
 
 
-template<typename T>
-Point<T>::Point(T val)
-	: x(val)
-	, y(val)
-	, z(val)
-{
-}
-
-template<typename T>
-Point<T> ::Point()
-	: x(T(0))
-	, y(T(0))
-	, z(T(0))
-{
-}
-
-template<typename T>
-Point<T>::Point(T x, T y, T z)
-	: x(x)
-	, y(y)
-	, z(z)
-{
-}
-
-template<typename T>
-Point<T> Point<T>::operator + (const Point<T>& other) const
-{
-	return Point<T>(x + other.x, y + other.y, z + other.z);
-}
-
-template<typename T>
-Point<T>& Point<T>::operator += (const Point<T>& other)
-{
-	x += other.x;
-	y += other.y;
-	z += other.z;
-	return *this;
-}
-
-template<typename T>
-Point<T> Point<T>::operator - (const Point<T>& other) const
-{
-	return Point<T>(x - other.x, y - other.y, z - other.z);
-}
-
-template<typename T>
-Point<T>& Point<T>::operator -= (const Point<T>& other)
-{
-	x -= other.x;
-	y -= other.y;
-	z -= other.z;
-	return *this;
-}
-
-template class Point<int>;
-template class Point<float>;
-template class Point<double>;
 /*
 template<typename T>
 T Vec3<T>::MagnitudeSquared() const

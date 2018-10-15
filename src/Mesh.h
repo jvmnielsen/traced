@@ -9,19 +9,19 @@ class Mesh :
     public Renderable
 {
 public:
-	Mesh() : Renderable(Vecf(0.18f), Diffuse) {}
+	Mesh() : Renderable(Color3f(0.18f), Diffuse) {}
 
 	bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
 	void AddPolygon(std::unique_ptr<Polygon> polygon);
 
-	void TransformByMatrix(const Matrix44f &object_to_world) override;
+	void TransformByMatrix(const Matrix4x4f &object_to_world) override;
 
     void CalculateNormal(Intersection &hit_data) const override;
 
 	void SetMaterialType(const MaterialType& type) override;
 
-    void TranslateBy(const Vecf& dir) override;
+    void TranslateBy(const Vec3f& dir) override;
 
     void RotateAroundX(float angle) override;
 

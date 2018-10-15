@@ -5,7 +5,7 @@ class Sphere :
     public Renderable
 {
 public:
-    Sphere(const Vecf& center, const float radius, const Vecf& albedo, MaterialType material)
+    Sphere(const Point3f& center, const float radius, const Color3f& albedo, MaterialType material)
         : Renderable(albedo, material)
         , m_center(center)
         , m_radius(radius)
@@ -16,7 +16,7 @@ public:
 
     bool solve_quadratic(const float a, const float b, const float c, float& solutionOne, float& solutionTwo) const;
 
-    void TransformByMatrix(const Matrix44f &object_to_world) override { }
+    void TransformByMatrix(const Matrix4x4f &object_to_world) override { }
 
     void CalculateNormal(Intersection &intersection) const override;
 
@@ -25,7 +25,7 @@ public:
         m_material = type;
     }
 
-    void TranslateBy(const Vecf& dir) override
+    void TranslateBy(const Vec3f& dir) override
     {
         m_center.x += dir.x;
         m_center.y += dir.y;
@@ -43,7 +43,7 @@ public:
 
 
 private:
-    Vecf m_center;
+    Point3f m_center;
     float m_radius;
     float m_radius_squared;
 	//Material* m_material;

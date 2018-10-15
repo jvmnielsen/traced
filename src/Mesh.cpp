@@ -18,7 +18,7 @@ void Mesh::AddPolygon(std::unique_ptr<Polygon> polygon)
 	m_mesh.push_back(std::move(polygon));
 }
 
-void Mesh::TransformByMatrix(const Matrix44f &object_to_world)
+void Mesh::TransformByMatrix(const Matrix4x4f &object_to_world)
 {
 	for (auto& polygon : m_mesh)
 	{
@@ -39,7 +39,7 @@ void Mesh::SetMaterialType(const MaterialType& type)
     }
 }
 
-void Mesh::TranslateBy(const Vecf& dir)
+void Mesh::TranslateBy(const Vec3f& dir)
 {
     for (auto& polygon : m_mesh)
         polygon->TranslateBy(dir);

@@ -29,11 +29,11 @@ public:
 
     void SetCamera(std::unique_ptr<Camera> camera);
 
-    void SetBackgroundColor(const Vecf& color) { m_backgroundColor = color; }
-    const Vecf& BackgroundColor() { return m_backgroundColor; }
+    constexpr auto SetBackgroundColor(const Color3f& color)  -> void { m_backgroundColor = color; }
+    constexpr auto BackgroundColor() const -> Color3f { return m_backgroundColor; }
 
 private:
-    Vecf m_backgroundColor;
+    Color3f m_backgroundColor;
     uint32_t m_max_depth;
 
 	std::vector<std::shared_ptr<Light>> m_scene_lights;
@@ -52,9 +52,9 @@ private:
     void TraceSimpleObjects(const Rayf &ray, Intersection &hit_data);
     void TraceMeshes(const Rayf &ray, Intersection &hit_data);
 	
-    Vecf CastRay(const Rayf& ray, uint32_t depth);
+    Color3f CastRay(const Rayf& ray, uint32_t depth);
 
-    Vecf random_in_unit_sphere();
+    Vec3f random_in_unit_sphere();
 
     std::unique_ptr<Camera> m_camera;
 

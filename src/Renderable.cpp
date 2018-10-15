@@ -8,7 +8,7 @@ void Intersection::CalculateNormal(const Rayf &ray)
 
 void Intersection::UpdateClosest(Renderable *ptr, const Rayf &ray)
 {
-    if (ptr->Material() == ReflectAndRefract && ray.m_rayType == ShadowRay) // we skip in this case
+    if (ptr->Material() == ReflectAndRefract && ray.getRayType() == RayType::ShadowRay) // we skip in this case
         return;
 
     if (m_t < m_t_closest && m_t > 0)
@@ -17,7 +17,7 @@ void Intersection::UpdateClosest(Renderable *ptr, const Rayf &ray)
         m_t_closest = m_t;
         //m_point_closest = m_point;
         m_ptr = ptr;
-        m_point = ray.point_at_parameter(m_t_closest);
+        m_point = ray.PointAtParameter(m_t_closest);
         m_has_been_hit = true; // optimise, is done every time
     }
 
