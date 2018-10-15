@@ -3,6 +3,9 @@
 #include <vector>
 #include <cmath>
 #include <cstring>
+#include <iomanip>
+
+
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -44,6 +47,14 @@ struct Vec3 {
     T x, y, z;
 
     constexpr Vec3() = default;
+    constexpr Vec3(const Vec3& other) = default;
+    constexpr Vec3& operator=(const Vec3& other)
+    {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+        return *this;
+    }
 
     constexpr explicit Vec3(T val) : x(val), y(val), z(val) {}
 
@@ -162,6 +173,11 @@ struct Vec3 {
     {
         return (&x)[i];
     }
+
+    void PrettyPrint() const
+    {
+        std::cout << "[ " << x << ", " << y << ", " << z << " ]\n";
+    }
 };
 
 template<typename T>
@@ -232,6 +248,11 @@ struct Point3
     constexpr T& operator[](const uint8_t i)
     {
         return (&x)[i];
+    }
+
+    void PrettyPrint() const
+    {
+        std::cout << "( " << x << ", " << y << ", " << z << " )\n";
     }
 };
 
@@ -510,6 +531,14 @@ public:
         auto w = vec[0] * m[0][3] + vec[1] * m[1][3] + vec[2] * m[2][3] + m[3][3];
 
         return {a, b, c};
+    }
+
+    void PrettyPrint() const
+    {
+        std::cout << "| " << std::setw(4) << m[0][0] << ", " << std::setw(4) << m[0][1] << ", " << std::setw(4)<< m[0][2] << ", " << std::setw(4) << m[0][3] << std::setw(4) << " |\n";
+        std::cout << "| " << std::setw(4) << m[1][0] << ", " << std::setw(4) << m[1][1] << ", " << std::setw(4)<< m[1][2] << ", " << std::setw(4) << m[1][3] << std::setw(4) << " |\n";
+        std::cout << "| " << std::setw(4) << m[2][0] << ", " << std::setw(4) << m[2][1] << ", " << std::setw(4)<< m[2][2] << ", " << std::setw(4) << m[2][3] << std::setw(4) << " |\n";
+        std::cout << "| " << std::setw(4) << m[3][0] << ", " << std::setw(4) << m[3][1] << ", " << std::setw(4)<< m[3][2] << ", " << std::setw(4) << m[3][3] << std::setw(4) << " |\n";
     }
 };
 typedef Matrix4x4<float> Matrix4x4f;

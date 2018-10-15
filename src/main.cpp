@@ -143,8 +143,22 @@ int main(int argc, char * argv[])
     };
 
     constexpr Matrix4x4f test { m };
+    test.PrettyPrint();
+
+    Vec3f vec { 2.0f, 9.0f, 81.0f };
+    Vec3f vec2 { 3.0f, 9.0f, 81.0f };
+    //constexpr auto vec3 = vec + vec2;
+
+    Math::Swap(vec, vec2);
+
+    vec.PrettyPrint();
+    vec2.PrettyPrint();
+
+    std::cout << vec.x << std::endl;
+    std::cout << vec2.x << std::endl;
 
     constexpr Matrix4x4f test2 = test.Invert();
+    test2.PrettyPrint();
 
     return 0;
 }
