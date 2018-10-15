@@ -100,7 +100,7 @@ struct LightingInfo
 class Light
 {
 public:
-    Light(const Color3f& color, float intensity = 1);
+    Light(const Color3f& color, float intensity = 1.0f);
 
     virtual ~Light() = default;
     virtual void illuminate(const Point3f& point, LightingInfo& info) const = 0;
@@ -126,7 +126,7 @@ public:
         const auto r2 = info.direction.LengthSquared();
         info.distance = sqrtf(r2);
         info.direction /= info.distance;
-        //info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
+        info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
     }
 
     Point3f m_position;

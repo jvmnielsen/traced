@@ -57,7 +57,7 @@ int main(int argc, char * argv[])
     auto camera = std::make_unique<Camera>(Point3f(0.0f, 2.5f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     scene.SetCamera(std::move(camera));
 
-    auto lightOne = std::make_unique<PointLight>(Color3f(0.6f, 0.2f, 0.8f), 90000.0f, Point3f(-2.2f, 4.0f, -2.5f));
+    auto lightOne = std::make_unique<PointLight>(Color3f(0.6f, 0.2f, 0.8f), 0.009f, Point3f(-2.2f, 4.0f, -2.5f));
     scene.AddLight(std::move(lightOne));
 
     //auto lightTwo = std::make_unique<PointLight>(Vecf(0.533f, 0.8f, 0.6f), 40.0f, Vecf(-2, 2, -2));

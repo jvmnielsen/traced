@@ -141,7 +141,7 @@ Color3f Scene::CastRay(const Rayf& ray, uint32_t depth)
                          hit_data.RenderablePtr()->Albedo()
                         * light_info.intensity
                         * std::max(0.f, hit_data.Normal().DotProduct(-light_info.direction))
-                        * !shadow_intersect.HasBeenHit();
+                        * static_cast<int>(!shadow_intersect.HasBeenHit());
                 } 
                 //hit_color = {100, 100, 100};
                 break;
