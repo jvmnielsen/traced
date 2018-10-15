@@ -8,6 +8,7 @@
 #include "ThreadManager.h"
 #include "Parser.h"
 #include <thread>
+#include <array>
 #include "Utility.h"
 
 /*
@@ -134,18 +135,16 @@ int main(int argc, char * argv[])
     //ThreadManager manager{ std::move(window), std::move(buffer) };
     //manager.Run(*scene); */
 
-    Matrix<3,3,float> test{};
-    test.m[0][0] = 3;
-    test.m[0][1] = 0;
-    test.m[0][2] = 2;
-    test.m[1][0] = 2;
-    test.m[1][1] = 0;
-    test.m[1][2] = -2;
-    test.m[2][0] = 0;
-    test.m[2][1] = 1;
-    test.m[2][2] = 1;
+    constexpr std::array<std::array<float, 4>, 4> m = {
+            2, 2, 3, 1,
+            9, 82, 9, 9,
+            0, 1, 92, 0,
+            0, 1, 0, 0
+    };
 
-    auto test2 = test.Invert2();
+    constexpr Matrix4x4f test { m };
+
+    constexpr Matrix4x4f test2 = test.Invert();
 
     return 0;
 }

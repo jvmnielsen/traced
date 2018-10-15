@@ -52,8 +52,8 @@ public:
 
     bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
-    void TransformByMatrix(const Matrix44f &object_to_world) override;
-    void TransformByMatrix2(const Matrix44f &object_to_world);
+    void TransformByMatrix(const Matrix4x4f &object_to_world) override;
+    void TransformByMatrix2(const Matrix4x4f &object_to_world);
 
     void SetMaterialType(const MaterialType& type) override
     {
@@ -62,13 +62,13 @@ public:
 
     void CalculateNormal(Intersection &hit_data) const override;
 
-    void TranslateBy(const Vec3f& dir) override;
+    void TranslateBy(const Vec3f& dir) override {}
 
-    void RotateAroundX(float angle) override;
-    void RotateAroundY(float angle) override;
-    void RotateAroundZ(float angle) override;
+    void RotateAroundX(float angle) override {}
+    void RotateAroundY(float angle) override {}
+    void RotateAroundZ(float angle) override {}
 
-    void ScaleBy(float factor) override;
+    void ScaleBy(float factor) override {}
 
 
     Vec3f m_vertices[3];  // TODO: encapsulate

@@ -71,7 +71,7 @@ public:
 
     virtual bool Intersects(const Rayf &ray, Intersection &hit_data) = 0;
 
-	virtual void TransformByMatrix(const Matrix44f &object_to_world) = 0;
+	virtual void TransformByMatrix(const Matrix4x4f &object_to_world) = 0;
 
     virtual void CalculateNormal(Intersection &hit_data) const = 0;
 

@@ -15,7 +15,7 @@ public:
 
 	void AddPolygon(std::unique_ptr<Polygon> polygon);
 
-	void TransformByMatrix(const Matrix44f &object_to_world) override;
+	void TransformByMatrix(const Matrix4x4f &object_to_world) override;
 
     void CalculateNormal(Intersection &hit_data) const override;
 

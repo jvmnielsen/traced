@@ -11,28 +11,28 @@ void Polygon::UpdateEdges()
 	m_normal = m_vertices[1] - m_vertices[0].CrossProduct(m_vertices[2] - m_vertices[0]).Normalize();
 }
 
-void Polygon::TransformByMatrix(const Matrix44f &object_to_world)
+void Polygon::TransformByMatrix(const Matrix4x4f &object_to_world)
 {
 	for(auto& vertex : m_vertices)
 	{
-        vertex = object_to_world.multiply_with_point(vertex);
+        vertex = object_to_world.Multiply(vertex);
 	}
 
-    const auto transformNormals = object_to_world.inverse(); // normals are transformed by the inverse matrix
+    //Matrix44f transformNormals = object_to_world.Invert(); // normals are transformed by the inverse matrix
 
     for (auto& normal : m_vertex_normals)
     {
-        normal = transformNormals.multiply_with_dir(normal);
+        //normal = transformNormals.Multiply(normal);
     }
 
     UpdateEdges(); // precompute edges again
 }
 
-void Polygon::TransformByMatrix2(const Matrix44f &object_to_world)
+void Polygon::TransformByMatrix2(const Matrix4x4f &object_to_world)
 {
     for (auto& vertex : m_vertices)
     {
-        vertex = object_to_world.multiply_with_point(vertex);
+        vertex = object_to_world.Multiply(vertex);
     }
 
     UpdateEdges(); // precompute edges again
@@ -82,7 +82,7 @@ void Polygon::CalculateNormal(Intersection &hit_data) const
     hit_data.SetNormal(Normalize(normal));
 }
 
-
+/*
 void Polygon::TranslateBy(const Vec3f& dir)
 {
     const Matrix44f translation =
@@ -141,3 +141,4 @@ void Polygon::ScaleBy(float factor)
 
     TransformByMatrix2(scale);
 }
+*/

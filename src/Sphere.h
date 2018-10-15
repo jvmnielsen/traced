@@ -16,7 +16,7 @@ public:
 
     bool solve_quadratic(const float a, const float b, const float c, float& solutionOne, float& solutionTwo) const;
 
-    void TransformByMatrix(const Matrix44f &object_to_world) override { }
+    void TransformByMatrix(const Matrix4x4f &object_to_world) override { }
 
     void CalculateNormal(Intersection &intersection) const override;
 
