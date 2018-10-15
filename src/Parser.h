@@ -16,8 +16,8 @@ private:
     void Reset();
 
     //std::ifstream m_file_in;
-	std::vector<Vec3f> m_vertex;
-	std::vector<Vec3f> m_texture_coord;
+	std::vector<Point3f> m_vertex;
+	std::vector<Point3f> m_texture_coord;
 	std::vector<Vec3f> m_normals;
 	std::vector<Vec3i> m_faces;
 

@@ -8,7 +8,7 @@ void Polygon::UpdateEdges()
 	m_edge0_2 = m_vertices[2] - m_vertices[0];
 	m_edge1 = m_vertices[2] - m_vertices[1];
 	m_edge2 = m_vertices[0] - m_vertices[2];
-	m_normal = m_vertices[1] - m_vertices[0].CrossProduct(m_vertices[2] - m_vertices[0]).Normalize();
+	m_normal = (m_vertices[1] - m_vertices[0]).CrossProduct(m_vertices[2] - m_vertices[0]).Normalize();
 }
 
 void Polygon::TransformByMatrix(const Matrix4x4f &object_to_world)
@@ -40,7 +40,7 @@ void Polygon::TransformByMatrix2(const Matrix4x4f &object_to_world)
 
 bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
 {
-    const auto p_vec = ray.direction().CrossProduct(m_edge0_2);
+    const auto p_vec = ray.Direction().CrossProduct(m_edge0_2);
     const auto det = m_edge0.DotProduct(p_vec);
 
     // back-face culling
@@ -53,14 +53,14 @@ bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
     Vec3f barycentric(0);
 
     // barycentric coordinate u
-    const auto t_vec = ray.origin() - m_vertices[0];
+    const auto t_vec = ray.Origin() - m_vertices[0];
     barycentric.x = t_vec.DotProduct(p_vec) * inverted_det;
     if (barycentric.x < 0 || barycentric.x > 1)
         return false;
 
     // barycentric coordinate v
     const auto q_vec = t_vec.CrossProduct(m_edge0);
-    barycentric.y = ray.direction().DotProduct( q_vec ) * inverted_det;
+    barycentric.y = ray.Direction().DotProduct( q_vec ) * inverted_det;
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return false;
 
@@ -75,9 +75,9 @@ bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
 void Polygon::CalculateNormal(Intersection &hit_data) const
 {
     // for flat shading simply return the face normal
-    const auto normal = (1 - hit_data.Barycentric().x - hit_data.Barycentric().y) * m_vertex_normals[0]
-        + hit_data.Barycentric().x * m_vertex_normals[1]
-        + hit_data.Barycentric().y * m_vertex_normals[2];
+    const auto normal = m_vertex_normals[0] * (1 - hit_data.Barycentric().x - hit_data.Barycentric().y)
+        + m_vertex_normals[1] * hit_data.Barycentric().x
+        + m_vertex_normals[2] *  hit_data.Barycentric().y;
 
     hit_data.SetNormal(Normalize(normal));
 }

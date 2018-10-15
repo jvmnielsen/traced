@@ -63,7 +63,7 @@ Intersection Scene::Trace(const Rayf &ray)
 
 inline Vec3f Reflect(const Vec3f &v, const Vec3f &n)
 {
-    return v - 2 * v.DotProduct(n) * n;
+    return v - n * 2 * v.DotProduct(n);
 }
 
 Vec3f Scene::random_in_unit_sphere()
@@ -71,7 +71,7 @@ Vec3f Scene::random_in_unit_sphere()
     Vec3f p;
     do
     {
-        p = 2.0f * Vec3f(m_dist(m_gen), m_dist(m_gen), m_dist(m_gen)) - Vec3f(1, 1, 1);
+        p = Vec3f(m_dist(m_gen), m_dist(m_gen), m_dist(m_gen)) * 2.0f - Vec3f(1, 1, 1);
     } while (p.LengthSquared() >= 1.0);
     return p;
 }
@@ -84,7 +84,7 @@ Vec3f Refracted(const Vec3f &I, const Vec3f &N, const float ior)
     if (cosi < 0) { cosi = -cosi; } else { std::swap(etai, etat); n= -N; }
     float eta = etai / etat;
     float k = 1 - eta * eta * (1 - cosi * cosi);
-    return k < 0 ? Vec3f(0) : eta * I + (eta * cosi - sqrtf(k)) * n;
+    return k < 0 ? Vec3f(0) : I * eta + n * (eta * cosi - sqrtf(k));
 }
 
 void Fresnel(const Vec3f &I, const Vec3f &N, const float &ior, float &kr)
@@ -114,7 +114,7 @@ Color3f Scene::CastRay(const Rayf& ray, uint32_t depth)
     if (depth > m_max_depth)
         return m_backgroundColor;
 
-    /*
+
 	Color3f hit_color{};
     auto hit_data = Trace(ray);
 
@@ -137,39 +137,40 @@ Color3f Scene::CastRay(const Rayf& ray, uint32_t depth)
                     auto shadow_intersect = Trace(
                             Rayf(hit_data.Point() + hit_data.Normal() * m_shadow_bias, -light_info.direction,
                                  RayType::ShadowRay));
-                    hit_color += !shadow_intersect.HasBeenHit()
-                        * hit_data.RenderablePtr()->Albedo()
+                    hit_color +=
+                         hit_data.RenderablePtr()->Albedo()
                         * light_info.intensity
-                        * std::max(0.f, hit_data.Normal().DotProduct(-light_info.direction));
+                        * std::max(0.f, hit_data.Normal().DotProduct(-light_info.direction))
+                        * !shadow_intersect.HasBeenHit();
                 } 
                 //hit_color = {100, 100, 100};
                 break;
             }
             case Reflective:
             {
-                const auto reflected = Reflect(ray.direction(), hit_data.Normal());
+                const auto reflected = Reflect(ray.Direction(), hit_data.Normal());
                 
-                hit_color += 0.8 * CastRay(Rayf(hit_data.Point() + hit_data.Normal() * m_shadow_bias, reflected, RayType::PrimaryRay), depth + 1); // fuzzines: + 0.05 * random_in_unit_sphere()
+                hit_color += 0.8f * CastRay(Rayf(hit_data.Point() + hit_data.Normal() * m_shadow_bias, reflected, RayType::PrimaryRay), depth + 1); // fuzzines: + 0.05 * random_in_unit_sphere()
                 break;
             }
             case ReflectAndRefract:
             {
-                Vec3f reflectColor = {};
-                Vec3f refractColor = {};
+                Color3f reflectColor = {};
+                Color3f refractColor = {};
                 float kr;
-                Fresnel(ray.direction(), hit_data.Normal(), 0.9, kr);
-                bool outside = ray.direction().DotProduct(hit_data.Normal()) < 0;
+                Fresnel(ray.Direction(), hit_data.Normal(), 0.9, kr);
+                bool outside = ray.Direction().DotProduct(hit_data.Normal()) < 0;
                 Vec3f bias = m_shadow_bias * hit_data.Normal();
 
                 if (kr < 1)
                 {
-                    Vec3f refractionDirection = Refracted(ray.direction(), hit_data.Normal(), 0.9).Normalize();
-                    Vec3f refractionRayOrig = outside ? hit_data.Point() - bias : hit_data.Point() + bias;
+                    Vec3f refractionDirection = Refracted(ray.Direction(), hit_data.Normal(), 0.9).Normalize();
+                    Point3f refractionRayOrig = outside ? hit_data.Point() - bias : hit_data.Point() + bias;
                     refractColor = CastRay(Rayf(refractionRayOrig, refractionDirection, RayType::PrimaryRay), depth + 1);
                 }
 
-                Vec3f reflectionDirection = Reflect(ray.direction(), hit_data.Normal()).Normalize();
-                Vec3f reflectionRayOrig = outside ? hit_data.Point() + bias : hit_data.Point() - bias;
+                Vec3f reflectionDirection = Reflect(ray.Direction(), hit_data.Normal()).Normalize();
+                Point3f reflectionRayOrig = outside ? hit_data.Point() + bias : hit_data.Point() - bias;
                 reflectColor = CastRay(Rayf(reflectionRayOrig, reflectionDirection, RayType::PrimaryRay), depth + 1);
 
                 hit_color += reflectColor * kr + refractColor * (1 - kr);
@@ -189,8 +190,8 @@ Color3f Scene::CastRay(const Rayf& ray, uint32_t depth)
 	{
 		hit_color = m_backgroundColor;
 	}
-    */
-	return { 255, 255, 255 };
+
+	return hit_color;
 }
 
 void Scene::Render(ImageBuffer& buffer)

@@ -24,7 +24,7 @@ public:
 
     bool HasBeenHit() const { return m_has_been_hit; }
 
-    const Vec3f& Point() const { return m_point; }
+    const Point3f& Point() const { return m_point; }
 
     void SetBarycentric(const Vec3f& barycentric ) { m_barycentric_coord = barycentric; };
     const Vec3f& Barycentric() const { return m_barycentric_closest; }
@@ -39,8 +39,8 @@ public:
 
 
     float       m_t;
-    Vec3f        m_point;
-    Vec3f        m_barycentric_coord;
+    Point3f     m_point;
+    Vec3f       m_barycentric_coord;
 
 private:
    
@@ -58,7 +58,7 @@ class Renderable
 public:
     Renderable() : m_material(Diffuse) {}
 
-    Renderable(const Vec3f& albedo, MaterialType material)
+    Renderable(const Color3f& albedo, MaterialType material)
         : m_albedo(albedo)
         , m_material(material) {}
 
@@ -86,10 +86,10 @@ public:
     virtual void RotateAroundZ(float dir) = 0;
 
 	MaterialType Material() const { return m_material; }
-	Vec3f Albedo() const { return m_albedo; }
+	Color3f Albedo() const { return m_albedo; }
 
 protected:
-    Vec3f m_albedo;
+    Color3f m_albedo;
     MaterialType m_material;
 };
 

@@ -47,29 +47,30 @@ void ConstructStandardBox(Scene& scene)
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[])
 {
-    /*
+
     const unsigned int SCREEN_WIDTH = 720;
     const unsigned int SCREEN_HEIGHT = 480;
 
     //auto scene = std::make_unique<Scene>();
     Scene scene;
 
-    auto camera = std::make_unique<Camera>(Vec3f(0.0f, 2.5f, 0.0f), Vec3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 2.5f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     scene.SetCamera(std::move(camera));
 
-    auto lightOne = std::make_unique<PointLight>(Color3f(0.6, 0.2f, 0.8f), 900.0f, Vec3f(-2.2f, 4.0f, -2.5f));
+    auto lightOne = std::make_unique<PointLight>(Color3f(0.6f, 0.2f, 0.8f), 90000.0f, Point3f(-2.2f, 4.0f, -2.5f));
     scene.AddLight(std::move(lightOne));
 
     //auto lightTwo = std::make_unique<PointLight>(Vecf(0.533f, 0.8f, 0.6f), 40.0f, Vecf(-2, 2, -2));
     //scene.AddLight(std::move(lightTwo));
 
 
-    scene.SetBackgroundColor({0.0f, 0.0f, 0.0f});
+    scene.SetBackgroundColor({0.1f, 0.1f, 0.1f});
 
     //ConstructStandardBox(scene);
 
     Parser parser;
 
+    /*
     auto plane = parser.Parse("assets/plane.obj");
     auto leftPlane = plane->CloneMesh();
     auto rightPlane = plane->CloneMesh();
@@ -110,15 +111,15 @@ int main(int argc, char * argv[])
     scene.AddMesh(std::move(teapot));  */
     
 
-    /*
-    auto sphereOne = std::make_unique<Sphere>(Vecf(0.1f, 0.50f,-7.0f), 0.5f, Vecf(0.18f), ReflectAndRefract);
-    scene.AddRenderable(std::move(sphereOne));
-    auto sphereTwo = std::make_unique<Sphere>(Vecf(-0.5f, 0.5f, -7.6f), 0.5f, Vecf(0.18f), Reflective);
-    scene.AddRenderable(std::move(sphereTwo));
-    auto sphereThree = std::make_unique<Sphere>(Vecf(0.7f, 0.5f, -6.2f), 0.50f, Vecf(0.18f), Diffuse);
-    scene.AddRenderable(std::move(sphereThree)); */
 
-    /*
+    auto sphereOne = std::make_unique<Sphere>(Point3f(0.1f, 0.50f,-7.0f), 0.5f, Color3f{0.18f}, ReflectAndRefract);
+    scene.AddRenderable(std::move(sphereOne));
+    auto sphereTwo = std::make_unique<Sphere>(Point3f(-0.5f, 0.5f, -7.6f), 0.5f, Color3f{0.18f}, Reflective);
+    scene.AddRenderable(std::move(sphereTwo));
+    auto sphereThree = std::make_unique<Sphere>(Point3f(0.7f, 0.5f, -6.2f), 0.50f, Color3f{0.18f}, Diffuse);
+    scene.AddRenderable(std::move(sphereThree));
+
+
     Window window = {SCREEN_WIDTH, SCREEN_HEIGHT};
     ImageBuffer buffer = {SCREEN_WIDTH, SCREEN_HEIGHT};
     //auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -130,35 +131,9 @@ int main(int argc, char * argv[])
     window.InitializeWindow(buffer);
     window.CheckForInput(buffer);
 
-    RenderThread.join(); */
+    RenderThread.join();
     
     //ThreadManager manager{ std::move(window), std::move(buffer) };
-    //manager.Run(*scene); */
+    //manager.Run(*scene);
 
-    constexpr std::array<std::array<float, 4>, 4> m = {
-            2, 2, 3, 1,
-            9, 82, 9, 9,
-            0, 1, 92, 0,
-            0, 1, 0, 0
-    };
-
-    constexpr Matrix4x4f test { m };
-    test.PrettyPrint();
-
-    Vec3f vec { 2.0f, 9.0f, 81.0f };
-    Vec3f vec2 { 3.0f, 9.0f, 81.0f };
-    //constexpr auto vec3 = vec + vec2;
-
-    Math::Swap(vec, vec2);
-
-    vec.PrettyPrint();
-    vec2.PrettyPrint();
-
-    std::cout << vec.x << std::endl;
-    std::cout << vec2.x << std::endl;
-
-    constexpr Matrix4x4f test2 = test.Invert();
-    test2.PrettyPrint();
-
-    return 0;
 }

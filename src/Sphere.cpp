@@ -3,17 +3,17 @@
 
 void Sphere::CalculateNormal(Intersection &intersection) const
 {
-    intersection.SetNormal(Normalize(intersection.Point() - m_center));
+    intersection.SetNormal((intersection.Point() - m_center).Normalize());
 }
 
 bool Sphere::Intersects(const Rayf &ray, Intersection &intersection)
 {
     float solutionOne, solutionTwo;
 
-    auto center_at_orig = ray.origin() - m_center;
+    auto center_at_orig = ray.Origin() - m_center;
 
-    const auto a = ray.direction().DotProduct(ray.direction());
-    const auto b = 2 * ray.direction().DotProduct(center_at_orig);
+    const auto a = ray.Direction().DotProduct(ray.Direction());
+    const auto b = 2 * ray.Direction().DotProduct(center_at_orig);
     const auto c = center_at_orig.DotProduct(center_at_orig) - m_radius_squared;
 
     if (!solve_quadratic(a, b, c, solutionOne, solutionTwo))

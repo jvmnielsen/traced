@@ -9,7 +9,7 @@ class Mesh :
     public Renderable
 {
 public:
-	Mesh() : Renderable(Vec3f(0.18f), Diffuse) {}
+	Mesh() : Renderable(Color3f(0.18f), Diffuse) {}
 
 	bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 

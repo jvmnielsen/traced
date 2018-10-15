@@ -118,7 +118,7 @@ struct Vec3 {
     {
         x -= other.x;
         y -= other.y;
-        z - +other.z;
+        z -= other.z;
         return *this;
     }
 
@@ -195,6 +195,7 @@ constexpr Vec3<T> Normalize(const Vec3<T>& vec)
     //return vec / vec.Length();
 }
 
+
 template<typename T>
 constexpr Vec3<T> operator*(const T factor, const Vec3<T>& vec)
 {
@@ -234,7 +235,17 @@ struct Point3
         return *this;
     }
 
-    constexpr bool operator==(const Point3& other)
+    constexpr Point3 operator+(const Vec3<T>& vec) const
+    {
+        return { x + vec.x, y + vec.y, z + vec.z };
+    }
+
+    constexpr Point3 operator-(const Vec3<T>& vec) const
+    {
+        return { x - vec.x, y - vec.y, z - vec.z };
+    }
+
+    constexpr bool operator==(const Point3& other) const
     {
         return x == other.x && y == other.y && z == other.z;
     }
@@ -553,7 +564,7 @@ class Ray
 public:
     constexpr Ray() = default;
 
-    constexpr Ray(const Vec3<T>& origin,
+    constexpr Ray(const Point3<T>& origin,
                   const Vec3<T>& direction,
                   const RayType& rayType)
         : m_origin(origin)
@@ -562,14 +573,14 @@ public:
     {
     }
 
-    constexpr Vec3<T> origin() const { return m_origin; }
-    constexpr Vec3<T> direction() const { return m_direction; }
-    constexpr Vec3<T> pointAtParameter(const float t) const { return m_origin + m_direction * t; }
-
-    RayType m_rayType;
+    constexpr Point3<T> Origin() const { return m_origin; }
+    constexpr Vec3<T> Direction() const { return m_direction; }
+    constexpr Point3<T> PointAtParameter(const float t) const { return m_origin + m_direction * t; }
+    constexpr RayType getRayType() const { return m_rayType; }
 
 private:
-    Vec3<T> m_origin;
+    RayType m_rayType;
+    Point3<T> m_origin;
     Vec3<T> m_direction;
 };
 

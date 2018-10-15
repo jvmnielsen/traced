@@ -7,9 +7,9 @@
 void GammaEncode(Color3f& color, float gamma)
 {
     float gammaExponent = 1 / gamma;
-    color.r = pow(color.r, gammaExponent);
-    color.g = pow(color.g, gammaExponent);
-    color.b = pow(color.b, gammaExponent);
+    color.r = std::pow(color.r, gammaExponent);
+    color.g = std::pow(color.g, gammaExponent);
+    color.b = std::pow(color.b, gammaExponent);
 }
 
 
@@ -17,7 +17,7 @@ void ConvertToRGB(Color3f& color)
 {
     GammaEncode(color, 2.2f);
 
-	color.r = 255 * Math::Clamp(0.0f, 1.0f, color.r); // gamma 2, i.e. sqrt
+	color.r = 255 * Math::Clamp(0.0f, 1.0f, color.r);
 	color.g = 255 * Math::Clamp(0.0f, 1.0f, color.g);
 	color.b = 255 * Math::Clamp(0.0f, 1.0f, color.b);
 }
@@ -34,15 +34,15 @@ Camera::Camera(const float v_fov, const float aspect)
     const auto theta = v_fov * M_PI / 180; // degrees to radians
     const auto half_height = static_cast<float>(tan(theta / 2));
     const auto half_width = aspect * half_height;
-    m_lowerLeftCorner = Vec3f(-half_width, -half_height, -1.0f);
+    m_lowerLeftCorner = Point3f(-half_width, -half_height, -1.0f);
     m_horizontal = Vec3f(2.0f * half_width, 0.0f, 0.0f);
     m_vertical = Vec3f(0.0f, 2.0f * half_height, 0.0f);
-    m_origin = Vec3f(0.0f);
+    m_origin = Point3f(0.0f);
 }
 
 Camera::Camera(
-        const Vec3f& look_from,
-        const Vec3f& look_at,
+        const Point3f& look_from,
+        const Point3f& look_at,
         const Vec3f& v_up,
         const float v_fov,
         const float aspect)
@@ -57,15 +57,15 @@ Camera::Camera(
     const auto u = (v_up.CrossProduct(w)).Normalize();
     const auto v = w.CrossProduct(u);
 
-    m_lowerLeftCorner = m_origin - half_width * u - half_height * v - w;
-    m_horizontal = 2 * half_width * u;
-    m_vertical = 2 * half_height * v;
+    m_lowerLeftCorner = m_origin - u*half_width  - v*half_height - w;
+    m_horizontal = u * 2 * half_width;
+    m_vertical = v * 2 * half_height;
 }
 
 Rayf Camera::GetRay(const float u, const float v) const
 {
     return {m_origin,
-            m_lowerLeftCorner + u * m_horizontal + v * m_vertical - m_origin, RayType::PrimaryRay};
+            m_lowerLeftCorner +  m_horizontal * u +  m_vertical * v - m_origin, RayType::PrimaryRay};
 }
 
 ImageBuffer::ImageBuffer(

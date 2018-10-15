@@ -49,7 +49,7 @@ void Parser::LoadFile(const std::string& filename)
 
 		if (split_str[0] == "v") // vertex
 		{
-			m_vertex.push_back(Vec3f(std::stof(split_str[1]),
+			m_vertex.push_back(Point3f(std::stof(split_str[1]),
 				std::stof(split_str[2]),
 				std::stof(split_str[3])));
 		}
@@ -122,7 +122,7 @@ std::unique_ptr<Mesh> Parser::ConstructMesh()
                  m_normals[m_normal_ordering[i] - 1],
                  m_normals[m_normal_ordering[i + 1] - 1],
                  m_normals[m_normal_ordering[i + 2] - 1],
-                 true, Vec3f(0.18f), Diffuse);
+                 true, Color3f{0.18f}, Diffuse);
 	    
         mesh_ptr->AddPolygon(std::move(polygon));       
 	}

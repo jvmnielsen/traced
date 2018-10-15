@@ -9,11 +9,11 @@ public:
     Polygon() = default;
 
     Polygon(
-            const Vec3f& vertx0,
-            const Vec3f& vertx1,
-            const Vec3f& vertx2,
+            const Point3f& vertx0,
+            const Point3f& vertx1,
+            const Point3f& vertx2,
             bool is_single_sided,
-            const Vec3f& albedo,
+            const Color3f& albedo,
             MaterialType material)
         : Renderable(albedo, material)
         , m_vertices{vertx0, vertx1, vertx2}
@@ -27,14 +27,14 @@ public:
     }
 
     Polygon(
-        const Vec3f& vertx0,
-        const Vec3f& vertx1,
-        const Vec3f& vertx2,
+        const Point3f& vertx0,
+        const Point3f& vertx1,
+        const Point3f& vertx2,
         const Vec3f& vertx_normal0,
         const Vec3f& vertx_normal1,
         const Vec3f& vertx_normal2,
         bool is_single_sided,
-        const Vec3f& albedo,
+        const Color3f& albedo,
         MaterialType material)
         : Renderable(albedo, material)
         , m_vertices{vertx0, vertx1, vertx2}
@@ -71,7 +71,7 @@ public:
     void ScaleBy(float factor) override {}
 
 
-    Vec3f m_vertices[3];  // TODO: encapsulate
+    Point3f m_vertices[3];  // TODO: encapsulate
 
     Vec3f m_vertex_normals[3];
 
