@@ -20,9 +20,9 @@ namespace Math
     }
 
     template<typename T>
-    constexpr T DegreeToRadian(const T degree)
+    float DegreeToRadian(const T degree)
     {
-        return (T)(degree * M_PI / 180);
+        return (T)(degree * M_PI / 180.0);
     }
 
     template<typename T>
@@ -344,16 +344,7 @@ struct Vec3 {
 template<typename T>
 constexpr Vec3<T> Normalize(const Vec3<T>& vec)
 {
-    Vec3<T> tmp;
-
-    T invertedLength = 1 / vec.Length();
-
-    tmp.x *= invertedLength;
-    tmp.y *= invertedLength;
-    tmp.z *= invertedLength;
-
-    return tmp;
-    //return vec / vec.Length();
+    return vec / vec.Length();
 }
 
 template<typename T>
@@ -665,7 +656,7 @@ public:
         Matrix4x4 tmp;
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
-                tmp.m[j][i] = m[i][j];
+                tmp.m[i][j] = m[j][i];
 
         return tmp;
     }

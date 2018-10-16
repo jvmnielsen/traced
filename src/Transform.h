@@ -26,11 +26,13 @@ public:
     static Transform Translate(const Vec3f& vec);
     static Transform Scale(const Vec3f& vec);
     static Transform Rotate(const Vec3f& axis, float angle);
+    // static Transform Perspective(float FieldOfView, float ClipNear, float ClipFar); // not needed for now
 
     //auto TransformAffine(const Point3f& point) const -> Point3f;
-    Point3f operator()(const Point3f& point) const;
-    Vec3f operator()(const Vec3f& vec) const;
-    Normal3f operator()(const Normal3f& normal) const;
+    void operator()(Point3f& point) const;
+    void operator()(Vec3f& vec) const;
+    void operator()(Normal3f& normal) const;
+
 
 private:
     Matrix4x4f m_mat;

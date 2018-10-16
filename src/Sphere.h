@@ -16,8 +16,6 @@ public:
 
     bool solve_quadratic(const float a, const float b, const float c, float& solutionOne, float& solutionTwo) const;
 
-    void TransformByMatrix(const Matrix4x4f &object_to_world) override { }
-
     void CalculateNormal(Intersection &intersection) const override;
 
     void SetMaterialType(const MaterialType& type) override
@@ -25,22 +23,7 @@ public:
         m_material = type;
     }
 
-    void TranslateBy(const Vec3f& dir) override
-    {
-        m_center.x += dir.x;
-        m_center.y += dir.y;
-        m_center.z += dir.z;
-    } 
-
-    void RotateAroundX(float dir) override {} // do nothing (our representation of a sphere cannot meaningfully be rotated)
-    void RotateAroundY(float dir) override {}
-    void RotateAroundZ(float dir) override {}
-
-    void ScaleBy(float factor) override
-    {
-        m_radius *= factor;
-    }
-
+    void TransformBy(const Transform& transform) override;
 
 private:
     Point3f m_center;

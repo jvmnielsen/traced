@@ -54,10 +54,10 @@ int main(int argc, char * argv[])
     //auto scene = std::make_unique<Scene>();
     Scene scene;
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 2.5f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 0.0f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     scene.SetCamera(std::move(camera));
 
-    auto lightOne = std::make_unique<PointLight>(Color3f(0.4f, 0.4f, 0.4f), 0.002f, Point3f(-2.2f, 4.0f, -2.5f));
+    auto lightOne = std::make_unique<PointLight>(Color3f(0.4f, 0.4f, 0.4f), 0.01f, Point3f(-2.2f, 4.0f, -6.5f));
     scene.AddLight(std::move(lightOne));
 
     //auto lightTwo = std::make_unique<PointLight>(Vecf(0.533f, 0.8f, 0.6f), 40.0f, Vecf(-2, 2, -2));
@@ -72,32 +72,20 @@ int main(int argc, char * argv[])
 
     auto plane = parser.Parse("../assets/plane.obj");
     auto leftPlane = plane->CloneMesh();
-    auto rightPlane = plane->CloneMesh();
-    auto backPlane = plane->CloneMesh();
+    //auto rightPlane = plane->CloneMesh();
+    //auto backPlane = plane->CloneMesh();
 
-    plane->ScaleBy(6.0f);
-    plane->TranslateBy({0.0f,-0.5f,-9.0f});
+
+
+    plane->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
+    plane->TransformBy(Transform::Scale({3.0f, 3.0f, 1.0f}));
+    plane->TransformBy(Transform::Translate({0.0f, 0.0f, -8.0f}));
     plane->SetMaterialType(MaterialType::Diffuse);
     scene.AddMesh(std::move(plane));
 
-    leftPlane->RotateAroundZ(90.0f);
-    leftPlane->ScaleBy(5.0f);
-    leftPlane->TranslateBy({-5.0f,0.0f,-9.0f});
-    leftPlane->SetMaterialType(MaterialType::Diffuse);
+    leftPlane->TransformBy(Transform::Scale({4.0f, 4.0f, 4.0f}));
+    leftPlane->TransformBy(Transform::Translate({0.0f, 0.0f, -6.0f}));
     scene.AddMesh(std::move(leftPlane));
-
-    rightPlane->RotateAroundZ(-90.0f);
-    rightPlane->ScaleBy(5.0f);
-    rightPlane->TranslateBy({5.0f,2.0f,-9.0f});
-    rightPlane->SetMaterialType(MaterialType::Diffuse);
-    scene.AddMesh(std::move(rightPlane));
-
-    backPlane->RotateAroundY(-70.0f);
-    backPlane->ScaleBy(10.0f);
-    backPlane->TranslateBy({0.0f,10.0f,-14.0f});
-    backPlane->SetMaterialType(MaterialType::Diffuse);
-    //scene.AddMesh(std::move(backPlane));
-
 
     /*
     auto teapot = parser.Parse("assets/teapot.obj");

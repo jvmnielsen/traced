@@ -115,7 +115,7 @@ std::unique_ptr<Mesh> Parser::ConstructMesh()
 	{
         // WARNING: .obj is 1-indexed
         auto polygon = 
-            std::make_unique<Polygon>( 
+            std::make_unique<Triangle>( 
                  m_vertex[m_vertex_ordering[i] - 1],
                  m_vertex[m_vertex_ordering[i + 1] - 1],
                  m_vertex[m_vertex_ordering[i + 2] - 1],

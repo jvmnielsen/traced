@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Sphere.h"
 #include "Material.h"
-#include "Polygon.h"
+#include "Triangle.h"
 #include "Parser.h"
 #include <memory>
 #include "Utility.h"

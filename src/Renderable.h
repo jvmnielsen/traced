@@ -3,6 +3,7 @@
 #include <utility>
 #include "MathUtil.h"
 #include "Imaging.h"
+#include "Transform.h"
 
 class Material;
 class Renderable;
@@ -22,20 +23,20 @@ public:
 
     void CalculateNormal(const Rayf &ray);
 
-    constexpr bool HasBeenHit() const { return m_has_been_hit; }
+    bool HasBeenHit() const { return m_has_been_hit; }
 
-    constexpr const Point3f& Point() const { return m_point; }
+    const Point3f& Point() const { return m_point; }
 
-    constexpr void SetBarycentric(const Vec2f& barycentric ) { m_barycentric_coord = barycentric; };
-    constexpr const Vec2f& Barycentric() const { return m_barycentric_closest; }
+    void SetBarycentric(const Vec2f& barycentric ) { m_barycentric_coord = barycentric; };
+    const Vec2f& Barycentric() const { return m_barycentric_closest; }
 
-    constexpr void SetNormal(const Vec3f& normal) { m_normal = normal; }
-    constexpr const Vec3f& Normal() const { return m_normal; }
+    void SetNormal(const Vec3f& normal) { m_normal = normal; }
+    const Vec3f& Normal() const { return m_normal; }
 
-    constexpr Renderable* RenderablePtr() const { return m_ptr; }
+    Renderable* RenderablePtr() const { return m_ptr; }
 
-    constexpr void SetParameter(const float t) { m_t = t; }
-    constexpr const float Parameter() { return m_t; }
+    void SetParameter(const float t) { m_t = t; }
+    const float Parameter() { return m_t; }
 
 
     float       m_t;
@@ -69,21 +70,24 @@ public:
         , m_material(other.m_material)
     {}
 
-    virtual bool Intersects(const Rayf &ray, Intersection &hit_data) = 0;
+    virtual bool Intersects(const Rayf &ray, Intersection &intersec) = 0;
 
-	virtual void TransformByMatrix(const Matrix4x4f &object_to_world) = 0;
+	//virtual void TransformByMatrix(const Matrix4x4f &object_to_world) = 0;
 
     virtual void CalculateNormal(Intersection &hit_data) const = 0;
 
     virtual void SetMaterialType(const MaterialType& type) = 0;
 
+    /*
     virtual void TranslateBy(const Vec3f& dir) = 0;
 
     virtual void ScaleBy(float factor) = 0;
 
     virtual void RotateAroundX(float dir) = 0;
     virtual void RotateAroundY(float dir) = 0;
-    virtual void RotateAroundZ(float dir) = 0;
+    virtual void RotateAroundZ(float dir) = 0; */
+
+    virtual void TransformBy(const Transform& transform) = 0;
 
 	MaterialType Material() const { return m_material; }
 	Color3f Albedo() const { return m_albedo; }

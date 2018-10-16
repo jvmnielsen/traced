@@ -48,7 +48,7 @@ Camera::Camera(
         const float aspect)
 {
     const auto theta = Math::DegreeToRadian(v_fov);
-    const auto halfHeight = static_cast<float>(tan(theta / 2));
+    const auto halfHeight = tan(theta / 2);
     const auto halfWidth = aspect * halfHeight;
 
     m_origin = look_from;
@@ -64,8 +64,9 @@ Camera::Camera(
 
 Rayf Camera::GetRay(const float u, const float v) const
 {
-    return {m_origin,
-            m_lowerLeftCorner +  m_horizontal * u +  m_vertical * v - m_origin, RayType::PrimaryRay};
+    return {m_origin, // origin of the camera
+            (m_lowerLeftCorner + m_horizontal * u +  m_vertical * v) - m_origin, // scale from lower left - origin for vector pointing to this point
+            RayType::PrimaryRay};
 }
 
 ImageBuffer::ImageBuffer(
@@ -92,9 +93,9 @@ auto ImageBuffer::AddPixelAt(Color3f& color, size_t i, size_t j) -> void
     if ((i < m_screenWidth) && (j < m_screenHeight))
     {
 		ConvertToRGB(color);
-        m_buffer[(corrected_j * m_screenWidth + i) * 4    ] = color.r;
-		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 1] = color.g;
-		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 2] = color.b;
+        m_buffer[(corrected_j * m_screenWidth + i) * 4    ] = static_cast<unsigned char>(color.r);
+		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 1] = static_cast<unsigned char>(color.g);
+		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 2] = static_cast<unsigned char>(color.b);
 		m_buffer[(corrected_j * m_screenWidth + i) * 4 + 3] = 255;
     }
 	else
