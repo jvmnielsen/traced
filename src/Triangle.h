@@ -2,13 +2,13 @@
 #include "Renderable.h"
 #include "MathUtil.h"
 
-class Polygon :
+class Triangle :
     public Renderable
 {
 public:
-    Polygon() = default;
+    Triangle() = default;
 
-    Polygon(
+    Triangle(
             const Point3f& vertx0,
             const Point3f& vertx1,
             const Point3f& vertx2,
@@ -26,7 +26,7 @@ public:
     {
     }
 
-    Polygon(
+    Triangle(
         const Point3f& vertx0,
         const Point3f& vertx1,
         const Point3f& vertx2,
@@ -48,32 +48,17 @@ public:
     {
     }
 
-    //Polygon(const Polygon& other) = default;
-
     bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
-    void TransformByMatrix(const Matrix4x4f &object_to_world) override;
-    void TransformByMatrix2(const Matrix4x4f &object_to_world);
+    void SetMaterialType(const MaterialType& type) override { m_material = type; }
 
-    void SetMaterialType(const MaterialType& type) override
-    {
-        m_material = type;
-    }
+    void CalculateNormal(Intersection &intersec) const override;
 
-    void CalculateNormal(Intersection &hit_data) const override;
-
-    void TranslateBy(const Vec3f& dir) override {}
-
-    void RotateAroundX(float angle) override {}
-    void RotateAroundY(float angle) override {}
-    void RotateAroundZ(float angle) override {}
-
-    void ScaleBy(float factor) override {}
-
+    void TransformBy(const Transform& transform) override;
 
     Point3f m_vertices[3];  // TODO: encapsulate
 
-    Vec3f m_vertex_normals[3];
+    Normal3f m_vertex_normals[3];
 
 private:
 

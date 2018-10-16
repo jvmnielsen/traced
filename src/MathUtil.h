@@ -20,9 +20,9 @@ namespace Math
     }
 
     template<typename T>
-    constexpr T DegreeToRadian(const T degree)
+    float DegreeToRadian(const T degree)
     {
-        return (T)(degree * M_PI / 180);
+        return (T)(degree * M_PI / 180.0);
     }
 
     template<typename T>
@@ -41,6 +41,167 @@ namespace Math
 
 
 }
+
+template<typename T>
+struct Vec2 {
+    T x, y;
+
+    constexpr Vec2() = default;
+    constexpr Vec2(const Vec2& other) = default;
+    constexpr Vec2& operator=(const Vec2& other)
+    {
+        x = other.x;
+        y = other.y;
+        return *this;
+    }
+
+    constexpr explicit Vec2(T val) : x(val), y(val) {}
+
+    constexpr Vec2(T x_, T y_, T z_) : x(x_), y(y_) {}
+
+    constexpr T LengthSquared() const
+    {
+        return x * x + y * y;
+    }
+
+    constexpr T Length() const
+    {
+        return std::sqrt(LengthSquared());
+    }
+
+    constexpr Vec2 operator*(const T factor) const
+    {
+        return Vec2{x * factor, y * factor };
+    }
+
+    constexpr Vec2& operator*=(const T factor)
+    {
+        x *= factor;
+        y *= factor;
+        return *this;
+    }
+
+    constexpr Vec2 operator/(const T factor) const
+    {
+        return Vec2{ x / factor, y / factor };
+    }
+
+    constexpr Vec2& operator/=(const T factor)
+    {
+        x /= factor;
+        y /= factor;
+        return *this;
+    }
+
+    constexpr Vec2 operator+(const Vec2 &other) const
+    {
+        return Vec2{x + other.x, y + other.y };
+    }
+
+    constexpr Vec2 operator+=(const Vec2 &other)
+    {
+        x += other.x;
+        y += other.y;
+        return *this;
+    }
+
+    constexpr Vec2 operator-(const Vec2 &other) const
+    {
+        return Vec2{x - other.x, y - other.y };
+    }
+
+    constexpr Vec2& operator-=(const Vec2 &other)
+    {
+        x -= other.x;
+        y -= other.y;
+        return *this;
+    }
+
+    constexpr T DotProduct(const Vec2& other) const
+    {
+        return x * other.x + y * other.y;
+    }
+
+    constexpr Vec2 CrossProduct(const Vec2& other) const
+    {
+        return Vec2<T>{ x * other.y - other.x * y };
+    }
+
+    constexpr Vec2& Normalize()
+    {
+        T length = this->Length();
+        if (length > 0) // avoid division by 0
+        {
+            T invertedLength = 1 / length;
+            x *= invertedLength;
+            y *= invertedLength;
+        }
+        return *this;
+    }
+
+    constexpr Vec2 operator-() const
+    {
+        return { -x, -y };
+    }
+
+    constexpr bool operator==(const Vec2& other)
+    {
+        return x == other.x && y == other.y;
+    }
+
+    constexpr bool operator!=(const Vec2& other)
+    {
+        return x != other.x || y != other.y;
+    }
+
+    // Accessors
+    constexpr T operator[](const uint8_t i) const
+    {
+        return (&x)[i];
+    }
+
+    constexpr T& operator[](const uint8_t i)
+    {
+        return (&x)[i];
+    }
+
+    void PrettyPrint() const
+    {
+        std::cout << "[ " << x << ", " << y << " ]\n";
+    }
+};
+
+template<typename T>
+constexpr Vec2<T> Normalize(const Vec2<T>& vec)
+{
+    Vec2<T> tmp;
+
+    T invertedLength = 1 / vec.Length();
+
+    tmp.x *= invertedLength;
+    tmp.y *= invertedLength;
+
+    return tmp;
+}
+
+
+template<typename T>
+constexpr Vec2<T> operator*(const T factor, const Vec2<T>& vec)
+{
+    return { vec.x * factor, vec.y * factor };
+}
+
+template<typename T>
+constexpr Vec2<T> operator/(const T factor, const Vec2<T>& vec)
+{
+    return {vec.x / factor, vec.y / factor, };
+}
+
+
+typedef Vec2<float> Vec2f;
+typedef Vec2<int> Vec2i;
+typedef Vec2<double> Vec2d;
+
 
 template<typename T>
 struct Vec3 {
@@ -183,18 +344,8 @@ struct Vec3 {
 template<typename T>
 constexpr Vec3<T> Normalize(const Vec3<T>& vec)
 {
-    Vec3<T> tmp;
-
-    T invertedLength = 1 / vec.Length();
-
-    tmp.x *= invertedLength;
-    tmp.y *= invertedLength;
-    tmp.z *= invertedLength;
-
-    return tmp;
-    //return vec / vec.Length();
+    return vec / vec.Length();
 }
-
 
 template<typename T>
 constexpr Vec3<T> operator*(const T factor, const Vec3<T>& vec)
@@ -212,7 +363,79 @@ constexpr Vec3<T> operator/(const T factor, const Vec3<T>& vec)
 typedef Vec3<float> Vec3f;
 typedef Vec3<int> Vec3i;
 typedef Vec3<double> Vec3d;
+
+template< typename T>
+class Normal3 : public Vec3<T>
+{
+public:
+    constexpr Normal3() = default;
+    constexpr Normal3(const Vec3<T>& other) : Vec3<T>(other) { }
+    constexpr explicit Normal3(T val) : Vec3<T>(val) {}
+    constexpr Normal3(T x, T y, T z) : Vec3<T>({x, y, z}) {}
+};
+typedef Normal3<float> Normal3f;
+typedef Normal3<int> Normal3i;
+typedef Normal3<double> Normal3d;
+
+
 // ---------------------------------------------------------------------------
+template<typename T>
+struct Point2
+{
+    T x, y;
+
+    constexpr Point2() : x(0), y(0) { }
+    constexpr explicit Point2(T val) : x(val), y(val) { }
+    constexpr Point2(T x_, T y_) : x(x_), y(y_) { }
+
+    constexpr Vec3<T> operator-(const Point2& other) const
+    {
+        return Vec3{ x - other.x, y - other.y };
+    }
+
+    constexpr Point2& operator-()
+    {
+        x = -x;
+        y = -y;
+        return *this;
+    }
+
+    constexpr Point2 operator+(const Vec3<T>& vec) const
+    {
+        return { x + vec.x, y + vec.y };
+    }
+
+    constexpr Point2 operator-(const Vec3<T>& vec) const
+    {
+        return { x - vec.x, y - vec.y };
+    }
+
+    constexpr bool operator==(const Point2& other) const
+    {
+        return x == other.x && y == other.y;
+    }
+
+    // Accessors
+    constexpr T operator[](const uint8_t i) const
+    {
+        return (&x)[i];
+    }
+
+    constexpr T& operator[](const uint8_t i)
+    {
+        return (&x)[i];
+    }
+
+    void PrettyPrint() const
+    {
+        std::cout << "( " << x << ", " << y << " )\n";
+    }
+};
+
+typedef Point2<float> Point2f;
+typedef Point2<int> Point2i;
+typedef Point2<double> Point2d;
+
 template<typename T>
 struct Point3
 {
@@ -390,19 +613,32 @@ public:
 template< typename T >
 class Matrix4x4
 {
-public:
+private:
     std::array<std::array<T, 4>, 4> m;
+public:
+    constexpr Matrix4x4
+    (T a00, T a01, T a02, T a03,
+     T a10, T a11, T a12, T a13,
+     T a20, T a21, T a22, T a23,
+     T a30, T a31, T a32, T a33)
+     : m({a00, a01, a02, a03,
+          a10, a11, a12, a13,
+          a20, a21, a22, a23,
+          a30, a31, a32, a33}) {}
 
     constexpr Matrix4x4()
     {
         constexpr auto tmp = std::array<std::array<T, 4>, 4>
-                { 0, 0, 0, 0,
-                  0, 0, 0, 0,
-                  0, 0, 0, 0,
-                  0, 0, 0, 0 };
+        { 0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0 };
 
         m = tmp;
     }
+
+    T& operator()(int i, int j) { return m[i][j]; }
+    const T& operator()(int i, int j) const { return m[i][j]; }
 
     constexpr explicit Matrix4x4(const std::array<std::array<float, 4>, 4>& _m) : m(_m){}
 
@@ -420,12 +656,12 @@ public:
         Matrix4x4 tmp;
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
-                tmp.m[j][i] = m[i][j];
+                tmp.m[i][j] = m[j][i];
 
         return tmp;
     }
 
-    constexpr Matrix4x4 Identity() const
+    constexpr Matrix4x4 getIdentity() const
     {
         constexpr auto identity = std::array<std::array<T, 4>, 4>
         { 1, 0, 0, 0,
@@ -438,12 +674,23 @@ public:
         return tmp;
     }
 
+    constexpr void setIdentity()
+    {
+        constexpr auto identity = std::array<std::array<T, 4>, 4>
+        { 1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1 };
+
+        m = identity;
+    }
+
     constexpr Matrix4x4 Invert() const
     {
         //static_assert(N == M, "Matrix is not square!");
 
         Matrix4x4 tmp = *this;
-         auto invTmp = tmp.Identity();
+        auto invTmp = tmp.getIdentity();
 
         // Switch rows around so there is a leading number in each
         // Set the diagonal to 1 by dividing the row with the leading element

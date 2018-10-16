@@ -2,38 +2,28 @@
 #include "Renderable.h"
 #include <memory>
 #include <vector>
-#include "Polygon.h"
+#include "Triangle.h"
 #include "Material.h"
 
 class Mesh :
     public Renderable
 {
 public:
-	Mesh() : Renderable(Color3f(0.18f), Diffuse) {}
+	Mesh() : Renderable(Color3f(0.18f), MaterialType::Diffuse) {}
 
 	bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
-	void AddPolygon(std::unique_ptr<Polygon> polygon);
-
-	void TransformByMatrix(const Matrix4x4f &object_to_world) override;
+	void AddPolygon(std::unique_ptr<Triangle> polygon);
 
     void CalculateNormal(Intersection &hit_data) const override;
 
 	void SetMaterialType(const MaterialType& type) override;
 
-    void TranslateBy(const Vec3f& dir) override;
-
-    void RotateAroundX(float angle) override;
-
-    void RotateAroundY(float angle) override;
-
-    void RotateAroundZ(float angle) override;
-
-    void ScaleBy(float factor) override;
+    void TransformBy(const Transform& transform) override;
 
     std::unique_ptr<Mesh> CloneMesh(); // consider making ctor
 private:
-    std::vector<std::unique_ptr<Polygon>> m_mesh;
+    std::vector<std::unique_ptr<Triangle>> m_mesh;
 	
 };
 

@@ -58,3 +58,8 @@ bool Sphere::solve_quadratic(
 
     return true;
 }
+
+void Sphere::TransformBy(const Transform& transform)
+{
+    transform(m_center);
+}

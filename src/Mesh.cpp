@@ -13,17 +13,9 @@ bool Mesh::Intersects(const Rayf &ray, Intersection &hit_data)
 	return hit_data.HasBeenHit();
 }
 
-void Mesh::AddPolygon(std::unique_ptr<Polygon> polygon)
+void Mesh::AddPolygon(std::unique_ptr<Triangle> polygon)
 {
 	m_mesh.push_back(std::move(polygon));
-}
-
-void Mesh::TransformByMatrix(const Matrix4x4f &object_to_world)
-{
-	for (auto& polygon : m_mesh)
-	{
-		polygon->TransformByMatrix(object_to_world);
-	}
 }
 
 void Mesh::CalculateNormal(Intersection &hit_data) const
@@ -39,34 +31,10 @@ void Mesh::SetMaterialType(const MaterialType& type)
     }
 }
 
-void Mesh::TranslateBy(const Vec3f& dir)
+void Mesh::TransformBy(const Transform& transform)
 {
-    for (auto& polygon : m_mesh)
-        polygon->TranslateBy(dir);
-}
-
-void Mesh::RotateAroundX(float angle)
-{
-    for (auto& polygon : m_mesh)
-        polygon->RotateAroundX(angle);
-}
-
-void Mesh::RotateAroundY(float angle)
-{
-    for (auto& polygon : m_mesh)
-        polygon->RotateAroundY(angle);
-}
-
-void Mesh::RotateAroundZ(float angle)
-{
-    for (auto& polygon : m_mesh)
-        polygon->RotateAroundZ(angle);
-}
-
-void Mesh::ScaleBy(float factor)
-{
-    for (auto& polygon : m_mesh)
-        polygon->ScaleBy(factor);
+    for (auto& triangle : m_mesh)
+        triangle->TransformBy(transform);
 }
 
 std::unique_ptr<Mesh> Mesh::CloneMesh()
@@ -75,7 +43,7 @@ std::unique_ptr<Mesh> Mesh::CloneMesh()
 
     for (const auto& polygon : m_mesh)
     {
-        auto newPolygon = std::make_unique<Polygon>();
+        auto newPolygon = std::make_unique<Triangle>();
 
         *newPolygon = *polygon;
 

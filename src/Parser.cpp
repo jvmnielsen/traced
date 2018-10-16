@@ -115,14 +115,14 @@ std::unique_ptr<Mesh> Parser::ConstructMesh()
 	{
         // WARNING: .obj is 1-indexed
         auto polygon = 
-            std::make_unique<Polygon>( 
+            std::make_unique<Triangle>( 
                  m_vertex[m_vertex_ordering[i] - 1],
                  m_vertex[m_vertex_ordering[i + 1] - 1],
                  m_vertex[m_vertex_ordering[i + 2] - 1],
                  m_normals[m_normal_ordering[i] - 1],
                  m_normals[m_normal_ordering[i + 1] - 1],
                  m_normals[m_normal_ordering[i + 2] - 1],
-                 true, Color3f{0.18f}, Diffuse);
+                 true, Color3f{0.18f}, MaterialType::Diffuse);
 	    
         mesh_ptr->AddPolygon(std::move(polygon));       
 	}
