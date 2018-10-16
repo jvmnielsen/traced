@@ -60,15 +60,15 @@ public:
         m_material = type;
     }
 
-    void CalculateNormal(Intersection &hit_data) const override;
+    void CalculateNormal(Intersection &intersec) const override;
 
-    void TranslateBy(const Vec3f& dir) override {}
+    void TranslateBy(const Vec3f& dir) override;
 
-    void RotateAroundX(float angle) override {}
-    void RotateAroundY(float angle) override {}
-    void RotateAroundZ(float angle) override {}
+    void RotateAroundX(float angle) override;
+    void RotateAroundY(float angle) override;
+    void RotateAroundZ(float angle) override;
 
-    void ScaleBy(float factor) override {}
+    void ScaleBy(float factor) override;
 
 
     Point3f m_vertices[3];  // TODO: encapsulate

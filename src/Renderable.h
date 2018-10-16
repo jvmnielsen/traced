@@ -22,41 +22,41 @@ public:
 
     void CalculateNormal(const Rayf &ray);
 
-    bool HasBeenHit() const { return m_has_been_hit; }
+    constexpr bool HasBeenHit() const { return m_has_been_hit; }
 
-    const Point3f& Point() const { return m_point; }
+    constexpr const Point3f& Point() const { return m_point; }
 
-    void SetBarycentric(const Vec3f& barycentric ) { m_barycentric_coord = barycentric; };
-    const Vec3f& Barycentric() const { return m_barycentric_closest; }
+    constexpr void SetBarycentric(const Vec2f& barycentric ) { m_barycentric_coord = barycentric; };
+    constexpr const Vec2f& Barycentric() const { return m_barycentric_closest; }
 
-    void SetNormal(const Vec3f& normal) { m_normal = normal; }
-    const Vec3f& Normal() const { return m_normal; }
+    constexpr void SetNormal(const Vec3f& normal) { m_normal = normal; }
+    constexpr const Vec3f& Normal() const { return m_normal; }
 
-    Renderable* RenderablePtr() const { return m_ptr; }
+    constexpr Renderable* RenderablePtr() const { return m_ptr; }
 
-    void SetParameter(const float t) { m_t = t; }
-    const float Parameter() { return m_t; }
+    constexpr void SetParameter(const float t) { m_t = t; }
+    constexpr const float Parameter() { return m_t; }
 
 
     float       m_t;
     Point3f     m_point;
-    Vec3f       m_barycentric_coord;
+    Vec2f       m_barycentric_coord;
 
 private:
    
-    Vec3f        m_normal;
+    Vec3f       m_normal;
     float       m_t_closest;
-    Vec3f        m_barycentric_closest;
+    Vec2f       m_barycentric_closest;
     Renderable* m_ptr;                  // observing
     bool        m_has_been_hit;
 };
 
-enum MaterialType { Diffuse, Reflective, Refract, ReflectAndRefract };
+enum class MaterialType { Diffuse, Reflective, Refract, ReflectAndRefract };
 
 class Renderable
 {
 public:
-    Renderable() : m_material(Diffuse) {}
+    Renderable() : m_material(MaterialType::Diffuse) {}
 
     Renderable(const Color3f& albedo, MaterialType material)
         : m_albedo(albedo)

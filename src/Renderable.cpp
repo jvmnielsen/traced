@@ -8,7 +8,7 @@ void Intersection::CalculateNormal(const Rayf &ray)
 
 void Intersection::UpdateClosest(Renderable *ptr, const Rayf &ray)
 {
-    if (ptr->Material() == ReflectAndRefract && ray.getRayType() == RayType::ShadowRay) // we skip in this case
+    if (ptr->Material() == MaterialType::ReflectAndRefract && ray.getRayType() == RayType::ShadowRay) // we skip in this case
         return;
 
     if (m_t < m_t_closest && m_t > 0)

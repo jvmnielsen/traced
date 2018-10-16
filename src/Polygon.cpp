@@ -50,7 +50,7 @@ bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
     // precompute for performance
     const auto inverted_det = 1 / det;
 
-    Vec3f barycentric(0);
+    Vec2f barycentric{0};
 
     // barycentric coordinate u
     const auto t_vec = ray.Origin() - m_vertices[0];
@@ -72,20 +72,20 @@ bool Polygon::Intersects(const Rayf& ray, Intersection& intersection)
     return true;
 } 
 
-void Polygon::CalculateNormal(Intersection &hit_data) const
+void Polygon::CalculateNormal(Intersection &intersec) const
 {
     // for flat shading simply return the face normal
-    const auto normal = m_vertex_normals[0] * (1 - hit_data.Barycentric().x - hit_data.Barycentric().y)
-        + m_vertex_normals[1] * hit_data.Barycentric().x
-        + m_vertex_normals[2] *  hit_data.Barycentric().y;
+    const auto normal = m_vertex_normals[0] * (1 - intersec.Barycentric().x - intersec.Barycentric().y)
+        + m_vertex_normals[1] * intersec.Barycentric().x
+        + m_vertex_normals[2] * intersec.Barycentric().y;
 
-    hit_data.SetNormal(Normalize(normal));
+    intersec.SetNormal(Normalize(normal));
 }
 
-/*
+
 void Polygon::TranslateBy(const Vec3f& dir)
 {
-    const Matrix44f translation =
+    const Matrix4x4f translation
     {    1,      0,     0, 0,
           0,     1,     0, 0,
           0,     0,     1, 0,
@@ -97,7 +97,7 @@ void Polygon::TranslateBy(const Vec3f& dir)
 void Polygon::RotateAroundX(float angle) 
 {
     const auto rad = Math::DegreeToRadian(angle);
-    const Matrix44f rotation =
+    const Matrix4x4f rotation
     {   1,        0,         0, 0,
         0, cos(rad), -sin(rad), 0,
         0, sin(rad),  cos(rad), 0,
@@ -109,7 +109,7 @@ void Polygon::RotateAroundX(float angle)
 void Polygon::RotateAroundY(float angle) 
 {
     const auto rad = Math::DegreeToRadian(angle);
-    const Matrix44f rotation =
+    const Matrix4x4f rotation
     { cos(rad), 0, sin(rad), 0,
              0, 1,        0, 0,
      -sin(rad), 0, cos(rad), 0,
@@ -121,7 +121,7 @@ void Polygon::RotateAroundY(float angle)
 void Polygon::RotateAroundZ(float angle) 
 {
     const auto rad = Math::DegreeToRadian(angle);
-    const Matrix44f rotation =
+    const Matrix4x4f rotation
     { cos(rad), -sin(rad), 0, 0,
       sin(rad),  cos(rad), 0, 0,
              0,         0, 1, 0,
@@ -133,7 +133,7 @@ void Polygon::RotateAroundZ(float angle)
 void Polygon::ScaleBy(float factor)
 {
     
-    const Matrix44f scale =
+    const Matrix4x4f scale
     {factor,      0,      0, 0,
           0, factor,      0, 0,
           0,      0, factor, 0,
@@ -141,4 +141,3 @@ void Polygon::ScaleBy(float factor)
 
     TransformByMatrix2(scale);
 }
-*/

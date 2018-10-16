@@ -57,7 +57,7 @@ int main(int argc, char * argv[])
     auto camera = std::make_unique<Camera>(Point3f(0.0f, 2.5f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     scene.SetCamera(std::move(camera));
 
-    auto lightOne = std::make_unique<PointLight>(Color3f(0.6f, 0.2f, 0.8f), 0.009f, Point3f(-2.2f, 4.0f, -2.5f));
+    auto lightOne = std::make_unique<PointLight>(Color3f(0.4f, 0.4f, 0.4f), 0.002f, Point3f(-2.2f, 4.0f, -2.5f));
     scene.AddLight(std::move(lightOne));
 
     //auto lightTwo = std::make_unique<PointLight>(Vecf(0.533f, 0.8f, 0.6f), 40.0f, Vecf(-2, 2, -2));
@@ -70,34 +70,33 @@ int main(int argc, char * argv[])
 
     Parser parser;
 
-    /*
-    auto plane = parser.Parse("assets/plane.obj");
+    auto plane = parser.Parse("../assets/plane.obj");
     auto leftPlane = plane->CloneMesh();
     auto rightPlane = plane->CloneMesh();
     auto backPlane = plane->CloneMesh();
 
     plane->ScaleBy(6.0f);
     plane->TranslateBy({0.0f,-0.5f,-9.0f});
-    plane->SetMaterialType(Diffuse);
+    plane->SetMaterialType(MaterialType::Diffuse);
     scene.AddMesh(std::move(plane));
 
-    leftPlane->RotateAroundZ(80.0f);
+    leftPlane->RotateAroundZ(90.0f);
     leftPlane->ScaleBy(5.0f);
     leftPlane->TranslateBy({-5.0f,0.0f,-9.0f});
-    leftPlane->SetMaterialType(Diffuse);
+    leftPlane->SetMaterialType(MaterialType::Diffuse);
     scene.AddMesh(std::move(leftPlane));
 
     rightPlane->RotateAroundZ(-90.0f);
     rightPlane->ScaleBy(5.0f);
     rightPlane->TranslateBy({5.0f,2.0f,-9.0f});
-    rightPlane->SetMaterialType(Diffuse);
+    rightPlane->SetMaterialType(MaterialType::Diffuse);
     scene.AddMesh(std::move(rightPlane));
 
-    backPlane->RotateAroundX(50.0f);
-    backPlane->ScaleBy(5.0f);
+    backPlane->RotateAroundY(-70.0f);
+    backPlane->ScaleBy(10.0f);
     backPlane->TranslateBy({0.0f,10.0f,-14.0f});
-    backPlane->SetMaterialType(Diffuse);
-    scene.AddMesh(std::move(backPlane)); */
+    backPlane->SetMaterialType(MaterialType::Diffuse);
+    //scene.AddMesh(std::move(backPlane));
 
 
     /*
@@ -112,11 +111,11 @@ int main(int argc, char * argv[])
     
 
 
-    auto sphereOne = std::make_unique<Sphere>(Point3f(0.1f, 0.50f,-7.0f), 0.5f, Color3f{0.18f}, ReflectAndRefract);
+    auto sphereOne = std::make_unique<Sphere>(Point3f(0.1f, 0.50f,-7.0f), 0.5f, Color3f{0.18f}, MaterialType::ReflectAndRefract);
     scene.AddRenderable(std::move(sphereOne));
-    auto sphereTwo = std::make_unique<Sphere>(Point3f(-0.5f, 0.5f, -7.6f), 0.5f, Color3f{0.18f}, Reflective);
+    auto sphereTwo = std::make_unique<Sphere>(Point3f(-0.5f, 0.5f, -7.6f), 0.5f, Color3f{0.18f}, MaterialType::Reflective);
     scene.AddRenderable(std::move(sphereTwo));
-    auto sphereThree = std::make_unique<Sphere>(Point3f(0.7f, 0.5f, -6.2f), 0.50f, Color3f{0.18f}, Diffuse);
+    auto sphereThree = std::make_unique<Sphere>(Point3f(0.7f, 0.5f, -6.2f), 0.50f, Color3f{0.18f}, MaterialType::Diffuse);
     scene.AddRenderable(std::move(sphereThree));
 
 

@@ -47,9 +47,9 @@ Camera::Camera(
         const float v_fov,
         const float aspect)
 {
-    const auto theta = v_fov * M_PI / 180;
-    const auto half_height = static_cast<float>(tan(theta / 2));
-    const auto half_width = aspect * half_height;
+    const auto theta = Math::DegreeToRadian(v_fov);
+    const auto halfHeight = static_cast<float>(tan(theta / 2));
+    const auto halfWidth = aspect * halfHeight;
 
     m_origin = look_from;
 
@@ -57,9 +57,9 @@ Camera::Camera(
     const auto u = (v_up.CrossProduct(w)).Normalize();
     const auto v = w.CrossProduct(u);
 
-    m_lowerLeftCorner = m_origin - u*half_width  - v*half_height - w;
-    m_horizontal = u * 2 * half_width;
-    m_vertical = v * 2 * half_height;
+    m_lowerLeftCorner = m_origin - u*halfWidth  - v*halfHeight - w;
+    m_horizontal = u * 2 * halfWidth;
+    m_vertical = v * 2 * halfHeight;
 }
 
 Rayf Camera::GetRay(const float u, const float v) const

@@ -126,7 +126,7 @@ Color3f Scene::CastRay(const Rayf& ray, uint32_t depth)
         switch (hit_data.RenderablePtr()->Material())
         {
             
-            case Diffuse:
+            case MaterialType::Diffuse:
             {
                 
                 for (const auto& light : m_scene_lights)
@@ -146,14 +146,14 @@ Color3f Scene::CastRay(const Rayf& ray, uint32_t depth)
                 //hit_color = {100, 100, 100};
                 break;
             }
-            case Reflective:
+            case MaterialType::Reflective:
             {
                 const auto reflected = Reflect(ray.Direction(), hit_data.Normal());
                 
                 hit_color += 0.8f * CastRay(Rayf(hit_data.Point() + hit_data.Normal() * m_shadow_bias, reflected, RayType::PrimaryRay), depth + 1); // fuzzines: + 0.05 * random_in_unit_sphere()
                 break;
             }
-            case ReflectAndRefract:
+            case MaterialType::ReflectAndRefract:
             {
                 Color3f reflectColor = {};
                 Color3f refractColor = {};
