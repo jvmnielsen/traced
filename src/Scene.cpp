@@ -196,7 +196,7 @@ Color3f Scene::CastRay(const Rayf& ray, uint32_t depth)
 
 void Scene::Render(ImageBuffer& buffer)
 {
-    const int aa_factor = 5; 
+    const int aa_factor = 5;
 
     Timer timer = {"Rendering took: "};
 
