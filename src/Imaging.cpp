@@ -58,8 +58,8 @@ Camera::Camera(
 Rayf Camera::GetRay(const float u, const float v) const
 {
     return {m_origin, // origin of the camera
-            (m_lowerLeftCorner + m_horizontal * u +  m_vertical * v) - m_origin // scale from lower left - origin for vector pointing to this point
-            };
+            m_lowerLeftCorner + m_horizontal * u +  m_vertical * v - m_origin}; // scale from lower left - origin for vector pointing to this point
+
 }
 
 ImageBuffer::ImageBuffer(

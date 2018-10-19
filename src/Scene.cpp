@@ -7,7 +7,7 @@
 #include <memory>
 #include "Utility.h"
 
-bool Scene::Intersects(const Rayf& ray, Intersection& isect)
+bool Scene::Intersects(const Rayf& ray, Intersection& isect) const
 {
     for (const auto& volume : m_boundingVolumes)
         volume->Intersects(ray, isect);
@@ -15,9 +15,13 @@ bool Scene::Intersects(const Rayf& ray, Intersection& isect)
     return isect.m_hasBeenHit;
 }
 
-bool Scene::IntersectsQuick(const Rayf& ray, Intersection& isec)
+bool Scene::IntersectsQuick(const Rayf& ray) const
 {
-    return true;
+    for (const auto& volume : m_boundingVolumes)
+        if (volume->IntersectsQuick(ray))
+            return true;
+
+    return false;
 }
 
 void Scene::AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume)

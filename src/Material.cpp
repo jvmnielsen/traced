@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "MathUtil.h"
+#include "VisibilityTester.h"
 
 bool refract( const Vec3f& v, const Vec3f& n, float ni_over_nt, Vec3f& refracted )
 {
@@ -23,12 +24,23 @@ float schlick( float cosine, float refractive_index )
 }
 
 
-bool Lambertian::Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) const
+Color3f Matte::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene) const
 {
-    const auto target = isect.m_point + isect.m_normal;// + random_in_unit_sphere();
-    scattered = Rayf{ isect.m_point, target-isect.m_point };
-    attenuation = m_albedo;
-    return true;
+    Color3f color{ 0 };
+
+    for (const auto& light : scene.m_lights)
+    {
+        VisibilityTester tester;
+        if (tester.IsVisible(isect.m_point + isect.m_normal * 1e-4f, light->m_position, scene)) // careful with self-intersection
+        {
+            PointLightingInfo info;
+            light->IlluminatePoint(isect.m_point, info);
+
+            color += m_albedo * std::max(0.f, isect.m_normal.DotProduct(info.directionToLight)) * info.lightIntensity;
+        }
+    }
+
+    return color;
 }
 
 /*

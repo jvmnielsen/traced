@@ -12,6 +12,8 @@ public:
 	Mesh() : Shape(Color3f(0.18f), nullptr) {}
 
 	bool Intersects(const Rayf &ray, Intersection &hit_data) override;
+    bool IntersectsQuick(const Rayf& ray) const override { return true; }
+
 
 	void AddPolygon(std::shared_ptr<Triangle> polygon);
 

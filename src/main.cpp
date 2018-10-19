@@ -52,20 +52,16 @@ int main(int argc, char * argv[])
     const unsigned int SCREEN_WIDTH = 720;
     const unsigned int SCREEN_HEIGHT = 480;
 
-    //auto scene = std::make_unique<Scene>();
     Scene scene;
 
-    Camera camera { Point3f(0.0f, 2.0f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
+    Camera camera { Point3f(0.0f, 0.0f, 0.0f), Point3f(0.0f,0.0f,-1.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
 
-    //auto lightOne = std::make_unique<PointLight>(Color3f(0.7f, 0.7f, 0.7f), 0.01f, Point3f(-2.2f, 2.0f, -1.5f));
-    //scene.AddLight(std::move(lightOne));
+    auto lightOne = std::make_unique<PointLight>(Color3f(0.01f, 0.02f, 0.03f), Point3f(1.2f, 2.0f, -0.1f));
+    scene.AddLight(std::move(lightOne));
 
-    //auto lightTwo = std::make_unique<PointLight>(Color3f(0.533f, 0.8f, 0.6f), 0.01f, Point3f(2, 2, -4));
-    //scene.AddLight(std::move(lightTwo));
+    auto lamb = std::make_shared<Matte>(Color3f{0.18f});
 
-    auto lamb = std::make_shared<Lambertian>(Color3f{0.18f});
-
-    auto sphere = std::make_shared<Sphere>(Point3f{0.f,0.f,-3.0f}, 0.5f, Color3f{0.18f}, lamb);
+    auto sphere = std::make_shared<Sphere>(Point3f{0.f,0.f,-4.0f}, 1.5f, Color3f{0.18f}, lamb);
 
     auto boundingSphere = std::make_shared<BoundingVolume>(sphere->GetBoundingVolume());
     boundingSphere->SetShape(sphere);
@@ -76,22 +72,16 @@ int main(int argc, char * argv[])
 
     Window window = {SCREEN_WIDTH, SCREEN_HEIGHT};
     ImageBuffer buffer = {SCREEN_WIDTH, SCREEN_HEIGHT};
-    StochasticRayTracer whit { 10 };
+    WhittedRayTracer whit { 10 };
 
-    //auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
-    //auto buffer = std::make_unique<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    whit.Render(scene, camera, buffer);
-
-    //std::thread RenderThread{ &Whitted::Render, scene, camera, buffer };
-    //scene.Render(buffer);
+    std::thread RenderThread{ &WhittedRayTracer::Render, whit, std::ref(scene), std::ref(camera), std::ref(buffer) };
 
     window.InitializeWindow(buffer);
     window.CheckForInput(buffer);
 
-    //RenderThread.join();
-    
-    //ThreadManager manager{ std::move(window), std::move(buffer) };
-    //manager.Run(*scene);
+    RenderThread.join();
+
+    return 0;
 
 }

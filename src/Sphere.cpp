@@ -22,13 +22,35 @@ bool Sphere::Intersects(const Rayf& ray, Intersection& isect)
     if (!(solutionOne > 0 || solutionTwo > 0))
         return false;
 
-    ray.m_maxParam = (solutionOne < solutionTwo) ? solutionOne : solutionTwo;
+    const auto param = (solutionOne < solutionTwo) ? solutionOne : solutionTwo;
+
+    if (ray.m_maxParam < param)
+        return false;
+
+    ray.m_maxParam = param;
     isect.m_shape = this;
     isect.m_point = ray.PointAtParameter(ray.m_maxParam);
+    CalculateNormal(isect);
     isect.m_hasBeenHit = true;
 
     return true;
  }
+
+bool Sphere::IntersectsQuick(const Rayf& ray) const
+{
+    float solutionOne, solutionTwo;
+
+    auto centerToOrigin = ray.Origin() - m_center;
+
+    const auto a = ray.Direction().DotProduct(ray.Direction());
+    const auto b = 2 * ray.Direction().DotProduct(centerToOrigin);
+    const auto c = centerToOrigin.DotProduct(centerToOrigin) - m_radius_squared;
+
+    if (!Math::SolveQuadratic(a, b, c, solutionOne, solutionTwo))
+        return false;
+
+    return solutionOne > 0 || solutionTwo > 0;
+}
 
 BoundingVolume Sphere::GetBoundingVolume() const
 {

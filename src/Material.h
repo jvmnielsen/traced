@@ -2,17 +2,19 @@
 #include "MathUtil.h"
 #include "Imaging.h"
 #include "Intersection.h"
+#include "Scene.h"
 
 class Material  {
 public:
-    virtual bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) const = 0;
+    virtual Color3f CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene) const = 0;
 };
 
-class Lambertian : public Material {
+class Matte : public Material {
 public:
-    explicit Lambertian(const Color3f& a) : m_albedo(a) {}
+    explicit Matte(const Color3f& a) : m_albedo(a) {}
 
-    bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) const override;
+    Color3f CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene) const override;
 
     Color3f m_albedo;
 };
+

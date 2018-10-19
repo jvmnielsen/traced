@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstddef>
 #include "MathUtil.h"
+//#include "VisibilityTester.h"
 //#include "Shape.h"
 
 template<typename T>
@@ -91,21 +92,26 @@ typedef Color3<uint8_t > Color3ui8;
 typedef Color3<unsigned short> Color3ui16;
 
 
-struct LightingInfo
+struct PointLightingInfo
 {
-    Vec3f dirToLight;
-    float pdf;
-    bool isVisible;
+    float distanceToLight;
+    Vec3f directionToLight;
+    Color3f lightIntensity;
 };
 
 class Light
 {
 public:
-    //Light(const Color3f& color, float intensity = 1.0f);
+    Light(const Color3f intensity, const Point3f& position)
+            : m_intensity(intensity)
+            , m_position(position)
+    {}
 
     virtual ~Light() = default;
-    //virtual Color3f SampleLi(const Intersection& isect, LightingInfo& info) const = 0;
-    //virtual void illuminate(const Point3f& point, LightingInfo& info) const = 0;
+    virtual void IlluminatePoint(const Point3f& point, PointLightingInfo& info) const = 0;
+
+    Color3f m_intensity;
+    Point3f m_position;
 
 protected:
     //Color3f m_color;
@@ -118,22 +124,20 @@ public:
     PointLight() = default;
 
     PointLight(const Color3f intensity, const Point3f& position)
-            : m_intensity(intensity) //: Light(color, intensity)
-            , m_position(position)
+            : Light(intensity, position)
     {}
 
-    /*
-    void illuminate(const Point3f& point, LightingInfo& info) const override
-    {
-        info.direction = point - m_position;
-        const auto r2 = info.direction.LengthSquared();
-        info.distance = sqrtf(r2);
-        info.direction /= info.distance;
-        //info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
-    } */
 
-    Color3f m_intensity;
-    Point3f m_position;
+    void IlluminatePoint(const Point3f& point, PointLightingInfo& info) const override
+    {
+        info.directionToLight = m_position - point;
+        const auto r2 = info.directionToLight.LengthSquared();
+        info.distanceToLight = sqrtf(r2);
+        info.directionToLight /= info.distanceToLight;
+        info.lightIntensity = m_intensity / (4 * (float)M_PI * r2);
+    }
+
+
 };
 
 

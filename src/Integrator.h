@@ -34,6 +34,7 @@ private:
     Color3f TraceRay(const Rayf& ray, Scene& scene, int depth);
 
     int m_recursionDepth;
+    float m_shadow_bias = 1e-4f;
 };
 
 class StochasticRayTracer : public Integrator

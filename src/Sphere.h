@@ -14,6 +14,7 @@ public:
     {}
 
     bool Intersects(const Rayf& ray, Intersection& isect) override;
+    bool IntersectsQuick(const Rayf& ray) const override;
 
     BoundingVolume GetBoundingVolume() const override;
 

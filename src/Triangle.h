@@ -51,6 +51,8 @@ public:
     }
 
     bool Intersects(const Rayf &ray, Intersection &hit_data) override;
+    bool IntersectsQuick(const Rayf& ray) const override { return true; }
+
 
     //void SetMaterialType(const MaterialType& type) override { m_material = type; }
 

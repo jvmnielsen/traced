@@ -3,6 +3,20 @@
 
 Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
 {
+    Intersection isect;
+    Color3f hitColor;
+
+    if (scene.Intersects(ray, isect))
+    //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect))
+    {
+        hitColor = isect.m_shape->GetMaterial().CalculateSurfaceColor(ray, isect, scene);
+    }
+    else
+    {
+        hitColor = scene.BackgroundColor();
+    }
+
+    return hitColor;
 
 }
 
@@ -12,10 +26,9 @@ void WhittedRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buffer)
     {
         for (size_t i = 0; i < buffer.Width(); ++i)
         {
-
             Color3f color{ 0 };
 
-            const auto ray = camera.GetRay(i, j);
+            const auto ray = camera.GetRay(static_cast<float>(i)/buffer.Width(), static_cast<float>(j)/buffer.Height());
 
             color = TraceRay(ray, scene, 0);
 
@@ -23,17 +36,16 @@ void WhittedRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buffer)
         }
     }
 }
-}
-
 
 Color3f StochasticRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
 {
+    /*
     Intersection isect;
     if (scene.Intersects(ray, isect))
     {
         Rayf scattered;
         Color3f attenuation;
-        if (depth < m_depth && isect.m_matPtr->Scatter(ray, isect, attenuation, scattered))
+        if (depth < m_depth && isect.m_matPtr->CalculateSurfaceColor(ray, isect, attenuation, scattered))
         {
             return attenuation * TraceRay(scattered, scene, depth + 1);
         }
@@ -45,8 +57,8 @@ Color3f StochasticRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     else
     {
         return scene.BackgroundColor();
-    }
-
+    } */
+    return {0,0,0};
 }
 
 void StochasticRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buffer)

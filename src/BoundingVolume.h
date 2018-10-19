@@ -21,14 +21,16 @@ public:
 
     ~BoundingVolume() = default;
 
-    bool Intersects(const Rayf& ray, Intersection& isect);
-    //bool IntersectsQuick(const Rayf& ray, Intersection& isect);
+    bool Intersects(const Rayf& ray, Intersection& isect) const;
+    bool IntersectsQuick(const Rayf& ray) const;
 
     void SetShape(std::shared_ptr<Shape> shape) { m_shape = std::move(shape); }
 
-private:
-    bool IntersectsShape(const Rayf& ray, Intersection& isect);
     std::shared_ptr<Shape> m_shape;
+
+private:
+    bool IntersectsShape(const Rayf& ray, Intersection& isect) const;
+
     Point3f m_bounds[2];
 };
 

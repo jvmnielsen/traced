@@ -10,8 +10,8 @@ public:
     Scene() = default;
     ~Scene() = default;
 
-    bool Intersects(const Rayf& ray, Intersection& isec);
-    bool IntersectsQuick(const Rayf& ray, Intersection& isec);
+    bool Intersects(const Rayf& ray, Intersection& isect) const;
+    bool IntersectsQuick(const Rayf& ray) const;
 
 	void AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume);
     void AddLight(std::unique_ptr<Light> lightPtr);
@@ -23,11 +23,13 @@ public:
 
     std::vector<std::shared_ptr<Light>> m_lights;
 
+    std::vector<std::shared_ptr<BoundingVolume>> m_boundingVolumes;
+
 private:
     Color3f m_backgroundColor;
 
 
-	std::vector<std::shared_ptr<BoundingVolume>> m_boundingVolumes;
+
 
     //std::vector<std::unique_ptr<Mesh>> m_scene_meshes;
     //const float m_infinity = std::numeric_limits<float>::max();

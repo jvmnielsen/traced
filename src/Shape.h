@@ -10,6 +10,8 @@
 class Intersection;
 class Material;
 class BoundingVolume;
+class Light;
+
 
 class Shape
 {
@@ -23,20 +25,21 @@ public:
 	virtual ~Shape() = default;
 
     virtual bool Intersects(const Rayf &ray, Intersection& isec) = 0;
-    //virtual bool IntersectsQuick(const Rayf& ray, Intersection& isec) = 0;
+    virtual bool IntersectsQuick(const Rayf& ray) const = 0;
 
     virtual BoundingVolume GetBoundingVolume() const = 0;
 
-    void ComputeScatteringFunction(Intersection& isect, const Rayf& ray);
+    //void ComputeScatteringFunction(Intersection& isect, const Rayf& ray);
     virtual void CalculateNormal(Intersection &hit_data) const = 0;
     virtual void TransformBy(const Transform& transform) = 0;
 
-	Color3f Albedo() const { return m_albedo; }
+    Color3f Albedo() const { return m_albedo; }
+
+    const Material& GetMaterial() { return *m_material; }
 
 protected:
     Color3f m_albedo;
     std::shared_ptr<Material> m_material;
-    //std::shared_ptr<BSDF> m_BSDF;
 };
 
 
