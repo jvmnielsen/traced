@@ -1,6 +1,7 @@
 #include "Material.h"
 #include "MathUtil.h"
 #include "VisibilityTester.h"
+#include "BSDF.h"
 
 bool refract( const Vec3f& v, const Vec3f& n, float ni_over_nt, Vec3f& refracted )
 {
@@ -33,10 +34,20 @@ Color3f Matte::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isec
         VisibilityTester tester;
         if (tester.IsVisible(isect.m_point + isect.m_normal * 1e-4f, light->m_position, scene)) // careful with self-intersection
         {
-            PointLightingInfo info;
-            light->IlluminatePoint(isect.m_point, info);
+            //PointLightingInfo info;
+            //light->IlluminatePoint(isect.m_point, info);
 
-            color += m_albedo * std::max(0.f, isect.m_normal.DotProduct(info.directionToLight)) * info.lightIntensity;
+            const Vec3f offset = light->m_position - isect.m_point;
+            const float distanceToLight = offset.Length();
+            const Vec3f wi = Normalize(offset);
+            const auto wo = -rayIn.Direction().Normalize();
+
+            const Color3f intensity = light->m_intensity / (4 * M_PI * distanceToLight * distanceToLight);
+
+            //Lambertian lm{ Color3f{0.1f, 0.2f, 0.0f} };
+            Phong lm{ Color3f{ 0.0f, 0.0f, 0.8f }, Color3f{ 0.2f }, 50, isect.m_normal };
+            color += intensity * std::max(0.0f, wi.DotProduct(isect.m_normal)) *
+                    lm.EvaluateFiniteScatteringDensity(wo, wi);
         }
     }
 

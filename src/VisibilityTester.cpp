@@ -7,6 +7,8 @@
 
 bool VisibilityTester::IsVisible(const Point3f& p1, const Point3f& p2, const Scene& scene) const
 {
-    Rayf ray{ p1, p2 - p1 };
+    const Vec3f offset = p2 - p1;
+    const float distance = offset.Length();
+    Rayf ray{ p1, offset, distance };
     return !scene.IntersectsQuick(ray);
 }

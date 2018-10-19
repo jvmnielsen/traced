@@ -56,12 +56,12 @@ int main(int argc, char * argv[])
 
     Camera camera { Point3f(0.0f, 0.0f, 0.0f), Point3f(0.0f,0.0f,-1.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
 
-    auto lightOne = std::make_unique<PointLight>(Color3f(0.01f, 0.02f, 0.03f), Point3f(1.2f, 2.0f, -0.1f));
+    auto lightOne = std::make_unique<PointLight>(Color3f{550.0f}, Point3f(0.0f, 2.0f, -2.0f));
     scene.AddLight(std::move(lightOne));
 
     auto lamb = std::make_shared<Matte>(Color3f{0.18f});
 
-    auto sphere = std::make_shared<Sphere>(Point3f{0.f,0.f,-4.0f}, 1.5f, Color3f{0.18f}, lamb);
+    auto sphere = std::make_shared<Sphere>(Point3f{0.f,0.f,-6.0f}, 1.5f, Color3f{0.18f}, lamb);
 
     auto boundingSphere = std::make_shared<BoundingVolume>(sphere->GetBoundingVolume());
     boundingSphere->SetShape(sphere);

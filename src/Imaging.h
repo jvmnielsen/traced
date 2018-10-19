@@ -30,7 +30,7 @@ public:
 
     constexpr Color3 operator/(T factor) const
     {
-        return Color3{ r * factor, g * factor, b * factor };
+        return Color3{ r / factor, g / factor, b / factor };
     }
 
     constexpr Color3& operator/=(T factor)
@@ -132,8 +132,8 @@ public:
     {
         info.directionToLight = m_position - point;
         const auto r2 = info.directionToLight.LengthSquared();
-        info.distanceToLight = sqrtf(r2);
-        info.directionToLight /= info.distanceToLight;
+        //info.distanceToLight = sqrtf(r2);
+        info.directionToLight.Normalize();// /= info.distanceToLight;
         info.lightIntensity = m_intensity / (4 * (float)M_PI * r2);
     }
 
