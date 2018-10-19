@@ -1,4 +1,5 @@
 #pragma once
+/*
 #include "Scene.h"
 #include "Window.h"
 #include "Imaging.h"
@@ -24,5 +25,5 @@ private:
     std::unique_ptr<Scene> m_scene;
     std::unique_ptr<Window> m_window;
     std::unique_ptr<ImageBuffer> m_buffer;
-};
+}; */
 

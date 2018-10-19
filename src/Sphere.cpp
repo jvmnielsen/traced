@@ -3,60 +3,37 @@
 
 void Sphere::CalculateNormal(Intersection &intersection) const
 {
-    intersection.SetNormal((intersection.Point() - m_center).Normalize());
+    intersection.m_normal = (intersection.m_point - m_center).Normalize();
 }
 
-bool Sphere::Intersects(const Rayf &ray, Intersection &intersection)
+bool Sphere::Intersects(const Rayf& ray, Intersection& isect)
 {
     float solutionOne, solutionTwo;
 
-    auto center_at_orig = ray.Origin() - m_center;
+    auto centerToOrigin = ray.Origin() - m_center;
 
     const auto a = ray.Direction().DotProduct(ray.Direction());
-    const auto b = 2 * ray.Direction().DotProduct(center_at_orig);
-    const auto c = center_at_orig.DotProduct(center_at_orig) - m_radius_squared;
+    const auto b = 2 * ray.Direction().DotProduct(centerToOrigin);
+    const auto c = centerToOrigin.DotProduct(centerToOrigin) - m_radius_squared;
 
-    if (!solve_quadratic(a, b, c, solutionOne, solutionTwo))
+    if (!Math::SolveQuadratic(a, b, c, solutionOne, solutionTwo))
         return false;
 
     if (!(solutionOne > 0 || solutionTwo > 0))
         return false;
 
-    intersection.SetParameter(
-            (solutionOne < solutionTwo) ? solutionOne : solutionTwo);
+    ray.m_maxParam = (solutionOne < solutionTwo) ? solutionOne : solutionTwo;
+    isect.m_shape = this;
+    isect.m_point = ray.PointAtParameter(ray.m_maxParam);
+    isect.m_hasBeenHit = true;
 
     return true;
  }
 
-bool Sphere::solve_quadratic(
-        const float a,
-        const float b,
-        const float c,
-        float& solutionOne,
-        float& solutionTwo) const
+BoundingVolume Sphere::GetBoundingVolume() const
 {
-    const auto discr = b * b - 4 * a * c;
-
-    if (discr < 0) 
-        return false;
-
-    else if (discr == 0) 
-        solutionOne = solutionTwo = -0.5f * b / a;
-
-    else
-    {
-        const float q = (b > 0) ?
-            -0.5f * (b + sqrt( discr )) :
-            -0.5f * (b - sqrt( discr ));
-
-        solutionOne = q / a;
-        solutionTwo = c / q;
-    }
-
-    if (solutionOne > solutionTwo)
-        std::swap(solutionOne, solutionTwo);
-
-    return true;
+    return BoundingVolume{ Point3f{ -m_radius, -m_radius, -m_radius },
+             Point3f{ m_radius, m_radius, m_radius } };
 }
 
 void Sphere::TransformBy(const Transform& transform)

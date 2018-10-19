@@ -1,47 +1,44 @@
 #include "Mesh.h"
 
-bool Mesh::Intersects(const Rayf &ray, Intersection &hit_data)
+bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
-	for (const auto& polygon : m_mesh)
-	{
-		if (polygon->Intersects(ray, hit_data))
-		{
-			hit_data.UpdateClosest(polygon.get(), ray);
-		}
-	}
+	for (const auto& triangle : m_triangles)
+	    triangle->Intersects(ray, isect);
 
-	return hit_data.HasBeenHit();
+	return isect.m_hasBeenHit;
 }
 
-void Mesh::AddPolygon(std::unique_ptr<Triangle> polygon)
+void Mesh::AddPolygon(std::shared_ptr<Triangle> polygon)
 {
-	m_mesh.push_back(std::move(polygon));
+	m_triangles.push_back(polygon);
 }
 
 void Mesh::CalculateNormal(Intersection &hit_data) const
 {
-    hit_data.RenderablePtr()->CalculateNormal(hit_data);
+    hit_data.m_shape->CalculateNormal(hit_data);
 }
 
+/*
 void Mesh::SetMaterialType(const MaterialType& type)
 {
-    for (auto& polygon : m_mesh)
+    for (auto& polygon : m_triangles)
     {
         polygon->SetMaterialType(type);
     }
-}
+} */
 
 void Mesh::TransformBy(const Transform& transform)
 {
-    for (auto& triangle : m_mesh)
+    for (auto& triangle : m_triangles)
         triangle->TransformBy(transform);
 }
 
-std::unique_ptr<Mesh> Mesh::CloneMesh()
+/*
+std::shared_ptr<Mesh> Mesh::CloneMesh()
 {
     auto newMesh = std::make_unique<Mesh>();
 
-    for (const auto& polygon : m_mesh)
+    for (const auto& polygon : m_triangles)
     {
         auto newPolygon = std::make_unique<Triangle>();
 
@@ -51,4 +48,4 @@ std::unique_ptr<Mesh> Mesh::CloneMesh()
     }
 
     return newMesh;
-}
+} */

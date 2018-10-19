@@ -10,6 +10,7 @@
 #include <thread>
 #include <array>
 #include "Utility.h"
+#include "Integrator.h"
 
 /*
 void ConstructStandardBox(Scene& scene)
@@ -54,73 +55,41 @@ int main(int argc, char * argv[])
     //auto scene = std::make_unique<Scene>();
     Scene scene;
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 2.0f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
-    scene.SetCamera(std::move(camera));
+    Camera camera { Point3f(0.0f, 2.0f, 0.0f), Point3f(0.0f,0.0f,-10.0f), Vec3f(0.0f,1.0f,0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
 
-    auto lightOne = std::make_unique<PointLight>(Color3f(0.7f, 0.7f, 0.7f), 0.01f, Point3f(-2.2f, 2.0f, -1.5f));
-    scene.AddLight(std::move(lightOne));
+    //auto lightOne = std::make_unique<PointLight>(Color3f(0.7f, 0.7f, 0.7f), 0.01f, Point3f(-2.2f, 2.0f, -1.5f));
+    //scene.AddLight(std::move(lightOne));
 
-    auto lightTwo = std::make_unique<PointLight>(Color3f(0.533f, 0.8f, 0.6f), 0.01f, Point3f(2, 2, -4));
+    //auto lightTwo = std::make_unique<PointLight>(Color3f(0.533f, 0.8f, 0.6f), 0.01f, Point3f(2, 2, -4));
     //scene.AddLight(std::move(lightTwo));
 
+    auto lamb = std::make_shared<Lambertian>(Color3f{0.18f});
+
+    auto sphere = std::make_shared<Sphere>(Point3f{0.f,0.f,-3.0f}, 0.5f, Color3f{0.18f}, lamb);
+
+    auto boundingSphere = std::make_shared<BoundingVolume>(sphere->GetBoundingVolume());
+    boundingSphere->SetShape(sphere);
+
+    scene.AddBoundingVolume(boundingSphere);
 
     scene.SetBackgroundColor({0.02f, 0.02f, 0.02f});
 
-    //ConstructStandardBox(scene);
-
-    Parser parser;
-
-    auto plane = parser.Parse("../assets/plane.obj");
-    auto leftPlane = plane->CloneMesh();
-    //auto rightPlane = plane->CloneMesh();
-    //auto backPlane = plane->CloneMesh();
-
-
-
-    plane->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 90.0f));
-    plane->TransformBy(Transform::Scale({3.0f, 3.0f, 1.0f}));
-    plane->TransformBy(Transform::Translate({-4.0f, 0.0f, -4.0f}));
-    plane->SetMaterialType(MaterialType::Diffuse);
-    //scene.AddMesh(std::move(plane));
-
-    leftPlane->TransformBy(Transform::Scale({6.0f, 6.0f, 6.0f}));
-    leftPlane->TransformBy(Transform::Translate({0.0f, 0.0f, -6.0f}));
-    scene.AddMesh(std::move(leftPlane));
-
-
-    auto teapot = parser.Parse("../assets/teapot.obj");
-
-
-    teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 56.0f));
-    teapot->TransformBy(Transform::Scale({0.08f, 0.08f, 0.08f}));
-    teapot->TransformBy(Transform::Translate({-0.4f, 0.5f, -5.0f}));
-    teapot->SetMaterialType(MaterialType::Diffuse);
-    scene.AddMesh(std::move(teapot));
-    
-
-
-    auto sphereOne = std::make_unique<Sphere>(Point3f(1.1f, 0.50f,-7.0f), 0.5f, Color3f{0.18f, 0.1f, 0.2f}, MaterialType::Reflective);
-    scene.AddRenderable(std::move(sphereOne));
-    auto sphereTwo = std::make_unique<Sphere>(Point3f(-2.5f, 0.5f, -7.0f), 0.5f, Color3f{0.18f}, MaterialType::Reflective);
-    scene.AddRenderable(std::move(sphereTwo));
-    auto sphereThree = std::make_unique<Sphere>(Point3f(1.7f, 0.5f, -6.2f), 0.50f, Color3f{0.18f, 0.3f, 0.1f}, MaterialType::Diffuse);
-    scene.AddRenderable(std::move(sphereThree));
-    auto sphereThee = std::make_unique<Sphere>(Point3f(-0.7f, 0.5f, -4.2f), 0.50f, Color3f{0.18f, 0.09f, 0.2f}, MaterialType::Diffuse);
-    //scene.AddRenderable(std::move(sphereThee));
-
-
     Window window = {SCREEN_WIDTH, SCREEN_HEIGHT};
     ImageBuffer buffer = {SCREEN_WIDTH, SCREEN_HEIGHT};
+    StochasticRayTracer whit { 10 };
+
     //auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
     //auto buffer = std::make_unique<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    std::thread RenderThread{ &Scene::Render, std::ref(scene), std::ref(buffer) };
+    whit.Render(scene, camera, buffer);
+
+    //std::thread RenderThread{ &Whitted::Render, scene, camera, buffer };
     //scene.Render(buffer);
 
     window.InitializeWindow(buffer);
     window.CheckForInput(buffer);
 
-    RenderThread.join();
+    //RenderThread.join();
     
     //ThreadManager manager{ std::move(window), std::move(buffer) };
     //manager.Run(*scene);

@@ -4,14 +4,14 @@
 
 void Triangle::UpdateEdges()
 {
-	m_edge0 = m_vertices[1] - m_vertices[0];
-	m_edge0_2 = m_vertices[2] - m_vertices[0];
-	m_edge1 = m_vertices[2] - m_vertices[1];
-	m_edge2 = m_vertices[0] - m_vertices[2];
-	m_normal = (m_vertices[1] - m_vertices[0]).CrossProduct(m_vertices[2] - m_vertices[0]).Normalize();
+	m_edge0 = m_vertex[1] - m_vertex[0];
+	m_edge0_2 = m_vertex[2] - m_vertex[0];
+	m_edge1 = m_vertex[2] - m_vertex[1];
+	m_edge2 = m_vertex[0] - m_vertex[2];
+	m_normal = (m_vertex[1] - m_vertex[0]).CrossProduct(m_vertex[2] - m_vertex[0]).Normalize();
 }
 
-bool Triangle::Intersects(const Rayf& ray, Intersection& intersection)
+bool Triangle::Intersects(const Rayf& ray, Intersection& isect)
 {
     const auto p_vec = ray.Direction().CrossProduct(m_edge0_2);
     const auto det = m_edge0.DotProduct(p_vec);
@@ -26,7 +26,7 @@ bool Triangle::Intersects(const Rayf& ray, Intersection& intersection)
     Vec2f barycentric{0};
 
     // barycentric coordinate u
-    const auto t_vec = ray.Origin() - m_vertices[0];
+    const auto t_vec = ray.Origin() - m_vertex[0];
     barycentric.x = t_vec.DotProduct(p_vec) * inverted_det;
     if (barycentric.x < 0 || barycentric.x > 1)
         return false;
@@ -39,8 +39,13 @@ bool Triangle::Intersects(const Rayf& ray, Intersection& intersection)
 
     const auto parameter = m_edge0_2.DotProduct(q_vec) * inverted_det;
 
-    intersection.SetBarycentric(barycentric);
-    intersection.SetParameter(parameter);
+    if (parameter > ray.m_maxParam)
+        return false;
+
+    ray.m_maxParam = parameter;
+    isect.m_barycentric = barycentric;
+    isect.m_point = ray.PointAtParameter(parameter);
+    isect.m_hasBeenHit = true;
 
     return true;
 } 
@@ -48,20 +53,20 @@ bool Triangle::Intersects(const Rayf& ray, Intersection& intersection)
 void Triangle::CalculateNormal(Intersection &intersec) const
 {
     // for flat shading simply return the face normal
-    const auto normal = m_vertex_normals[0] * (1 - intersec.Barycentric().x - intersec.Barycentric().y)
-        + m_vertex_normals[1] * intersec.Barycentric().x
-        + m_vertex_normals[2] * intersec.Barycentric().y;
+    const auto normal = m_normals[0] * (1 - intersec.m_barycentric.x - intersec.m_barycentric.y)
+        + m_normals[1] * intersec.m_barycentric.x
+        + m_normals[2] * intersec.m_barycentric.y;
 
-    intersec.SetNormal(Normalize(normal));
+    intersec.m_normal = Normalize(normal);
 }
 
 void Triangle::TransformBy(const Transform& transform)
 {
 
-    for (auto& vertex : m_vertices)
+    for (auto& vertex : m_vertex)
         transform(vertex);
 
-    for (auto& normal : m_vertex_normals)
+    for (auto& normal : m_normals)
         transform(normal);
 
     // precompute again

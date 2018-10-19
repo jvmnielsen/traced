@@ -1,12 +1,14 @@
 #pragma once
-#include "Renderable.h"
+#include "Shape.h"
 #include "MathUtil.h"
+#include "BoundingVolume.h"
+#include "Intersection.h"
 
 class Triangle :
-    public Renderable
+    public Shape
 {
 public:
-    Triangle() = default;
+    Triangle() = delete;
 
     Triangle(
             const Point3f& vertx0,
@@ -14,9 +16,9 @@ public:
             const Point3f& vertx2,
             bool is_single_sided,
             const Color3f& albedo,
-            MaterialType material)
-        : Renderable(albedo, material)
-        , m_vertices{vertx0, vertx1, vertx2}
+            std::shared_ptr<Material> material)
+        : Shape(albedo, material)
+        , m_vertex{vertx0, vertx1, vertx2}
         , m_edge0(vertx1 - vertx0)
         , m_edge0_2(vertx2 - vertx0)
         , m_edge1(vertx2 - vertx1)
@@ -35,10 +37,10 @@ public:
         const Vec3f& vertx_normal2,
         bool is_single_sided,
         const Color3f& albedo,
-        MaterialType material)
-        : Renderable(albedo, material)
-        , m_vertices{vertx0, vertx1, vertx2}
-        , m_vertex_normals{vertx_normal0, vertx_normal1, vertx_normal2}
+        std::shared_ptr<Material> material)
+        : Shape(albedo, material)
+        , m_vertex{vertx0, vertx1, vertx2}
+        , m_normals{vertx_normal0, vertx_normal1, vertx_normal2}
         , m_edge0(vertx1 - vertx0)
         , m_edge0_2(vertx2 - vertx0)
         , m_edge1(vertx2 - vertx1)
@@ -50,15 +52,17 @@ public:
 
     bool Intersects(const Rayf &ray, Intersection &hit_data) override;
 
-    void SetMaterialType(const MaterialType& type) override { m_material = type; }
+    //void SetMaterialType(const MaterialType& type) override { m_material = type; }
+
+    BoundingVolume GetBoundingVolume() const override { return BoundingVolume{}; }
 
     void CalculateNormal(Intersection &intersec) const override;
 
     void TransformBy(const Transform& transform) override;
 
-    Point3f m_vertices[3];  // TODO: encapsulate
+    Point3f m_vertex[3];  // TODO: encapsulate
 
-    Normal3f m_vertex_normals[3];
+    Normal3f m_normals[3];
 
 private:
 

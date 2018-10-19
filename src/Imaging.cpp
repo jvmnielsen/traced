@@ -22,13 +22,6 @@ void ConvertToRGB(Color3f& color)
 	color.b = 255 * Math::Clamp(0.0f, 1.0f, color.b);
 }
 
-
-Light::Light(const Color3f& color, const float intensity)
-        : m_color(color)
-        , m_intensity(intensity)
-{
-}
-
 Camera::Camera(const float v_fov, const float aspect)
 {
     const auto theta = v_fov * M_PI / 180; // degrees to radians
@@ -65,8 +58,8 @@ Camera::Camera(
 Rayf Camera::GetRay(const float u, const float v) const
 {
     return {m_origin, // origin of the camera
-            (m_lowerLeftCorner + m_horizontal * u +  m_vertical * v) - m_origin, // scale from lower left - origin for vector pointing to this point
-            RayType::PrimaryRay};
+            (m_lowerLeftCorner + m_horizontal * u +  m_vertical * v) - m_origin // scale from lower left - origin for vector pointing to this point
+            };
 }
 
 ImageBuffer::ImageBuffer(

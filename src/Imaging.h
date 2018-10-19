@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstddef>
 #include "MathUtil.h"
+//#include "Shape.h"
 
 template<typename T>
 class Color3
@@ -92,22 +93,23 @@ typedef Color3<unsigned short> Color3ui16;
 
 struct LightingInfo
 {
-    Vec3f direction;
-    Color3f intensity;
-    float distance;
+    Vec3f dirToLight;
+    float pdf;
+    bool isVisible;
 };
 
 class Light
 {
 public:
-    Light(const Color3f& color, float intensity = 1.0f);
+    //Light(const Color3f& color, float intensity = 1.0f);
 
     virtual ~Light() = default;
-    virtual void illuminate(const Point3f& point, LightingInfo& info) const = 0;
+    //virtual Color3f SampleLi(const Intersection& isect, LightingInfo& info) const = 0;
+    //virtual void illuminate(const Point3f& point, LightingInfo& info) const = 0;
 
 protected:
-    Color3f m_color;
-    float m_intensity;
+    //Color3f m_color;
+    //float m_intensity;
 };
 
 class PointLight : public Light
@@ -115,20 +117,22 @@ class PointLight : public Light
 public:
     PointLight() = default;
 
-    PointLight(const Color3f& color, const float intensity, const Point3f& position)
-            : Light(color, intensity)
+    PointLight(const Color3f intensity, const Point3f& position)
+            : m_intensity(intensity) //: Light(color, intensity)
             , m_position(position)
     {}
 
+    /*
     void illuminate(const Point3f& point, LightingInfo& info) const override
     {
         info.direction = point - m_position;
         const auto r2 = info.direction.LengthSquared();
         info.distance = sqrtf(r2);
         info.direction /= info.distance;
-        info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
-    }
+        //info.intensity = m_intensity * m_color / (4 * (float)M_PI * r2);
+    } */
 
+    Color3f m_intensity;
     Point3f m_position;
 };
 

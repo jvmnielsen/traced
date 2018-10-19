@@ -7,11 +7,11 @@
 class Parser
 {
 public:
-    std::unique_ptr<Mesh> Parse(const std::string& filename);
+    std::shared_ptr<Mesh> Parse(const std::string& filename);
 
 private:
 	void LoadFile(const std::string& filename);
-	std::unique_ptr<Mesh> ConstructMesh();
+	std::shared_ptr<Mesh> ConstructMesh();
 
     void Reset();
 

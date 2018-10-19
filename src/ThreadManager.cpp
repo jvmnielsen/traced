@@ -1,6 +1,7 @@
 #include "ThreadManager.h"
 #include <thread>
 
+/*
 void ThreadManager::Run(const Scene& scene)
 {
 
@@ -24,4 +25,4 @@ void ThreadManager::Run(const Scene& scene)
 
     //window_thread.join();
     //render_thread.join();
-}
+} */

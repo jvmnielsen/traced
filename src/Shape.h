@@ -2,100 +2,45 @@
 #include <memory>
 #include <utility>
 #include "MathUtil.h"
-#include "Imaging.h"
 #include "Transform.h"
+#include "Imaging.h"
+#include "BoundingVolume.h"
+#include "Intersection.h"
 
+class Intersection;
 class Material;
-class Renderable;
+class BoundingVolume;
 
-class Intersection
+class Shape
 {
 public:
-    Intersection()
-        : m_t(-1)
-        , m_t_closest(std::numeric_limits<float>::max())
-        , m_point(0)
-        , m_ptr(nullptr)
-        , m_has_been_hit(false)
-    {}
+    //Shape() : m_material(MaterialType::Diffuse) {}
 
-    void UpdateClosest(Renderable *ptr, const Rayf &ray);
-
-    void CalculateNormal(const Rayf &ray);
-
-    bool HasBeenHit() const { return m_has_been_hit; }
-
-    const Point3f& Point() const { return m_point; }
-
-    void SetBarycentric(const Vec2f& barycentric ) { m_barycentric_coord = barycentric; };
-    const Vec2f& Barycentric() const { return m_barycentric_closest; }
-
-    void SetNormal(const Vec3f& normal) { m_normal = normal; }
-    const Vec3f& Normal() const { return m_normal; }
-
-    Renderable* RenderablePtr() const { return m_ptr; }
-
-    void SetParameter(const float t) { m_t = t; }
-    const float Parameter() { return m_t; }
-
-
-    float       m_t;
-    Point3f     m_point;
-    Vec2f       m_barycentric_coord;
-
-private:
-   
-    Vec3f       m_normal;
-    float       m_t_closest;
-    Vec2f       m_barycentric_closest;
-    Renderable* m_ptr;                  // observing
-    bool        m_has_been_hit;
-};
-
-enum class MaterialType { Diffuse, Reflective, Refract, ReflectAndRefract };
-
-class Renderable
-{
-public:
-    Renderable() : m_material(MaterialType::Diffuse) {}
-
-    Renderable(const Color3f& albedo, MaterialType material)
+    Shape(const Color3f& albedo, std::shared_ptr<Material> material)
         : m_albedo(albedo)
-        , m_material(material) {}
+        , m_material(std::move(material)) {}
 
-	virtual ~Renderable() = default;
+	virtual ~Shape() = default;
 
-    Renderable(const Renderable& other)
-        : m_albedo(other.m_albedo)
-        , m_material(other.m_material)
-    {}
+    virtual bool Intersects(const Rayf &ray, Intersection& isec) = 0;
+    //virtual bool IntersectsQuick(const Rayf& ray, Intersection& isec) = 0;
 
-    virtual bool Intersects(const Rayf &ray, Intersection &intersec) = 0;
+    virtual BoundingVolume GetBoundingVolume() const = 0;
 
-	//virtual void TransformByMatrix(const Matrix4x4f &object_to_world) = 0;
-
+    void ComputeScatteringFunction(Intersection& isect, const Rayf& ray);
     virtual void CalculateNormal(Intersection &hit_data) const = 0;
-
-    virtual void SetMaterialType(const MaterialType& type) = 0;
-
-    /*
-    virtual void TranslateBy(const Vec3f& dir) = 0;
-
-    virtual void ScaleBy(float factor) = 0;
-
-    virtual void RotateAroundX(float dir) = 0;
-    virtual void RotateAroundY(float dir) = 0;
-    virtual void RotateAroundZ(float dir) = 0; */
-
     virtual void TransformBy(const Transform& transform) = 0;
 
-	MaterialType Material() const { return m_material; }
 	Color3f Albedo() const { return m_albedo; }
 
 protected:
     Color3f m_albedo;
-    MaterialType m_material;
+    std::shared_ptr<Material> m_material;
+    //std::shared_ptr<BSDF> m_BSDF;
 };
+
+
+
 
 /*
 

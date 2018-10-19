@@ -107,9 +107,9 @@ void Parser::LoadFile(const std::string& filename)
         
 	}
 }
-std::unique_ptr<Mesh> Parser::ConstructMesh()
+std::shared_ptr<Mesh> Parser::ConstructMesh()
 {
-	auto mesh_ptr = std::make_unique<Mesh>();
+	auto mesh_ptr = std::make_shared<Mesh>();
 	
 	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3)
 	{
@@ -122,7 +122,7 @@ std::unique_ptr<Mesh> Parser::ConstructMesh()
                  m_normals[m_normal_ordering[i] - 1],
                  m_normals[m_normal_ordering[i + 1] - 1],
                  m_normals[m_normal_ordering[i + 2] - 1],
-                 true, Color3f{0.18f}, MaterialType::Diffuse);
+                 true, Color3f{0.18f}, nullptr);
 	    
         mesh_ptr->AddPolygon(std::move(polygon));       
 	}
@@ -142,7 +142,7 @@ void Parser::Reset()
     m_normal_ordering.clear();
 }
 
-std::unique_ptr<Mesh> Parser::Parse(const std::string& filename)
+std::shared_ptr<Mesh> Parser::Parse(const std::string& filename)
 {
     try
     {

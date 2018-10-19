@@ -1,27 +1,23 @@
 #pragma once
-#include "Renderable.h"
+#include "Shape.h"
+#include "Intersection.h"
 
 class Sphere :
-    public Renderable
+    public Shape
 {
 public:
-    Sphere(const Point3f& center, const float radius, const Color3f& albedo, MaterialType material)
-        : Renderable(albedo, material)
+    Sphere(const Point3f& center, const float radius, const Color3f& albedo, std::shared_ptr<Material> material)
+        : Shape(albedo, material)
         , m_center(center)
         , m_radius(radius)
         , m_radius_squared(radius * radius)
     {}
 
-    bool Intersects(const Rayf &ray, Intersection &intersection) override;
+    bool Intersects(const Rayf& ray, Intersection& isect) override;
 
-    bool solve_quadratic(const float a, const float b, const float c, float& solutionOne, float& solutionTwo) const;
+    BoundingVolume GetBoundingVolume() const override;
 
     void CalculateNormal(Intersection &intersection) const override;
-
-    void SetMaterialType(const MaterialType& type) override
-    {
-        m_material = type;
-    }
 
     void TransformBy(const Transform& transform) override;
 

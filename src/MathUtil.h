@@ -5,14 +5,14 @@
 #include <cstring>
 #include <iomanip>
 
-
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <array>
 
 namespace Math
 {
+    const static float Infinity = std::numeric_limits<float>::max();
+
     template<typename T>
     constexpr T Clamp(const T& low, const T& high, const T& value)
     {
@@ -39,6 +39,12 @@ namespace Math
         b = tmp;
     }
 
+    bool SolveQuadratic(
+            const float a,
+            const float b,
+            const float c,
+            float& solutionOne,
+            float& solutionTwo);
 
 }
 
@@ -341,11 +347,6 @@ struct Vec3 {
     }
 };
 
-template<typename T>
-constexpr Vec3<T> Normalize(const Vec3<T>& vec)
-{
-    return vec / vec.Length();
-}
 
 template<typename T>
 constexpr Vec3<T> operator*(const T factor, const Vec3<T>& vec)
@@ -373,6 +374,14 @@ public:
     constexpr explicit Normal3(T val) : Vec3<T>(val) {}
     constexpr Normal3(T x, T y, T z) : Vec3<T>({x, y, z}) {}
 };
+
+
+template<typename T>
+constexpr Normal3<T> Normalize(const Vec3<T>& vec)
+{
+    return vec / vec.Length();
+}
+
 typedef Normal3<float> Normal3f;
 typedef Normal3<int> Normal3i;
 typedef Normal3<double> Normal3d;
@@ -811,13 +820,21 @@ class Ray
 public:
     constexpr Ray() = default;
 
-    constexpr Ray(const Point3<T>& origin,
-                  const Vec3<T>& direction,
-                  const RayType& rayType)
+    Ray(const Point3<T>& origin,
+        const Vec3<T>& direction,
+        const T maxParam = Math::Infinity,
+        const T minParam = 0,
+        const RayType& rayType = RayType::PrimaryRay)
         : m_origin(origin)
         , m_direction(direction)
+        , m_maxParam(maxParam)
+        , m_minParam(minParam)
         , m_rayType(rayType)
+        , m_invDirection(1 / direction.x, 1 / direction.y, 1 / direction.z)
     {
+        m_sign[0] = m_invDirection.x < 0;
+        m_sign[1] = m_invDirection.y < 0;
+        m_sign[2] = m_invDirection.z < 0;
     }
 
     constexpr Point3<T> Origin() const { return m_origin; }
@@ -825,10 +842,16 @@ public:
     constexpr Point3<T> PointAtParameter(const float t) const { return m_origin + m_direction * t; }
     constexpr RayType getRayType() const { return m_rayType; }
 
+    mutable T m_maxParam;
+    mutable T m_minParam;
+
+    Vec3f m_invDirection;
+    int m_sign[3]; // used in AABB intersection test
+
 private:
-    RayType m_rayType;
     Point3<T> m_origin;
     Vec3<T> m_direction;
+    RayType m_rayType;
 };
 
 typedef Ray<float> Rayf;

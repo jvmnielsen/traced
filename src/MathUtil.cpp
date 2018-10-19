@@ -2,7 +2,36 @@
 #include <math.h>
 #include <algorithm>
 
+bool Math::SolveQuadratic(
+        const float a,
+        const float b,
+        const float c,
+        float& solutionOne,
+        float& solutionTwo)
+{
+    const auto discr = b * b - 4 * a * c;
 
+    if (discr < 0)
+        return false;
+
+    else if (discr == 0)
+        solutionOne = solutionTwo = -0.5f * b / a;
+
+    else
+    {
+        const float q = (b > 0) ?
+                        -0.5f * (b + sqrt(discr)) :
+                        -0.5f * (b - sqrt(discr));
+
+        solutionOne = q / a;
+        solutionTwo = c / q;
+    }
+
+    if (solutionOne > solutionTwo)
+        std::swap(solutionOne, solutionTwo);
+
+    return true;
+}
 
 /*
 template<typename T>
