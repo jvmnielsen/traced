@@ -72,6 +72,9 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
 
     m_pixels = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
 
+    SDL_SetWindowPosition(m_windowHandle, 0, 0);
+
+
     return true;
 }
 
@@ -87,6 +90,10 @@ void Window::UpdateTexture(ImageBuffer &buffer)
 void Window::CheckForInput(ImageBuffer &pixelBuffer)
 {
     bool running = true;
+
+    // Super hacky solution for MacOS 14
+    SDL_PumpEvents();
+    SDL_SetWindowPosition(m_windowHandle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     //While application is running 
     while (running)
