@@ -61,12 +61,24 @@ int main(int argc, char * argv[])
 
     auto lamb = std::make_shared<Matte>(Color3f{0.18f});
 
+
+    Parser parser;
+    auto teapot = parser.Parse("../assets/teapot.obj");
+
+    //teapot->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
+    teapot->TransformBy(Transform::Scale({0.1f, 0.1f, 0.1f}));
+    teapot->TransformBy(Transform::Translate({0.0f, 0.0f, -6.0f}));
+    teapot->m_material = lamb;
+    auto teapotBounding = teapot->GetBoundingVolume();
+    teapotBounding->SetShape(teapot);
+    scene.AddBoundingVolume(teapotBounding);
+
+    /*
     auto sphere = std::make_shared<Sphere>(Point3f{0.f,0.f,-6.0f}, 1.5f, Color3f{0.18f}, lamb);
-
-    auto boundingSphere = std::make_shared<BoundingVolume>(sphere->GetBoundingVolume());
+    auto boundingSphere = sphere->GetBoundingVolume();
     boundingSphere->SetShape(sphere);
-
     scene.AddBoundingVolume(boundingSphere);
+    */
 
     scene.SetBackgroundColor({0.02f, 0.02f, 0.02f});
 

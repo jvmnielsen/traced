@@ -52,10 +52,10 @@ bool Sphere::IntersectsQuick(const Rayf& ray) const
     return solutionOne > 0 || solutionTwo > 0;
 }
 
-BoundingVolume Sphere::GetBoundingVolume() const
+std::shared_ptr<BoundingVolume> Sphere::GetBoundingVolume() const
 {
-    return BoundingVolume{ Point3f{ -m_radius, -m_radius, -m_radius },
-             Point3f{ m_radius, m_radius, m_radius } };
+    return std::make_shared<BoundingVolume>(Point3f{ -m_radius, -m_radius, -m_radius },
+             Point3f{ m_radius, m_radius, m_radius });
 }
 
 void Sphere::TransformBy(const Transform& transform)
