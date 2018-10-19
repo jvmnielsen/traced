@@ -9,7 +9,7 @@ Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     if (scene.Intersects(ray, isect))
     //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect))
     {
-        hitColor = isect.m_shape->GetMaterial().CalculateSurfaceColor(ray, isect, scene);
+        hitColor = isect.m_matPtr->CalculateSurfaceColor(ray, isect, scene);
     }
     else
     {

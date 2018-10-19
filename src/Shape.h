@@ -27,7 +27,7 @@ public:
     virtual bool Intersects(const Rayf &ray, Intersection& isec) = 0;
     virtual bool IntersectsQuick(const Rayf& ray) const = 0;
 
-    virtual BoundingVolume GetBoundingVolume() const = 0;
+    virtual std::shared_ptr<BoundingVolume> GetBoundingVolume() const = 0;
 
     //void ComputeScatteringFunction(Intersection& isect, const Rayf& ray);
     virtual void CalculateNormal(Intersection &hit_data) const = 0;
@@ -36,10 +36,10 @@ public:
     Color3f Albedo() const { return m_albedo; }
 
     const Material& GetMaterial() { return *m_material; }
-
+    std::shared_ptr<Material> m_material;
 protected:
     Color3f m_albedo;
-    std::shared_ptr<Material> m_material;
+
 };
 
 
