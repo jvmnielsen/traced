@@ -54,7 +54,7 @@ int main(int argc, char * argv[])
 
     Scene scene;
 
-    Camera camera { Point3f(0.0f, 0.0f, 0.0f), Point3f(0.0f,0.0f,-1.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
+    Camera camera { Point3f(0.0f, 5.0f, 0.0f), Point3f(0.0f,.0f,-5.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
 
     auto lightOne = std::make_unique<PointLight>(Color3f{550.0f}, Point3f(0.0f, 2.0f, -2.0f));
     scene.AddLight(std::move(lightOne));
@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
 
     //teapot->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
     teapot->TransformBy(Transform::Scale({0.1f, 0.1f, 0.1f}));
-    teapot->TransformBy(Transform::Translate({0.0f, 0.0f, -6.0f}));
+    teapot->TransformBy(Transform::Translate({0.0f, 0.0f, -3.0f}));
     teapot->m_material = lamb;
     auto teapotBounding = teapot->GetBoundingVolume();
     teapotBounding->SetShape(teapot);

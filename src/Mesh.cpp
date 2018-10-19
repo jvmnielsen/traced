@@ -63,12 +63,12 @@ std::shared_ptr<Mesh> Mesh::CloneMesh()
 
 std::shared_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
 {
-    float minX = -Math::Infinity;
-    float minY = -Math::Infinity;
-    float minZ = -Math::Infinity;
-    float maxX = Math::Infinity;
-    float maxY = Math::Infinity;
-    float maxZ = Math::Infinity;
+    float minX = Math::Infinity;
+    float minY = Math::Infinity;
+    float minZ = Math::Infinity;
+    float maxX = -Math::Infinity;
+    float maxY = -Math::Infinity;
+    float maxZ = -Math::Infinity;
     for (const auto& triangle : m_triangles)
     {
         for (const auto& vertices : triangle->m_vertex)
@@ -76,16 +76,16 @@ std::shared_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
             if (vertices.x < minX)
                 minX = vertices.x;
             if (vertices.y < minY)
-                minX = vertices.y;
+                minY = vertices.y;
             if (vertices.z < minZ)
-                minX = vertices.z;
+                minZ = vertices.z;
 
             if (vertices.x > maxX)
-                minX = vertices.x;
+                maxX = vertices.x;
             if (vertices.y > maxY)
-                minX = vertices.y;
-            if (vertices.z > minZ)
-                minX = vertices.z;
+                maxY = vertices.y;
+            if (vertices.z > maxZ)
+                maxZ = vertices.z;
         }
     }
     Point3f min { minX, minY, minZ };
