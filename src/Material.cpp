@@ -34,20 +34,45 @@ Color3f Matte::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isec
         VisibilityTester tester;
         if (tester.IsVisible(isect.m_point + isect.m_normal * 1e-4f, light->m_position, scene)) // careful with self-intersection
         {
-            //PointLightingInfo info;
-            //light->IlluminatePoint(isect.m_point, info);
+            PointLightingInfo info;
+            light->IlluminatePoint(isect.m_point, info);
 
-            const Vec3f offset = light->m_position - isect.m_point;
-            const float distanceToLight = offset.Length();
-            const Vec3f wi = Normalize(offset);
+            //const Vec3f offset = light->m_position - isect.m_point;
+            //const float distanceToLight = offset.Length();
+            //const Vec3f wi = Normalize(offset);
             const auto wo = -rayIn.Direction().Normalize();
+            const auto wi = info.directionToLight;
 
-            const Color3f intensity = light->m_intensity / (4 * M_PI * distanceToLight * distanceToLight);
+            //const Color3f intensity = light->m_intensity / (4 * M_PI * distanceToLight * distanceToLight);
 
-            //Lambertian lm{ Color3f{0.1f, 0.2f, 0.0f} };
-            Phong lm{ Color3f{ 0.0f, 0.0f, 0.8f }, Color3f{ 0.2f }, 50, isect.m_normal };
-            color += intensity * std::max(0.0f, wi.DotProduct(isect.m_normal)) *
+            Lambertian lm{ m_diffuse };
+            color += info.lightIntensity * std::max(0.0f, wi.DotProduct(isect.m_normal)) *
                     lm.EvaluateFiniteScatteringDensity(wo, wi);
+        }
+    }
+
+    return color;
+}
+
+
+Color3f Plastic::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene) const
+{
+    Color3f color{ 0 };
+
+    for (const auto& light : scene.m_lights)
+    {
+        VisibilityTester tester;
+        if (tester.IsVisible(isect.m_point + isect.m_normal * 1e-4f, light->m_position, scene)) // careful with self-intersection
+        {
+            PointLightingInfo info;
+            light->IlluminatePoint(isect.m_point, info);
+
+            const auto wo = -rayIn.Direction().Normalize();
+            const auto wi = info.directionToLight;
+
+            Phong phong{ m_diffuse, m_specular, m_smoothness, isect.m_normal };
+            color += info.lightIntensity * std::max(0.0f, wi.DotProduct(isect.m_normal)) *
+                     phong.EvaluateFiniteScatteringDensity(wo, wi);
         }
     }
 

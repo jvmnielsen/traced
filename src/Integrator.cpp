@@ -7,7 +7,7 @@ Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     Color3f hitColor;
 
     if (scene.Intersects(ray, isect))
-    //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect))
+    //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_shape->Intersects(ray, isect))
     {
         hitColor = isect.m_matPtr->CalculateSurfaceColor(ray, isect, scene);
     }
@@ -22,6 +22,7 @@ Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
 
 void WhittedRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buffer)
 {
+    Timer timer { "Rendering took: " };
     for (int j = (int)buffer.Height() - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
         for (size_t i = 0; i < buffer.Width(); ++i)

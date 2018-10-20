@@ -54,21 +54,30 @@ int main(int argc, char * argv[])
 
     Scene scene;
 
-    Camera camera { Point3f(0.0f, 5.0f, 0.0f), Point3f(0.0f,.0f,-5.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
+    Camera camera { Point3f(0.0f, 2.0f, 0.0f), Point3f(0.0f,.0f,-5.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
 
     auto lightOne = std::make_unique<PointLight>(Color3f{550.0f}, Point3f(0.0f, 2.0f, -2.0f));
     scene.AddLight(std::move(lightOne));
 
     auto lamb = std::make_shared<Matte>(Color3f{0.18f});
-
+    auto phong = std::make_shared<Plastic>(Color3f{0.1,0.3,0.5}, Color3f(0.1,0.1,0.0), 70);
 
     Parser parser;
     auto teapot = parser.Parse("../assets/teapot.obj");
+    auto plane = parser.Parse("../assets/plane.obj");
 
-    //teapot->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
+    plane->TransformBy(Transform::Scale({6.0f, 1.0f, 6.0f}));
+    plane->TransformBy(Transform::Translate({0.0f, 0.0f, -4.0f}));
+    plane->m_material = lamb;
+    auto plane2 = plane->GetBoundingVolume();
+    plane2->SetShape(plane);
+    scene.AddBoundingVolume(plane2);
+
+
+    teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 30.0f));
     teapot->TransformBy(Transform::Scale({0.1f, 0.1f, 0.1f}));
-    teapot->TransformBy(Transform::Translate({0.0f, 0.0f, -3.0f}));
-    teapot->m_material = lamb;
+    teapot->TransformBy(Transform::Translate({0.0f, 0.7f, -5.0f}));
+    teapot->m_material = phong;
     auto teapotBounding = teapot->GetBoundingVolume();
     teapotBounding->SetShape(teapot);
     scene.AddBoundingVolume(teapotBounding);

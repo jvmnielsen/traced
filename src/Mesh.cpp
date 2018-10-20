@@ -3,9 +3,8 @@
 bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
 	for (const auto& triangle : m_triangles)
-	    triangle->Intersects(ray, isect);
-
-	isect.m_matPtr = m_material.get();
+	    if (triangle->Intersects(ray, isect))
+	        isect.m_matPtr = m_material.get();
 
 	return isect.m_hasBeenHit;
 }
