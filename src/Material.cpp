@@ -25,7 +25,7 @@ float schlick( float cosine, float refractive_index )
 }
 
 
-Color3f Matte::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene) const
+Color3f Matte::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene, int depth) const
 {
     Color3f color{ 0 };
 
@@ -55,7 +55,7 @@ Color3f Matte::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isec
 }
 
 
-Color3f Plastic::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene) const
+Color3f Plastic::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene, int depth) const
 {
     Color3f color{ 0 };
 
@@ -78,6 +78,33 @@ Color3f Plastic::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& is
 
     return color;
 }
+
+Vec3f Reflect(const Vec3f& vec, const Vec3f& n)
+{
+    return vec - 2 * vec.DotProduct(n) * n;
+}
+
+Color3f Metal::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene, int depth) const
+{
+    if (depth > 5)
+    {
+        return scene.BackgroundColor();
+    }
+
+    Color3f color{0};
+    const auto reflected = Reflect(rayIn.Direction(), isect.m_normal);
+    const auto scattered = Rayf{isect.m_point + isect.m_normal * 1e-4f, reflected};
+
+    Intersection reflectIsect;
+
+    if (scene.Intersects(scattered, reflectIsect))
+        color += 0.9f * reflectIsect.m_matPtr->CalculateSurfaceColor(scattered, reflectIsect, scene, depth + 1);
+    else
+        color += scene.BackgroundColor();
+
+    return color;
+}
+
 
 /*
 Vec3f Lambertian::random_in_unit_sphere()

@@ -15,7 +15,7 @@ Color3f Phong::EvaluateFiniteScatteringDensity(
         const Vec3f& wi,
         const Vec3f& wo) const
 {
-    const Vec3f wh = (wi + wo).Normalize();
+    const Vec3f wh = (wi + wo) / 2;
     return (m_colorMatte + m_colorGlossy * ((m_smoothness + 8.0f)
                 * powf(std::max(0.0f, wh.DotProduct(m_normal)), m_smoothness) / 8.0f)) / M_PI;
 }

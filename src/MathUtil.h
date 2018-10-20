@@ -14,7 +14,7 @@ namespace Math
     const static float Infinity = std::numeric_limits<float>::max();
 
     template<typename T>
-    constexpr T Clamp(const T& low, const T& high, const T& value)
+    T Clamp(const T& low, const T& high, const T& value)
     {
         return std::max(low, std::min(high, value));
     }
@@ -26,13 +26,13 @@ namespace Math
     }
 
     template<typename T>
-    constexpr T Abs(const T& value)
+    T Abs(const T& value)
     {
         return (T{} > value) ? -value : value;
     }
 
     template<typename T>
-    constexpr void Swap(T& a, T& b)
+    void Swap(T& a, T& b)
     {
         T tmp = a;
         a = b;
@@ -225,24 +225,24 @@ struct Vec3 {
 
     constexpr explicit Vec3(T val) : x(val), y(val), z(val) {}
 
-    constexpr Vec3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
+    Vec3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
 
-    constexpr T LengthSquared() const
+    T LengthSquared() const
     {
         return x * x + y * y + z * z;
     }
 
-    constexpr T Length() const
+    T Length() const
     {
         return std::sqrt(LengthSquared());
     }
 
-    constexpr Vec3 operator*(const T factor) const
+    Vec3 operator*(const T factor) const
     {
         return Vec3{x * factor, y * factor, z * factor};
     }
 
-    constexpr Vec3& operator*=(const T factor)
+    Vec3& operator*=(const T factor)
     {
         x *= factor;
         y *= factor;
@@ -250,12 +250,12 @@ struct Vec3 {
         return *this;
     }
 
-    constexpr Vec3 operator/(const T factor) const
+    Vec3 operator/(const T factor) const
     {
         return Vec3{x / factor, y / factor, z / factor};
     }
 
-    constexpr Vec3& operator/=(const T factor)
+    Vec3& operator/=(const T factor)
     {
         x /= factor;
         y /= factor;
@@ -263,12 +263,12 @@ struct Vec3 {
         return *this;
     }
 
-    constexpr Vec3 operator+(const Vec3 &other) const
+    Vec3 operator+(const Vec3 &other) const
     {
         return Vec3{x + other.x, y + other.y, z + other.z};
     }
 
-    constexpr Vec3 operator+=(const Vec3 &other)
+    Vec3 operator+=(const Vec3 &other)
     {
         x += other.x;
         y += other.y;
@@ -276,12 +276,12 @@ struct Vec3 {
         return *this;
     }
 
-    constexpr Vec3 operator-(const Vec3 &other) const
+    Vec3 operator-(const Vec3 &other) const
     {
-        return Vec3{x - other.x, y - other.y, z - other.z};
+        return Vec3<T>{x - other.x, y - other.y, z - other.z};
     }
 
-    constexpr Vec3& operator-=(const Vec3 &other)
+    Vec3& operator-=(const Vec3 &other)
     {
         x -= other.x;
         y -= other.y;
@@ -289,12 +289,12 @@ struct Vec3 {
         return *this;
     }
 
-    constexpr T DotProduct(const Vec3& other) const
+    T DotProduct(const Vec3& other) const
     {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    constexpr Vec3 CrossProduct(const Vec3& other) const
+    Vec3 CrossProduct(const Vec3& other) const
     {
         return Vec3<T>{
                 y * other.z - z * other.y,
@@ -302,7 +302,7 @@ struct Vec3 {
                 x * other.y - y * other.x};
     }
 
-    constexpr Vec3& Normalize()
+    Vec3& Normalize()
     {
         T length = this->Length();
         if (length > 0) // avoid division by 0
@@ -351,13 +351,13 @@ struct Vec3 {
 template<typename T>
 constexpr Vec3<T> operator*(const T factor, const Vec3<T>& vec)
 {
-    return Vec3{vec.x * factor, vec.y * factor, vec.z * factor};
+    return Vec3<T>{vec.x * factor, vec.y * factor, vec.z * factor};
 }
 
 template<typename T>
 constexpr Vec3<T> operator/(const T factor, const Vec3<T>& vec)
 {
-    return Vec3{vec.x / factor, vec.y / factor, vec.z / factor};
+    return Vec3<T>{vec.x / factor, vec.y / factor, vec.z / factor};
 }
 
 
@@ -456,7 +456,7 @@ struct Point3
 
     constexpr Vec3<T> operator-(const Point3& other) const
     {
-        return Vec3{ x - other.x, y - other.y, z - other.z };
+        return Vec3<T>{ x - other.x, y - other.y, z - other.z };
     }
 
     constexpr Point3& operator-()
@@ -823,7 +823,7 @@ public:
     Ray(const Point3<T>& origin,
         const Vec3<T>& direction,
         const T maxParam = Math::Infinity,
-        const T minParam = 0,
+        const T minParam = -0.01,
         const RayType& rayType = RayType::PrimaryRay)
         : m_origin(origin)
         , m_direction(direction)

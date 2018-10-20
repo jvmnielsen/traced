@@ -32,6 +32,7 @@ bool Sphere::Intersects(const Rayf& ray, Intersection& isect)
     isect.m_point = ray.PointAtParameter(ray.m_maxParam);
     CalculateNormal(isect);
     isect.m_hasBeenHit = true;
+    isect.m_matPtr = m_material.get();
 
     return true;
  }
@@ -54,8 +55,8 @@ bool Sphere::IntersectsQuick(const Rayf& ray) const
 
 std::shared_ptr<BoundingVolume> Sphere::GetBoundingVolume() const
 {
-    return std::make_shared<BoundingVolume>(Point3f{ -m_radius, -m_radius, -m_radius },
-             Point3f{ m_radius, m_radius, m_radius });
+    return std::make_shared<BoundingVolume>(Point3f{ -m_radius + m_center.x, -m_radius + m_center.y, -m_radius + m_center.z },
+             Point3f{ m_radius + m_center.x, m_radius + m_center.y, m_radius + m_center.z });
 }
 
 void Sphere::TransformBy(const Transform& transform)

@@ -131,20 +131,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BoundingVolume.cpp" />
+    <ClCompile Include="src\BSDF.cpp" />
+    <ClCompile Include="src\Integrator.cpp" />
+    <ClCompile Include="src\Intersection.cpp" />
+    <ClCompile Include="src\MathUtil.cpp" />
+    <ClCompile Include="src\Shape.cpp" />
     <ClCompile Include="src\ThreadManager.cpp" />
     <ClCompile Include="src\Imaging.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Parser.cpp" />
-    <ClCompile Include="src\Polygon.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Renderable.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
+    <ClCompile Include="src\Triangle.cpp" />
+    <ClCompile Include="src\VisibilityTester.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BoundingVolume.h" />
+    <ClInclude Include="src\BSDF.h" />
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Integrator.h" />
+    <ClInclude Include="src\Intersection.h" />
+    <ClInclude Include="src\MathUtil.h" />
+    <ClInclude Include="src\Shape.h" />
     <ClInclude Include="src\ThreadManager.h" />
     <ClInclude Include="src\HitData.h" />
     <ClInclude Include="src\Imaging.h" />
@@ -159,7 +172,11 @@
     <ClInclude Include="src\Renderable.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\Sphere.h" />
+    <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\Triangle.h" />
+    <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\Vec2.h" />
+    <ClInclude Include="src\VisibilityTester.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="third_party\sdl2\include\begin_code.h" />
     <ClInclude Include="third_party\sdl2\include\close_code.h" />

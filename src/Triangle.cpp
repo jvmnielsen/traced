@@ -39,7 +39,7 @@ bool Triangle::Intersects(const Rayf& ray, Intersection& isect)
 
     const auto parameter = m_edge0_2.DotProduct(q_vec) * inverted_det;
 
-    if (parameter > ray.m_maxParam)
+    if (parameter > ray.m_maxParam || parameter < ray.m_minParam)
         return false;
 
     ray.m_maxParam = parameter;

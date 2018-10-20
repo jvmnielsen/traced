@@ -46,7 +46,7 @@ bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
             return false;
     }
 
-    if (parameter > ray.m_maxParam)
+    if (parameter > ray.m_maxParam || parameter < ray.m_minParam)
         return false;
 
     IntersectsShape(ray, isect);
