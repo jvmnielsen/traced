@@ -10,7 +10,7 @@
 #include <thread>
 #include <array>
 #include "Utility.h"
-#include "Integrator.h"
+#include "RenderMode.h"
 
 /*
 void ConstructStandardBox(Scene& scene)
@@ -58,52 +58,28 @@ int main(int argc, char * argv[])
 
     Camera camera { Point3f(0.0f, 1.0f, 0.0f), Point3f(0.0f,.0f,-8.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
 
-    auto lightOne = std::make_unique<PointLight>(Color3f{600.0f}, Point3f(3.0f, 2.0f, -1.0f));
+    auto lightOne = std::make_unique<PointLight>(Color3f{200.0f}, Point3f(2.0f, 2.0f, -2.0f));
     scene.AddLight(std::move(lightOne));
 
     auto lamb = std::make_shared<Matte>(Color3f{0.18f});
-    auto phong = std::make_shared<Plastic>(Color3f{ 0.1f, 0.3f, 0.5f}, Color3f(0.1f, 0.1f, 0.0f), 70.f);
+    auto phong = std::make_shared<Plastic>(Color3f{ 0.8f, 0.0f, 0.0f}, Color3f(0.2f), 50.f);
     auto metal = std::make_shared<Metal>();
 
     Parser parser;
     auto teapot = parser.Parse("assets/teapot.obj");
     auto plane = parser.Parse("assets/plane.obj");
-    auto plane2 = plane->Clone();
-    auto plane3 = plane->Clone();
-    auto plane4 = plane->Clone();
-
+  
     plane->TransformBy(Transform::Scale({1.3f, 1.0f, 1.3f}));
     plane->TransformBy(Transform::Translate({0.0f, 0.0f, -3.0f}));
-    plane->m_material = phong;
+    plane->m_material = lamb;
     scene.AddShape(plane);
 
-    plane2->TransformBy(Transform::Scale({2.0f, 1.0f, 1.3f}));
-    plane2->TransformBy(Transform::Rotate({0,0,1}, -90));
-    plane2->TransformBy(Transform::Translate({-1.3f, 0.0f, -1.7f}));
-    plane2->m_material = phong;
-    scene.AddShape(plane2);
-
-    plane3->TransformBy(Transform::Rotate({0,0,1}, 90));
-    plane3->TransformBy(Transform::Scale({4.0f, 1.0f, 4.0f}));
-    plane3->TransformBy(Transform::Translate({2.6f, 0.0f, -4.3f}));
-    plane3->m_material = phong;
-    //scene.AddShape(plane3);
-
-    plane4->TransformBy(Transform::Rotate({1,0,0}, 90));
-    plane4->TransformBy(Transform::Scale({4.0f, 1.0f, 4.0f}));
-    plane4->TransformBy(Transform::Translate({0.0f, 0.0f, -8.0f}));
-    plane4->m_material = phong;
-    //scene.AddShape(plane4);
-
-
-
-    teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 30.0f));
-    teapot->TransformBy(Transform::Scale({0.1f, 0.1f, 0.1f}));
-    teapot->TransformBy(Transform::Translate({0.0f, 0.7f, -5.0f}));
+   
+    teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 42.0f));
+    teapot->TransformBy(Transform::Scale({0.03f, 0.03f, 0.03f}));
+    teapot->TransformBy(Transform::Translate({0.0f, 0.15f, -2.8f}));
     teapot->m_material = lamb;
-    auto teapotBounding = teapot->GetBoundingVolume();
-    teapotBounding->SetShape(teapot);
-    scene.AddBoundingVolume(teapotBounding);
+    scene.AddShape(teapot);
 
     
     auto sphere = std::make_shared<Sphere>(Point3f{-1.f,0.5f,-3.0f}, 0.5f, metal);
@@ -120,10 +96,10 @@ int main(int argc, char * argv[])
 
     Window window = {SCREEN_WIDTH, SCREEN_HEIGHT};
     ImageBuffer buffer = {SCREEN_WIDTH, SCREEN_HEIGHT};
-    WhittedRayTracer whit { 10 };
+    StochasticRayTracer whit { 10 };
 
 
-    std::thread RenderThread{ &WhittedRayTracer::Render, whit, std::ref(scene), std::ref(camera), std::ref(buffer) };
+    std::thread RenderThread{ &StochasticRayTracer::Render, whit, std::ref(scene), std::ref(camera), std::ref(buffer) };
 
     window.InitializeWindow(buffer);
     window.CheckForInput(buffer);

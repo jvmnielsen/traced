@@ -70,6 +70,14 @@ Color3f Plastic::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& is
             const auto wo = -rayIn.Direction().Normalize();
             const auto wi = info.directionToLight;
 
+            //const Vec3f offset = light->m_position - isect.m_point;
+            //const float distanceToLight = offset.Length();
+            //const Vec3f wi = Normalize(offset);
+           
+
+            //const Color3f intensity = light->m_intensity / (4 * M_PI * distanceToLight * distanceToLight);
+
+
             Phong phong{ m_diffuse, m_specular, m_smoothness, isect.m_normal };
             color += info.lightIntensity * std::max(0.0f, wi.DotProduct(isect.m_normal)) *
                      phong.EvaluateFiniteScatteringDensity(wo, wi);

@@ -1,6 +1,4 @@
-//
-// Created by Jacob Vesti Moeslund Nielsen on 18/10/2018.
-//
+
 
 #ifndef RAYTRACER_INTEGRATOR_H
 #define RAYTRACER_INTEGRATOR_H
@@ -13,16 +11,16 @@
 #include "Intersection.h"
 #include "Material.h"
 
-class Integrator
+class RenderMode
 {
 public:
-    Integrator() = default;
-    virtual ~Integrator() = default;
+    RenderMode() = default;
+    virtual ~RenderMode() = default;
 
     virtual void Render(Scene& scene, Camera& camera, ImageBuffer& buffer) = 0;
 };
 
-class WhittedRayTracer : Integrator
+class WhittedRayTracer : RenderMode
 {
 public:
     explicit WhittedRayTracer(int recursionDepth) : m_recursionDepth(recursionDepth) { }
@@ -37,12 +35,16 @@ private:
     float m_shadow_bias = 1e-4f;
 };
 
-class StochasticRayTracer : public Integrator
+class StochasticRayTracer : public RenderMode
 {
 public:
-    explicit StochasticRayTracer(int depth = 5) : m_depth(depth), m_gen(std::random_device()()), m_dist(0, 1) { }
-    ~StochasticRayTracer() override = default;
-
+    explicit StochasticRayTracer(int depth = 5, size_t raysPerPixel = 5) 
+        : m_depth(depth)
+        , m_raysPerPixel(raysPerPixel)
+        , m_gen(std::random_device()())
+        , m_dist(0, 1) 
+    { }
+    
     void Render(Scene& scene, Camera& camera, ImageBuffer& buffer) override;
     Color3f TraceRay(const Rayf& ray, Scene& scene, int depth);
 
@@ -52,6 +54,7 @@ public:
     std::uniform_real_distribution<> m_dist;
 
     int m_depth;
+    size_t m_raysPerPixel;
 };
 
 

@@ -8,6 +8,8 @@ class Material;
 class Intersection
 {
 public:
+
+    
     explicit Intersection(
             bool hasBeenHit = false,
             const Point3f& point = Point3f{0},
@@ -26,9 +28,9 @@ public:
             , m_wo(wo)
             , m_matPtr(material)
     {
-    }
+    } 
 
-    ~Intersection() = default;
+    ~Intersection() = default; 
 
     //void ComputeScatteringFunction(const Rayf& ray);
 
