@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
 
     Scene scene;
 
-    Camera camera { Point3f(0.0f, 2.0f, 0.0f), Point3f(0.0f,.0f,-5.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
+    Camera camera { Point3f(0.0f, 1.0f, 0.0f), Point3f(0.0f,.0f,-8.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
 
     auto lightOne = std::make_unique<PointLight>(Color3f{600.0f}, Point3f(3.0f, 2.0f, -1.0f));
     scene.AddLight(std::move(lightOne));
@@ -68,30 +68,50 @@ int main(int argc, char * argv[])
     Parser parser;
     auto teapot = parser.Parse("assets/teapot.obj");
     auto plane = parser.Parse("assets/plane.obj");
+    auto plane2 = plane->Clone();
+    auto plane3 = plane->Clone();
+    auto plane4 = plane->Clone();
 
-    plane->TransformBy(Transform::Scale({6.0f, 1.0f, 6.0f}));
-    plane->TransformBy(Transform::Translate({0.0f, 0.0f, -4.0f}));
+    plane->TransformBy(Transform::Scale({1.3f, 1.0f, 1.3f}));
+    plane->TransformBy(Transform::Translate({0.0f, 0.0f, -3.0f}));
     plane->m_material = phong;
-    auto plane2 = plane->GetBoundingVolume();
-    plane2->SetShape(plane);
-    scene.AddBoundingVolume(plane2);
+    scene.AddShape(plane);
+
+    plane2->TransformBy(Transform::Scale({2.0f, 1.0f, 1.3f}));
+    plane2->TransformBy(Transform::Rotate({0,0,1}, -90));
+    plane2->TransformBy(Transform::Translate({-1.3f, 0.0f, -1.7f}));
+    plane2->m_material = phong;
+    scene.AddShape(plane2);
+
+    plane3->TransformBy(Transform::Rotate({0,0,1}, 90));
+    plane3->TransformBy(Transform::Scale({4.0f, 1.0f, 4.0f}));
+    plane3->TransformBy(Transform::Translate({2.6f, 0.0f, -4.3f}));
+    plane3->m_material = phong;
+    //scene.AddShape(plane3);
+
+    plane4->TransformBy(Transform::Rotate({1,0,0}, 90));
+    plane4->TransformBy(Transform::Scale({4.0f, 1.0f, 4.0f}));
+    plane4->TransformBy(Transform::Translate({0.0f, 0.0f, -8.0f}));
+    plane4->m_material = phong;
+    //scene.AddShape(plane4);
+
 
 
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 30.0f));
     teapot->TransformBy(Transform::Scale({0.1f, 0.1f, 0.1f}));
     teapot->TransformBy(Transform::Translate({0.0f, 0.7f, -5.0f}));
-    teapot->m_material = metal;
+    teapot->m_material = lamb;
     auto teapotBounding = teapot->GetBoundingVolume();
     teapotBounding->SetShape(teapot);
     scene.AddBoundingVolume(teapotBounding);
 
     
-    auto sphere = std::make_shared<Sphere>(Point3f{-1.f,0.5f,-3.0f}, 0.5f, Color3f{0.18f}, metal);
+    auto sphere = std::make_shared<Sphere>(Point3f{-1.f,0.5f,-3.0f}, 0.5f, metal);
     auto boundingSphere = sphere->GetBoundingVolume();
     boundingSphere->SetShape(sphere);
     //scene.AddBoundingVolume(boundingSphere);
 
-    auto sphere2 = std::make_shared<Sphere>(Point3f{1.0f,0.5f,-3.0f}, 0.5f, Color3f{0.18f}, phong);
+    auto sphere2 = std::make_shared<Sphere>(Point3f{1.0f,0.5f,-3.0f}, 0.5f, phong);
     auto boundingSphere2 = sphere2->GetBoundingVolume();
     boundingSphere2->SetShape(sphere2);
     //scene.AddBoundingVolume(boundingSphere2);

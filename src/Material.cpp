@@ -105,6 +105,10 @@ Color3f Metal::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isec
     return color;
 }
 
+Color3f Glass::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene, int depth) const
+{
+    return {0,0,0};
+}
 
 /*
 Vec3f Lambertian::random_in_unit_sphere()

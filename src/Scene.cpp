@@ -29,6 +29,13 @@ void Scene::AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume)
     m_boundingVolumes.push_back(boundingVolume);
 }
 
+void Scene::AddShape(std::shared_ptr<Shape> shape)
+{
+    auto boundingBoxForShape = shape->GetBoundingVolume();
+    boundingBoxForShape->SetShape(shape);
+    m_boundingVolumes.push_back(boundingBoxForShape);
+}
+
 void Scene::AddLight(std::unique_ptr<Light> lightPtr)
 {
     m_lights.push_back(std::move(lightPtr));

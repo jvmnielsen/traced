@@ -8,16 +8,16 @@ class Triangle :
     public Shape
 {
 public:
-    Triangle() = delete;
+    Triangle() : Shape(nullptr) { }
 
     Triangle(
             const Point3f& vertx0,
             const Point3f& vertx1,
             const Point3f& vertx2,
             bool is_single_sided,
-            const Color3f& albedo,
+  
             std::shared_ptr<Material> material)
-        : Shape(albedo, material)
+        : Shape(material)
         , m_vertex{vertx0, vertx1, vertx2}
         , m_edge0(vertx1 - vertx0)
         , m_edge0_2(vertx2 - vertx0)
@@ -36,9 +36,9 @@ public:
         const Vec3f& vertx_normal1,
         const Vec3f& vertx_normal2,
         bool is_single_sided,
-        const Color3f& albedo,
+       
         std::shared_ptr<Material> material)
-        : Shape(albedo, material)
+        : Shape(material)
         , m_vertex{vertx0, vertx1, vertx2}
         , m_normals{vertx_normal0, vertx_normal1, vertx_normal2}
         , m_edge0(vertx1 - vertx0)

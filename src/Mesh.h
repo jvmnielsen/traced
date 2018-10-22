@@ -9,7 +9,7 @@ class Mesh :
     public Shape
 {
 public:
-	Mesh() : Shape(Color3f(0.18f), nullptr) {}
+	Mesh() : Shape(nullptr) {}
 
 	bool Intersects(const Rayf &ray, Intersection &hit_data) override;
     bool IntersectsQuick(const Rayf& ray) const override;
@@ -25,7 +25,7 @@ public:
 
     void TransformBy(const Transform& transform) override;
 
-    //std::shared_ptr<Mesh> CloneMesh(); // consider making ctor
+    std::shared_ptr<Mesh> Clone(); // consider making ctor
 
 private:
     std::vector<std::shared_ptr<Triangle>> m_triangles;

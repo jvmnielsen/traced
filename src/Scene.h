@@ -14,6 +14,9 @@ public:
     bool IntersectsQuick(const Rayf& ray) const;
 
 	void AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume);
+
+    void AddShape(std::shared_ptr<Shape> shape);
+
     void AddLight(std::unique_ptr<Light> lightPtr);
 
     //void SetCamera(std::unique_ptr<Camera> camera);

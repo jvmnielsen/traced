@@ -43,22 +43,23 @@ void Mesh::TransformBy(const Transform& transform)
         triangle->TransformBy(transform);
 }
 
-/*
-std::shared_ptr<Mesh> Mesh::CloneMesh()
+
+std::shared_ptr<Mesh> Mesh::Clone()
 {
-    auto newMesh = std::make_unique<Mesh>();
+    auto newMesh = std::make_shared<Mesh>();
 
     for (const auto& polygon : m_triangles)
     {
-        auto newPolygon = std::make_unique<Triangle>();
+        auto newPolygon = std::make_shared<Triangle>();
 
+        Triangle triangle;
         *newPolygon = *polygon;
 
         newMesh->AddPolygon(std::move(newPolygon));
     }
 
     return newMesh;
-} */
+} 
 
 std::shared_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
 {

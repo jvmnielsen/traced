@@ -122,7 +122,7 @@ std::shared_ptr<Mesh> Parser::ConstructMesh()
                  m_normals[m_normal_ordering[i] - 1],
                  m_normals[m_normal_ordering[i + 1] - 1],
                  m_normals[m_normal_ordering[i + 2] - 1],
-                 true, Color3f{0.18f}, nullptr);
+                 true, nullptr);
 	    
         mesh_ptr->AddPolygon(std::move(polygon));       
 	}

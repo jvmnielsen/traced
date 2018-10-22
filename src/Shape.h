@@ -16,11 +16,10 @@ class Light;
 class Shape
 {
 public:
-    //Shape() : m_material(MaterialType::Diffuse) {}
+    Shape() : m_material(nullptr) {}
 
-    Shape(const Color3f& albedo, std::shared_ptr<Material> material)
-        : m_albedo(albedo)
-        , m_material(std::move(material)) {}
+    Shape(std::shared_ptr<Material> material)
+        : m_material(std::move(material)) {}
 
 	virtual ~Shape() = default;
 
@@ -33,12 +32,12 @@ public:
     virtual void CalculateNormal(Intersection &hit_data) const = 0;
     virtual void TransformBy(const Transform& transform) = 0;
 
-    Color3f Albedo() const { return m_albedo; }
+    //Color3f Albedo() const { return m_albedo; }
 
     const Material& GetMaterial() { return *m_material; }
     std::shared_ptr<Material> m_material;
 protected:
-    Color3f m_albedo;
+    //Color3f m_albedo;
 
 };
 

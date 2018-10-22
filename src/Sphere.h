@@ -6,8 +6,10 @@ class Sphere :
     public Shape
 {
 public:
-    Sphere(const Point3f& center, const float radius, const Color3f& albedo, std::shared_ptr<Material> material)
-        : Shape(albedo, material)
+    Sphere() : Shape(nullptr) { }
+
+    Sphere(const Point3f& center, const float radius, std::shared_ptr<Material> material)
+        : Shape(material)
         , m_center(center)
         , m_radius(radius)
         , m_radius_squared(radius * radius)

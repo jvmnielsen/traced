@@ -38,3 +38,11 @@ class Metal : public Material
     Color3f CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene, int depth) const override;
 };
 
+class Glass : public Material
+{
+    explicit Glass(float refractiveIndex) : m_refractiveIndex(refractiveIndex) { }
+
+    Color3f CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene, int depth) const override;
+
+    float m_refractiveIndex;
+};
