@@ -47,7 +47,10 @@ Color3f StochasticRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     {
         Rayf scattered;
         Color3f attentuation;
-        if (depth < m_raysPerPixel && isect.m_matPtr->Scatter(ray, isect, attentuation, scattered)) // TODO: Don't use rays, make own variable
+
+        // TODO: calculate emitted light
+
+        if (depth < m_raysPerPixel && isect.m_matPtr->Scatter(ray, isect, attentuation, scattered)) // TODO: Don't use raysPerPixel, make own variable
         {
             return attentuation * TraceRay(scattered, scene, depth + 1);
         }

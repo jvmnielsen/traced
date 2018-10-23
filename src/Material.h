@@ -17,6 +17,9 @@ public:
 
     virtual bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) = 0;
 
+    virtual Color3f Emitted(float u, float v, const Point3f& point) const { return {0.0f, 0.0f, 0.0f}; }
+
+
 protected:
     // to generate random numbers [0,1]
     //std::random_device m_seed;

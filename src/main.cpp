@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
     auto lightOne = std::make_unique<PointLight>(Color3f{200.0f}, Point3f(2.0f, 2.0f, -2.0f));
     scene.AddLight(std::move(lightOne));
 
-    auto lamb = std::make_shared<Matte>(Color3f{0.18f});
+    auto lamb = std::make_shared<Matte>(Color3f{0.8f, 0.5f, 0.1f});
     auto phong = std::make_shared<Plastic>(Color3f{ 0.8f, 0.0f, 0.0f}, Color3f(0.2f), 50.f);
     auto metal = std::make_shared<Metal>();
 
