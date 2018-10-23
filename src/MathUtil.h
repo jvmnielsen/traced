@@ -399,7 +399,7 @@ struct Point2
 
     constexpr Vec3<T> operator-(const Point2& other) const
     {
-        return Vec3{ x - other.x, y - other.y };
+        return Vec3<T>{ x - other.x, y - other.y };
     }
 
     constexpr Point2& operator-()
@@ -498,6 +498,20 @@ struct Point3
         std::cout << "( " << x << ", " << y << ", " << z << " )\n";
     }
 };
+
+
+template<typename T>
+constexpr Point3<T> operator*(const T factor, const Point3<T>& point)
+{
+    return Point3<T>{point.x * factor, point.y * factor, point.z * factor};
+}
+
+template<typename T>
+constexpr Point3<T> operator/(const T factor, const Point3<T>& point)
+{
+    return Point3<T>{point.x / factor, point.y / factor, point.z / factor};
+}
+
 
 typedef Point3<float> Point3f;
 typedef Point3<int> Point3i;

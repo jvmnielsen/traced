@@ -24,6 +24,26 @@ float schlick( float cosine, float refractive_index )
     return r0 + (1 - r0) * pow( (1 - cosine), 5 );
 }
 
+Vec3f Matte::RandomInUnitSphere()
+{
+    Vec3f randomVec;
+    do
+    {
+        randomVec = 2.0f * Point3f{ m_dist(m_gen), m_dist(m_gen), m_dist(m_gen) } - Point3f{ 1.0f, 1.0f, 1.0f };
+    } while (randomVec.LengthSquared() >= 1.0f);
+
+    return randomVec;
+}
+
+
+bool Matte::Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered)
+{
+    const auto target = isect.m_point + isect.m_normal + RandomInUnitSphere(); // Move point into unit-sphere by shifting with normal, then move with random vec
+    scattered = Rayf{isect.m_point, target - isect.m_point};
+    attenuation = m_diffuse;
+    return true;
+}
+
 
 Color3f Matte::CalculateSurfaceColor(const Rayf& rayIn, const Intersection& isect, const Scene& scene, int depth) const
 {

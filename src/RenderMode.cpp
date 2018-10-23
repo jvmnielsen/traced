@@ -45,7 +45,12 @@ Color3f StochasticRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
 
     if (scene.Intersects(ray, isect))
     {
-        hitColor = isect.m_matPtr->CalculateSurfaceColor(ray, isect, scene, 0);
+        Rayf scattered;
+        Color3f attentuation;
+        if (depth < m_raysPerPixel && isect.m_matPtr->Scatter(ray, isect, attentuation, scattered)) // TODO: Don't use rays, make own variable
+        {
+            return attentuation * TraceRay(scattered, scene, depth + 1);
+        }
     }
     else
     {
