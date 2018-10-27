@@ -10,7 +10,7 @@
 #include <thread>
 #include <array>
 #include "Utility.h"
-#include "RenderMode.h"
+#include "Renderer.h"
 
 /*
 void ConstructStandardBox(Scene& scene)

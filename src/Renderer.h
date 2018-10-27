@@ -11,16 +11,16 @@
 #include "Intersection.h"
 #include "Material.h"
 
-class RenderMode
+class Renderer
 {
 public:
-    RenderMode() = default;
-    virtual ~RenderMode() = default;
+    Renderer() = default;
+    virtual ~Renderer() = default;
 
     virtual void Render(Scene& scene, Camera& camera, ImageBuffer& buffer) = 0;
 };
 
-class WhittedRayTracer : RenderMode
+class WhittedRayTracer : Renderer
 {
 public:
     explicit WhittedRayTracer(int recursionDepth) : m_recursionDepth(recursionDepth) { }
@@ -35,7 +35,7 @@ private:
     float m_shadow_bias = 1e-4f;
 };
 
-class StochasticRayTracer : public RenderMode
+class StochasticRayTracer : public Renderer
 {
 public:
     explicit StochasticRayTracer(int depth = 50, size_t raysPerPixel = 100) 

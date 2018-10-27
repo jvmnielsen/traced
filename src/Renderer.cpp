@@ -1,4 +1,4 @@
-#include "RenderMode.h"
+#include "Renderer.h"
 #include "Utility.h"
 
 Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
