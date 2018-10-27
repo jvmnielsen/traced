@@ -837,7 +837,7 @@ public:
     Ray(const Point3<T>& origin,
         const Vec3<T>& direction,
         const T maxParam = Math::Infinity,
-        const T minParam = -0.01,
+        const T minParam = 0.0001,
         const RayType& rayType = RayType::PrimaryRay)
         : m_origin(origin)
         , m_direction(direction)

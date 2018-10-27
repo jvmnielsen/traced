@@ -11,7 +11,7 @@ bool Scene::Intersects(const Rayf& ray, Intersection& isect) const
 {
     for (const auto& volume : m_boundingVolumes)
         volume->Intersects(ray, isect);
-
+           
     return isect.m_hasBeenHit;
 }
 

@@ -9,7 +9,7 @@ Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     if (scene.Intersects(ray, isect))
     //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_shape->Intersects(ray, isect))
     {
-        hitColor = isect.m_matPtr->CalculateSurfaceColor(ray, isect, scene, 0);
+        //hitColor = isect.m_matPtr->CalculateSurfaceColor(ray, isect, scene, 0);
     }
     else
     {
@@ -41,18 +41,22 @@ void WhittedRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buffer)
 Color3f StochasticRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
 {
     Intersection isect;
-    Color3f hitColor;
+    Color3f hitColor{0};
 
     if (scene.Intersects(ray, isect))
+    //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[2]->m_shape->Intersects(ray, isect))
     {
         Rayf scattered;
-        Color3f attentuation;
+        Color3f attenuation;
+        const auto emitted = isect.m_matPtr->Emitted(isect.m_barycentric.x, isect.m_barycentric.y, isect.m_point);
 
-        // TODO: calculate emitted light
-
-        if (depth < m_raysPerPixel && isect.m_matPtr->Scatter(ray, isect, attentuation, scattered)) // TODO: Don't use raysPerPixel, make own variable
+        if (depth < m_depth && isect.m_matPtr->Scatter(ray, isect, attenuation, scattered)) 
         {
-            return attentuation * TraceRay(scattered, scene, depth + 1);
+             hitColor += emitted + attenuation * TraceRay(scattered, scene, depth + 1);
+        }
+        else
+        {
+            hitColor += emitted;
         }
     }
     else

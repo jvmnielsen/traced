@@ -38,7 +38,7 @@ private:
 class StochasticRayTracer : public RenderMode
 {
 public:
-    explicit StochasticRayTracer(int depth = 5, size_t raysPerPixel = 5) 
+    explicit StochasticRayTracer(int depth = 50, size_t raysPerPixel = 100) 
         : m_depth(depth)
         , m_raysPerPixel(raysPerPixel)
         , m_gen(std::random_device()())

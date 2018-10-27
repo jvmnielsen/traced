@@ -22,12 +22,12 @@ bool Sphere::Intersects(const Rayf& ray, Intersection& isect)
     if (!(solutionOne > 0 || solutionTwo > 0))
         return false;
 
-    const auto param = (solutionOne < solutionTwo) ? solutionOne : solutionTwo;
+    const auto parameter = (solutionOne < solutionTwo) ? solutionOne : solutionTwo;
 
-    if (ray.m_maxParam < param)
+    if (parameter > ray.m_maxParam || parameter < ray.m_minParam)
         return false;
 
-    ray.m_maxParam = param;
+    ray.m_maxParam = parameter;
     isect.m_shape = this;
     isect.m_point = ray.PointAtParameter(ray.m_maxParam);
     CalculateNormal(isect);

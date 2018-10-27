@@ -14,7 +14,7 @@ bool Math::SolveQuadratic(
     if (discr < 0)
         return false;
 
-    else if (discr == 0)
+    if (discr == 0)
         solutionOne = solutionTwo = -0.5f * b / a;
 
     else
