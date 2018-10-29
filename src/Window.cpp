@@ -67,8 +67,8 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
             m_renderer,
             SDL_PIXELFORMAT_RGBA32,
             SDL_TEXTUREACCESS_STREAMING,
-            buffer.Width(),
-            buffer.Height());
+            buffer.GetWidth(),
+            buffer.GetHeight());
 
     m_pixels = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
 
@@ -80,7 +80,7 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
 
 void Window::UpdateTexture(ImageBuffer &buffer)
 {
-    SDL_UpdateTexture(m_texture, NULL, m_pixels, buffer.Width() * sizeof(uint32_t));
+    SDL_UpdateTexture(m_texture, NULL, m_pixels, buffer.GetWidth() * sizeof(uint32_t));
 
     //SDL_RenderClear( m_renderer ); // might not be necessary
     SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);

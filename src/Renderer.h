@@ -1,25 +1,41 @@
-
-
 #ifndef RAYTRACER_INTEGRATOR_H
 #define RAYTRACER_INTEGRATOR_H
-
 
 #include <random>
 #include "Scene.h"
 #include "Imaging.h"
-#include "Shape.h"
-#include "Intersection.h"
 #include "Material.h"
+#include "../Sampler.h"
 
 class Renderer
 {
 public:
-    Renderer() = default;
-    virtual ~Renderer() = default;
 
-    virtual void Render(Scene& scene, Camera& camera, ImageBuffer& buffer) = 0;
+    Renderer::Renderer(
+        std::unique_ptr<Camera> camera,
+        std::unique_ptr<Scene> scene,
+        std::shared_ptr<ImageBuffer> buffer,
+        std::unique_ptr<Sampler> sampler);
+
+    
+    void Render(int samplesPerPixel);
+
+private:
+    std::unique_ptr<Camera>      m_camera;
+    std::unique_ptr<Scene>       m_scene;
+    std::shared_ptr<ImageBuffer> m_buffer;
+    std::unique_ptr<Sampler>     m_sampler;
+
+    // to generate random numbers [0,1]
+    //std::random_device m_seed;
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<float> m_dist;
+
+    Color3f TraceRay(const Rayf& ray, int depth);
+
 };
 
+/*
 class WhittedRayTracer : Renderer
 {
 public:
@@ -38,24 +54,8 @@ private:
 class StochasticRayTracer : public Renderer
 {
 public:
-    explicit StochasticRayTracer(int depth = 50, size_t raysPerPixel = 100) 
-        : m_depth(depth)
-        , m_raysPerPixel(raysPerPixel)
-        , m_gen(std::random_device()())
-        , m_dist(0, 1) 
-    { }
     
-    void Render(Scene& scene, Camera& camera, ImageBuffer& buffer) override;
-    Color3f TraceRay(const Rayf& ray, Scene& scene, int depth);
-
-    // to generate random numbers [0,1]
-    //std::random_device m_seed;
-    std::mt19937 m_gen;
-    std::uniform_real_distribution<> m_dist;
-
-    int m_depth;
-    size_t m_raysPerPixel;
-};
+}; */
 
 
 #endif //RAYTRACER_INTEGRATOR_H

@@ -1,6 +1,70 @@
 #include "Renderer.h"
 #include "Utility.h"
 
+Renderer::Renderer(
+    std::unique_ptr<Camera> camera,
+    std::unique_ptr<Scene> scene,
+    std::shared_ptr<ImageBuffer> buffer,
+    std::unique_ptr<Sampler> sampler)
+    : m_camera(std::move(camera))
+    , m_scene(std::move(scene))
+    , m_buffer(buffer)
+    , m_sampler(std::move(sampler))
+    , m_gen(std::random_device()())
+    , m_dist(0.0f, 1.0f)
+{
+}
+
+void Renderer::Render(int samplesPerPixel)
+{
+    Timer timer = {"Rendering took: "};
+
+    const int height = m_buffer->GetHeight();
+    const int width = m_buffer->GetWidth();
+
+    for (int j = height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
+    {
+        for (size_t i = 0; i < width; ++i)
+        {
+
+            Color3f color{0};
+
+            for (size_t s = 0; s < samplesPerPixel; s++)
+            {
+                const auto u = float(i + m_dist(m_gen)) / float(width); // maybe precompute
+                const auto v = float(j + m_dist(m_gen)) / float(height);
+
+                const auto ray = m_camera->GetRay(u, v);
+
+                color += TraceRay(ray, 0);
+            }
+
+            color /= float(samplesPerPixel);
+            m_buffer->AddPixelAt(color, i, j);
+        }
+    }
+}
+
+Color3f Renderer::TraceRay(const Rayf& ray, int depth)
+{
+    Intersection isect;
+    Color3f hitColor{0};
+
+    if (m_scene->Intersects(ray, isect))
+    {
+       
+    }
+    else
+    {
+        //hitColor = scene.BackgroundColor();
+    }
+
+    return hitColor;
+}
+
+
+
+/*
 Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
 {
     Intersection isect;
@@ -23,13 +87,13 @@ Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
 void WhittedRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buffer)
 {
     Timer timer { "Rendering took: " };
-    for (int j = (int)buffer.Height() - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
+    for (int j = (int)buffer.GetHeight() - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
-        for (size_t i = 0; i < buffer.Width(); ++i)
+        for (size_t i = 0; i < buffer.GetWidth(); ++i)
         {
             Color3f color{ 0 };
 
-            const auto ray = camera.GetRay(static_cast<float>(i)/buffer.Width(), static_cast<float>(j)/buffer.Height());
+            const auto ray = camera.GetRay(static_cast<float>(i)/buffer.GetWidth(), static_cast<float>(j)/buffer.GetHeight());
 
             color = TraceRay(ray, scene, 0);
 
@@ -72,17 +136,17 @@ void StochasticRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buff
     Timer timer = {"Rendering took: "};
 
 
-    for (int j = (int)buffer.Height() - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
+    for (int j = (int)buffer.GetHeight() - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
-        for (size_t i = 0; i < buffer.Width(); ++i)
+        for (size_t i = 0; i < buffer.GetWidth(); ++i)
         {
 
             Color3f color{ 0 };
 
             for (size_t s = 0; s < m_raysPerPixel; s++) 
             {
-                const auto u = float(i + m_dist(m_gen)) / float(buffer.Width()); // maybe precompute
-                const auto v = float(j + m_dist(m_gen)) / float(buffer.Height());
+                const auto u = float(i + m_dist(m_gen)) / float(buffer.GetWidth()); // maybe precompute
+                const auto v = float(j + m_dist(m_gen)) / float(buffer.GetHeight());
 
                 const auto ray = camera.GetRay(u, v);
 
@@ -94,3 +158,5 @@ void StochasticRayTracer::Render(Scene& scene, Camera& camera, ImageBuffer& buff
         }
     }
 }
+
+*/

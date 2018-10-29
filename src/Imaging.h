@@ -172,8 +172,8 @@ public:
 
 	//void AddPixel(const Color& color);
 
-    constexpr size_t Width() { return m_screenWidth; }
-    constexpr size_t Height() { return m_screenHeight; }
+    constexpr size_t GetWidth() { return m_screenWidth; }
+    constexpr size_t GetHeight() { return m_screenHeight; }
 
     constexpr int BitsPerByte() { return m_bitsPerByte; }
 	constexpr int Channels() { return m_channels; }
