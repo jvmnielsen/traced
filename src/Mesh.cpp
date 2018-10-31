@@ -4,7 +4,7 @@ bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
 	for (const auto& triangle : m_triangles)
 	    if (triangle->Intersects(ray, isect))
-	        isect.m_matPtr = m_material.get();
+	        isect.m_material = m_material.get();
 
 	return isect.m_hasBeenHit;
 }
@@ -23,9 +23,9 @@ void Mesh::AddPolygon(std::shared_ptr<Triangle> polygon)
 	m_triangles.push_back(polygon);
 }
 
-void Mesh::CalculateNormal(Intersection &hit_data) const
+void Mesh::NormalAtIntesection(Intersection &hit_data) const
 {
-    hit_data.m_shape->CalculateNormal(hit_data);
+    hit_data.m_shape->NormalAtIntersection(hit_data);
 }
 
 /*
@@ -59,9 +59,9 @@ std::shared_ptr<Mesh> Mesh::Clone()
     }
 
     return newMesh;
-} 
+}
 
-std::shared_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
+std::unique_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
 {
     float minX = Math::Infinity;
     float minY = Math::Infinity;
@@ -90,5 +90,5 @@ std::shared_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
     }
     Point3f min { minX, minY, minZ };
     Point3f max { maxX, maxY, maxZ };
-    return std::make_shared<BoundingVolume>( min, max );
+    return std::make_unique<BoundingVolume>( min, max );
 }

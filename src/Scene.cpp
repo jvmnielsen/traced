@@ -24,19 +24,27 @@ bool Scene::IntersectsQuick(const Rayf& ray) const
     return false;
 }
 
-void Scene::AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume)
+void Scene::AddBoundingVolume(std::unique_ptr<BoundingVolume> boundingVolume)
 {
     m_boundingVolumes.push_back(boundingVolume);
 }
 
-void Scene::AddShape(std::shared_ptr<Shape> shape)
+void Scene::AddShape(std::unique_ptr<Shape> shape)
 {
-    auto boundingBoxForShape = shape->GetBoundingVolume();
+    const auto boundingBoxForShape = shape->GetBoundingVolume();
     boundingBoxForShape->SetShape(shape);
-    m_boundingVolumes.push_back(boundingBoxForShape);
+    m_boundingVolumes.emplace_back(boundingBoxForShape);
 }
 
-void Scene::AddLight(std::unique_ptr<Light> lightPtr)
+void AddPointLight(std::unique_ptr<Light> lightPtr);
+void AddAreaLight(std::unique_ptr<BoundingVolume> lightPtr);
+
+
+bool Scene::HasLineOfSight(const Point3f& p1, const Point3f& p2)
 {
-    m_lights.push_back(std::move(lightPtr));
+    const Vec3f offset = p2 - p1;
+    const float distance = offset.Length();
+    Rayf ray{ p1, offset, distance };
+    return !IntersectsQuick(ray);
 }
+

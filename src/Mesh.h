@@ -17,9 +17,9 @@ public:
 
 	void AddPolygon(std::shared_ptr<Triangle> polygon);
 
-    void CalculateNormal(Intersection &hit_data) const override;
+    void NormalAtIntesection(Intersection &hit_data) const override;
 
-	std::shared_ptr<BoundingVolume> GetBoundingVolume() const override;
+    std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
 
 	//void SetMaterialType(const MaterialType& type) override;
 

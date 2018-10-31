@@ -26,10 +26,10 @@ public:
     virtual bool Intersects(const Rayf &ray, Intersection& isec) = 0;
     virtual bool IntersectsQuick(const Rayf& ray) const = 0;
 
-    virtual std::shared_ptr<BoundingVolume> GetBoundingVolume() const = 0;
+    virtual std::unique_ptr<BoundingVolume> GetBoundingVolume() const = 0;
 
     //void ComputeScatteringFunction(Intersection& isect, const Rayf& ray);
-    virtual void CalculateNormal(Intersection &hit_data) const = 0;
+    virtual Normal3f NormalAtIntersection(const Intersection& isect) const = 0;
     virtual void TransformBy(const Transform& transform) = 0;
 
     //Color3f Albedo() const { return m_albedo; }

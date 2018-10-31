@@ -12,10 +12,10 @@ bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
 
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (m_bounds[ray.m_sign[0]].x - ray.Origin().x) * ray.m_invDirection.x;
-    tmax = (m_bounds[1-ray.m_sign[0]].x - ray.Origin().x) * ray.m_invDirection.x;
-    tymin = (m_bounds[ray.m_sign[1]].y - ray.Origin().y) * ray.m_invDirection.y;
-    tymax = (m_bounds[1-ray.m_sign[1]].y - ray.Origin().y) * ray.m_invDirection.y;
+    tmin = (m_bounds[ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
+    tmax = (m_bounds[1-ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
+    tymin = (m_bounds[ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
+    tymax = (m_bounds[1-ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
 
     if ( (tmin > tymax) || (tymin > tmax) )
         return false;
@@ -25,8 +25,8 @@ bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
     if (tymax < tmax)
         tmax = tymax;
 
-    tzmin = (m_bounds[ray.m_sign[2]].z - ray.Origin().z) * ray.m_invDirection.z;
-    tzmax = (m_bounds[1-ray.m_sign[2]].z - ray.Origin().z) * ray.m_invDirection.z;
+    tzmin = (m_bounds[ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
+    tzmax = (m_bounds[1-ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
 
     if ( (tmin > tzmax) || (tzmin > tmax) )
         return false;
@@ -58,10 +58,10 @@ bool BoundingVolume::IntersectsQuick(const Rayf& ray) const
 {
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (m_bounds[ray.m_sign[0]].x - ray.Origin().x) * ray.m_invDirection.x;
-    tmax = (m_bounds[1-ray.m_sign[0]].x - ray.Origin().x) * ray.m_invDirection.x;
-    tymin = (m_bounds[ray.m_sign[1]].y - ray.Origin().y) * ray.m_invDirection.y;
-    tymax = (m_bounds[1-ray.m_sign[1]].y - ray.Origin().y) * ray.m_invDirection.y;
+    tmin = (m_bounds[ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
+    tmax = (m_bounds[1-ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
+    tymin = (m_bounds[ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
+    tymax = (m_bounds[1-ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
 
     if ( (tmin > tymax) || (tymin > tmax) )
         return false;
@@ -71,8 +71,8 @@ bool BoundingVolume::IntersectsQuick(const Rayf& ray) const
     if (tymax < tmax)
         tmax = tymax;
 
-    tzmin = (m_bounds[ray.m_sign[2]].z - ray.Origin().z) * ray.m_invDirection.z;
-    tzmax = (m_bounds[1-ray.m_sign[2]].z - ray.Origin().z) * ray.m_invDirection.z;
+    tzmin = (m_bounds[ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
+    tzmax = (m_bounds[1-ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
 
     if ( (tmin > tzmax) || (tzmin > tmax) )
         return false;

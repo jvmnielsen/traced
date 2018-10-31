@@ -50,33 +50,33 @@ Vec3f Reflect(const Vec3f& vec, const Vec3f& n)
 
 bool Metal::Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered)
 {
-    const auto reflected = Reflect(rayIn.Direction(), isect.m_normal);
+    const auto reflected = Reflect(rayIn.GetDirection(), isect.m_normal);
     scattered = Rayf{isect.m_point, reflected + m_fuzz * RandomInUnitSphere()};
     attenuation = m_albedo;
-    return scattered.Direction().DotProduct(isect.m_normal) > 0;
+    return scattered.GetDirection().DotProduct(isect.m_normal) > 0;
 }
 
 bool Dielectric::Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered)
 {
     Vec3f outward_normal;
-    const auto reflected = Reflect(rayIn.Direction(), isect.m_normal);
+    const auto reflected = Reflect(rayIn.GetDirection(), isect.m_normal);
     float ni_over_nt;
     attenuation = Color3f(1.0f);
     Vec3f refracted;
     float reflect_prob;
     float cosine;
 
-    if (rayIn.Direction().DotProduct(isect.m_normal) > 0) {
+    if (rayIn.GetDirection().DotProduct(isect.m_normal) > 0) {
         outward_normal = -isect.m_normal;
         ni_over_nt = m_refractiveIndex;
-        cosine = m_refractiveIndex * rayIn.Direction().DotProduct(isect.m_normal) / rayIn.Direction().Length();
+        cosine = m_refractiveIndex * rayIn.GetDirection().DotProduct(isect.m_normal) / rayIn.GetDirection().Length();
     }
     else {
         outward_normal = isect.m_normal;
         ni_over_nt = 1.0 / m_refractiveIndex;
-        cosine = -rayIn.Direction().DotProduct(isect.m_normal) / rayIn.Direction().Length();
+        cosine = -rayIn.GetDirection().DotProduct(isect.m_normal) / rayIn.GetDirection().Length();
     }
-    if (refract(rayIn.Direction(), outward_normal, ni_over_nt, refracted)) {
+    if (refract(rayIn.GetDirection(), outward_normal, ni_over_nt, refracted)) {
         reflect_prob = Schlick(cosine, m_refractiveIndex);
     }
     else {

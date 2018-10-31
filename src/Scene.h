@@ -10,44 +10,34 @@ public:
     Scene() = default;
     ~Scene() = default;
 
+    // Does a ray intersect any shapes in the scene?
     bool Intersects(const Rayf& ray, Intersection& isect) const;
-    bool IntersectsQuick(const Rayf& ray) const;
+    
+    // Adding shapes and lights to the scene
+    void AddShape(std::unique_ptr<Shape> shape);
+    void AddPointLight(std::unique_ptr<Light> lightPtr);
+    void AddAreaLight(std::unique_ptr<BoundingVolume> lightPtr);
 
-	void AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume);
-
-    void AddShape(std::shared_ptr<Shape> shape);
-
-    void AddLight(std::unique_ptr<Light> lightPtr);
-
-    //void SetCamera(std::unique_ptr<Camera> camera);
+    // Is there a clear line of sight between two points
+    bool HasLineOfSight(const Point3f& p1, const Point3f& p2);
 
     void SetBackgroundColor(const Color3f& color) { m_backgroundColor = color; }
     Color3f BackgroundColor() const { return m_backgroundColor; }
 
-    std::vector<std::shared_ptr<Light>> m_lights;
-
-    std::vector<std::shared_ptr<BoundingVolume>> m_boundingVolumes;
+    const std::vector<std::unique_ptr<Light>>& GetPointLights() const { return m_lights; }
+    const std::vector<std::unique_ptr<BoundingVolume>>& GetAreaLights() const { return m_areaLights; }
 
 private:
     Color3f m_backgroundColor;
 
+    std::vector<std::unique_ptr<Light>> m_lights;
+    std::vector<std::unique_ptr<BoundingVolume>> m_areaLights;
+    std::vector<std::unique_ptr<BoundingVolume>> m_boundingVolumes;
 
+    void AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume);
 
+    bool IntersectsQuick(const Rayf& ray) const;
 
-    //std::vector<std::unique_ptr<Mesh>> m_scene_meshes;
-    //const float m_infinity = std::numeric_limits<float>::max();
-
-    //Intersection Trace(const Rayf &ray);
-
-    //void TraceSimpleObjects(const Rayf &ray, Intersection &hit_data);
-    //void TraceMeshes(const Rayf &ray, Intersection &hit_data);
-	
-    //Color3f CastRay(const Rayf& ray, uint32_t depth);
-
-    //Vec3f random_in_unit_sphere();
-
-    //std::unique_ptr<Camera> m_camera;
-
-	float m_shadow_bias = 1e-4f;
+    float m_shadow_bias = 1e-4f;
 };
 

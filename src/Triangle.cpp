@@ -1,64 +1,75 @@
 #include "Triangle.h"
 #include <cmath>
 
+Triangle::Triangle(
+    std::array<Point3f, 3> vertices,
+    std::array<Normal3f, 3> vertexNormals,
+    bool isSingleSided,
+    std::shared_ptr<Material> material)
+    : Shape(material)
+    , m_vertices(std::move(vertices))
+    , m_vertexNormals(std::move(vertexNormals))
+    , m_isSingleSided(isSingleSided)
+{
+    m_edges.at(0) = m_vertices.at(1) - m_vertices.at(0);
+    m_edges.at(1) = m_vertices.at(2) - m_vertices.at(0);
+}
 
 void Triangle::UpdateEdges()
 {
-	m_edge0 = m_vertex[1] - m_vertex[0];
-	m_edge0_2 = m_vertex[2] - m_vertex[0];
-	m_edge1 = m_vertex[2] - m_vertex[1];
-	m_edge2 = m_vertex[0] - m_vertex[2];
-	m_normal = (m_vertex[1] - m_vertex[0]).CrossProduct(m_vertex[2] - m_vertex[0]).Normalize();
+	m_edges.at(0) = m_vertices.at(1) - m_vertices.at(0);
+    m_edges.at(1) = m_vertices.at(2) - m_vertices.at(0);
+	m_faceNormal = m_edges.at(0).CrossProduct(m_edges.at(1)).Normalize();
 }
 
 bool Triangle::Intersects(const Rayf& ray, Intersection& isect)
 {
-    const auto p_vec = ray.Direction().CrossProduct(m_edge0_2);
-    const auto det = m_edge0.DotProduct(p_vec);
+    const auto p_vec = ray.GetDirection().CrossProduct(m_edges.at(1));
+    const auto det = m_edges.at(0).DotProduct(p_vec);
 
     // back-face culling
-    if (fabs(det < m_epsilon) && m_is_single_sided)
+    if (fabs(det < m_epsilon) && m_isSingleSided)
         return false;
    
     // precompute for performance
     const auto inverted_det = 1 / det;
 
-    Vec2f barycentric{0};
+    Point2f barycentric{0};
 
     // barycentric coordinate u
-    const auto t_vec = ray.Origin() - m_vertex[0];
+    const auto t_vec = ray.GetOrigin() - m_vertices[0];
     barycentric.x = t_vec.DotProduct(p_vec) * inverted_det;
+    
     if (barycentric.x < 0 || barycentric.x > 1)
         return false;
 
     // barycentric coordinate v
-    const auto q_vec = t_vec.CrossProduct(m_edge0);
-    barycentric.y = ray.Direction().DotProduct( q_vec ) * inverted_det;
+    const auto q_vec = t_vec.CrossProduct(m_edges.at(0));
+    barycentric.y = ray.GetDirection().DotProduct( q_vec ) * inverted_det;
+    
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return false;
 
-    const auto parameter = m_edge0_2.DotProduct(q_vec) * inverted_det;
+    const auto parameter = m_edges.at(1).DotProduct(q_vec) * inverted_det;
 
-    if (parameter > ray.m_maxParam || parameter < ray.m_minParam)
+    if (!ray.ParameterWithinBounds(parameter))
         return false;
 
-    ray.m_maxParam = parameter;
-    isect.m_shape = this;
-    isect.m_barycentric = barycentric;
-    isect.m_point = ray.PointAtParameter(parameter);
-    isect.m_hasBeenHit = true;
-    CalculateNormal(isect);
 
+    // Update parameter and intersection as necessary
+    ray.NewMaxParameter(parameter);
+    isect.Update(ray.PointAtParameter(parameter), barycentric, this, m_material.get());
+   
     return true;
 }
 
 bool Triangle::IntersectsQuick(const Rayf& ray) const
 {
-    const auto p_vec = ray.Direction().CrossProduct(m_edge0_2);
-    const auto det = m_edge0.DotProduct(p_vec);
+    const auto p_vec = ray.GetDirection().CrossProduct(m_edges.at(1));
+    const auto det = m_edges.at(0).DotProduct(p_vec);
 
     // back-face culling
-    if (fabs(det < m_epsilon) && m_is_single_sided)
+    if (fabs(det < m_epsilon) && m_isSingleSided)
         return false;
 
     // precompute for performance
@@ -67,43 +78,42 @@ bool Triangle::IntersectsQuick(const Rayf& ray) const
     Vec2f barycentric{0};
 
     // barycentric coordinate u
-    const auto t_vec = ray.Origin() - m_vertex[0];
+    const auto t_vec = ray.GetOrigin() - m_vertices[0];
     barycentric.x = t_vec.DotProduct(p_vec) * inverted_det;
     if (barycentric.x < 0 || barycentric.x > 1)
         return false;
 
     // barycentric coordinate v
-    const auto q_vec = t_vec.CrossProduct(m_edge0);
-    barycentric.y = ray.Direction().DotProduct( q_vec ) * inverted_det;
+    const auto q_vec = t_vec.CrossProduct(m_edges.at(0));
+    barycentric.y = ray.GetDirection().DotProduct( q_vec ) * inverted_det;
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return false;
 
-    const auto parameter = m_edge0_2.DotProduct(q_vec) * inverted_det;
+    const auto parameter = m_edges.at(1).DotProduct(q_vec) * inverted_det;
 
-    return parameter > 0 && parameter <= ray.m_maxParam;
+    return parameter > 0 && parameter <= ray.GetMaxParameter();
 
 }
 
-void Triangle::CalculateNormal(Intersection &intersec) const
+Normal3f Triangle::NormalAtIntersection(const Intersection& isect) const
 {
     // for flat shading simply return the face normal
-    const auto normal = m_normals[0] * (1 - intersec.m_barycentric.x - intersec.m_barycentric.y)
-        + m_normals[1] * intersec.m_barycentric.x
-        + m_normals[2] * intersec.m_barycentric.y;
+    const auto normal = m_vertexNormals[0] * (1 - isect.GetUV().x - isect.GetUV().y)
+        + m_vertexNormals[1] * isect.GetUV().x
+        + m_vertexNormals[2] * isect.GetUV().y;
 
-    intersec.m_normal = Normalize(normal);
+    return Normalize(normal);
 }
 
 void Triangle::TransformBy(const Transform& transform)
 {
 
-    for (auto& vertex : m_vertex)
+    for (auto& vertex : m_vertices)
         transform(vertex);
 
-    for (auto& normal : m_normals)
+    for (auto& normal : m_vertexNormals)
         transform(normal);
 
     // precompute again
     UpdateEdges();
-
 }

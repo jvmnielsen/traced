@@ -48,20 +48,51 @@ void Renderer::Render(int samplesPerPixel)
 Color3f Renderer::TraceRay(const Rayf& ray, int depth)
 {
     Intersection isect;
-    Color3f hitColor{0};
+    Color3f hitColor{0.0f};
 
     if (m_scene->Intersects(ray, isect))
     {
-       
+        if (isEyeRay && m_emit)
+            color += surfel.material.emit;
+
+        if ((!isEyeRay) || m_direct)
+        {
+            color += estiamteDirectLightFromPointLights(surfel, ray);
+            color += estimateDirectLightFromAreaLight(sufel, ray);
+        }
+        if (!(isEyeray) || m_indirect)
+            color += estimateIndirectLight(sufel, ray, isEyeRay);
+
+
     }
     else
     {
-        //hitColor = scene.BackgroundColor();
+        hitColor = m_scene->BackgroundColor();
     }
 
     return hitColor;
 }
 
+Color3f Renderer::SamplePointLights(const Intersection& isect, const Rayf& ray) const
+{
+    Color3f color{0.0f};
+
+    if (!m_scene->m_areaLights.empty())
+    {
+        
+    }
+
+    return color;
+
+}
+Color3f Renderer::SampleAreaLights(const Intersection& isect, const Rayf& ray) const
+{
+    
+}
+Color3f Renderer::SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const
+{
+    
+}
 
 
 /*
@@ -73,7 +104,7 @@ Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     if (scene.Intersects(ray, isect))
     //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_shape->Intersects(ray, isect))
     {
-        //hitColor = isect.m_matPtr->CalculateSurfaceColor(ray, isect, scene, 0);
+        //hitColor = isect.m_material->CalculateSurfaceColor(ray, isect, scene, 0);
     }
     else
     {
@@ -112,9 +143,9 @@ Color3f StochasticRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     {
         Rayf scattered;
         Color3f attenuation;
-        const auto emitted = isect.m_matPtr->Emitted(isect.m_barycentric.x, isect.m_barycentric.y, isect.m_point);
+        const auto emitted = isect.m_material->Emitted(isect.m_uvCoord.x, isect.m_uvCoord.y, isect.m_point);
 
-        if (depth < m_depth && isect.m_matPtr->Scatter(ray, isect, attenuation, scattered)) 
+        if (depth < m_depth && isect.m_material->Scatter(ray, isect, attenuation, scattered)) 
         {
              hitColor += emitted + attenuation * TraceRay(scattered, scene, depth + 1);
         }

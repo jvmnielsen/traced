@@ -18,11 +18,11 @@ public:
     bool Intersects(const Rayf& ray, Intersection& isect) override;
     bool IntersectsQuick(const Rayf& ray) const override;
 
-    std::shared_ptr<BoundingVolume> GetBoundingVolume() const override;
+    std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
 
-    void CalculateNormal(Intersection &intersection) const override;
+    inline Normal3f NormalAtIntesection(Intersection& isect) const override;
 
-    void TransformBy(const Transform& transform) override;
+    inline void TransformBy(const Transform& transform) override;
 
 private:
     Point3f m_center;
