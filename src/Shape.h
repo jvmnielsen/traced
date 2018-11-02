@@ -1,25 +1,24 @@
 #pragma once
 #include <memory>
 #include <utility>
-#include "MathUtil.h"
 #include "Transform.h"
-#include "Imaging.h"
-#include "BoundingVolume.h"
+#include <random>
+//#include "BoundingVolume.h"
 #include "Intersection.h"
+//#include "BoundingVolume.h"
 
-class Intersection;
-class Material;
+
+//class Intersection;
+//class Material;
 class BoundingVolume;
-class Light;
+//class Light;
 
 
 class Shape
 {
 public:
-    Shape() : m_material(nullptr) {}
-
-    Shape(std::shared_ptr<Material> material)
-        : m_material(std::move(material)) {}
+    Shape();
+    Shape(std::shared_ptr<Material> material);
 
 	virtual ~Shape() = default;
 
@@ -28,14 +27,23 @@ public:
 
     virtual std::unique_ptr<BoundingVolume> GetBoundingVolume() const = 0;
 
-    virtual Normal3f NormalAtIntersection(const Intersection& isect) const = 0;
+    virtual Normal3f CalculateShadingNormal(const Intersection& isect) const = 0;
     virtual void TransformBy(const Transform& transform) = 0;
 
-    const Material& GetMaterial() { return *m_material; }
+    virtual Point3f GetPointOnSurface(const float u, const float v) const = 0;
+    virtual Point3f GetRandomPointOnSurface() = 0;
+    virtual Intersection GetRandomSurfaceIntersection() = 0;
+
+    const Material& GetMaterial() const;
+    void SetMaterial(std::shared_ptr<Material> material);
 
 protected:
     std::shared_ptr<Material> m_material;
 
+    // to generate random numbers [0,1]
+    //std::random_device m_seed;
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<float> m_dist;
 };
 
 

@@ -3,7 +3,16 @@
 //
 
 #include "BoundingVolume.h"
-#include "Intersection.h"
+//#include "Intersection.h"
+
+BoundingVolume::BoundingVolume(
+    const Point3f& lowerBound,
+    const Point3f& upperBound)
+{
+    m_bounds[0] = lowerBound;
+    m_bounds[1] = upperBound;
+}
+
 
 bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
 {
@@ -99,4 +108,14 @@ bool BoundingVolume::IntersectsShape(const Rayf& ray, Intersection& isect) const
 {
     return m_shape->Intersects(ray, isect);
 
+}
+
+void BoundingVolume::SetShape(std::unique_ptr<Shape> shape)
+{
+    m_shape = std::move(shape);
+}
+
+Shape& BoundingVolume::GetShape() const
+{
+    return *m_shape;
 }

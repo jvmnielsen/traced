@@ -1,6 +1,6 @@
 #pragma once
 #include "Shape.h"
-#include "Intersection.h"
+//#include "Intersection.h"
 
 class Sphere :
     public Shape
@@ -20,9 +20,14 @@ public:
 
     std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
 
-    inline Normal3f NormalAtIntesection(Intersection& isect) const override;
+    Normal3f CalculateShadingNormal(const Intersection& isect) const override;
 
-    inline void TransformBy(const Transform& transform) override;
+    Point3f GetPointOnSurface(const float u, const float v) const;
+    Point3f GetRandomPointOnSurface() override;
+    Intersection GetRandomSurfaceIntersection() override;
+
+
+    void TransformBy(const Transform& transform) override;
 
 private:
     Point3f m_center;

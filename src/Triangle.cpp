@@ -1,5 +1,7 @@
 #include "Triangle.h"
 #include <cmath>
+#include "BoundingVolume.h"
+
 
 Triangle::Triangle(
     std::array<Point3f, 3> vertices,
@@ -58,7 +60,7 @@ bool Triangle::Intersects(const Rayf& ray, Intersection& isect)
 
     // Update parameter and intersection as necessary
     ray.NewMaxParameter(parameter);
-    isect.Update(ray.PointAtParameter(parameter), barycentric, this, m_material.get());
+    isect.Update(ray.PointAtParameter(parameter), barycentric, m_faceNormal, this, m_material.get());
    
     return true;
 }
@@ -95,7 +97,7 @@ bool Triangle::IntersectsQuick(const Rayf& ray) const
 
 }
 
-Normal3f Triangle::NormalAtIntersection(const Intersection& isect) const
+Normal3f Triangle::CalculateShadingNormal(const Intersection& isect) const
 {
     // for flat shading simply return the face normal
     const auto normal = m_vertexNormals[0] * (1 - isect.GetUV().x - isect.GetUV().y)
@@ -107,7 +109,6 @@ Normal3f Triangle::NormalAtIntersection(const Intersection& isect) const
 
 void Triangle::TransformBy(const Transform& transform)
 {
-
     for (auto& vertex : m_vertices)
         transform(vertex);
 
@@ -116,4 +117,31 @@ void Triangle::TransformBy(const Transform& transform)
 
     // precompute again
     UpdateEdges();
+}
+
+Point3f Triangle::GetPointOnSurface(const float u, const float v) const
+{
+    return m_vertices[0] + u * m_edges[0] + v * m_edges[1];
+}
+
+Point3f Triangle::GetRandomPointOnSurface() 
+{
+    return GetPointOnSurface(m_dist(m_gen), m_dist(m_gen));
+}
+
+Intersection Triangle::GetRandomSurfaceIntersection() 
+{
+    return Intersection{GetRandomPointOnSurface(), m_faceNormal};
+}
+
+auto
+Triangle::GetVertices() const -> const std::array<Point3f, 3>&
+{
+    return m_vertices;
+}
+
+auto
+Triangle::GetBoundingVolume() const -> std::unique_ptr<BoundingVolume>
+{
+    return nullptr;
 }

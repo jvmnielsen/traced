@@ -1,6 +1,4 @@
 #pragma once
-#include <memory>
-#include <vector>
 #include "Imaging.h"
 #include <SDL2/SDL.h>
 

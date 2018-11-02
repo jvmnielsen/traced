@@ -1,8 +1,5 @@
-#ifndef RAYTRACER_TRANSFORMATION_H
-#define RAYTRACER_TRANSFORMATION_H
-
+#pragma once
 #include "MathUtil.h"
-
 
 class Transform
 {
@@ -38,7 +35,3 @@ private:
     Matrix4x4f m_mat;
     Matrix4x4f m_invMat;
 };
-
-
-
-#endif //RAYTRACER_TRANSFORMATION_H

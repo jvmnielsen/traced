@@ -1,19 +1,17 @@
 #pragma once
 #include <iostream>
-#include <vector>
 #include <cmath>
-#include <cstring>
 #include <iomanip>
 
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 #include <array>
 
 namespace Math
 {
-    constexpr const static float Infinity = std::numeric_limits<float>::max();
-    constexpr const static float Pi = 3.141592653589793f;
-
+    const static float Infinity = std::numeric_limits<float>::max();
+    const static double Pi = 3.14159265358979323846;
+    const static float Epsilon = 1e-4f;
 
     template<typename T>
     T Clamp(const T& low, const T& high, const T& value)
@@ -24,7 +22,7 @@ namespace Math
     template<typename T>
     float DegreeToRadian(const T degree)
     {
-        return (T)(degree * M_PI / 180.0);
+        return static_cast<T>(degree * Math::Pi / 180.0);
     }
 
     template<typename T>
@@ -371,10 +369,10 @@ template< typename T>
 class Normal3 : public Vec3<T>
 {
 public:
-    //constexpr Normal3() = default;
-    constexpr Normal3(const Vec3<T>& other) : Vec3<T>(other) { }
-    constexpr explicit Normal3(T val) : Vec3<T>(val) {}
-    constexpr Normal3(T x, T y, T z) : Vec3<T>({x, y, z}) {}
+    Normal3() = default;
+    Normal3(const Vec3<T>& other) : Vec3<T>(other) { }
+    explicit Normal3(T val) : Vec3<T>(val) {}
+    Normal3(T x, T y, T z) : Vec3<T>({x, y, z}) {}
 };
 
 

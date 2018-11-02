@@ -99,9 +99,9 @@ void Parser::LoadFile(const std::string& filename)
         
 	}
 }
-std::shared_ptr<Mesh> Parser::ConstructMesh()
+std::unique_ptr<Mesh> Parser::ConstructMesh()
 {
-	auto mesh_ptr = std::make_shared<Mesh>();
+	auto mesh_ptr = std::make_unique<Mesh>();
 	
 	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3)
 	{
@@ -148,7 +148,7 @@ void Parser::Reset()
     m_normal_ordering.clear();
 }
 
-std::shared_ptr<Mesh> Parser::Parse(const std::string& filename)
+std::unique_ptr<Mesh> Parser::Parse(const std::string& filename)
 {
     try
     {

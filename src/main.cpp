@@ -2,14 +2,10 @@
 #include <vector>
 #include "Imaging.h"
 #include "MathUtil.h"
-#include "Scene.h"
-#include "Material.h"
 #include "Sphere.h"
-#include "ThreadManager.h"
+//#include "ThreadManager.h"
 #include "Parser.h"
 #include <thread>
-#include <array>
-#include "Utility.h"
 #include "Renderer.h"
 
 /*
@@ -48,18 +44,14 @@ void ConstructStandardBox(Scene& scene)
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[])
 {
-
-    Vec3f{1.0f} / 2;
-
     const unsigned int SCREEN_WIDTH = 720;
     const unsigned int SCREEN_HEIGHT = 480;
 
-    Scene scene;
+    auto scene = std::make_unique<Scene>();
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 1.0f, 0.0f), Point3f(0.0f,.0f,-8.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
 
-    Camera camera { Point3f(0.0f, 1.0f, 0.0f), Point3f(0.0f,.0f,-8.0f), Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT) };
-
-    auto lightOne = std::make_unique<PointLight>(Color3f{200.0f}, Point3f(2.0f, 2.0f, -2.0f));
-    scene.AddLight(std::move(lightOne));
+    //auto lightOne = std::make_unique<PointLight>(Color3f{200.0f}, Point3f(2.0f, 2.0f, -2.0f));
+    //scene.AddLight(std::move(lightOne));
 
     auto green = std::make_shared<Matte>(Color3f{0.1f, 0.6f, 0.1f});
     auto red = std::make_shared<Matte>(Color3f{0.6f, 0.1f, 0.1f});
@@ -83,44 +75,44 @@ int main(int argc, char * argv[])
 
     plane->TransformBy(Transform::Scale({1.3f, 1.0f, 1.3f}));
     plane->TransformBy(Transform::Translate({0.0f, 0.0f, -3.0f}));
-    plane->m_material = white;
-    scene.AddShape(plane);
+    plane->SetMaterial(white);
+    scene->AddShape(std::move(plane));
 
     topPlane->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 180.0f));   
     topPlane->TransformBy(Transform::Translate({0.0f, 2.0f, -3.0f}));
-    topPlane->m_material = white;
-    scene.AddShape(topPlane);
+    topPlane->SetMaterial(white);
+    scene->AddShape(std::move(topPlane));
 
     rightPlane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 90.0f));
     rightPlane->TransformBy(Transform::Scale({1.8f, 1.0f, 1.3f}));
     rightPlane->TransformBy(Transform::Translate({1.f, 1.0f, -3.0f}));
-    rightPlane->m_material = green;
+    //rightPlane->m_material = green;
     //scene.AddShape(rightPlane);
 
     leftPlane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, -90.0f));
     leftPlane->TransformBy(Transform::Scale({1.8f, 1.0f, 1.3f}));
     leftPlane->TransformBy(Transform::Translate({-1.f, 1.0f, -3.0f}));
-    leftPlane->m_material = red;
+    //leftPlane->m_material = red;
     //scene.AddShape(leftPlane);
 
     backPlane->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
     backPlane->TransformBy(Transform::Scale({1.3f, 1.0f, 1.8f}));
     backPlane->TransformBy(Transform::Translate({0.0f, 1.0f, -3.85f}));
-    backPlane->m_material = white;
+    //backPlane->m_material = white;
     //scene.AddShape(backPlane);
 
 
     lightSquare->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 180.0f));
     lightSquare->TransformBy(Transform::Scale({0.3f, 1.f, 0.3f}));
     lightSquare->TransformBy(Transform::Translate({0.0f, 2.0f, -2.5f}));
-    lightSquare->m_material = light;
-    scene.AddShape(lightSquare);
+    lightSquare->SetMaterial(light);
+    scene->AddShape(std::move(lightSquare));
 
    
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 42.0f));
     teapot->TransformBy(Transform::Scale({0.03f, 0.03f, 0.03f}));
     teapot->TransformBy(Transform::Translate({0.0f, 0.2f, -2.8f}));
-    teapot->m_material = metal;
+    //teapot->m_material = metal;
     //scene.AddShape(teapot);
 
     
@@ -131,17 +123,19 @@ int main(int argc, char * argv[])
     //scene.AddShape(sphere2);
 
 
-    scene.SetBackgroundColor(Color3f{0.0f});
+    scene->SetBackgroundColor(Color3f{0.0f});
 
-    Window window = {SCREEN_WIDTH, SCREEN_HEIGHT};
-    ImageBuffer buffer = {SCREEN_WIDTH, SCREEN_HEIGHT};
-    StochasticRayTracer whit { 50, 1000 };
+    auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
+    auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
+    
+    
+    Renderer renderer{ std::move(camera), std::move(scene), buffer, nullptr };
 
 
-    std::thread RenderThread{ &StochasticRayTracer::Render, whit, std::ref(scene), std::ref(camera), std::ref(buffer) };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 20 };
 
-    window.InitializeWindow(buffer);
-    window.CheckForInput(buffer);
+    window->InitializeWindow(*buffer);
+    window->CheckForInput(*buffer);
 
     RenderThread.join();
 

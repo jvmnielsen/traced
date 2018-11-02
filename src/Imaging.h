@@ -11,16 +11,16 @@ class Color3
 public:
     T r, g, b;
 
-    constexpr Color3() : r(0), g(0), b(0) { }
-    constexpr explicit Color3(T val) : r(val), g(val), b(val) { }
-    constexpr Color3(T r_, T g_, T b_) : r(r_), g(g_), b(b_) { }
+    Color3() : r(0), g(0), b(0) { }
+    explicit Color3(T val) : r(val), g(val), b(val) { }
+    Color3(T r_, T g_, T b_) : r(r_), g(g_), b(b_) { }
 
-    constexpr Color3 operator*(T factor) const
+    Color3 operator*(T factor) const
     {
         return Color3{ r * factor, g * factor, b * factor };
     }
 
-    constexpr Color3& operator*=(T factor)
+    Color3& operator*=(T factor)
     {
         r *= factor;
         g *= factor;
@@ -28,12 +28,12 @@ public:
         return *this;
     }
 
-    constexpr Color3 operator/(T factor) const
+    Color3 operator/(T factor) const
     {
         return Color3{ r / factor, g / factor, b / factor };
     }
 
-    constexpr Color3& operator/=(T factor)
+    Color3& operator/=(T factor)
     {
         r /= factor;
         g /= factor;
@@ -41,12 +41,12 @@ public:
         return *this;
     }
 
-    constexpr Color3 operator+(const Color3& other) const
+    Color3 operator+(const Color3& other) const
     {
         return Color3{ r + other.r, g + other.g, b + other.b };
     }
 
-    constexpr Color3& operator+=(const Color3& other)
+    Color3& operator+=(const Color3& other)
     {
         r += other.r;
         g += other.g;
@@ -54,12 +54,12 @@ public:
         return *this;
     }
 
-    constexpr Color3 operator-(const Color3& other) const
+    Color3 operator-(const Color3& other) const
     {
         return Color3{ r - other.r, g - other.g, b - other.b };
     }
 
-    constexpr Color3& operator-=(const Color3& other)
+    Color3& operator-=(const Color3& other)
     {
         r -= other.r;
         g -= other.g;
@@ -67,7 +67,7 @@ public:
         return *this;
     }
 
-    constexpr Color3 operator*(const Color3& other)
+    Color3 operator*(const Color3& other)
     {
         return { r * other.r, g * other.g, b*other.b };
     }
@@ -75,13 +75,13 @@ public:
 };
 
 template<typename T>
-constexpr Color3<T> operator*(T factor, const Color3<T>& color)
+Color3<T> operator*(T factor, const Color3<T>& color)
 {
     return Color3<T>{ color.r * factor, color.g * factor, color.b * factor };
 }
 
 template<typename T>
-constexpr Color3<T> operator/(T factor, const Color3<T>& color)
+Color3<T> operator/(T factor, const Color3<T>& color)
 {
     return Color3<T>{ color.r * factor, color.g * factor, color.b * factor };
 }

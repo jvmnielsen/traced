@@ -11,7 +11,7 @@
 
 class BSDF
 {
-    virtual Color3f EvaluateFiniteScatteringDensity(
+    virtual Color3f Evaluate(
         const Vec3f& wi,
         const Vec3f& wo) const = 0;
 
@@ -22,7 +22,7 @@ class Lambertian : public BSDF
 public:
     explicit Lambertian(const Color3f& colorMatte = Color3f{0.2f}) : m_colorMatte(colorMatte) { }
 
-    Color3f EvaluateFiniteScatteringDensity(
+    Color3f Evaluate(
             const Vec3f& wi,
             const Vec3f& wo) const override;
 
@@ -44,7 +44,7 @@ public:
             , m_normal(normal)
             { }
 
-    Color3f EvaluateFiniteScatteringDensity(
+    Color3f Evaluate(
             const Vec3f& wi,
             const Vec3f& wo) const override;
 

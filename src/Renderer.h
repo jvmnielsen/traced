@@ -1,11 +1,10 @@
-#ifndef RAYTRACER_INTEGRATOR_H
-#define RAYTRACER_INTEGRATOR_H
-
+#pragma once
 #include <random>
 #include "Scene.h"
-#include "Imaging.h"
-#include "Material.h"
 #include "../Sampler.h"
+
+//#include "Material.h"
+
 
 class Renderer
 {
@@ -64,6 +63,3 @@ class StochasticRayTracer : public Renderer
 public:
     
 }; */
-
-
-#endif //RAYTRACER_INTEGRATOR_H

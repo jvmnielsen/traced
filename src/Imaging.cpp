@@ -1,6 +1,4 @@
 #include "Imaging.h"
-#include "MathUtil.h"
-#include <algorithm>
 #include <cmath>
 // ---------------------------------------------------------------------------
 
@@ -24,7 +22,7 @@ void ConvertToRGB(Color3f& color)
 
 Camera::Camera(const float v_fov, const float aspect)
 {
-    const auto theta = v_fov * M_PI / 180; // degrees to radians
+    const auto theta = v_fov * Math::Pi / 180; // degrees to radians
     const auto half_height = static_cast<float>(tan(theta / 2));
     const auto half_width = aspect * half_height;
     m_lowerLeftCorner = Point3f(-half_width, -half_height, -1.0f);

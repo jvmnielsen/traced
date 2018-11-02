@@ -1,14 +1,12 @@
 #pragma once
 #include "Shape.h"
 #include "MathUtil.h"
-#include "BoundingVolume.h"
-#include "Intersection.h"
 
 class Triangle :
     public Shape
 {
 public:
-    //Triangle() : Shape(nullptr) { }
+    Triangle() : Shape(nullptr) { }
 
     Triangle(std::array<Point3f, 3> vertices,
              std::array<Normal3f, 3> vertexNormals,
@@ -21,11 +19,17 @@ public:
 
     //void SetMaterialType(const MaterialType& type) override { m_material = type; }
 
-    std::unique_ptr<BoundingVolume> GetBoundingVolume() const override { return nullptr; }
-
-    Normal3f NormalAtIntersection(const Intersection& intersec) const override;
+    Normal3f CalculateShadingNormal(const Intersection& intersec) const override;
 
     void TransformBy(const Transform& transform) override;
+   
+    Point3f GetPointOnSurface(const float u, const float v) const override;
+    Point3f GetRandomPointOnSurface() override;
+    Intersection GetRandomSurfaceIntersection() override;
+
+    const std::array<Point3f, 3>& GetVertices() const;
+    std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
+
 
 private:
 

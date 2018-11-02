@@ -1,7 +1,8 @@
 #include "Sphere.h"
 //#include "Material.h"
+#include "BoundingVolume.h"
 
-inline Normal3f Sphere::NormalAtIntesection(Intersection& isect) const
+inline Normal3f Sphere::CalculateShadingNormal(const Intersection& isect) const
 {
     return (isect.GetPoint() - m_center).Normalize();
 }
@@ -28,7 +29,8 @@ bool Sphere::Intersects(const Rayf& ray, Intersection& isect)
         return false;
 
     ray.NewMaxParameter(parameter);
-    isect.Update(ray.PointAtParameter(parameter), Point2f{}, this, m_material.get());
+    const auto point = ray.PointAtParameter(parameter);
+    isect.Update(point, Point2f{}, (point - m_center).Normalize(), this, m_material.get());
 
     return true;
  }
@@ -55,7 +57,26 @@ std::unique_ptr<BoundingVolume> Sphere::GetBoundingVolume() const
              Point3f{ m_radius + m_center.x, m_radius + m_center.y, m_radius + m_center.z });
 }
 
-inline void Sphere::TransformBy(const Transform& transform)
+auto 
+Sphere::TransformBy(const Transform& transform) -> void
 {
     transform(m_center);
+}
+
+auto
+Sphere::GetPointOnSurface(const float u, const float v) const -> Point3f
+{
+    return {0.0f, 0.0f, 0.0f};
+}
+
+auto
+Sphere::GetRandomPointOnSurface() -> Point3f
+{
+    return Point3f{0};
+}
+
+auto
+Sphere::GetRandomSurfaceIntersection() -> Intersection
+{
+    return Intersection{};
 }

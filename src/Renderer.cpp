@@ -53,46 +53,26 @@ Color3f Renderer::TraceRay(const Rayf& ray, int depth)
     if (m_scene->Intersects(ray, isect))
     {
         if (ray.IsPrimaryRay() && m_emit)
-            color += isect.GetMaterial()->Emitted(0, 0, Point3f{0.0f});
+            color += isect.CalculateEmitted();
 
         if (!ray.IsPrimaryRay() || m_direct)
         {
-            color += estiamteDirectLightFromPointLights(surfel, ray);
-            color += estimateDirectLightFromAreaLight(sufel, ray);
+            //color += estiamteDirectLightFromPointLights(surfel, ray);
+            color += SampleAreaLights(isect, ray);
         }
 
-        if (!ray.IsPrimaryRay() || m_indirect)
-            color += estimateIndirectLight(sufel, ray, isEyeRay);
+        if (!ray.IsPrimaryRay() || m_indirect);
+            //color += estimateIndirectLight(sufel, ray, isEyeRay);
 
     }
     else
     {
-        hitColor = m_scene->BackgroundColor();
-    }
-
-    return hitColor;
-}
-
-Color3f Renderer::SamplePointLights(const Intersection& isect, const Rayf& ray) const
-{
-    Color3f color{0.0f};
-
-    if (!m_scene->m_areaLights.empty())
-    {
-        
+        color = m_scene->BackgroundColor();
     }
 
     return color;
+}
 
-}
-Color3f Renderer::SampleAreaLights(const Intersection& isect, const Rayf& ray) const
-{
-    for ()
-}
-Color3f Renderer::SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const
-{
-    
-}
 
 
 /*

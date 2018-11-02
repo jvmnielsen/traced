@@ -149,7 +149,6 @@
     <ClCompile Include="src\Sphere.cpp" />
     <ClCompile Include="src\Transform.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
-    <ClCompile Include="src\VisibilityTester.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,7 +169,6 @@
     <ClInclude Include="src\Transform.h" />
     <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\Utility.h" />
-    <ClInclude Include="src\VisibilityTester.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="third_party\sdl2\include\begin_code.h" />
     <ClInclude Include="third_party\sdl2\include\close_code.h" />
