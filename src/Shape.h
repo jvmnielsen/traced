@@ -23,21 +23,18 @@ public:
 
 	virtual ~Shape() = default;
 
-    virtual bool Intersects(const Rayf &ray, Intersection& isec) = 0;
+    virtual bool Intersects(const Rayf &ray, Intersection& isect) = 0;
     virtual bool IntersectsQuick(const Rayf& ray) const = 0;
 
     virtual std::unique_ptr<BoundingVolume> GetBoundingVolume() const = 0;
 
-    //void ComputeScatteringFunction(Intersection& isect, const Rayf& ray);
     virtual Normal3f NormalAtIntersection(const Intersection& isect) const = 0;
     virtual void TransformBy(const Transform& transform) = 0;
 
-    //Color3f Albedo() const { return m_albedo; }
-
     const Material& GetMaterial() { return *m_material; }
-    std::shared_ptr<Material> m_material;
+
 protected:
-    //Color3f m_albedo;
+    std::shared_ptr<Material> m_material;
 
 };
 

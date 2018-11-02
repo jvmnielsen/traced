@@ -15,9 +15,9 @@ public:
     bool IntersectsQuick(const Rayf& ray) const override;
 
 
-	void AddPolygon(std::shared_ptr<Triangle> polygon);
+	void AddPolygon(std::unique_ptr<Triangle> polygon);
 
-    void NormalAtIntesection(Intersection &hit_data) const override;
+    //void NormalAtIntesection(const Intersection &hit_data) const override;
 
     std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
 
@@ -28,6 +28,6 @@ public:
     std::shared_ptr<Mesh> Clone(); // consider making ctor
 
 private:
-    std::vector<std::shared_ptr<Triangle>> m_triangles;
+    std::vector<std::unique_ptr<Triangle>> m_triangles;
 };
 

@@ -11,7 +11,9 @@
 
 namespace Math
 {
-    const static float Infinity = std::numeric_limits<float>::max();
+    constexpr const static float Infinity = std::numeric_limits<float>::max();
+    constexpr const static float Pi = 3.141592653589793f;
+
 
     template<typename T>
     T Clamp(const T& low, const T& high, const T& value)
@@ -860,10 +862,13 @@ public:
     T GetMaxParameter() const { return m_maxParam; }
     T GetMinParameter() const { return m_minParam; }
     bool ParameterWithinBounds(const T parameter) const { return parameter < m_maxParam && parameter > m_minParam; }
+    bool ParameterWithinUpperBound(const T parameter) const { return parameter < m_maxParam; }
 
 
     const std::array<int, 3>& GetReciprocSigns() const { return m_sign; }
     const Vec3f& GetReciprocDirection() const { return m_reciprocDir; }
+
+    bool IsPrimaryRay() const { return m_rayType == RayType::PrimaryRay; }
 
 private:
     Point3<T> m_origin;

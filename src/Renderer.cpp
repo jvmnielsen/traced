@@ -48,21 +48,21 @@ void Renderer::Render(int samplesPerPixel)
 Color3f Renderer::TraceRay(const Rayf& ray, int depth)
 {
     Intersection isect;
-    Color3f hitColor{0.0f};
+    Color3f color{0.0f};
 
     if (m_scene->Intersects(ray, isect))
     {
-        if (isEyeRay && m_emit)
-            color += surfel.material.emit;
+        if (ray.IsPrimaryRay() && m_emit)
+            color += isect.GetMaterial()->Emitted(0, 0, Point3f{0.0f});
 
-        if ((!isEyeRay) || m_direct)
+        if (!ray.IsPrimaryRay() || m_direct)
         {
             color += estiamteDirectLightFromPointLights(surfel, ray);
             color += estimateDirectLightFromAreaLight(sufel, ray);
         }
-        if (!(isEyeray) || m_indirect)
-            color += estimateIndirectLight(sufel, ray, isEyeRay);
 
+        if (!ray.IsPrimaryRay() || m_indirect)
+            color += estimateIndirectLight(sufel, ray, isEyeRay);
 
     }
     else
@@ -87,7 +87,7 @@ Color3f Renderer::SamplePointLights(const Intersection& isect, const Rayf& ray) 
 }
 Color3f Renderer::SampleAreaLights(const Intersection& isect, const Rayf& ray) const
 {
-    
+    for ()
 }
 Color3f Renderer::SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const
 {

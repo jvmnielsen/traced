@@ -43,6 +43,8 @@ public:
     inline const Normal3f& GetNormal() const { return m_normal; }
     inline Material* GetMaterial() const { return m_material; }
 
+    inline Point3f PointOffsetAlongNormal() const { return m_point + m_normal * 0.0001f; }
+
 private:
     bool            m_hasBeenHit;
     Point3f         m_point;

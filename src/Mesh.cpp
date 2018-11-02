@@ -18,14 +18,14 @@ bool Mesh::IntersectsQuick(const Rayf& ray) const
     return false;
 }
 
-void Mesh::AddPolygon(std::shared_ptr<Triangle> polygon)
+void Mesh::AddPolygon(std::unique_ptr<Triangle> polygon)
 {
-	m_triangles.push_back(polygon);
+	m_triangles.push_back(std::move(polygon));
 }
 
 void Mesh::NormalAtIntesection(Intersection &hit_data) const
 {
-    hit_data.m_shape->NormalAtIntersection(hit_data);
+    //hit_data.m_shape->NormalAtIntersection(hit_data);
 }
 
 /*

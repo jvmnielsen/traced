@@ -92,11 +92,10 @@ typedef Color3<uint8_t > Color3ui8;
 typedef Color3<unsigned short> Color3ui16;
 
 
-struct PointLightingInfo
+struct LightingAtPoint
 {
-    float distanceToLight;
     Vec3f directionToLight;
-    Color3f lightIntensity;
+    Color3f intensityAtPoint;
 };
 
 class Light
@@ -108,12 +107,16 @@ public:
     {}
 
     virtual ~Light() = default;
-    virtual void IlluminatePoint(const Point3f& point, PointLightingInfo& info) const = 0;
+    virtual void IlluminatePoint(const Point3f& point, LightingAtPoint& info) const = 0;
 
+    const Color3f& GetItensity() const { return m_intensity; }
+    const Point3f& GetPosition() const { return m_position; }
+
+protected:
     Color3f m_intensity;
     Point3f m_position;
 
-protected:
+
     //Color3f m_color;
     //float m_intensity;
 };
@@ -128,13 +131,12 @@ public:
     {}
 
 
-    void IlluminatePoint(const Point3f& point, PointLightingInfo& info) const override
+    void IlluminatePoint(const Point3f& point, LightingAtPoint& info) const override
     {
         info.directionToLight = m_position - point;
-        const auto r2 = info.directionToLight.LengthSquared();
-        //info.distanceToLight = sqrtf(r2);
-        info.directionToLight.Normalize();// /= info.distanceToLight;
-        info.lightIntensity = m_intensity / (4 * (float)M_PI * r2);
+        const auto lengthSquared = info.directionToLight.LengthSquared();
+        info.directionToLight.Normalize();
+        info.intensityAtPoint = m_intensity / (4 * Math::Pi * lengthSquared);
     }
 
 

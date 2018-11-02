@@ -12,10 +12,10 @@ bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
 
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (m_bounds[ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
-    tmax = (m_bounds[1-ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
-    tymin = (m_bounds[ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
-    tymax = (m_bounds[1-ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
+    tmin  = (m_bounds[    ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tmax  = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tymin = (m_bounds[    ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
+    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
 
     if ( (tmin > tymax) || (tymin > tmax) )
         return false;
@@ -25,8 +25,8 @@ bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
     if (tymax < tmax)
         tmax = tymax;
 
-    tzmin = (m_bounds[ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
-    tzmax = (m_bounds[1-ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
+    tzmin = (m_bounds[    ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
+    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
 
     if ( (tmin > tzmax) || (tzmin > tmax) )
         return false;
@@ -37,7 +37,7 @@ bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
 
     //return ( (tmin < t1) && (tmax > t0) );
 
-    auto parameter = tmin;
+    auto parameter = tmin; // > 0 ? tmin : tmax > 0 ? tmax : 0; //= tmin;
 
     if (parameter < 0)
     {
@@ -46,22 +46,22 @@ bool BoundingVolume::Intersects(const Rayf& ray, Intersection& isect) const
             return false;
     }
 
-    if (parameter > ray.m_maxParam) // || parameter < ray.m_minParam)
-        return false;
+    if (!ray.ParameterWithinUpperBound(parameter)) // We're only checking the upper bounds as we may be
+        return false;                             // within a BV already
 
     IntersectsShape(ray, isect);
 
-    return isect.m_hasBeenHit;
+    return isect.HasBeenHit();
 }
 
 bool BoundingVolume::IntersectsQuick(const Rayf& ray) const
 {
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (m_bounds[ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
-    tmax = (m_bounds[1-ray.m_sign[0]].x - ray.GetOrigin().x) * ray.m_reciprocDir.x;
-    tymin = (m_bounds[ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
-    tymax = (m_bounds[1-ray.m_sign[1]].y - ray.GetOrigin().y) * ray.m_reciprocDir.y;
+    tmin  = (m_bounds[    ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tmax  = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tymin = (m_bounds[    ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
+    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
 
     if ( (tmin > tymax) || (tymin > tmax) )
         return false;
@@ -71,8 +71,8 @@ bool BoundingVolume::IntersectsQuick(const Rayf& ray) const
     if (tymax < tmax)
         tmax = tymax;
 
-    tzmin = (m_bounds[ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
-    tzmax = (m_bounds[1-ray.m_sign[2]].z - ray.GetOrigin().z) * ray.m_reciprocDir.z;
+    tzmin = (m_bounds[    ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
+    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
 
     if ( (tmin > tzmax) || (tzmin > tmax) )
         return false;

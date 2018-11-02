@@ -19,10 +19,16 @@ public:
     void AddAreaLight(std::unique_ptr<BoundingVolume> lightPtr);
 
     // Is there a clear line of sight between two points
-    bool HasLineOfSight(const Point3f& p1, const Point3f& p2);
+    bool LineOfSightBetween(const Point3f& p1, const Point3f& p2) const;
 
     void SetBackgroundColor(const Color3f& color) { m_backgroundColor = color; }
     Color3f BackgroundColor() const { return m_backgroundColor; }
+
+
+    Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
+    Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
+    Color3f SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const;
+
 
     const std::vector<std::unique_ptr<Light>>& GetPointLights() const { return m_lights; }
     const std::vector<std::unique_ptr<BoundingVolume>>& GetAreaLights() const { return m_areaLights; }
@@ -34,7 +40,7 @@ private:
     std::vector<std::unique_ptr<BoundingVolume>> m_areaLights;
     std::vector<std::unique_ptr<BoundingVolume>> m_boundingVolumes;
 
-    void AddBoundingVolume(std::shared_ptr<BoundingVolume> boundingVolume);
+    void AddBoundingVolume(std::unique_ptr<BoundingVolume> boundingVolume);
 
     bool IntersectsQuick(const Rayf& ray) const;
 
