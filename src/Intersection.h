@@ -21,20 +21,20 @@ public:
 
     Intersection(Point3f point, Normal3f geometricNormal);
 
-    inline void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, Shape* shape, Material* material);
+    void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, Shape* shape, Material* material);
 
-    inline bool HasBeenHit() const;
-    inline const Point3f& GetPoint() const;
-    inline const Point2f& GetUV() const;
-    inline Shape* GetShape() const;
-    inline const Normal3f& GetGeometricNormal() const;
-    inline const Normal3f& GetShadingNormal() const;
-    inline Material* GetMaterial() const;
+    bool HasBeenHit() const;
+    const Point3f& GetPoint() const;
+    const Point2f& GetUV() const;
+    Shape* GetShape() const;
+    const Normal3f& GetGeometricNormal() const;
+    const Normal3f& GetShadingNormal() const;
+    Material* GetMaterial() const;
 
-    inline Point3f OffsetShadingPoint() const;
-    inline Point3f OffsetGeometricPoint() const;
+    Point3f OffsetShadingPoint() const;
+    Point3f OffsetGeometricPoint() const;
 
-    inline Color3f CalculateEmitted() const;
+    Color3f CalculateEmitted() const;
 
 private:
     bool            m_hasBeenHit;

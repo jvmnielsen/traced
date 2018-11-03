@@ -2,7 +2,7 @@
 //#include "Material.h"
 #include "BoundingVolume.h"
 
-inline Normal3f Sphere::CalculateShadingNormal(const Intersection& isect) const
+Normal3f Sphere::CalculateShadingNormal(const Intersection& isect) const
 {
     return (isect.GetPoint() - m_center).Normalize();
 }

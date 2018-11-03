@@ -58,7 +58,7 @@ Color3f Renderer::TraceRay(const Rayf& ray, int depth)
         if (!ray.IsPrimaryRay() || m_direct)
         {
             //color += estiamteDirectLightFromPointLights(surfel, ray);
-            color += SampleAreaLights(isect, ray);
+            color += m_scene->SampleAreaLights(isect, ray);
         }
 
         if (!ray.IsPrimaryRay() || m_indirect);

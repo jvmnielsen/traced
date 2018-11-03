@@ -32,9 +32,9 @@ private:
 
     Color3f TraceRay(const Rayf& ray, int depth);
 
-    Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
-    Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
-    Color3f SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const;
+    //Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
+    //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
+    //Color3f SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const;
 
     bool m_emit;
     bool m_direct;
