@@ -4,7 +4,8 @@
 bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
     for (const auto& triangle : m_triangles)
-        triangle->Intersects(ray, isect);
+        if (triangle->Intersects(ray, isect))
+            isect.SetParentMeshMaterial(m_material.get());
 	        
 	return isect.HasBeenHit();
 }
@@ -109,6 +110,15 @@ Mesh::CalculateShadingNormal(const Intersection& isect) const -> Normal3f
 {
     return Normal3f{0};
 }
+
+/*
+auto 
+Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
+{
+    for (auto& triangle : m_triangles)
+        triangle->SetParentMeshMaterial(material);
+}
+*/
 
 //inline Point3f GetPointOnSurface(const float u, const float v) const override;
 //inline Point3f GetRandomPointOnSurface() override;

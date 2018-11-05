@@ -5,6 +5,9 @@ bool Scene::Intersects(const Rayf& ray, Intersection& isect) const
 {
     for (const auto& volume : m_boundingVolumes)
         volume->Intersects(ray, isect);
+
+    for (const auto& light : m_areaLights)
+        light->Intersects(ray, isect);
            
     return isect.HasBeenHit();
 }
@@ -30,8 +33,15 @@ void Scene::AddShape(std::unique_ptr<Shape> shape)
     m_boundingVolumes.emplace_back(std::move(boundingBoxForShape));
 }
 
-void AddPointLight(std::unique_ptr<Light> lightPtr);
-void AddAreaLight(std::unique_ptr<BoundingVolume> lightPtr);
+void Scene::AddPointLight(std::unique_ptr<Light> lightPtr) { }
+
+auto
+Scene::AddAreaLight(std::unique_ptr<Shape> light) -> void
+{
+    auto boundingBoxForShape = light->GetBoundingVolume();
+    boundingBoxForShape->SetShape(std::move(light));
+    m_areaLights.emplace_back(std::move(boundingBoxForShape));
+}
 
 
 bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const
@@ -77,8 +87,8 @@ Color3f Scene::SampleAreaLights(const Intersection& isect, const Rayf& ray)
             const float distanceSquared = w_i.LengthSquared();
             w_i /= sqrt(distanceSquared);
 
-            color += isect.GetMaterial()->EvaluateBSDF(w_i, -ray.GetDirection()) 
-                        * isect.CalculateEmitted()
+            color += isect.GetMaterial()->EvaluateBSDF(w_i, -ray.GetDirection())
+                        * light->GetShape().GetMaterial().Emitted(Point2f{0}, Point3f{0})
                         * std::max(0.0f, w_i.DotProduct(isect.GetShadingNormal()))
                         * std::max(0.0f, -w_i.DotProduct(lightIsect.GetGeometricNormal()) / distanceSquared);
         }

@@ -71,44 +71,17 @@ int main(int argc, char * argv[])
     auto backPlane = plane->Clone();
     auto topPlane = plane->Clone();
 
-    
-
     plane->TransformBy(Transform::Scale({1.3f, 1.0f, 1.3f}));
     plane->TransformBy(Transform::Translate({0.0f, 0.0f, -3.0f}));
-    plane->SetMaterial(white);
-    scene->AddShape(std::move(plane));
-
-    topPlane->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 180.0f));   
-    topPlane->TransformBy(Transform::Translate({0.0f, 2.0f, -3.0f}));
-    topPlane->SetMaterial(white);
-    scene->AddShape(std::move(topPlane));
-
-    rightPlane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 90.0f));
-    rightPlane->TransformBy(Transform::Scale({1.8f, 1.0f, 1.3f}));
-    rightPlane->TransformBy(Transform::Translate({1.f, 1.0f, -3.0f}));
-    //rightPlane->m_material = green;
-    //scene.AddShape(rightPlane);
-
-    leftPlane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, -90.0f));
-    leftPlane->TransformBy(Transform::Scale({1.8f, 1.0f, 1.3f}));
-    leftPlane->TransformBy(Transform::Translate({-1.f, 1.0f, -3.0f}));
-    //leftPlane->m_material = red;
-    //scene.AddShape(leftPlane);
-
-    backPlane->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
-    backPlane->TransformBy(Transform::Scale({1.3f, 1.0f, 1.8f}));
-    backPlane->TransformBy(Transform::Translate({0.0f, 1.0f, -3.85f}));
-    //backPlane->m_material = white;
-    //scene.AddShape(backPlane);
-
-
+    plane->SetMaterial(red);
+    //scene->AddShape(std::move(plane));
+    
     lightSquare->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 180.0f));
     lightSquare->TransformBy(Transform::Scale({0.3f, 1.f, 0.3f}));
-    lightSquare->TransformBy(Transform::Translate({0.0f, 2.0f, -2.5f}));
+    lightSquare->TransformBy(Transform::Translate({0.3f, 1.7f, -2.2f}));
     lightSquare->SetMaterial(light);
-    scene->AddShape(std::move(lightSquare));
+    scene->AddAreaLight(std::move(lightSquare));
 
-   
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 42.0f));
     teapot->TransformBy(Transform::Scale({0.03f, 0.03f, 0.03f}));
     teapot->TransformBy(Transform::Translate({0.0f, 0.2f, -2.8f}));
@@ -116,8 +89,8 @@ int main(int argc, char * argv[])
     //scene.AddShape(teapot);
 
     
-    auto sphere = std::make_shared<Sphere>(Point3f{-0.3f,0.3f,-2.8f}, 0.3f, metal);
-    //scene.AddShape(sphere);
+    auto sphere = std::make_unique<Sphere>(Point3f{-0.3f,0.3f,-2.8f}, 0.3f, red);
+    scene->AddShape(std::move(sphere));
 
     auto sphere2 = std::make_shared<Sphere>(Point3f{0.1f,0.3f,-2.2f}, 0.3f, diel);
     //scene.AddShape(sphere2);

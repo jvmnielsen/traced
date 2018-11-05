@@ -16,7 +16,7 @@ public:
 
     virtual Color3f Emitted(const Point2f& uv, const Point3f& point) const { return {0.0f, 0.0f, 0.0f}; }
 
-    virtual float EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) = 0;
+    virtual Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) = 0;
 
 
 protected:
@@ -38,7 +38,7 @@ public:
 
     bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return true; }
 
-    float EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return 0.4f; }
+    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return m_diffuse / Math::Pi; }
 
 private:
     
@@ -52,7 +52,7 @@ public:
 
     bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return true; }
 
-    float EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return 0.4f; }
+    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return Color3f{0.4f}; }
 
     float m_fuzz;
 
@@ -67,7 +67,7 @@ public:
 
     bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return true; }
 
-    float EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return 0.4f; }
+    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return Color3f{0.4f}; }
 
 private:
     float m_refractiveIndex;
@@ -75,8 +75,8 @@ private:
 
 class DiffuseLight : public Material
 {
-    float EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return 0.4f; }
+    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return Color3f{0.4f}; }
 
     bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return false; }
-    Color3f Emitted(const Point2f& uv, const Point3f& point) const override { return Color3f{70.0f}; }
+    Color3f Emitted(const Point2f& uv, const Point3f& point) const override { return Color3f{40.0f}; }
 }; 

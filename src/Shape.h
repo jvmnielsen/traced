@@ -35,7 +35,7 @@ public:
     virtual Intersection GetRandomSurfaceIntersection() = 0;
 
     const Material& GetMaterial() const;
-    void SetMaterial(std::shared_ptr<Material> material);
+    virtual void SetMaterial(std::shared_ptr<Material> material);
 
 protected:
     std::shared_ptr<Material> m_material;

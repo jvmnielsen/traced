@@ -25,7 +25,7 @@ bool Sphere::Intersects(const Rayf& ray, Intersection& isect)
 
     const auto parameter = (solutionOne < solutionTwo) ? solutionOne : solutionTwo;
 
-    if (ray.ParameterWithinBounds(parameter))
+    if (!ray.ParameterWithinBounds(parameter))
         return false;
 
     ray.NewMaxParameter(parameter);

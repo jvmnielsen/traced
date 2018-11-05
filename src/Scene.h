@@ -19,7 +19,7 @@ public:
     // Adding shapes and lights to the scene
     void AddShape(std::unique_ptr<Shape> shape);
     void AddPointLight(std::unique_ptr<Light> lightPtr);
-    void AddAreaLight(std::unique_ptr<BoundingVolume> lightPtr);
+    void AddAreaLight(std::unique_ptr<Shape> lightPtr);
 
     // Is there a clear line of sight between two points
     bool LineOfSightBetween(const Point3f& p1, const Point3f& p2) const;

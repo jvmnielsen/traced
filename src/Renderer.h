@@ -9,14 +9,12 @@
 class Renderer
 {
 public:
-
     Renderer::Renderer(
         std::unique_ptr<Camera> camera,
         std::unique_ptr<Scene> scene,
         std::shared_ptr<ImageBuffer> buffer,
         std::unique_ptr<Sampler> sampler);
 
-    
     void Render(int samplesPerPixel);
 
 private:
@@ -36,9 +34,9 @@ private:
     //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
     //Color3f SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const;
 
-    bool m_emit;
-    bool m_direct;
-    bool m_indirect;
+    bool m_emit = true;
+    bool m_direct = true;
+    bool m_indirect = true;
 
 };
 

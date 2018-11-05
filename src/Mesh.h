@@ -34,6 +34,9 @@ public:
 
     std::unique_ptr<Mesh> Clone(); // consider making ctor
 
+    //auto SetParentMeshMaterial(std::shared_ptr<Material> material) -> void override;
+
+
 private:
     std::vector<std::unique_ptr<Triangle>> m_triangles;
 

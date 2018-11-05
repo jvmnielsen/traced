@@ -29,7 +29,9 @@ public:
     Shape* GetShape() const;
     const Normal3f& GetGeometricNormal() const;
     const Normal3f& GetShadingNormal() const;
+    
     Material* GetMaterial() const;
+    auto SetParentMeshMaterial(Material* material) -> void;
 
     Point3f OffsetShadingPoint() const;
     Point3f OffsetGeometricPoint() const;

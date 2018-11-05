@@ -12,8 +12,18 @@ Shape::Shape(std::shared_ptr<Material> material)
     , m_dist(0.0f, 1.0f) 
 {}
 
-const Material& Shape::GetMaterial() const { return *m_material; }
-void Shape::SetMaterial(std::shared_ptr<Material> material) { m_material = material; }
+
+auto
+Shape::GetMaterial() const -> const Material&
+{
+    return *m_material;
+}
+
+auto
+Shape::SetMaterial(std::shared_ptr<Material> material) -> void
+{
+    m_material = material;
+}
 
 /*
 Point3f Shape::GetRandomPointOnSurface() const

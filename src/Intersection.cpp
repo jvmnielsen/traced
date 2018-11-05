@@ -41,9 +41,11 @@ void Intersection::Update(
     m_uvCoord = uvCoord;
     m_geometricNormal = geometricNormal;
     m_shape = shape;
-    m_material = material;
 
-    m_geometricNormal = m_shape->CalculateShadingNormal(*this);
+    if (material)
+        m_material = material;
+
+    m_shadingNormal = m_shape->CalculateShadingNormal(*this);
 }
 
 bool Intersection::HasBeenHit() const { return m_hasBeenHit; }
@@ -66,5 +68,14 @@ Point3f Intersection::OffsetGeometricPoint() const
 
 Color3f Intersection::CalculateEmitted() const
 {
-    return m_material->Emitted(m_uvCoord, m_point);
+    if (m_material)
+        return m_material->Emitted(m_uvCoord, m_point);
+    else
+        return Color3f{0.0f};
+}
+
+auto 
+Intersection::SetParentMeshMaterial(Material* material) -> void
+{
+    m_material = material;
 }
