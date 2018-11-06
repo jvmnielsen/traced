@@ -1,5 +1,6 @@
 #include "Shape.h"
 
+/*
 Shape::Shape()
     : m_material(nullptr)
     , m_gen(std::random_device()())
@@ -23,7 +24,7 @@ auto
 Shape::SetMaterial(std::shared_ptr<Material> material) -> void
 {
     m_material = material;
-}
+} */
 
 /*
 Point3f Shape::GetRandomPointOnSurface() const

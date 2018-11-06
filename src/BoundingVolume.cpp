@@ -101,21 +101,21 @@ bool BoundingVolume::IntersectsQuick(const Rayf& ray) const
             return false;
     }
 
-    return m_shape->IntersectsQuick(ray);
+    return m_mesh->IntersectsFast(ray);
 }
 
 bool BoundingVolume::IntersectsShape(const Rayf& ray, Intersection& isect) const
 {
-    return m_shape->Intersects(ray, isect);
+    return m_mesh->Intersects(ray, isect);
 
 }
 
-void BoundingVolume::SetShape(std::unique_ptr<Shape> shape)
+void BoundingVolume::SetShape(std::unique_ptr<Mesh> shape)
 {
-    m_shape = std::move(shape);
+    m_mesh = std::move(shape);
 }
 
-Shape& BoundingVolume::GetShape() const
+Mesh& BoundingVolume::GetShape() const
 {
-    return *m_shape;
+    return *m_mesh;
 }

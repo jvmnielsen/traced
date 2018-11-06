@@ -99,10 +99,13 @@ void Parser::LoadFile(const std::string& filename)
         
 	}
 }
-std::unique_ptr<Mesh> Parser::ConstructMesh()
+Mesh Parser::ConstructMesh()
 {
-	auto mesh_ptr = std::make_unique<Mesh>();
-	
+	//auto mesh_ptr = std::make_unique<Mesh>();
+    Mesh mesh;
+
+    mesh.m_triangles.reserve(m_vertex_ordering.size() / 3);
+
 	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3)
 	{
         // WARNING: .obj is 1-indexed
@@ -117,23 +120,25 @@ std::unique_ptr<Mesh> Parser::ConstructMesh()
                  m_normals[m_normal_ordering[i + 2] - 1],
                  true, nullptr); */
 
-        auto polygon =
-			std::make_unique<Triangle>(
-				std::array<Point3f, 3> {
-                    m_vertex.at(m_vertex_ordering.at(i)     - 1),
+        mesh.m_triangles.emplace_back(
+            
+                std::array<Point3f, 3> {
+                m_vertex.at(m_vertex_ordering.at(i) - 1),
                     m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
                     m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
-				},
-				std::array<Normal3f, 3> {
-                    m_normals.at(m_normal_ordering.at(i)     - 1),
-                    m_normals.at(m_normal_ordering.at(i + 1) - 1),
-                    m_normals.at(m_normal_ordering.at(i + 2) - 1),
-				}, true, nullptr);
+                },
+                std::array<Normal3f, 3> {
+                    m_normals.at(m_normal_ordering.at(i) - 1),
+                        m_normals.at(m_normal_ordering.at(i + 1) - 1),
+                        m_normals.at(m_normal_ordering.at(i + 2) - 1),
+                }
+            
+        );
 	    
-        mesh_ptr->AddPolygon(std::move(polygon));       
+        //mesh_ptr->AddPolygon(std::move(polygon));       
 	}
 
-	return mesh_ptr;
+	return mesh;
 }
 
 void Parser::Reset()
@@ -148,7 +153,7 @@ void Parser::Reset()
     m_normal_ordering.clear();
 }
 
-std::unique_ptr<Mesh> Parser::Parse(const std::string& filename)
+Mesh Parser::Parse(const std::string& filename)
 {
     try
     {

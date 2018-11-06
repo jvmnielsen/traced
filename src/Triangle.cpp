@@ -4,55 +4,69 @@
 
 
 Triangle::Triangle(
-    std::array<Point3f, 3> vertices,
-    std::array<Normal3f, 3> vertexNormals,
-    bool isSingleSided,
-    std::shared_ptr<Material> material)
-    : Shape(material)
-    , m_vertices(std::move(vertices))
+    std::array<Point3f, 3>     vertices,
+    std::array<Normal3f, 3>    vertexNormals,
+    std::array<Point2f, 3>     uv)
+    : m_vertices(std::move(vertices))
     , m_vertexNormals(std::move(vertexNormals))
-    , m_isSingleSided(isSingleSided)
+    , m_uv(std::move(uv))
 {
-    m_edges.at(0) = m_vertices.at(1) - m_vertices.at(0);
-    m_edges.at(1) = m_vertices.at(2) - m_vertices.at(0);
+    UpdateEdges();
 }
 
-void Triangle::UpdateEdges()
+Triangle::Triangle(
+    std::array<Point3f, 3>     vertices,
+    std::array<Normal3f, 3>    vertexNormals)
+    : m_vertices(std::move(vertices))
+    , m_vertexNormals(std::move(vertexNormals))
 {
-	m_edges.at(0) = m_vertices.at(1) - m_vertices.at(0);
-    m_edges.at(1) = m_vertices.at(2) - m_vertices.at(0);
-	m_faceNormal = m_edges.at(0).CrossProduct(m_edges.at(1)).Normalize();
+    //std::cout << "Triangled constructed\n";
+    UpdateEdges();
 }
 
-bool Triangle::Intersects(const Rayf& ray, Intersection& isect)
+Triangle::Triangle(const Triangle& other)
+{
+    std::cout << "Triangle copied\n";
+}
+
+Triangle::Triangle(Triangle&& other)
+{
+    std::cout << "Triangle moved\n";
+}
+
+auto 
+Triangle::UpdateEdges() -> void
+{
+    m_edges[0]   = m_vertices[1] - m_vertices[0];
+    m_edges[1]   = m_vertices[2] - m_vertices[0];
+    m_faceNormal = m_edges[0].CrossProduct(m_edges[1]).Normalize();
+}
+
+auto
+Triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
 {
     const auto p_vec = ray.GetDirection().CrossProduct(m_edges.at(1));
-    const auto det = m_edges.at(0).DotProduct(p_vec);
+    const auto det = Dot(m_edges[0], p_vec);
 
-    // back-face culling
-    if (fabs(det < m_epsilon) && m_isSingleSided)
-        return false;
-   
-    // precompute for performance
-    const auto inverted_det = 1 / det;
+    const auto recipDet = 1 / det;
 
     Point2f barycentric{0};
 
     // barycentric coordinate u
     const auto t_vec = ray.GetOrigin() - m_vertices[0];
-    barycentric.x = t_vec.DotProduct(p_vec) * inverted_det;
+    barycentric.x = t_vec.DotProduct(p_vec) * recipDet;
     
     if (barycentric.x < 0 || barycentric.x > 1)
         return false;
 
     // barycentric coordinate v
     const auto q_vec = t_vec.CrossProduct(m_edges.at(0));
-    barycentric.y = ray.GetDirection().DotProduct( q_vec ) * inverted_det;
+    barycentric.y = ray.GetDirection().DotProduct( q_vec ) * recipDet;
     
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return false;
 
-    const auto parameter = m_edges.at(1).DotProduct(q_vec) * inverted_det;
+    const auto parameter = m_edges.at(1).DotProduct(q_vec) * recipDet;
 
     if (!ray.ParameterWithinBounds(parameter))
         return false;
@@ -60,19 +74,16 @@ bool Triangle::Intersects(const Rayf& ray, Intersection& isect)
 
     // Update parameter and intersection as necessary
     ray.NewMaxParameter(parameter);
-    isect.Update(ray.PointAtParameter(parameter), barycentric, m_faceNormal, this, m_material.get());
+    isect.Update(ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric), this);
    
     return true;
 }
 
-bool Triangle::IntersectsQuick(const Rayf& ray) const
+auto
+Triangle::IntersectsFast(const Rayf& ray) const -> bool
 {
     const auto p_vec = ray.GetDirection().CrossProduct(m_edges.at(1));
     const auto det = m_edges.at(0).DotProduct(p_vec);
-
-    // back-face culling
-    if (fabs(det < m_epsilon) && m_isSingleSided)
-        return false;
 
     // precompute for performance
     const auto inverted_det = 1 / det;
@@ -97,17 +108,19 @@ bool Triangle::IntersectsQuick(const Rayf& ray) const
 
 }
 
-Normal3f Triangle::CalculateShadingNormal(const Intersection& isect) const
+auto 
+Triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f
 {
     // for flat shading simply return the face normal
-    const auto normal = m_vertexNormals[0] * (1 - isect.GetUV().x - isect.GetUV().y)
-        + m_vertexNormals[1] * isect.GetUV().x
-        + m_vertexNormals[2] * isect.GetUV().y;
+    const auto normal = m_vertexNormals[0] * (1 - uv.x - uv.y)
+                        + m_vertexNormals[1] * uv.x
+                        + m_vertexNormals[2] * uv.y;
 
     return Normalize(normal);
 }
 
-void Triangle::TransformBy(const Transform& transform)
+auto
+Triangle::TransformBy(const Transform& transform) -> void
 {
     for (auto& vertex : m_vertices)
         transform(vertex);
@@ -119,6 +132,19 @@ void Triangle::TransformBy(const Transform& transform)
     UpdateEdges();
 }
 
+auto 
+Triangle::Area() const -> float
+{
+    return 3;
+}
+
+auto
+Triangle::GetVertices() const -> const std::array<Point3f, 3>&
+{
+    return m_vertices;
+}
+
+/*
 Point3f Triangle::GetPointOnSurface(const float u, const float v) const
 {
     return m_vertices[0] + u * m_edges[0] + v * m_edges[1];
@@ -134,14 +160,12 @@ Intersection Triangle::GetRandomSurfaceIntersection()
     return Intersection{GetRandomPointOnSurface(), m_faceNormal};
 }
 
-auto
-Triangle::GetVertices() const -> const std::array<Point3f, 3>&
-{
-    return m_vertices;
-}
+
 
 auto
 Triangle::GetBoundingVolume() const -> std::unique_ptr<BoundingVolume>
 {
     return nullptr;
 }
+*/
+

@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BVH.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="src\BoundingVolume.cpp" />
     <ClCompile Include="src\BSDF.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BVH.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="src\BoundingVolume.h" />
     <ClInclude Include="src\BSDF.h" />
@@ -171,7 +173,6 @@
     <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="third_party\sdl2\include\begin_code.h" />
-    <ClInclude Include="third_party\sdl2\include\close_code.h" />
     <ClInclude Include="third_party\sdl2\include\SDL.h" />
     <ClInclude Include="third_party\sdl2\include\SDL_assert.h" />
     <ClInclude Include="third_party\sdl2\include\SDL_atomic.h" />

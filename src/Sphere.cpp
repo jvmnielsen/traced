@@ -2,6 +2,7 @@
 //#include "Material.h"
 #include "BoundingVolume.h"
 
+/*
 Normal3f Sphere::CalculateShadingNormal(const Intersection& isect) const
 {
     return (isect.GetPoint() - m_center).Normalize();
@@ -35,7 +36,7 @@ bool Sphere::Intersects(const Rayf& ray, Intersection& isect)
     return true;
  }
 
-bool Sphere::IntersectsQuick(const Rayf& ray) const
+bool Sphere::IntersectsFast(const Rayf& ray) const
 {
     float solutionOne, solutionTwo;
 
@@ -74,9 +75,4 @@ Sphere::GetRandomPointOnSurface() -> Point3f
 {
     return Point3f{0};
 }
-
-auto
-Sphere::GetRandomSurfaceIntersection() -> Intersection
-{
-    return Intersection{};
-}
+*/

@@ -10,20 +10,21 @@
 
 //class Intersection;
 //class Material;
-class BoundingVolume;
+//class BoundingVolume;
 //class Light;
 
 
+/*
 class Shape
 {
 public:
     Shape();
     Shape(std::shared_ptr<Material> material);
 
-	virtual ~Shape() = default;
+	//virtual ~Shape() = default;
 
     virtual bool Intersects(const Rayf &ray, Intersection& isect) = 0;
-    virtual bool IntersectsQuick(const Rayf& ray) const = 0;
+    virtual bool IntersectsFast(const Rayf& ray) const = 0;
 
     virtual std::unique_ptr<BoundingVolume> GetBoundingVolume() const = 0;
 
@@ -37,6 +38,10 @@ public:
     const Material& GetMaterial() const;
     virtual void SetMaterial(std::shared_ptr<Material> material);
 
+    virtual float Area() const = 0;
+
+
+
 protected:
     std::shared_ptr<Material> m_material;
 
@@ -44,7 +49,7 @@ protected:
     //std::random_device m_seed;
     std::mt19937 m_gen;
     std::uniform_real_distribution<float> m_dist;
-};
+}; */
 
 
 

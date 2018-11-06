@@ -1,10 +1,12 @@
 #pragma once
 #include <memory>
 //#include "Intersection.h"
-#include "Shape.h"
+//#include "Triangle.h"
+#include "Mesh.h"
 
 //class Shape;
 //class Intersection;
+//class Mesh;
 
 class BoundingVolume
 {
@@ -18,14 +20,14 @@ public:
     bool Intersects(const Rayf& ray, Intersection& isect) const;
     bool IntersectsQuick(const Rayf& ray) const;
 
-    void SetShape(std::unique_ptr<Shape> shape);
-    Shape& GetShape() const;
+    void SetShape(std::unique_ptr<Mesh> shape);
+    Mesh& GetShape() const;
 
 private:
     bool IntersectsShape(const Rayf& ray, Intersection& isect) const;
 
     std::array<Point3f, 2> m_bounds;
 
-    std::shared_ptr<Shape> m_shape;
+    std::shared_ptr<Mesh> m_mesh;
 };
 

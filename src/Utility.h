@@ -14,7 +14,7 @@ public:
         auto finish = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration = finish - m_start;
         
-        std::cout << m_message << duration.count();
+        std::cout << m_message << duration.count() << "\n";
     }
 
 private:

@@ -9,9 +9,9 @@
 
 namespace Math
 {
-    const static float Infinity = std::numeric_limits<float>::max();
-    const static double Pi = 3.14159265358979323846;
-    const static float Epsilon = 1e-4f;
+    static constexpr float  Infinity    = std::numeric_limits<float>::max();
+    static constexpr float  Pi          = 3.14159265358979323846f;
+    static constexpr float  Epsilon     = 1e-4f;
 
     template<typename T>
     T Clamp(const T& low, const T& high, const T& value)
@@ -49,62 +49,56 @@ namespace Math
 }
 
 template<typename T>
-struct Vec2 {
+class Vec2 
+{
+public:
     T x, y;
 
-    constexpr Vec2() = default;
-    constexpr Vec2(const Vec2& other) = default;
-    constexpr Vec2& operator=(const Vec2& other)
-    {
-        x = other.x;
-        y = other.y;
-        return *this;
-    }
+    // Constructors
+    Vec2() {}
+    explicit Vec2(T val) : x(val), y(val) {}
+    Vec2(T x_, T y_, T z_) : x(x_), y(y_) {}
 
-    constexpr explicit Vec2(T val) : x(val), y(val) {}
-
-    constexpr Vec2(T x_, T y_, T z_) : x(x_), y(y_) {}
-
-    constexpr T LengthSquared() const
+    auto LengthSquared() const -> T 
     {
         return x * x + y * y;
     }
 
-    constexpr T Length() const
+    auto Length() const -> T
     {
         return std::sqrt(LengthSquared());
     }
 
-    constexpr Vec2 operator*(const T factor) const
+    auto operator*(const T factor) const -> Vec2
     {
         return Vec2{x * factor, y * factor };
     }
 
-    constexpr Vec2& operator*=(const T factor)
+    auto operator*=(const T factor) -> Vec2&
     {
         x *= factor;
         y *= factor;
         return *this;
     }
 
-    constexpr Vec2 operator/(const T factor) const
+    auto operator/(const T factor) const -> Vec2
     {
         return Vec2{ x / factor, y / factor };
     }
 
-    constexpr Vec2& operator/=(const T factor)
+    auto operator/=(const T factor) -> Vec2&
     {
         x /= factor;
         y /= factor;
         return *this;
     }
 
-    constexpr Vec2 operator+(const Vec2 &other) const
+    auto operator+(const Vec2 &other) const -> Vec2
     {
         return Vec2{x + other.x, y + other.y };
     }
 
-    constexpr Vec2 operator+=(const Vec2 &other)
+    auto operator+=(const Vec2 &other) -> Vec2
     {
         x += other.x;
         y += other.y;
@@ -315,7 +309,7 @@ struct Vec3 {
         return *this;
     }
 
-    constexpr Vec3 operator-() const
+    Vec3 operator-() const
     {
         return Vec3{ -x, -y, -z };
     }
@@ -358,6 +352,20 @@ template<typename T>
 constexpr Vec3<T> operator/(const T factor, const Vec3<T>& vec)
 {
     return Vec3<T>{vec.x / factor, vec.y / factor, vec.z / factor};
+}
+
+template<typename T> auto 
+Dot(const Vec3<T>& v1, const Vec3<T>& v2) -> T
+{
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+template< typename T > auto
+Cross(const Vec3<T>& v1, const Vec3<T>& v2) -> Vec3<T>
+{
+    return Vec3<T>{
+        v1.y * v2.z - v1.z * v2.y,
+        v1.z * v2.x - v1.x * v2.z,
+        v1.x * v2.y - v1.y * v2.x};
 }
 
 

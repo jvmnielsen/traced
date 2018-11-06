@@ -1,36 +1,58 @@
 #include "Mesh.h"
-#include "BoundingVolume.h"
+
+Mesh::Mesh()
+{
+    std::cout << "Constructed mesh!\n";
+}
+
+Mesh::~Mesh()
+{
+    std::cout << "Destroyed mesh!\n";
+}
+
+Mesh::Mesh(std::shared_ptr<Material> material)
+    : m_material(material)
+{
+}
+
+Mesh::Mesh(const Mesh& other)
+{
+    std::cout << "Copied mesh!\n";
+}
+
+Mesh::Mesh(Mesh&& other)
+{
+    std::cout << "Moved mesh!\n";
+}
+
+
 
 bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
-    for (const auto& triangle : m_triangles)
-        if (triangle->Intersects(ray, isect))
-            isect.SetParentMeshMaterial(m_material.get());
-	        
+    for (auto& triangle : m_triangles)
+        if (triangle.Intersects(ray, isect))
+            isect.SetMaterial(m_material.get());
+            
 	return isect.HasBeenHit();
 }
 
-bool Mesh::IntersectsQuick(const Rayf& ray) const
+bool Mesh::IntersectsFast(const Rayf& ray) const
 {
     for (const auto& triangle : m_triangles)
-        if (triangle->IntersectsQuick(ray))
+        if (triangle.IntersectsFast(ray))
             return true;
 
     return false;
 }
 
-void Mesh::AddPolygon(std::unique_ptr<Triangle> polygon)
-{
-	m_triangles.push_back(std::move(polygon));
-}
 
 void Mesh::TransformBy(const Transform& transform)
 {
     for (auto& triangle : m_triangles)
-        triangle->TransformBy(transform);
+        triangle.TransformBy(transform);
 }
 
-
+/*
 std::unique_ptr<Mesh> Mesh::Clone()
 {
     auto newMesh = std::make_unique<Mesh>();
@@ -46,9 +68,11 @@ std::unique_ptr<Mesh> Mesh::Clone()
     }
 
     return newMesh;
-}
+} */
 
-std::unique_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
+
+auto 
+Mesh::GetExtent() const->std::array<Point3f, 2>
 {
     float minX = Math::Infinity;
     float minY = Math::Infinity;
@@ -58,7 +82,7 @@ std::unique_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
     float maxZ = -Math::Infinity;
     for (const auto& triangle : m_triangles)
     {
-        for (const auto& vertices : triangle->GetVertices())
+        for (const auto& vertices : triangle.GetVertices())
         {
             if (vertices.x < minX)
                 minX = vertices.x;
@@ -77,9 +101,10 @@ std::unique_ptr<BoundingVolume> Mesh::GetBoundingVolume() const
     }
     Point3f min { minX, minY, minZ };
     Point3f max { maxX, maxY, maxZ };
-    return std::make_unique<BoundingVolume>( min, max );
+    return std::array<Point3f, 2>{ min, max };
 }
 
+/*
 auto
 Mesh::GetRandomTriangleVertex() -> int
 {
@@ -122,4 +147,4 @@ Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
 
 //inline Point3f GetPointOnSurface(const float u, const float v) const override;
 //inline Point3f GetRandomPointOnSurface() override;
-//inline Intersection GetRandomSurfaceIntersection() override;
+//inline Intersection GetRandomSurfaceIntersection() override; */

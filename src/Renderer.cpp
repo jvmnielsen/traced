@@ -22,6 +22,7 @@ void Renderer::Render(int samplesPerPixel)
     const int height = m_buffer->GetHeight();
     const int width = m_buffer->GetWidth();
 
+    
     for (int j = height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
         for (size_t i = 0; i < width; ++i)
@@ -60,7 +61,7 @@ Color3f Renderer::TraceRay(const Rayf& ray, int depth)
         if (m_direct) // !ray.IsPrimaryRay() ||
         {
             //color += estiamteDirectLightFromPointLights(surfel, ray);
-            color += m_scene->SampleAreaLights(isect, ray);
+            //color += m_scene->SampleAreaLights(isect, ray);
         }
 
         // Contribution from indirect lighting
@@ -85,7 +86,7 @@ Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     Color3f hitColor;
 
     if (scene.Intersects(ray, isect))
-    //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_shape->Intersects(ray, isect))
+    //if (scene.m_boundingVolumes[0]->m_mesh->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_mesh->Intersects(ray, isect))
     {
         //hitColor = isect.m_material->CalculateSurfaceColor(ray, isect, scene, 0);
     }
@@ -122,11 +123,11 @@ Color3f StochasticRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)
     Color3f hitColor{0};
 
     if (scene.Intersects(ray, isect))
-    //if (scene.m_boundingVolumes[0]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_shape->Intersects(ray, isect) || scene.m_boundingVolumes[2]->m_shape->Intersects(ray, isect))
+    //if (scene.m_boundingVolumes[0]->m_mesh->Intersects(ray, isect) || scene.m_boundingVolumes[1]->m_mesh->Intersects(ray, isect) || scene.m_boundingVolumes[2]->m_mesh->Intersects(ray, isect))
     {
         Rayf scattered;
         Color3f attenuation;
-        const auto emitted = isect.m_material->Emitted(isect.m_uvCoord.x, isect.m_uvCoord.y, isect.m_point);
+        const auto emitted = isect.m_material->Emitted(isect.m_uv.x, isect.m_uv.y, isect.m_point);
 
         if (depth < m_depth && isect.m_material->Scatter(ray, isect, attenuation, scattered)) 
         {

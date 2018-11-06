@@ -3,55 +3,33 @@
 //#include "Material.h"
 
 Intersection::Intersection(
-    bool hasBeenHit,
-    const Point3f& point,
-    const Point2f& barycentric,
-    Shape* shape,
-    const Normal3f& geometricNormal,
-    const Normal3f& shadingNormal,
-    Material* material)
-    : m_hasBeenHit(hasBeenHit)
-    , m_point(point)
-    , m_uvCoord(barycentric)
-    , m_shape(shape)
-    , m_geometricNormal(geometricNormal)
-    , m_shadingNormal(shadingNormal)
-    , m_material(material)
-{
-}
-
-Intersection::Intersection(
     Point3f point,
     Normal3f geometricNormal)
     : m_point(std::move(point))
     , m_geometricNormal(std::move(geometricNormal))
 {}
 
+//void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);
 
 void Intersection::Update(
     const Point3f&      point,
     const Point2f&      uvCoord,
     const Normal3f&     geometricNormal,
-    Shape*              shape,
-    Material*           material)
+    const Normal3f&     shadingNormal,
+    Triangle*           triangle)
 {
     m_hasBeenHit = true;
-
     m_point = point;
-    m_uvCoord = uvCoord;
+    m_uv = uvCoord;
     m_geometricNormal = geometricNormal;
-    m_shape = shape;
-
-    if (material)
-        m_material = material;
-
-    m_shadingNormal = m_shape->CalculateShadingNormal(*this);
+    m_triangle = triangle;
+    m_shadingNormal = shadingNormal;
 }
 
 bool Intersection::HasBeenHit() const { return m_hasBeenHit; }
 const Point3f& Intersection::GetPoint() const { return m_point; }
-const Point2f& Intersection::GetUV() const { return m_uvCoord; }
-Shape* Intersection::GetShape() const { return m_shape; }
+const Point2f& Intersection::GetUV() const { return m_uv; }
+Triangle* Intersection::GetTriangle() const { return m_triangle; }
 const Normal3f& Intersection::GetGeometricNormal() const { return m_geometricNormal; }
 const Normal3f& Intersection::GetShadingNormal() const { return m_shadingNormal; }
 Material* Intersection::GetMaterial() const { return m_material; }
@@ -69,13 +47,7 @@ Point3f Intersection::OffsetGeometricPoint() const
 Color3f Intersection::CalculateEmitted() const
 {
     if (m_material)
-        return m_material->Emitted(m_uvCoord, m_point);
+        return m_material->Emitted(m_uv, m_point);
     else
         return Color3f{0.0f};
-}
-
-auto 
-Intersection::SetParentMeshMaterial(Material* material) -> void
-{
-    m_material = material;
 }

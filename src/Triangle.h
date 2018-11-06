@@ -1,56 +1,59 @@
 #pragma once
-#include "Shape.h"
-#include "MathUtil.h"
 
-class Triangle :
-    public Shape
+#include "MathUtil.h"
+#include <memory>
+//#include "Material.h"
+#include "Intersection.h"
+#include "Transform.h"
+
+class Triangle 
 {
 public:
-    Triangle() : Shape(nullptr) { }
 
-    Triangle(std::array<Point3f, 3> vertices,
-             std::array<Normal3f, 3> vertexNormals,
-             bool isSingleSided,
-             std::shared_ptr<Material> material);
+    Triangle(std::array<Point3f, 3>     vertices,
+             std::array<Normal3f, 3>    vertexNormals,
+             std::array<Point2f, 3>     uv);
 
-    bool Intersects(const Rayf &ray, Intersection &hit_data) override;
-    bool IntersectsQuick(const Rayf& ray) const override;
+    Triangle(std::array<Point3f, 3>     vertices,
+             std::array<Normal3f, 3>    vertexNormals);
 
+    Triangle(const Triangle& other);
+    Triangle(Triangle&& other);
 
-    //void SetMaterialType(const MaterialType& type) override { m_material = type; }
+    bool Intersects(const Rayf &ray, Intersection& isect);
+    bool IntersectsFast(const Rayf& ray) const;
 
-    Normal3f CalculateShadingNormal(const Intersection& intersec) const override;
+    auto InterpolateNormalAt(const Point2f& uv) const -> Normal3f;
 
-    void TransformBy(const Transform& transform) override;
-   
+    auto TransformBy(const Transform& transform) -> void;
+
+    auto Area() const -> float;
+
+    /*
     Point3f GetPointOnSurface(const float u, const float v) const override;
     Point3f GetRandomPointOnSurface() override;
     Intersection GetRandomSurfaceIntersection() override;
+    */
+
 
     const std::array<Point3f, 3>& GetVertices() const;
-    std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
+    //std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
 
 
 private:
-
-    std::array<Point3f, 3> m_vertices;
-    //Point3f test;
-    //Point3f m_vertex[3];  // TODO: encapsulate
-    std::array<Normal3f, 3> m_vertexNormals;
-    //Normal3f m_normals[3];
-    std::array<Vec3f, 2> m_edges; // Pre-calculated for use in Intercept function
+    std::array<Point3f, 3>      m_vertices;         // Three points making up the triangle
+    std::array<Normal3f, 3>     m_vertexNormals;    // Normal at each vertex, used to interpolate a normal across the face
+    Vec3f                       m_faceNormal;       // In cases where vertex normals are not available, use face normal
+    std::array<Vec3f, 2>        m_edges;            // Pre-calculated for use in Intercept function
+    std::array<Point2f, 3>      m_uv;               // Texture coordinates
+         
+    
 
 	void UpdateEdges();
+    
 
-    /*
-    Vec3f m_edge0;
-    Vec3f m_edge0_2; // from vertx 0 to vertx 2. used for normal
-    Vec3f m_edge1;
-    Vec3f m_edge2;
-    */
-
-    Vec3f m_faceNormal;
-    bool m_isSingleSided;
-    float m_epsilon = 1e-8f;
+    
+    //bool m_isSingleSided;
+    //float m_epsilon = 1e-8f;
 };
 

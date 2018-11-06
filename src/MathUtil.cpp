@@ -1,5 +1,5 @@
 #include "MathUtil.h"
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 
 bool Math::SolveQuadratic(

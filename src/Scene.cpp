@@ -26,21 +26,21 @@ void Scene::AddBoundingVolume(std::unique_ptr<BoundingVolume> boundingVolume)
     m_boundingVolumes.push_back(std::move(boundingVolume));
 }
 
-void Scene::AddShape(std::unique_ptr<Shape> shape)
+void Scene::AddShape(std::unique_ptr<Mesh> shape)
 {
-    auto boundingBoxForShape = shape->GetBoundingVolume();
-    boundingBoxForShape->SetShape(std::move(shape));
-    m_boundingVolumes.emplace_back(std::move(boundingBoxForShape));
+    //auto boundingBoxForShape = shape->ConstructBoundingVolume();
+    //boundingBoxForShape.SetShape(std::move(shape));
+    //m_boundingVolumes.emplace_back(std::move(boundingBoxForShape));
 }
 
 void Scene::AddPointLight(std::unique_ptr<Light> lightPtr) { }
 
 auto
-Scene::AddAreaLight(std::unique_ptr<Shape> light) -> void
+Scene::AddAreaLight(std::unique_ptr<Mesh> light) -> void
 {
-    auto boundingBoxForShape = light->GetBoundingVolume();
-    boundingBoxForShape->SetShape(std::move(light));
-    m_areaLights.emplace_back(std::move(boundingBoxForShape));
+    //auto boundingBoxForShape = light->ConstructBoundingVolume();
+    //boundingBoxForShape.SetShape(std::move(light));
+    //m_areaLights.emplace_back(std::move(boundingBoxForShape));
 }
 
 
@@ -72,6 +72,7 @@ Color3f Scene::SamplePointLights(const Intersection& isect, const Rayf& ray) con
     return color;
 }
 
+/*
 Color3f Scene::SampleAreaLights(const Intersection& isect, const Rayf& ray)
 {
     Color3f color{0.0f};
@@ -94,7 +95,7 @@ Color3f Scene::SampleAreaLights(const Intersection& isect, const Rayf& ray)
         }
     }
     return color;
-}
+} */
 
 Color3f Scene::SampleIndirectLighting(const Intersection& isect, const Rayf& ray)
 {

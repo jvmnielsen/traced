@@ -2,6 +2,7 @@
 #include "Shape.h"
 //#include "Intersection.h"
 
+/*
 class Sphere :
     public Shape
 {
@@ -16,7 +17,7 @@ public:
     {}
 
     bool Intersects(const Rayf& ray, Intersection& isect) override;
-    bool IntersectsQuick(const Rayf& ray) const override;
+    bool IntersectsFast(const Rayf& ray) const override;
 
     std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
 
@@ -24,7 +25,7 @@ public:
 
     Point3f GetPointOnSurface(const float u, const float v) const;
     Point3f GetRandomPointOnSurface() override;
-    Intersection GetRandomSurfaceIntersection() override;
+    //Intersection GetRandomSurfaceIntersection() override;
 
 
     void TransformBy(const Transform& transform) override;
@@ -36,4 +37,5 @@ private:
 	//Material* m_material;
     
 };
+*/
 

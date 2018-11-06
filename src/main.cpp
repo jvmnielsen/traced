@@ -7,6 +7,7 @@
 #include "Parser.h"
 #include <thread>
 #include "Renderer.h"
+#include "Utility.h"
 
 /*
 void ConstructStandardBox(Scene& scene)
@@ -44,6 +45,7 @@ void ConstructStandardBox(Scene& scene)
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[])
 {
+    /*
     const unsigned int SCREEN_WIDTH = 720;
     const unsigned int SCREEN_HEIGHT = 480;
 
@@ -112,6 +114,18 @@ int main(int argc, char * argv[])
 
     RenderThread.join();
 
-    return 0;
+    return 0; */
+    {
+    Timer timer{"Test"};
 
+    Parser parser;
+    auto teapot = parser.Parse("assets/teapot.obj");
+
+    Scene scene;
+
+    scene.m_meshes.push_back(std::move(teapot));
+
+    }
+
+    return 0;
 }
