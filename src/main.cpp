@@ -115,17 +115,27 @@ int main(int argc, char * argv[])
     RenderThread.join();
 
     return 0; */
+
     {
-    Timer timer{"Test"};
+        Timer<std::milli> timer{"move "};
 
-    Parser parser;
-    auto teapot = parser.Parse("assets/teapot.obj");
+        Parser parser;
+        auto teapot = parser.GetMeshFromFile("../assets/alfa147.obj");
 
-    Scene scene;
+        Scene scene;
 
-    scene.m_meshes.push_back(std::move(teapot));
+        scene.AddMesh(teapot);
+        //scene.m_meshesPtr.push_back(std::move(teapot));
 
+        //scene.m_meshes.push_back(std::move(teapot));
     }
+
+
+
+
+
+
+
 
     return 0;
 }

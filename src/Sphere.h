@@ -19,7 +19,7 @@ public:
     bool Intersects(const Rayf& ray, Intersection& isect) override;
     bool IntersectsFast(const Rayf& ray) const override;
 
-    std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
+    std::unique_ptr<AABB> GetBoundingVolume() const override;
 
     Normal3f CalculateShadingNormal(const Intersection& isect) const override;
 

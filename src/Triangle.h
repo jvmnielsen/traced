@@ -27,7 +27,7 @@ public:
 
     auto TransformBy(const Transform& transform) -> void;
 
-    auto Area() const -> float;
+    auto GetArea() const -> float;
 
     /*
     Point3f GetPointOnSurface(const float u, const float v) const override;
@@ -37,7 +37,7 @@ public:
 
 
     const std::array<Point3f, 3>& GetVertices() const;
-    //std::unique_ptr<BoundingVolume> GetBoundingVolume() const override;
+    //std::unique_ptr<AABB> GetBoundingVolume() const override;
 
 
 private:

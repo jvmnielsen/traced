@@ -1,18 +1,32 @@
-//
-// Created by Jacob Vesti Moeslund Nielsen on 18/10/2018.
-//
+#include "BVH.h"
+
 
 /*
-#include "BoundingVolume.h"
-
-AABB::AABB(std::array<Point3f, 2> bounds)
-    : m_bounds(std::move(bounds))
+BVH::BVH(std::vector<std::unique_ptr<Mesh>> shapes)
+    : m_shapes(std::move(shapes))
 {
 }
 
+
+BVH::~BVH()
+{
+} */
+
+
+AABB::AABB(std::array<Point3f, 2> bounds)
+        : m_bounds(std::move(bounds))
+{
+}
+
+AABB::AABB(Point3f lowerBound, Point3f upperBound)
+    : m_bounds(std::move(std::array<Point3f, 2>{std::move(lowerBound), std::move(upperBound)}))
+{
+}
+
+
 AABB::AABB(std::unique_ptr<Mesh> mesh)
-    : m_bounds(mesh->GetExtent())
-    , m_mesh(std::move(mesh))
+        : m_bounds(mesh->GetExtent())
+        , m_mesh(std::move(mesh))
 {
 }
 
@@ -112,6 +126,11 @@ bool AABB::IntersectsShape(const Rayf& ray, Intersection& isect) const
 
 }
 
+auto AABB::GetBounds() const -> const std::array<Point3f, 2>&
+{
+    return m_bounds;
+}
+
 void AABB::SetShape(std::unique_ptr<Mesh> shape)
 {
     m_mesh = std::move(shape);
@@ -135,4 +154,3 @@ AABB::SurfaceArea() const -> float
     const auto diagonal = Diagonal();
     return 2 * (diagonal.x * diagonal.y + diagonal.x * diagonal.z + diagonal.y * diagonal.z);
 }
-*/

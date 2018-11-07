@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-//#include "BoundingVolume.h"
+//#include "AABB.h"
 #include <memory>
 //#include "Shape.h"
 #include "BoundingVolume.h"
@@ -25,6 +25,9 @@ public:
     // Is there a clear line of sight between two points
     bool LineOfSightBetween(const Point3f& p1, const Point3f& p2) const;
 
+    auto AddMesh(Mesh& mesh) -> void { m_meshes.push_back((mesh)); }
+
+
     //auto EstimateDirectLight(const Intersection& isect) -> Color3f;
 
 
@@ -36,20 +39,20 @@ public:
     Color3f BackgroundColor() const;
 
     const std::vector<std::unique_ptr<Light>>& GetPointLights() const;
-    const std::vector<std::unique_ptr<BoundingVolume>>& GetAreaLights() const;
+    const std::vector<std::unique_ptr<AABB>>& GetAreaLights() const;
 
     std::vector<Mesh> m_meshes;
-   
+    std::vector<std::unique_ptr<Mesh>> m_meshesPtr;
 private:
     Color3f m_backgroundColor;
 
     std::vector<std::unique_ptr<Light>> m_lights;
-    std::vector<std::unique_ptr<BoundingVolume>> m_areaLights;
-    std::vector<std::unique_ptr<BoundingVolume>> m_boundingVolumes;
+    std::vector<std::unique_ptr<AABB>> m_areaLights;
+    std::vector<std::unique_ptr<AABB>> m_boundingVolumes;
 
     //std::unique_ptr<BVH> m_bvh;
 
-    void AddBoundingVolume(std::unique_ptr<BoundingVolume> boundingVolume);
+    void AddBoundingVolume(std::unique_ptr<AABB> boundingVolume);
 
     bool IntersectsQuick(const Rayf& ray) const;
 

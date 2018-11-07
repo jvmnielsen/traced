@@ -52,9 +52,9 @@ bool Sphere::IntersectsFast(const Rayf& ray) const
     return solutionOne > 0 || solutionTwo > 0;
 }
 
-std::unique_ptr<BoundingVolume> Sphere::GetBoundingVolume() const
+std::unique_ptr<AABB> Sphere::GetBoundingVolume() const
 {
-    return std::make_unique<BoundingVolume>(Point3f{ -m_radius + m_center.x, -m_radius + m_center.y, -m_radius + m_center.z },
+    return std::make_unique<AABB>(Point3f{ -m_radius + m_center.x, -m_radius + m_center.y, -m_radius + m_center.z },
              Point3f{ m_radius + m_center.x, m_radius + m_center.y, m_radius + m_center.z });
 }
 

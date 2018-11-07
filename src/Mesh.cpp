@@ -104,6 +104,16 @@ Mesh::GetExtent() const->std::array<Point3f, 2>
     return std::array<Point3f, 2>{ min, max };
 }
 
+auto
+Mesh::GetSurfaceArea() const -> float
+{
+    float sum = 0;
+    for (const auto& triangle : m_triangles)
+        sum += triangle.GetArea();
+
+    return sum;
+}
+
 /*
 auto
 Mesh::GetRandomTriangleVertex() -> int
@@ -136,14 +146,14 @@ Mesh::CalculateShadingNormal(const Intersection& isect) const -> Normal3f
     return Normal3f{0};
 }
 
-/*
+
 auto 
 Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
 {
     for (auto& triangle : m_triangles)
         triangle->SetParentMeshMaterial(material);
 }
-*/
+
 
 //inline Point3f GetPointOnSurface(const float u, const float v) const override;
 //inline Point3f GetRandomPointOnSurface() override;

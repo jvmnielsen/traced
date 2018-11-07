@@ -134,7 +134,7 @@
   <ItemGroup>
     <ClCompile Include="BVH.cpp" />
     <ClCompile Include="Sampler.cpp" />
-    <ClCompile Include="src\BoundingVolume.cpp" />
+    <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\BSDF.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Intersection.cpp" />
@@ -155,7 +155,7 @@
   <ItemGroup>
     <ClInclude Include="BVH.h" />
     <ClInclude Include="Sampler.h" />
-    <ClInclude Include="src\BoundingVolume.h" />
+    <ClInclude Include="src\AABB.h" />
     <ClInclude Include="src\BSDF.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Intersection.h" />

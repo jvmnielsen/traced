@@ -7,15 +7,13 @@
 class Parser
 {
 public:
-    Mesh Parse(const std::string& filename);
+	std::unique_ptr<Mesh> GetMeshFromFile(const std::string& filename);
 
 private:
-	void LoadFile(const std::string& filename);
-	Mesh ConstructMesh();
-
+	void ParseFile(const std::string& filename);
+	std::unique_ptr<Mesh> ConstructMesh();
     void Reset();
 
-    //std::ifstream m_file_in;
 	std::vector<Point3f> m_vertex;
 	std::vector<Point2f> m_texture_coord;
 	std::vector<Vec3f> m_normals;

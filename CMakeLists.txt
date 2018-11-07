@@ -14,7 +14,7 @@ file(GLOB SOURCE_FILES "src/*.cpp" "src/*.h")
 #        src/Intersection.h src/Intersection.cpp src/Imaging.h src/Imaging.cpp src/Material.cpp
 #        src/Material.cpp src/MathUtil.cpp src/MathUtil.h src/Parser.cpp src/Parser.h src/Triangle.cpp
 #        src/Triangle.h src/Mesh.cpp src/Mesh.h src/Shape.h src/Shape.cpp
-#        src/Scene.cpp src/Scene.h src/Sphere.cpp src/Sphere.h src/Window.cpp src/Window.h src/Transform.cpp src/Transform.h src/Integrator.cpp src/Integrator.h src/BoundingVolume.cpp src/BoundingVolume.h src/BSDF.cpp src/BSDF.h src/VisibilityTester.cpp src/VisibilityTester.h)
+#        src/Scene.cpp src/Scene.h src/Sphere.cpp src/Sphere.h src/Window.cpp src/Window.h src/Transform.cpp src/Transform.h src/Integrator.cpp src/Integrator.h src/AABB.cpp src/AABB.h src/BSDF.cpp src/BSDF.h src/VisibilityTester.cpp src/VisibilityTester.h)
 
 add_executable(Traced ${SOURCE_FILES})
 target_link_libraries(Traced ${LIBRARIES})

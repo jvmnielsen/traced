@@ -3,14 +3,14 @@
 #include <utility>
 #include "Transform.h"
 #include <random>
-//#include "BoundingVolume.h"
+//#include "AABB.h"
 #include "Intersection.h"
-//#include "BoundingVolume.h"
+//#include "AABB.h"
 
 
 //class Intersection;
 //class Material;
-//class BoundingVolume;
+//class AABB;
 //class Light;
 
 
@@ -26,7 +26,7 @@ public:
     virtual bool Intersects(const Rayf &ray, Intersection& isect) = 0;
     virtual bool IntersectsFast(const Rayf& ray) const = 0;
 
-    virtual std::unique_ptr<BoundingVolume> GetBoundingVolume() const = 0;
+    virtual std::unique_ptr<AABB> GetBoundingVolume() const = 0;
 
     virtual Normal3f CalculateShadingNormal(const Intersection& isect) const = 0;
     virtual void TransformBy(const Transform& transform) = 0;

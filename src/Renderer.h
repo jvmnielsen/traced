@@ -9,7 +9,7 @@
 class Renderer
 {
 public:
-    Renderer::Renderer(
+    Renderer(
         std::unique_ptr<Camera> camera,
         std::unique_ptr<Scene> scene,
         std::shared_ptr<ImageBuffer> buffer,

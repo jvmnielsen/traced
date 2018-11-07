@@ -17,7 +17,7 @@ Renderer::Renderer(
 
 void Renderer::Render(int samplesPerPixel)
 {
-    Timer timer = {"Rendering took: "};
+    Timer<std::milli> timer = {"Rendering took: "};
 
     const int height = m_buffer->GetHeight();
     const int width = m_buffer->GetWidth();

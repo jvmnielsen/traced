@@ -42,7 +42,7 @@
     <ClCompile Include="src\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoundingVolume.cpp">
+    <ClCompile Include="src\AABB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\BSDF.cpp">
@@ -341,7 +341,7 @@
     <ClInclude Include="src\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BoundingVolume.h">
+    <ClInclude Include="src\AABB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BSDF.h">

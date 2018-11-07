@@ -133,9 +133,9 @@ Triangle::TransformBy(const Transform& transform) -> void
 }
 
 auto 
-Triangle::Area() const -> float
+Triangle::GetArea() const -> float
 {
-    return 3;
+    return 0.5f * Cross(m_edges[0], m_edges[1]).Length();
 }
 
 auto
@@ -163,7 +163,7 @@ Intersection Triangle::GetRandomSurfaceIntersection()
 
 
 auto
-Triangle::GetBoundingVolume() const -> std::unique_ptr<BoundingVolume>
+Triangle::GetBoundingVolume() const -> std::unique_ptr<AABB>
 {
     return nullptr;
 }

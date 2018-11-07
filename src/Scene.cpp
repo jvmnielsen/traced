@@ -21,7 +21,7 @@ bool Scene::IntersectsQuick(const Rayf& ray) const
     return false;
 }
 
-void Scene::AddBoundingVolume(std::unique_ptr<BoundingVolume> boundingVolume)
+void Scene::AddBoundingVolume(std::unique_ptr<AABB> boundingVolume)
 {
     m_boundingVolumes.push_back(std::move(boundingVolume));
 }
@@ -117,7 +117,7 @@ auto Scene::GetPointLights() const -> const std::vector<std::unique_ptr<Light>>&
     return m_lights;
 }
 
-auto Scene::GetAreaLights() const -> const std::vector<std::unique_ptr<BoundingVolume>>&
+auto Scene::GetAreaLights() const -> const std::vector<std::unique_ptr<AABB>>&
 {
     return m_areaLights;
 }

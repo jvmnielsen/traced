@@ -5,7 +5,8 @@
 #include <sstream>
 #include <memory>
 
-std::vector<std::string> split_string( const std::string& subject )
+auto
+split_string(const std::string& subject) -> std::vector<std::string>
 {
     std::istringstream stream{ subject };
 
@@ -14,7 +15,8 @@ std::vector<std::string> split_string( const std::string& subject )
     return container;
 }
 
-std::vector<std::string> split_string( std::string& subject, const std::string& delimiter )
+auto
+split_string(std::string& subject, const std::string& delimiter) -> std::vector<std::string>
 {
 	size_t pos = 0;
 	std::string token;
@@ -34,9 +36,9 @@ std::vector<std::string> split_string( std::string& subject, const std::string& 
 	return container;
 }
 
-void Parser::LoadFile(const std::string& filename)
+void Parser::ParseFile(const std::string& filename)
 {
-	std::ifstream infile(filename);
+    std::ifstream infile(filename);
 
 	std::string line;
 
@@ -53,13 +55,10 @@ void Parser::LoadFile(const std::string& filename)
 				std::stof(split_str[2]),
 				std::stof(split_str[3])));
 		}
-		/*
 	    else if (split_str[0] == "vt") // texture coordinate
 		{
-			//m_texture_coord.emplace_back(Vec2f(std::stof(split_str[1]),
-			//	std::stof(split_str[2])));
-
-		} */
+			m_texture_coord.emplace_back(Point2f{std::stof(split_str[1]), std::stof(split_str[2])});
+		}
 		else if (split_str[0] == "vn") // normal
 		{
 			m_normals.emplace_back(
@@ -73,72 +72,46 @@ void Parser::LoadFile(const std::string& filename)
             for (size_t i = 1; i < split_str.size(); i++) // skip first
             {
                 if (split_str.size() > 4)
-                    throw std::string("Loaded face is not a triangle!");
+                    continue;
 
                 auto ordering = split_string(split_str[i], "/");
                 // faces are ordered 1/1/1 (vertex, texture, normal)
-                m_vertex_ordering.push_back( std::stol(ordering[0]) );
+                m_vertex_ordering.push_back(std::stoi(ordering[0]));
 
                 if (!ordering[1].empty()) // may be empty
-                    m_texture_coord_ordering.push_back( std::stol( ordering[1] ) );
+                    m_texture_coord_ordering.push_back(std::stoi(ordering[1]));
 
-                m_normal_ordering.push_back( std::stol( ordering[2] ) );
+
+                if (!ordering[2].empty()) // may be empty
+                    m_normal_ordering.push_back( std::stoi(ordering[2]));
             }
-
-            /*
-			m_faces.push_back( // assuming triangles
-				Vec3i(std::stol(split_str[1]),
-					  std::stol(split_str[2]),
-					  std::stol(split_str[3]))); */
-
-
-
-
-			//m_faces.emplace_back(face);
 		}
-        
 	}
+	infile.close();
 }
-Mesh Parser::ConstructMesh()
-{
-	//auto mesh_ptr = std::make_unique<Mesh>();
-    Mesh mesh;
 
-    mesh.m_triangles.reserve(m_vertex_ordering.size() / 3);
+std::unique_ptr<Mesh> Parser::ConstructMesh()
+{
+	auto mesh_ptr = std::make_unique<Mesh>();
+
+	mesh_ptr->m_triangles.reserve(m_vertex_ordering.size() / 3);
 
 	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3)
 	{
-        // WARNING: .obj is 1-indexed
-        /*
-        auto polygon =
-            std::make_unique<Triangle>( 
-                 m_vertex[m_vertex_ordering[i] - 1],
-                 m_vertex[m_vertex_ordering[i + 1] - 1],
-                 m_vertex[m_vertex_ordering[i + 2] - 1],
-                 m_normals[m_normal_ordering[i] - 1],
-                 m_normals[m_normal_ordering[i + 1] - 1],
-                 m_normals[m_normal_ordering[i + 2] - 1],
-                 true, nullptr); */
-
-        mesh.m_triangles.emplace_back(
-            
-                std::array<Point3f, 3> {
-                m_vertex.at(m_vertex_ordering.at(i) - 1),
-                    m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
-                    m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
-                },
-                std::array<Normal3f, 3> {
-                    m_normals.at(m_normal_ordering.at(i) - 1),
-                        m_normals.at(m_normal_ordering.at(i + 1) - 1),
-                        m_normals.at(m_normal_ordering.at(i + 2) - 1),
-                }
-            
-        );
-	    
-        //mesh_ptr->AddPolygon(std::move(polygon));       
+		mesh_ptr->m_triangles.emplace_back(
+				std::array<Point3f, 3> {
+						m_vertex[m_vertex_ordering[i    ] - 1],
+						m_vertex[m_vertex_ordering[i + 1] - 1],
+						m_vertex[m_vertex_ordering[i + 2] - 1],
+				},
+				std::array<Normal3f, 3> {
+						m_normals[m_normal_ordering[i    ] - 1],
+						m_normals[m_normal_ordering[i + 1] - 1],
+						m_normals[m_normal_ordering[i + 2] - 1],
+				});
 	}
 
-	return mesh;
+	return mesh_ptr;
 }
 
 void Parser::Reset()
@@ -153,20 +126,13 @@ void Parser::Reset()
     m_normal_ordering.clear();
 }
 
-Mesh Parser::Parse(const std::string& filename)
+std::unique_ptr<Mesh> Parser::GetMeshFromFile(const std::string& filename)
 {
-    try
-    {
-        LoadFile(filename);
-    } 
-    catch (std::string& msg)
-    {
-        std::cout << msg << '\n';
-    }
-	
-	auto mesh_ptr = ConstructMesh();
+    ParseFile(filename);
+
+    auto mesh_ptr = ConstructMesh();
 
     Reset(); // ready for next one
 
-	return mesh_ptr;
+    return mesh_ptr;
 }

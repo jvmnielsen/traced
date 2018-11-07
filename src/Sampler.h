@@ -2,7 +2,7 @@
 class Sampler
 {
 public:
-    Sampler();
-    ~Sampler();
+    //ampler();
+    //~Sampler();
 };
 
