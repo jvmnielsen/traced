@@ -124,7 +124,7 @@ int main(int argc, char * argv[])
 
         Scene scene;
 
-        scene.AddMesh(teapot);
+        //scene.AddMesh(std::move(teapot));
         //scene.m_meshesPtr.push_back(std::move(teapot));
 
         //scene.m_meshes.push_back(std::move(teapot));

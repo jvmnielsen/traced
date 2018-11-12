@@ -1,7 +1,8 @@
 #include "Scene.h"
 #include <memory>
 
-bool Scene::Intersects(const Rayf& ray, Intersection& isect) const
+auto
+Scene::Intersects(const Rayf& ray, Intersection& isect) const -> std::optional<Intersection>
 {
     for (const auto& volume : m_boundingVolumes)
         volume->Intersects(ray, isect);

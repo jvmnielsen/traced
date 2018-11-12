@@ -3,10 +3,11 @@
 //#include "AABB.h"
 #include <memory>
 //#include "Shape.h"
-#include "BoundingVolume.h"
+//#include "BoundingVolume.h"
 //#include "../BVH.h"
-
+#include "BVH.h"
 //class Intersection;
+#include <optional>
 
 class Scene
 {
@@ -15,7 +16,7 @@ public:
     //~Scene() = default;
 
     // Does a ray intersect any shapes in the scene?
-    bool Intersects(const Rayf& ray, Intersection& isect) const;
+    auto Intersects(const Rayf& ray, Intersection& isect) const -> std::optional<Intersection>;
     
     // Adding shapes and lights to the scene
     void AddShape(std::unique_ptr<Mesh> shape);

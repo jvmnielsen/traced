@@ -4,12 +4,11 @@
 Renderer::Renderer(
     std::unique_ptr<Camera> camera,
     std::unique_ptr<Scene> scene,
-    std::shared_ptr<ImageBuffer> buffer,
-    std::unique_ptr<Sampler> sampler)
+    std::shared_ptr<ImageBuffer> buffer)
     : m_camera(std::move(camera))
     , m_scene(std::move(scene))
     , m_buffer(buffer)
-    , m_sampler(std::move(sampler))
+    //, m_sampler(std::move(sampler))
     , m_gen(std::random_device()())
     , m_dist(0.0f, 1.0f)
 {

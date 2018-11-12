@@ -20,7 +20,7 @@ Mesh::Mesh(const Mesh& other)
     std::cout << "Copied mesh!\n";
 }
 
-Mesh::Mesh(Mesh&& other)
+Mesh::Mesh(Mesh&& other) noexcept
 {
     std::cout << "Moved mesh!\n";
 }
