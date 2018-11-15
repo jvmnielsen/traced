@@ -237,9 +237,10 @@ BVH::BuildTree(int start, int end) -> void {
 
         auto mid = (end + start) / 2;
 
+        /*
         std::nth_element(&m_boundingBoxes[start], &m_boundingBoxes[mid], &m_boundingBoxes[end],
                          [axis](const AABB& a,
-                                const AABB& b) { return a.CalculateCenter()[axis] < });
+                                const AABB& b) { return a.CalculateCenter()[axis] < }); */
 
     }
 }

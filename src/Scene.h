@@ -16,7 +16,7 @@ public:
     //~Scene() = default;
 
     // Does a ray intersect any shapes in the scene?
-    auto Intersects(const Rayf& ray, Intersection& isect) const -> std::optional<Intersection>;
+    auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
     
     // Adding shapes and lights to the scene
     void AddShape(std::unique_ptr<Mesh> shape);

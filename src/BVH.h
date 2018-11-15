@@ -82,5 +82,8 @@ private:
     std::vector<AABB> m_boundingBoxes;
 
     auto GenerateAABBList() -> void;
+
+    auto
+    BuildTree(int start, int end) -> void;
 };
 
