@@ -84,6 +84,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)third_party\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -100,6 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>$(ProjectDir)third_party\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -114,6 +116,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)third_party\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2main.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -124,6 +127,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)third_party\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2main.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -132,46 +136,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\BoundingVolume.cpp" />
-    <ClCompile Include="src\BSDF.cpp" />
-    <ClCompile Include="src\BVH.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
-    <ClCompile Include="src\Intersection.cpp" />
-    <ClCompile Include="src\MathUtil.cpp" />
-    <ClCompile Include="src\Sampler.cpp" />
-    <ClCompile Include="src\Shape.cpp" />
-    <ClCompile Include="src\ThreadManager.cpp" />
-    <ClCompile Include="src\Imaging.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Material.cpp" />
-    <ClCompile Include="src\Parser.cpp" />
-    <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Scene.cpp" />
-    <ClCompile Include="src\Sphere.cpp" />
-    <ClCompile Include="src\Transform.cpp" />
-    <ClCompile Include="src\Triangle.cpp" />
-    <ClCompile Include="src\Window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\BoundingVolume.h" />
-    <ClInclude Include="src\BSDF.h" />
-    <ClInclude Include="src\BVH.h" />
-    <ClInclude Include="src\Renderer.h" />
-    <ClInclude Include="src\Intersection.h" />
-    <ClInclude Include="src\MathUtil.h" />
-    <ClInclude Include="src\Sampler.h" />
-    <ClInclude Include="src\Shape.h" />
-    <ClInclude Include="src\ThreadManager.h" />
-    <ClInclude Include="src\Imaging.h" />
-    <ClInclude Include="src\Material.h" />
-    <ClInclude Include="src\Parser.h" />
-    <ClInclude Include="src\Mesh.h" />
-    <ClInclude Include="src\Scene.h" />
-    <ClInclude Include="src\Sphere.h" />
-    <ClInclude Include="src\Transform.h" />
-    <ClInclude Include="src\Triangle.h" />
-    <ClInclude Include="src\Utility.h" />
-    <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\Acceleration\BoundingVolume.hpp" />
+    <ClInclude Include="src\Acceleration\BVH.hpp" />
+    <ClInclude Include="src\Core\Intersection.hpp" />
+    <ClInclude Include="src\Core\Renderer.hpp" />
+    <ClInclude Include="src\Core\Sampler.hpp" />
+    <ClInclude Include="src\Core\Scene.hpp" />
+    <ClInclude Include="src\Geometry\Mesh.hpp" />
+    <ClInclude Include="src\Geometry\Triangle.hpp" />
+    <ClInclude Include="src\Imaging\Camera.hpp" />
+    <ClInclude Include="src\Imaging\Color3.hpp" />
+    <ClInclude Include="src\Imaging\ImageBuffer.hpp" />
+    <ClInclude Include="src\Imaging\Light.hpp" />
+    <ClInclude Include="src\Material\BSDF.hpp" />
+    <ClInclude Include="src\Material\Material.hpp" />
+    <ClInclude Include="src\Math\MathUtil.hpp" />
+    <ClInclude Include="src\Math\Matrix4x4.hpp" />
+    <ClInclude Include="src\Math\Normal3.hpp" />
+    <ClInclude Include="src\Math\Point2.hpp" />
+    <ClInclude Include="src\Math\Point3.hpp" />
+    <ClInclude Include="src\Math\Ray.hpp" />
+    <ClInclude Include="src\Math\Transform.hpp" />
+    <ClInclude Include="src\Math\Vec2.hpp" />
+    <ClInclude Include="src\Math\Vec3.hpp" />
+    <ClInclude Include="src\Utility\Parser.hpp" />
+    <ClInclude Include="src\Utility\Utility.hpp" />
+    <ClInclude Include="src\Utility\Window.hpp" />
     <ClInclude Include="third_party\sdl2\include\begin_code.h" />
     <ClInclude Include="third_party\sdl2\include\SDL.h" />
     <ClInclude Include="third_party\sdl2\include\SDL_assert.h" />
@@ -253,6 +243,25 @@
     <ClInclude Include="third_party\sdl2\include\SDL_version.h" />
     <ClInclude Include="third_party\sdl2\include\SDL_video.h" />
     <ClInclude Include="third_party\sdl2\include\SDL_vulkan.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Acceleration\BoundingVolume.cpp" />
+    <ClCompile Include="src\Acceleration\BVH.cpp" />
+    <ClCompile Include="src\Core\Intersection.cpp" />
+    <ClCompile Include="src\Core\Renderer.cpp" />
+    <ClCompile Include="src\Core\Sampler.cpp" />
+    <ClCompile Include="src\Core\Scene.cpp" />
+    <ClCompile Include="src\Geometry\Mesh.cpp" />
+    <ClCompile Include="src\Geometry\Triangle.cpp" />
+    <ClCompile Include="src\Imaging\Camera.cpp" />
+    <ClCompile Include="src\Imaging\ImageBuffer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Material\BSDF.cpp" />
+    <ClCompile Include="src\Material\Material.cpp" />
+    <ClCompile Include="src\Math\MathUtil.cpp" />
+    <ClCompile Include="src\Math\Transform.cpp" />
+    <ClCompile Include="src\Utility\Parser.cpp" />
+    <ClCompile Include="src\Utility\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
