@@ -14,7 +14,7 @@ public:
 
 
 template<typename T>
-constexpr Normal3<T> Normalize(const Vec3<T>& vec)
+Normal3<T> Normalize(const Vec3<T>& vec)
 {
     return vec / vec.Length();
 }

@@ -1,13 +1,10 @@
-#include "Window.h"
-#include <vector>
-#include "Imaging.h"
-#include "MathUtil.h"
-#include "Sphere.h"
+
 //#include "ThreadManager.h"
-#include "Parser.h"
-#include <thread>
-#include "Renderer.h"
-#include "Utility.h"
+
+#include "Utility/Utility.hpp"
+#include "Utility/Parser.hpp"
+#include "Core/Scene.hpp"
+
 
 /*
 void ConstructStandardBox(Scene& scene)

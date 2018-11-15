@@ -7,15 +7,7 @@ struct Vec3 {
     T x, y, z;
 
     Vec3() = default;
-    Vec3(const Vec3& other) = default;
-    Vec3& operator=(const Vec3& other)
-    {
-        x = other.x;
-        y = other.y;
-        z = other.z;
-        return *this;
-    }
-
+   
     explicit Vec3(T val) : x(val), y(val), z(val) {}
 
     Vec3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
@@ -141,6 +133,12 @@ struct Vec3 {
     }
 };
 
+template< typename T > auto
+operator==(const Vec3<T>& v1, const Vec3<T>& v2) -> bool
+{
+    return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
+}
+
 
 template<typename T>
 Vec3<T> operator*(const T factor, const Vec3<T>& vec)
@@ -167,7 +165,6 @@ Cross(const Vec3<T>& v1, const Vec3<T>& v2) -> Vec3<T>
             v1.z * v2.x - v1.x * v2.z,
             v1.x * v2.y - v1.y * v2.x};
 }
-
 
 typedef Vec3<float> Vec3f;
 typedef Vec3<int> Vec3i;

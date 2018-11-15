@@ -125,6 +125,7 @@ public:
     }
 };
 
+/*
 template<typename T>
 constexpr Vec2<T> Normalize(const Vec2<T>& vec)
 {
@@ -136,7 +137,7 @@ constexpr Vec2<T> Normalize(const Vec2<T>& vec)
     tmp.y *= invertedLength;
 
     return tmp;
-}
+} */
 
 
 template<typename T>

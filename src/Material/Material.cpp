@@ -1,4 +1,5 @@
-#include "Material.h"
+#include "Material.hpp"
+#include "../Math/Normal3.hpp"
 //#include "MathUtil.h"
 
 Material::Material()

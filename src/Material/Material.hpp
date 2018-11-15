@@ -4,7 +4,7 @@
 #include "../Math/Ray.hpp"
 #include "../Imaging/Color3.hpp"
 #include "../Math/Vec3.hpp"
-
+#include "../Math/Point2.hpp"
 
 
 class Intersection;
