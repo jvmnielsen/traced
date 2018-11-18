@@ -10,10 +10,10 @@ public:
     Window();
 	~Window();
 
-	bool InitializeWindow(image_buffer &buffer);
+	bool InitializeWindow(ImageBuffer& buffer);
 
-    void CheckForInput(image_buffer &pixelBuffer);
-    void UpdateTexture(image_buffer &buffer);
+    void CheckForInput(ImageBuffer& pixelBuffer);
+    void UpdateTexture(ImageBuffer& buffer);
    
 private:
 	SDL_Window *m_windowHandle;

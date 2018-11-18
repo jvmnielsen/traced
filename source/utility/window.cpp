@@ -27,7 +27,7 @@ Window::~Window()
     SDL_Quit();
 }
 
-bool Window::InitializeWindow(image_buffer& buffer)
+bool Window::InitializeWindow(ImageBuffer& buffer)
 {
     // initalize window
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0)
@@ -78,7 +78,7 @@ bool Window::InitializeWindow(image_buffer& buffer)
     return true;
 }
 
-void Window::UpdateTexture(image_buffer &buffer)
+void Window::UpdateTexture(ImageBuffer &buffer)
 {
     SDL_UpdateTexture(m_texture, NULL, m_pixels, buffer.GetWidth() * sizeof(uint32_t));
 
@@ -87,7 +87,7 @@ void Window::UpdateTexture(image_buffer &buffer)
     SDL_RenderPresent(m_renderer);
 }
 
-void Window::CheckForInput(image_buffer &pixelBuffer)
+void Window::CheckForInput(ImageBuffer &pixelBuffer)
 {
     bool running = true;
 

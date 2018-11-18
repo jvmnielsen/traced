@@ -3,15 +3,15 @@
 #include <iostream>
 
 template<typename T>
-class vec2
+class Vec2
 {
 public:
     T x, y;
 
     // Constructors
-    vec2() {}
-    explicit vec2(T val) : x(val), y(val) {}
-    vec2(T x_, T y_, T z_) : x(x_), y(y_) {}
+    Vec2() {}
+    explicit Vec2(T val) : x(val), y(val) {}
+    Vec2(T x_, T y_, T z_) : x(x_), y(y_) {}
 
     auto LengthSquared() const -> T
     {
@@ -23,65 +23,65 @@ public:
         return std::sqrt(LengthSquared());
     }
 
-    auto operator*(const T factor) const -> vec2
+    auto operator*(const T factor) const -> Vec2
     {
-        return vec2{x * factor, y * factor};
+        return Vec2{x * factor, y * factor};
     }
 
-    auto operator*=(const T factor) -> vec2&
+    auto operator*=(const T factor) -> Vec2&
     {
         x *= factor;
         y *= factor;
         return *this;
     }
 
-    auto operator/(const T factor) const -> vec2
+    auto operator/(const T factor) const -> Vec2
     {
-        return vec2{x / factor, y / factor};
+        return Vec2{x / factor, y / factor};
     }
 
-    auto operator/=(const T factor) -> vec2&
+    auto operator/=(const T factor) -> Vec2&
     {
         x /= factor;
         y /= factor;
         return *this;
     }
 
-    auto operator+(const vec2 &other) const -> vec2
+    auto operator+(const Vec2 &other) const -> Vec2
     {
-        return vec2{x + other.x, y + other.y};
+        return Vec2{x + other.x, y + other.y};
     }
 
-    auto operator+=(const vec2 &other) -> vec2
+    auto operator+=(const Vec2 &other) -> Vec2
     {
         x += other.x;
         y += other.y;
         return *this;
     }
 
-    constexpr vec2 operator-(const vec2 &other) const
+    constexpr Vec2 operator-(const Vec2 &other) const
     {
-        return vec2{x - other.x, y - other.y};
+        return Vec2{x - other.x, y - other.y};
     }
 
-    constexpr vec2& operator-=(const vec2 &other)
+    constexpr Vec2& operator-=(const Vec2 &other)
     {
         x -= other.x;
         y -= other.y;
         return *this;
     }
 
-    constexpr T DotProduct(const vec2& other) const
+    constexpr T DotProduct(const Vec2& other) const
     {
         return x * other.x + y * other.y;
     }
 
-    constexpr vec2 CrossProduct(const vec2& other) const
+    constexpr Vec2 CrossProduct(const Vec2& other) const
     {
-        return vec2<T>{ x * other.y - other.x * y };
+        return Vec2<T>{ x * other.y - other.x * y };
     }
 
-    constexpr vec2& Normalize()
+    constexpr Vec2& Normalize()
     {
         T length = this->Length();
         if (length > 0) // avoid division by 0
@@ -93,17 +93,17 @@ public:
         return *this;
     }
 
-    constexpr vec2 operator-() const
+    constexpr Vec2 operator-() const
     {
         return {-x, -y};
     }
 
-    constexpr bool operator==(const vec2& other)
+    constexpr bool operator==(const Vec2& other)
     {
         return x == other.x && y == other.y;
     }
 
-    constexpr bool operator!=(const vec2& other)
+    constexpr bool operator!=(const Vec2& other)
     {
         return x != other.x || y != other.y;
     }
@@ -141,18 +141,18 @@ constexpr Vec2<T> Normalize(const Vec2<T>& vec)
 
 
 template<typename T>
-vec2<T> operator*(const T factor, const vec2<T>& vec)
+Vec2<T> operator*(const T factor, const Vec2<T>& vec)
 {
     return {vec.x * factor, vec.y * factor};
 }
 
 template<typename T>
-vec2<T> operator/(const T factor, const vec2<T>& vec)
+Vec2<T> operator/(const T factor, const Vec2<T>& vec)
 {
     return {vec.x / factor, vec.y / factor,};
 }
 
 
-typedef vec2<float> Vec2f;
-typedef vec2<int> Vec2i;
-typedef vec2<double> Vec2d;
+typedef Vec2<float> Vec2f;
+typedef Vec2<int> Vec2i;
+typedef Vec2<double> Vec2d;

@@ -5,6 +5,10 @@
 #ifndef TRACED_AABB_HPP
 #define TRACED_AABB_HPP
 
+#include "../math/point3.hpp"
+#include "../math/math_util.hpp"
+#include "../geometry/mesh.hpp"
+
 // Axis-aligned bounding-box
 class AABB
 {

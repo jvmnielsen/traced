@@ -1,7 +1,7 @@
 #include "camera.hpp"
 #include "../math/math_util.hpp"
 
-camera::camera(const float v_fov, const float aspect)
+Camera::Camera(const float v_fov, const float aspect)
 {
     const auto theta = v_fov * Math::Pi / 180; // degrees to radians
     const auto half_height = static_cast<float>(tan(theta / 2));
@@ -12,7 +12,7 @@ camera::camera(const float v_fov, const float aspect)
     m_origin = Point3f(0.0f);
 }
 
-camera::camera(
+Camera::Camera(
         const Point3f& look_from,
         const Point3f& look_at,
         const Vec3f& v_up,
@@ -35,7 +35,7 @@ camera::camera(
 }
 
 
-Rayf camera::GetRay(const float u, const float v) const
+Rayf Camera::GetRay(const float u, const float v) const
 {
     return {m_origin, // origin of the camera
             m_lowerLeftCorner + m_horizontal * u + m_vertical * v - m_origin}; // scale from lower left - origin for vector pointing to this point

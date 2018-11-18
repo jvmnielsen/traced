@@ -8,20 +8,20 @@
 //#include "Material.h"
 
 
-class renderer
+class Renderer
 {
 public:
-    renderer(
-        std::unique_ptr<camera> camera,
-        std::unique_ptr<scene> scene,
-        std::shared_ptr<image_buffer> buffer);
+    Renderer(
+        std::unique_ptr<Camera> camera,
+        std::unique_ptr<Scene> scene,
+        std::shared_ptr<ImageBuffer> buffer);
 
     void Render(int samplesPerPixel);
 
 private:
-    std::unique_ptr<camera>      m_camera;
-    std::unique_ptr<scene>       m_scene;
-    std::shared_ptr<image_buffer> m_buffer;
+    std::unique_ptr<Camera>      m_camera;
+    std::unique_ptr<Scene>       m_scene;
+    std::shared_ptr<ImageBuffer> m_buffer;
     //std::unique_ptr<Sampler>     m_sampler;
 
     // to generate random numbers [0,1]

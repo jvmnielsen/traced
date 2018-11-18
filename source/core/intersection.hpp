@@ -17,12 +17,12 @@ public:
     Intersection(Point3f point, Normal3f geometricNormal);
    
 
-    void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, triangle* shape);
+    void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);
 
     bool HasBeenHit() const;
     const Point3f& GetPoint() const;
     const Point2f& GetUV() const;
-    triangle* GetTriangle() const;
+    Triangle* GetTriangle() const;
     const Normal3f& GetGeometricNormal() const;
     const Normal3f& GetShadingNormal() const;
     
@@ -39,7 +39,7 @@ private:
     bool            m_hasBeenHit;
     Point3f         m_point;
     Point2f         m_uv;
-    triangle*       m_triangle;
+    Triangle*       m_triangle;
     Normal3f        m_geometricNormal;
     Normal3f        m_shadingNormal;
     Material*       m_material;

@@ -5,13 +5,13 @@
 #include "vec3.hpp"
 
 template< typename T >
-class matrix4x4
+class Matrix4x4
 {
 private:
     std::array<std::array<T, 4>, 4> m;
 public:
 
-    matrix4x4
+    Matrix4x4
     (T a00, T a01, T a02, T a03,
      T a10, T a11, T a12, T a13,
      T a20, T a21, T a22, T a23,
@@ -21,25 +21,25 @@ public:
              a20, a21, a22, a23,
              a30, a31, a32, a33}) {}
 
-    matrix4x4() {}
+    Matrix4x4() {}
 
     T& operator()(int i, int j) { return m[i][j]; }
     const T& operator()(int i, int j) const { return m[i][j]; }
 
-    explicit matrix4x4(const std::array<std::array<float, 4>, 4>& _m) : m(_m) {}
+    explicit Matrix4x4(const std::array<std::array<float, 4>, 4>& _m) : m(_m) {}
 
-    explicit matrix4x4(T val)
+    explicit Matrix4x4(T val)
     {
         for (auto& subArray : m)
             for (auto& value : subArray)
                 value = val;
     }
 
-    matrix4x4(const matrix4x4& mtx) : m(mtx.m) { }
+    Matrix4x4(const Matrix4x4& mtx) : m(mtx.m) { }
 
-    matrix4x4 Transpose() const
+    Matrix4x4 Transpose() const
     {
-        matrix4x4 tmp;
+        Matrix4x4 tmp;
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
                 tmp.m[i][j] = m[j][i];
@@ -47,9 +47,9 @@ public:
         return tmp;
     }
 
-    matrix4x4 getIdentity() const
+    Matrix4x4 getIdentity() const
     {
-        return matrix4x4{{ 1, 0, 0, 0,
+        return Matrix4x4{{ 1, 0, 0, 0,
                               0, 1, 0, 0,
                               0, 0, 1, 0,
                               0, 0, 0, 1 }};
@@ -66,11 +66,11 @@ public:
         m = identity;
     }
 
-    matrix4x4 Invert() const
+    Matrix4x4 Invert() const
     {
         //static_assert(N == M, "Matrix is not square!");
 
-        matrix4x4 tmp = *this;
+        Matrix4x4 tmp = *this;
         auto invTmp = tmp.getIdentity();
 
         // Switch rows around so there is a leading number in each
@@ -132,7 +132,7 @@ public:
     }
 
 
-    static void Multiply(const matrix4x4& a, const matrix4x4& b, matrix4x4& c)
+    static void Multiply(const Matrix4x4& a, const Matrix4x4& b, Matrix4x4& c)
     {
         // rolled up version rather than writing out the arguments
         for (uint8_t i = 0; i < 4; ++i) {
@@ -143,9 +143,9 @@ public:
         }
     }
 
-    matrix4x4 operator*(const matrix4x4& other) const
+    Matrix4x4 operator*(const Matrix4x4& other) const
     {
-        matrix4x4 tmp;
+        Matrix4x4 tmp;
         Multiply(*this, other, tmp);
         return tmp;
     }
@@ -180,4 +180,4 @@ public:
         std::cout << "| " << std::setw(4) << m[3][0] << ", " << std::setw(4) << m[3][1] << ", " << std::setw(4) << m[3][2] << ", " << std::setw(4) << m[3][3] << std::setw(4) << " |\n";
     }
 };
-typedef matrix4x4<float> Matrix4x4f;
+typedef Matrix4x4<float> Matrix4x4f;

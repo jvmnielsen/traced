@@ -2,10 +2,10 @@
 #include "color3.hpp"
 #include <vector>
 
-class image_buffer
+class ImageBuffer
 {
 public:
-    image_buffer(size_t screenWidth, size_t screenHeight);
+    ImageBuffer(size_t screenWidth, size_t screenHeight);
 
     void AddPixelAt(Color3f& color, size_t i, size_t j); // read/write for pixel at specified location
 

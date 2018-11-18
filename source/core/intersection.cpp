@@ -16,7 +16,7 @@ void Intersection::Update(
     const Point2f&      uvCoord,
     const Normal3f&     geometricNormal,
     const Normal3f&     shadingNormal,
-    triangle*           triangle)
+    Triangle*           triangle)
 {
     m_hasBeenHit = true;
     m_point = point;
@@ -29,7 +29,7 @@ void Intersection::Update(
 bool Intersection::HasBeenHit() const { return m_hasBeenHit; }
 const Point3f& Intersection::GetPoint() const { return m_point; }
 const Point2f& Intersection::GetUV() const { return m_uv; }
-triangle* Intersection::GetTriangle() const { return m_triangle; }
+Triangle* Intersection::GetTriangle() const { return m_triangle; }
 const Normal3f& Intersection::GetGeometricNormal() const { return m_geometricNormal; }
 const Normal3f& Intersection::GetShadingNormal() const { return m_shadingNormal; }
 Material* Intersection::GetMaterial() const { return m_material; }

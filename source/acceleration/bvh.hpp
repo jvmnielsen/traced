@@ -18,7 +18,7 @@ Union(const AABB& b1, const AABB& b2) -> AABB;
 class BVH
 {
 public:
-    explicit BVH(std::vector<std::unique_ptr<mesh>> meshes);
+    explicit BVH(std::vector<std::unique_ptr<Mesh>> meshes);
 
 private:
 

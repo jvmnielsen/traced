@@ -3,15 +3,15 @@
 #include "../math/vec3.hpp"
 #include "../math/ray.hpp"
 
-class camera
+class Camera
 {
 public:
 
-    camera() = default;
-    ~camera() = default;
+    Camera() = default;
+    ~Camera() = default;
 
-    camera(float v_fov, float aspect);
-    camera(const Point3f& look_from, const Point3f& look_at, const Vec3f& v_up, const float v_fov, const float aspect);
+    Camera(float v_fov, float aspect);
+    Camera(const Point3f& look_from, const Point3f& look_at, const Vec3f& v_up, const float v_fov, const float aspect);
 
     Rayf GetRay(const float u, const float v) const;
 

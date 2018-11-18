@@ -7,11 +7,11 @@
 class Parser
 {
 public:
-	std::unique_ptr<mesh> GetMeshFromFile(const std::string& filename);
+	std::unique_ptr<Mesh> GetMeshFromFile(const std::string& filename);
 
 private:
 	void ParseFile(const std::string& filename);
-	std::unique_ptr<mesh> ConstructMesh();
+	std::unique_ptr<Mesh> ConstructMesh();
     void Reset();
 
 	std::vector<Point3f> m_vertex;

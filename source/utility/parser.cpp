@@ -92,11 +92,11 @@ void Parser::ParseFile(const std::string& filename)
 	infile.close();
 }
 
-std::unique_ptr<mesh> Parser::ConstructMesh()
+std::unique_ptr<Mesh> Parser::ConstructMesh()
 {
 	//auto mesh_ptr = std::make_unique<Mesh>();
 
-	std::vector<triangle> triangles;
+	std::vector<Triangle> triangles;
 
 	triangles.reserve(m_vertex_ordering.size() / 3);
 
@@ -115,7 +115,7 @@ std::unique_ptr<mesh> Parser::ConstructMesh()
 				});
 	}
 
-	return std::make_unique<mesh>(std::move(triangles));
+	return std::make_unique<Mesh>(std::move(triangles));
 }
 
 void Parser::Reset()
@@ -130,7 +130,7 @@ void Parser::Reset()
     m_normal_ordering.clear();
 }
 
-std::unique_ptr<mesh> Parser::GetMeshFromFile(const std::string& filename)
+std::unique_ptr<Mesh> Parser::GetMeshFromFile(const std::string& filename)
 {
     ParseFile(filename);
 

@@ -3,14 +3,14 @@
 #include <cmath>
 
 template<typename T>
-struct vec3 {
+struct Vec3 {
     T x, y, z;
 
-    vec3() = default;
+    Vec3() = default;
    
-    explicit vec3(T val) : x(val), y(val), z(val) {}
+    explicit Vec3(T val) : x(val), y(val), z(val) {}
 
-    vec3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
+    Vec3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
 
     T LengthSquared() const
     {
@@ -22,12 +22,12 @@ struct vec3 {
         return std::sqrt(LengthSquared());
     }
 
-    vec3 operator*(const T factor) const
+    Vec3 operator*(const T factor) const
     {
-        return vec3{x * factor, y * factor, z * factor};
+        return Vec3{x * factor, y * factor, z * factor};
     }
 
-    vec3& operator*=(const T factor)
+    Vec3& operator*=(const T factor)
     {
         x *= factor;
         y *= factor;
@@ -35,12 +35,12 @@ struct vec3 {
         return *this;
     }
 
-    vec3 operator/(const T factor) const
+    Vec3 operator/(const T factor) const
     {
-        return vec3{x / factor, y / factor, z / factor};
+        return Vec3{x / factor, y / factor, z / factor};
     }
 
-    vec3& operator/=(const T factor)
+    Vec3& operator/=(const T factor)
     {
         x /= factor;
         y /= factor;
@@ -48,12 +48,12 @@ struct vec3 {
         return *this;
     }
 
-    vec3 operator+(const vec3 &other) const
+    Vec3 operator+(const Vec3 &other) const
     {
-        return vec3{x + other.x, y + other.y, z + other.z};
+        return Vec3{x + other.x, y + other.y, z + other.z};
     }
 
-    vec3 operator+=(const vec3 &other)
+    Vec3 operator+=(const Vec3 &other)
     {
         x += other.x;
         y += other.y;
@@ -61,12 +61,12 @@ struct vec3 {
         return *this;
     }
 
-    vec3 operator-(const vec3 &other) const
+    Vec3 operator-(const Vec3 &other) const
     {
-        return vec3<T>{x - other.x, y - other.y, z - other.z};
+        return Vec3<T>{x - other.x, y - other.y, z - other.z};
     }
 
-    vec3& operator-=(const vec3 &other)
+    Vec3& operator-=(const Vec3 &other)
     {
         x -= other.x;
         y -= other.y;
@@ -74,20 +74,20 @@ struct vec3 {
         return *this;
     }
 
-    T DotProduct(const vec3& other) const
+    T DotProduct(const Vec3& other) const
     {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    vec3 CrossProduct(const vec3& other) const
+    Vec3 CrossProduct(const Vec3& other) const
     {
-        return vec3<T>{
+        return Vec3<T>{
             y * other.z - z * other.y,
                 z * other.x - x * other.z,
                 x * other.y - y * other.x};
     }
 
-    vec3& Normalize()
+    Vec3& Normalize()
     {
         T length = this->Length();
         if (length > 0) // avoid division by 0
@@ -100,18 +100,18 @@ struct vec3 {
         return *this;
     }
 
-    vec3 operator-() const
+    Vec3 operator-() const
     {
-        return vec3{-x, -y, -z};
+        return Vec3{-x, -y, -z};
     }
 
     
-    bool operator==(const vec3& other)
+    bool operator==(const Vec3& other)
     {
         return x == other.x && y == other.y && z == other.z;
     }
 
-    bool operator!=(const vec3& other)
+    bool operator!=(const Vec3& other)
     {
         return x != other.x || y != other.y || z != other.z;
     }
@@ -134,38 +134,38 @@ struct vec3 {
 };
 
 template< typename T > auto
-operator==(const vec3<T>& v1, const vec3<T>& v2) -> bool
+operator==(const Vec3<T>& v1, const Vec3<T>& v2) -> bool
 {
     return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
 }
 
 
 template<typename T>
-vec3<T> operator*(const T factor, const vec3<T>& vec)
+Vec3<T> operator*(const T factor, const Vec3<T>& vec)
 {
-    return vec3<T>{vec.x * factor, vec.y * factor, vec.z * factor};
+    return Vec3<T>{vec.x * factor, vec.y * factor, vec.z * factor};
 }
 
 template<typename T>
-vec3<T> operator/(const T factor, const vec3<T>& vec)
+Vec3<T> operator/(const T factor, const Vec3<T>& vec)
 {
-    return vec3<T>{vec.x / factor, vec.y / factor, vec.z / factor};
+    return Vec3<T>{vec.x / factor, vec.y / factor, vec.z / factor};
 }
 
 template<typename T> auto
-Dot(const vec3<T>& v1, const vec3<T>& v2) -> T
+Dot(const Vec3<T>& v1, const Vec3<T>& v2) -> T
 {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 template< typename T > auto
-Cross(const vec3<T>& v1, const vec3<T>& v2) -> vec3<T>
+Cross(const Vec3<T>& v1, const Vec3<T>& v2) -> Vec3<T>
 {
-    return vec3<T>{
+    return Vec3<T>{
         v1.y * v2.z - v1.z * v2.y,
             v1.z * v2.x - v1.x * v2.z,
             v1.x * v2.y - v1.y * v2.x};
 }
 
-typedef vec3<float> Vec3f;
-typedef vec3<int> Vec3i;
-typedef vec3<double> Vec3d;
+typedef Vec3<float> Vec3f;
+typedef Vec3<int> Vec3i;
+typedef Vec3<double> Vec3d;

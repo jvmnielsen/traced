@@ -8,7 +8,7 @@
 #include "../math/vec3.hpp"
 
 
-class bsdf
+class BSDF
 {
     virtual Color3f Evaluate(
         const Vec3f& wi,
@@ -16,7 +16,7 @@ class bsdf
 
 };
 
-class Lambertian : public bsdf
+class Lambertian : public BSDF
 {
 public:
     explicit Lambertian(const Color3f& colorMatte = Color3f{0.2f}) : m_colorMatte(colorMatte) { }
@@ -28,7 +28,7 @@ public:
     Color3f m_colorMatte;
 };
 
-class Phong : public bsdf
+class Phong : public BSDF
 {
 public:
 

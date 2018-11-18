@@ -5,11 +5,11 @@
 #include "../acceleration/bvh.hpp"
 #include "../imaging/light.hpp"
 
-class scene
+class Scene
 {
 public:
 
-    scene(std::vector<std::unique_ptr<mesh>> meshes, std::vector<std::unique_ptr<light>> lights);
+    Scene(std::vector<std::unique_ptr<Mesh>> meshes, std::vector<std::unique_ptr<Light>> lights);
 
     // Does a ray intersect any shapes in the scene?
     auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
@@ -34,7 +34,7 @@ private:
     Color3f m_backgroundColor;
 
     BVH m_meshes;
-    std::vector<std::unique_ptr<light>> m_lights;
+    std::vector<std::unique_ptr<Light>> m_lights;
 
 
     bool IntersectsQuick(const Rayf& ray) const;

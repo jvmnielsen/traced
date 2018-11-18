@@ -1,15 +1,15 @@
 #include "scene.hpp"
 
-scene::scene(
-        std::vector<std::unique_ptr<mesh>> meshes,
-        std::vector<std::unique_ptr<light>> lights)
+Scene::Scene(
+        std::vector<std::unique_ptr<Mesh>> meshes,
+        std::vector<std::unique_ptr<Light>> lights)
     : m_meshes(std::move(meshes))
     , m_lights(std::move(lights))
 {
 }
 
 auto
-scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool
+Scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool
 {
 
     //for (const auto& light : m_lights)
@@ -19,7 +19,7 @@ scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool
     return false;
 }
 
-bool scene::IntersectsQuick(const Rayf& ray) const
+bool Scene::IntersectsQuick(const Rayf& ray) const
 {
     //for (const auto& volume : m_boundingVolumes)
     //    if (volume->IntersectsQuick(ray))
@@ -30,7 +30,7 @@ bool scene::IntersectsQuick(const Rayf& ray) const
 
 
 
-bool scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const
+bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const
 {
     const Vec3f offset = p2 - p1;
     const float distance = offset.Length();
@@ -39,7 +39,7 @@ bool scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const
 }
 
 
-Color3f scene::SamplePointLights(const Intersection& isect, const Rayf& ray) const
+Color3f Scene::SamplePointLights(const Intersection& isect, const Rayf& ray) const
 {
     Color3f color{0.0f};
     for (auto& light : m_lights)
@@ -83,17 +83,17 @@ Color3f Scene::SampleAreaLights(const Intersection& isect, const Rayf& ray)
     return color;
 } */
 
-Color3f scene::SampleIndirectLighting(const Intersection& isect, const Rayf& ray)
+Color3f Scene::SampleIndirectLighting(const Intersection& isect, const Rayf& ray)
 {
     return {0,0,0};
 }
 
-void scene::SetBackgroundColor(const Color3f& color)
+void Scene::SetBackgroundColor(const Color3f& color)
 {
     m_backgroundColor = color;
 }
 
-Color3f scene::BackgroundColor() const
+Color3f Scene::BackgroundColor() const
 {
     return m_backgroundColor;
 }

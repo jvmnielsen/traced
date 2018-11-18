@@ -11,15 +11,15 @@ struct LightingAtPoint
     Color3f intensityAtPoint;
 };
 
-class light
+class Light
 {
 public:
-    light(const Color3f intensity, const Point3f& position)
+    Light(const Color3f intensity, const Point3f& position)
         : m_intensity(intensity)
         , m_position(position)
     {}
 
-    virtual ~light() = default;
+    virtual ~Light() = default;
     virtual void IlluminatePoint(const Point3f& point, LightingAtPoint& info) const = 0;
 
     const Color3f& GetItensity() const { return m_intensity; }
@@ -34,13 +34,13 @@ protected:
     //float m_intensity;
 };
 
-class PointLight : public light
+class PointLight : public Light
 {
 public:
     PointLight() = default;
 
     PointLight(const Color3f intensity, const Point3f& position)
-        : light(intensity, position)
+        : Light(intensity, position)
     {}
 
 

@@ -7,13 +7,13 @@
 enum class RayType { PrimaryRay, ShadowRay };
 
 template< typename T >
-class ray
+class Ray
 {
 public:
-    constexpr ray() = default;
+    constexpr Ray() = default;
 
-    ray(const point3<T>& origin,
-        const vec3<T>& direction,
+    Ray(const Point3<T>& origin,
+        const Vec3<T>& direction,
         const T maxParam = Math::Infinity,
         const T minParam = 0.0001,
         const RayType& rayType = RayType::PrimaryRay)
@@ -29,9 +29,9 @@ public:
         m_sign[2] = m_reciprocDir.z < 0;
     }
 
-    const point3<T>& GetOrigin() const { return m_origin; }
-    const vec3<T>& GetDirection() const { return m_direction; }
-    point3<T> PointAtParameter(const float t) const { return m_origin + m_direction * t; }
+    const Point3<T>& GetOrigin() const { return m_origin; }
+    const Vec3<T>& GetDirection() const { return m_direction; }
+    Point3<T> PointAtParameter(const float t) const { return m_origin + m_direction * t; }
     const RayType& GetRayType() const { return m_rayType; }
 
     void NewMaxParameter(const T maxParam) const { m_maxParam = maxParam; }
@@ -47,8 +47,8 @@ public:
     bool IsPrimaryRay() const { return m_rayType == RayType::PrimaryRay; }
 
 private:
-    point3<T> m_origin;
-    vec3<T> m_direction;
+    Point3<T> m_origin;
+    Vec3<T> m_direction;
     RayType m_rayType;
 
     mutable T m_maxParam;
@@ -58,6 +58,6 @@ private:
     std::array<int, 3> m_sign; // used in AABB intersection test
 };
 
-typedef ray<float> Rayf;
-typedef ray<int> Rayi;
-typedef ray<double> Rayd;
+typedef Ray<float> Rayf;
+typedef Ray<int> Rayi;
+typedef Ray<double> Rayd;

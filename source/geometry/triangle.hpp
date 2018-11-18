@@ -11,15 +11,15 @@
 class Intersection;
 class Transform;
 
-class triangle
+class Triangle
 {
 public:
 
-    triangle(std::array<Point3f, 3>     vertices,
+    Triangle(std::array<Point3f, 3>     vertices,
              std::array<Normal3f, 3>    vertexNormals,
              std::array<Point2f, 3>     uv);
 
-    triangle(std::array<Point3f, 3>     vertices,
+    Triangle(std::array<Point3f, 3>     vertices,
              std::array<Normal3f, 3>    vertexNormals);
 
     bool Intersects(const Rayf &ray, Intersection& isect);

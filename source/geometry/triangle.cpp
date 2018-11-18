@@ -3,7 +3,7 @@
 #include "../core/intersection.hpp"
 #include "../math/transform.hpp"
 
-triangle::triangle(
+Triangle::Triangle(
     std::array<Point3f, 3>     vertices,
     std::array<Normal3f, 3>    vertexNormals,
     std::array<Point2f, 3>     uv)
@@ -14,7 +14,7 @@ triangle::triangle(
     UpdateEdges();
 }
 
-triangle::triangle(
+Triangle::Triangle(
     std::array<Point3f, 3>     vertices,
     std::array<Normal3f, 3>    vertexNormals)
     : m_vertices(std::move(vertices))
@@ -26,7 +26,7 @@ triangle::triangle(
 
 
 auto 
-triangle::UpdateEdges() -> void
+Triangle::UpdateEdges() -> void
 {
     m_edges[0]   = m_vertices[1] - m_vertices[0];
     m_edges[1]   = m_vertices[2] - m_vertices[0];
@@ -34,7 +34,7 @@ triangle::UpdateEdges() -> void
 }
 
 auto
-triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
+Triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
 {
     const auto p_vec = ray.GetDirection().CrossProduct(m_edges.at(1));
     const auto det = Dot(m_edges[0], p_vec);
@@ -71,7 +71,7 @@ triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
 }
 
 auto
-triangle::IntersectsFast(const Rayf& ray) const -> bool
+Triangle::IntersectsFast(const Rayf& ray) const -> bool
 {
     const auto p_vec = ray.GetDirection().CrossProduct(m_edges.at(1));
     const auto det = m_edges.at(0).DotProduct(p_vec);
@@ -100,7 +100,7 @@ triangle::IntersectsFast(const Rayf& ray) const -> bool
 }
 
 auto 
-triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f
+Triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f
 {
     // for flat shading simply return the face normal
     const auto normal = m_vertexNormals[0] * (1 - uv.x - uv.y)
@@ -111,7 +111,7 @@ triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f
 }
 
 auto
-triangle::TransformBy(const Transform& transform) -> void
+Triangle::TransformBy(const Transform& transform) -> void
 {
     for (auto& vertex : m_vertices)
         transform(vertex);
@@ -124,13 +124,13 @@ triangle::TransformBy(const Transform& transform) -> void
 }
 
 auto 
-triangle::GetArea() const -> float
+Triangle::GetArea() const -> float
 {
     return 0.5f * Cross(m_edges[0], m_edges[1]).Length();
 }
 
 auto
-triangle::GetVertices() const -> const std::array<Point3f, 3>&
+Triangle::GetVertices() const -> const std::array<Point3f, 3>&
 {
     return m_vertices;
 }

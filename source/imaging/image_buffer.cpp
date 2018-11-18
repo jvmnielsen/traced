@@ -21,7 +21,7 @@ void ConvertToRGB(Color3f& color)
 }
 
 
-image_buffer::image_buffer(
+ImageBuffer::ImageBuffer(
     const size_t screenWidth,
     const size_t screenHeight)
     : m_screenWidth(screenWidth)
@@ -38,7 +38,7 @@ image_buffer::image_buffer(
     }
 }
 
-auto image_buffer::AddPixelAt(Color3f& color, size_t i, size_t j) -> void
+auto ImageBuffer::AddPixelAt(Color3f& color, size_t i, size_t j) -> void
 {
     auto corrected_j = std::abs((int)j - (int)m_screenHeight) - 1; // to correct for j starting at screen_height and decrementing
 

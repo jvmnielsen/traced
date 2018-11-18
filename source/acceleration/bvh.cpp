@@ -25,7 +25,7 @@ Union(const AABB& b, const Point3f& p) -> AABB
 }
 
 
-BVH::BVH(std::vector<std::unique_ptr<mesh>> meshes)
+BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes)
 {
     for (auto& shape : meshes)
     {

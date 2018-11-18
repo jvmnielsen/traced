@@ -1,10 +1,10 @@
 #include "renderer.hpp"
 #include "../utility/utility.hpp"
 
-renderer::renderer(
-    std::unique_ptr<camera> camera,
-    std::unique_ptr<scene> scene,
-    std::shared_ptr<image_buffer> buffer)
+Renderer::Renderer(
+    std::unique_ptr<Camera> camera,
+    std::unique_ptr<Scene> scene,
+    std::shared_ptr<ImageBuffer> buffer)
     : m_camera(std::move(camera))
     , m_scene(std::move(scene))
     , m_buffer(buffer)
@@ -14,7 +14,7 @@ renderer::renderer(
 {
 }
 
-void renderer::Render(int samplesPerPixel)
+void Renderer::Render(int samplesPerPixel)
 {
     Timer<std::milli> timer = {"Rendering took: "};
 
@@ -45,7 +45,7 @@ void renderer::Render(int samplesPerPixel)
     }
 }
 
-Color3f renderer::TraceRay(const Rayf& ray, int depth)
+Color3f Renderer::TraceRay(const Rayf& ray, int depth)
 {
     Intersection isect;
     Color3f color{0.0f};

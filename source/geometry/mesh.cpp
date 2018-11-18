@@ -1,14 +1,14 @@
 
 #include "mesh.hpp"
 
-mesh::mesh(std::vector<triangle> triangle)
+Mesh::Mesh(std::vector<Triangle> triangle)
     : m_triangles(std::move(triangle))
 {
     std::cout << "Constructed mesh!\n";
 
 }
 
-mesh::mesh()
+Mesh::Mesh()
 {
     std::cout << "Constructed mesh!\n";
 }
@@ -52,7 +52,7 @@ Mesh::Mesh(Mesh&& other) noexcept
 
 
 
-bool mesh::Intersects(const Rayf& ray, Intersection& isect)
+bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
     for (auto& triangle : m_triangles)
         if (triangle.Intersects(ray, isect))
@@ -61,7 +61,7 @@ bool mesh::Intersects(const Rayf& ray, Intersection& isect)
 	return isect.HasBeenHit();
 }
 
-bool mesh::IntersectsFast(const Rayf& ray) const
+bool Mesh::IntersectsFast(const Rayf& ray) const
 {
     for (const auto& triangle : m_triangles)
         if (triangle.IntersectsFast(ray))
@@ -71,7 +71,7 @@ bool mesh::IntersectsFast(const Rayf& ray) const
 }
 
 
-void mesh::TransformBy(const Transform& transform)
+void Mesh::TransformBy(const Transform& transform)
 {
     for (auto& triangle : m_triangles)
         triangle.TransformBy(transform);
@@ -99,7 +99,7 @@ std::unique_ptr<Mesh> Mesh::Clone()
 
 
 auto 
-mesh::GetExtent() const->std::array<Point3f, 2>
+Mesh::GetExtent() const->std::array<Point3f, 2>
 {
     float minX = Math::Infinity;
     float minY = Math::Infinity;
@@ -132,7 +132,7 @@ mesh::GetExtent() const->std::array<Point3f, 2>
 }
 
 auto
-mesh::GetSurfaceArea() const -> float
+Mesh::GetSurfaceArea() const -> float
 {
     float sum = 0;
     for (const auto& triangle : m_triangles)
@@ -142,13 +142,13 @@ mesh::GetSurfaceArea() const -> float
 }
 
 auto
-mesh::ApplyMaterial(std::shared_ptr<Material> material) -> void
+Mesh::ApplyMaterial(std::shared_ptr<Material> material) -> void
 {
     m_material = std::move(material);
 }
 
 auto
-mesh::GetMaterial() const -> const Material&
+Mesh::GetMaterial() const -> const Material&
 {
     return *m_material;
 }

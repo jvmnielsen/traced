@@ -9,11 +9,11 @@
 
 class Transform;
 
-class mesh 
+class Mesh
 {
 public:
-    mesh();
-    explicit mesh(std::vector<triangle> triangle);
+    Mesh();
+    explicit Mesh(std::vector<Triangle> triangle);
     //Mesh(const Mesh& other);
     //Mesh(Mesh&& other) noexcept;
     //auto operator=(const Mesh& other) -> Mesh&;
@@ -30,7 +30,7 @@ public:
 
 private:
 
-    std::vector<triangle>       m_triangles;
+    std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;
 
 };

@@ -1,5 +1,5 @@
 #pragma once
-class sampler
+class Sampler
 {
 public:
     //ampler();
