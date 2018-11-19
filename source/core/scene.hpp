@@ -34,7 +34,7 @@ private:
     Color3f m_backgroundColor;
 
     BVH m_meshes;
-    std::vector<std::unique_ptr<Light>> m_lights;
+    std::vector<AABB> m_lights;
 
 
     bool IntersectsQuick(const Rayf& ray) const;

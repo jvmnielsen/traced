@@ -4,8 +4,13 @@ Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
         std::vector<std::unique_ptr<Light>> lights)
     : m_meshes(std::move(meshes))
-    , m_lights(std::move(lights))
+    //, m_lights(std::move(lights))
 {
+    m_lights.reserve(lights.size());
+
+    for (auto& light : lights)
+        m_lights.emplace_back(std::move(light));
+
 }
 
 auto

@@ -24,71 +24,78 @@ Union(const AABB& b, const Point3f& p) -> AABB
                           std::max(b.UpperBound().z, p.z)}};
 }
 
+BVH::BVHNode::BVHNode(const AABB& bounds)
+        : m_aabb(bounds)
+        , m_leftChild(nullptr)
+        , m_rightChild(nullptr) {
+}
 
-BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes)
-{
-    for (auto& shape : meshes)
-    {
+BVH::BVHNode::BVHNode(
+            int axis,
+            std::unique_ptr<BVHNode> leftChild,
+            std::unique_ptr<BVHNode> rightChild)
+        : m_aabb(Union(leftChild->m_aabb, rightChild->m_aabb))
+        , m_splitAxis(axis)
+        , m_leftChild(std::move(leftChild))
+        , m_rightChild(std::move(rightChild)) {
+}
+
+BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes) {
+
+    for (auto& shape : meshes) {
         m_AABBs.emplace_back(std::move(shape));
     }
 
-    BuildTree(0, m_AABBs.size());
+    m_rootNode = BuildTree(0, static_cast<int>(m_AABBs.size()));
 }
 
+auto BVH::FlattenTree(std::unique_ptr<BVHNode> rootNode) -> void {
 
-auto 
-BVH::AxisOfMaximumExtent() const -> int
-{
-    AABB globalBounds;
-    //for (const auto& bounds : m_boundingBoxes)
-      //  globalBounds = Union(globalBounds, bounds);
-
-    return globalBounds.MaximumExtent();
 }
 
-auto 
-BVH::BuildTree(int start, int end) -> BVHNode*
-{
-    // Node to return
-    BVHNode* node;
-
-    // Total bounds for current level
-    AABB totalBounds;
-    for (int i = start; i < end; ++i)
-        totalBounds = Union(totalBounds, m_AABBs[i]);
+auto BVH::BuildTree(int start, int end) -> std::unique_ptr<BVHNode> {
 
     int numShapes = end - start;
 
-    if (numShapes == 1)
-    {
-        // Create leaf node
-        node->InitLeaf(0, 1, totalBounds);
-    }
-    else
-    {
-        AABB centerBounds;
-        for (int i = start; i < end; ++i)
-        {
-            centerBounds = Union(centerBounds, m_AABBs[i].CalculateCenter());
+    // We've bottomed out
+    if (numShapes == 1) {
+        // Total bounds for current level
+        AABB totalBounds;
+        for (int i = start; i < end; ++i) {
+            totalBounds = Union(totalBounds, m_AABBs[i]);
         }
-        auto axis = centerBounds.MaximumExtent();
-        auto mid = (end + start) / 2;
-
-
-        std::nth_element(
-                &m_AABBs[start],
-                &m_AABBs[mid],
-                &m_AABBs[end],
-                [axis](const AABB& a, const AABB& b)
-                {
-                    return a.CalculateCenter()[axis] < b.CalculateCenter()[axis];
-                });
-
-
-        node->InitInner(axis,
-                       BuildTree(start, mid),
-                       BuildTree(mid, end));
+        // Create leaf node
+        return std::make_unique<BVHNode>(totalBounds);
     }
 
-    return node;
+    AABB centerBounds;
+    for (int i = start; i < end; ++i) {
+        centerBounds = Union(centerBounds, m_AABBs[i].CalculateCenter());
+    }
+    auto axis = centerBounds.MaximumExtent();
+    auto mid = (end + start) / 2;
+
+    std::nth_element(&m_AABBs[start], &m_AABBs[mid], &m_AABBs[end],
+                        [axis](const AABB& a, const AABB& b) {
+                            return a.CalculateCenter()[axis] < b.CalculateCenter()[axis];
+                        });
+
+    return std::make_unique<BVHNode>(axis, BuildTree(start, mid), BuildTree(mid, end));
+}
+
+auto BVH::BVHNode::Intersects(const Rayf& ray, Intersection& isect) const -> bool {
+
+    // Do we hit the bounding box?
+    if (!m_aabb.IntersectsBox(ray)) {
+        return false;
+    }
+    // Is the current node in the interior or a leaf?
+    if (m_leftChild || m_rightChild) {
+        auto leftIsect = m_leftChild->Intersects(ray);
+        auto rightIsect = m_rightChild->Intersects(ray);
+
+        if ()
+
+    }
+    return true;
 }

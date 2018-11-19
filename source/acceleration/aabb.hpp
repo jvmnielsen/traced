@@ -8,6 +8,7 @@
 #include "../math/point3.hpp"
 #include "../math/math_util.hpp"
 #include "../geometry/mesh.hpp"
+#include <optional>
 
 // Axis-aligned bounding-box
 class AABB
@@ -20,7 +21,12 @@ public:
     AABB(const AABB& other);
     auto operator=(const AABB& other) -> AABB&;
 
+
+    auto IntersectsMesh(const Rayf& ray) const -> std::optional<Intersection>;
+    auto IntersectsBox(const Rayf& ray) const -> bool;
+
     auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
+
     auto IntersectsQuick(const Rayf& ray) const -> bool;
 
     auto Diagonal()         const -> Vec3f;

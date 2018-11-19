@@ -8,53 +8,37 @@
 //#include "AABB.h"
 
 #include "aabb.hpp"
+#include <optional>
 
-
-auto
-Union(const AABB& b1, const AABB& b2) -> AABB;
-
-
-
-class BVH
-{
+class BVH {
 public:
     explicit BVH(std::vector<std::unique_ptr<Mesh>> meshes);
 
+    //auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
+
 private:
 
-    struct BVHNode
-    {
-        auto InitLeaf(int first, int n, const AABB& b) -> void
-        {
-            firstPrimOffset = first;
-            nPrimitives = n;
-            bounds = b;
-            children[0] = children[1] = nullptr;
+    struct BVHNode {
 
-        }
+        explicit BVHNode(const AABB& bounds);
+        BVHNode(int axis, std::unique_ptr<BVHNode> leftChild, std::unique_ptr<BVHNode> rightChild);
 
-        auto InitInner(int axis, BVHNode* c0, BVHNode* c1) -> void
-        {
-            children[0] = c0;
-            children[1] = c1;
-            bounds = Union(c0->bounds, c1->bounds);
-            splitAxis = axis;
-            nPrimitives =0;
+        auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
 
-        }
-
-        AABB bounds;
-        BVHNode* children[2];
-        int splitAxis, firstPrimOffset, nPrimitives;
+        AABB m_aabb;
+        std::unique_ptr<BVHNode> m_leftChild;
+        std::unique_ptr<BVHNode> m_rightChild;
+        //BVHNode* children[2];
+        int m_splitAxis; //, firstPrimOffset, nPrimitives;
     };
-
-    auto AxisOfMaximumExtent() const-> int;
 
     std::vector<AABB> m_AABBs;
 
-    BVHNode* m_rootNode;
+    std::unique_ptr<BVHNode> m_rootNode;
 
-    auto
-    BuildTree(int start, int end) -> BVHNode*;
+    std::vector<std::unique_ptr<BVHNode>> m_flattenedTree;
+
+    auto BuildTree(int start, int end) -> std::unique_ptr<BVHNode>;
+    auto FlattenTree(std::unique_ptr<BVHNode> rootNode) -> void;
 };
 
