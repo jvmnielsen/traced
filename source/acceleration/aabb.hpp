@@ -22,7 +22,7 @@ public:
     auto operator=(const AABB& other) -> AABB&;
 
 
-    auto IntersectsMesh(const Rayf& ray) const -> std::optional<Intersection>;
+    //auto IntersectsMesh(const Rayf& ray) const -> std::optional<Intersection>;
     auto IntersectsBox(const Rayf& ray) const -> bool;
 
     auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;

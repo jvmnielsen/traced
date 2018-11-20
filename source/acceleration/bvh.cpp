@@ -24,8 +24,8 @@ Union(const AABB& b, const Point3f& p) -> AABB
                           std::max(b.UpperBound().z, p.z)}};
 }
 
-BVH::BVHNode::BVHNode(const AABB& bounds)
-        : m_aabb(bounds)
+BVH::BVHNode::BVHNode(AABB aabb)
+        : m_aabb(std::move(aabb))
         , m_leftChild(nullptr)
         , m_rightChild(nullptr) {
 }
@@ -60,12 +60,12 @@ auto BVH::BuildTree(int start, int end) -> std::unique_ptr<BVHNode> {
     // We've bottomed out
     if (numShapes == 1) {
         // Total bounds for current level
-        AABB totalBounds;
-        for (int i = start; i < end; ++i) {
-            totalBounds = Union(totalBounds, m_AABBs[i]);
-        }
+        //AABB totalBounds;
+        //for (int i = start; i < end; ++i) {
+        //    totalBounds = Union(totalBounds, m_AABBs[i]);
+        //}
         // Create leaf node
-        return std::make_unique<BVHNode>(totalBounds);
+        return std::make_unique<BVHNode>(m_AABBs[start]);
     }
 
     AABB centerBounds;
@@ -90,12 +90,17 @@ auto BVH::BVHNode::Intersects(const Rayf& ray, Intersection& isect) const -> boo
         return false;
     }
     // Is the current node in the interior or a leaf?
-    if (m_leftChild || m_rightChild) {
-        auto leftIsect = m_leftChild->Intersects(ray);
-        auto rightIsect = m_rightChild->Intersects(ray);
-
-        if ()
-
+    if (m_leftChild) {
+        return m_leftChild->Intersects(ray, isect);
     }
-    return true;
+    if (m_rightChild) {
+        return m_rightChild->Intersects(ray, isect);
+    }
+//    throw std::exception();
+    return m_aabb.Intersects(ray, isect);
+}
+
+auto BVH::Intersects(const Rayf& ray, Intersection& isect) const -> bool
+{
+    return m_rootNode->Intersects(ray, isect);
 }

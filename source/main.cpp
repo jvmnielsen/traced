@@ -23,13 +23,13 @@ int main(int argc, char * argv[])
     auto teapot = parser.GetMeshFromFile("../assets/teapot.obj");
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 42.0f));
     teapot->TransformBy(Transform::Scale({0.03f, 0.03f, 0.03f}));
-    teapot->TransformBy(Transform::Translate({0.0f, 0.2f, -2.8f}));
+    teapot->TransformBy(Transform::Translate({-0.3f, 0.2f, -2.8f}));
 
     //Mesh test = *teapot;
     auto teapot2 = std::make_unique<Mesh>(*teapot);
     teapot2->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 60.0f));
     teapot2->TransformBy(Transform::Scale({0.03f, 0.03f, 0.03f}));
-    teapot2->TransformBy(Transform::Translate({0.0f, 1.2f, -1.8f}));
+    teapot2->TransformBy(Transform::Translate({0.4f, 0.2f, -2.8f}));
 
     //auto matte = std::make_shared<Matte>( Color3f{0} );
     //teapot->ApplyMaterial(matte);

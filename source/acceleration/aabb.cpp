@@ -144,6 +144,48 @@ bool AABB::IntersectsQuick(const Rayf& ray) const
     return m_mesh->IntersectsFast(ray);
 }
 
+auto AABB::IntersectsBox(const Rayf& ray) const -> bool
+{
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+    tmin  = (m_bounds[    ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tmax  = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tymin = (m_bounds[    ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
+    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
+
+    if ( (tmin > tymax) || (tymin > tmax) )
+        return false;
+
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    tzmin = (m_bounds[    ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
+    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
+
+    if ( (tmin > tzmax) || (tzmin > tmax) )
+        return false;
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+
+    //return ( (tmin < t1) && (tmax > t0) );
+
+    auto parameter = tmin;
+
+    if (parameter < 0)
+    {
+        parameter = tmax;
+        if (parameter < 0)
+            return false;
+    }
+
+    return true;
+}
+
+
 bool AABB::IntersectsShape(const Rayf& ray, Intersection& isect) const
 {
     return m_mesh->Intersects(ray, isect);

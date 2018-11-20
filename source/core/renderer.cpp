@@ -52,6 +52,7 @@ Color3f Renderer::TraceRay(const Rayf& ray, int depth)
 
     if (m_scene->Intersects(ray, isect))
     {
+        /*
         // Contribution from object self-emitting
         if (ray.IsPrimaryRay() && m_emit)
             color += isect.CalculateEmitted();
@@ -64,9 +65,11 @@ Color3f Renderer::TraceRay(const Rayf& ray, int depth)
         }
 
         // Contribution from indirect lighting
-        if (!ray.IsPrimaryRay() || m_indirect);
+        if (!ray.IsPrimaryRay() || m_indirect)
+            ;
             //color += estimateIndirectLight(sufel, ray, isEyeRay);
-
+        */
+        color += Color3f{0.1f};
     }
     else
     {

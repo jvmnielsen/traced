@@ -8,20 +8,19 @@ Scene::Scene(
 {
     m_lights.reserve(lights.size());
 
-    for (auto& light : lights)
-        m_lights.emplace_back(std::move(light));
+    //for (auto& light : lights)
+    //    m_lights.emplace_back(std::move(light));
 
 }
 
 auto
 Scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool
 {
-
     //for (const auto& light : m_lights)
     //    light->Intersects(ray, isect);
            
     //return isect.HasBeenHit();
-    return false;
+    return m_meshes.Intersects(ray, isect);
 }
 
 bool Scene::IntersectsQuick(const Rayf& ray) const
@@ -47,6 +46,7 @@ bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const
 Color3f Scene::SamplePointLights(const Intersection& isect, const Rayf& ray) const
 {
     Color3f color{0.0f};
+    /*
     for (auto& light : m_lights)
     {
         if (LineOfSightBetween(isect.OffsetShadingPoint(), light->GetPosition()))
@@ -60,6 +60,7 @@ Color3f Scene::SamplePointLights(const Intersection& isect, const Rayf& ray) con
             color += isect.GetMaterial()->EvaluateBSDF(w_o, w_i) * info.intensityAtPoint * std::max(0.0f, w_i.DotProduct(isect.GetShadingNormal()));
         }
     }
+     */
     return color;
 }
 
