@@ -24,8 +24,8 @@ int main(int argc, char * argv[])
     auto teapot2 = std::make_unique<Mesh>(*teapot);
     
     //teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 42.0f));
-    teapot->TransformBy(Transform::Scale({0.25f, 0.25f, 0.25f}));
-    teapot->TransformBy(Transform::Translate({-7.0f, 0.2f, -20.0f}));
+    teapot->TransformBy(Transform::Scale({0.55f, 0.55f, 0.55f}));
+    teapot->TransformBy(Transform::Translate({7.0f, 0.2f, -40.0f}));
 
     //Mesh test = *teapot;
     //teapot2->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 60.0f));

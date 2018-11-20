@@ -17,6 +17,8 @@ public:
 
     Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal, Triangle* triangle);
 
+    auto Emitted() const -> Color3f;
+
     //Intersection(Point3f point, Normal3f geometricNormal);
    
 
@@ -30,7 +32,8 @@ public:
     const Normal3f& GetShadingNormal() const;
     
     Material* GetMaterial() const;
-    auto SetMaterial(Material* material) -> void { m_material = material; }
+    auto SetMaterial(Material* material) -> void;
+    //auto SetMaterial(Material* material) -> void { m_material = material; }
     //auto SetParentMeshMaterial(Material* material) -> void;
 
     Point3f OffsetShadingPoint() const;

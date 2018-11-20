@@ -31,8 +31,8 @@ void Renderer::Render(int samplesPerPixel)
 
             for (size_t s = 0; s < samplesPerPixel; s++)
             {
-                const auto u = float(i + m_dist(m_gen)) / float(width); // maybe precompute
-                const auto v = float(j + m_dist(m_gen)) / float(height);
+                const auto u = float(i ) / float(width); // + m_dist(m_gen)
+                const auto v = float(j ) / float(height); // + m_dist(m_gen)
 
                 const auto ray = m_camera->GetRay(u, v);
 
@@ -50,33 +50,31 @@ Color3f Renderer::TraceRay(const Rayf& ray, int depth)
     //Intersection isect;
     Color3f color{0.3f};
 
-    std::optional<Intersection> isect = m_scene->Intersects(ray);
+    const auto isect = m_scene->Intersects(ray);
 
-    if (isect.has_value())
+    if (!isect.has_value() || depth > m_maxBounces)
+        return m_scene->BackgroundColor();
+        
+    // Contribution from object self-emitting
+    if (ray.IsPrimaryRay() && m_emit)
+        color += isect.value().Emitted();
+
+    // Contribution from direct lighting
+    if (m_direct) // !ray.IsPrimaryRay() ||
     {
-        /*
-        // Contribution from object self-emitting
-        if (ray.IsPrimaryRay() && m_emit)
-            color += isect.CalculateEmitted();
-
-        // Contribution from direct lighting
-        if (m_direct) // !ray.IsPrimaryRay() ||
-        {
-            //color += estiamteDirectLightFromPointLights(surfel, ray);
-            //color += m_scene->SampleAreaLights(isect, ray);
-        }
-
-        // Contribution from indirect lighting
-        if (!ray.IsPrimaryRay() || m_indirect)
-            ;
-            //color += estimateIndirectLight(sufel, ray, isEyeRay);
-        */
-        color += Color3f{0.1f};
+        //color += estiamteDirectLightFromPointLights(surfel, ray);
+        //color += m_scene->SampleAreaLights(isect, ray);
     }
-    else
-    {
-        color = m_scene->BackgroundColor();
-    }
+
+    // Contribution from indirect lighting
+    if (!ray.IsPrimaryRay() || m_indirect)
+        ;
+        //color += estimateIndirectLight(sufel, ray, isEyeRay);
+        
+
+    
+    //color = m_scene->BackgroundColor();
+    
 
     return color;
 }

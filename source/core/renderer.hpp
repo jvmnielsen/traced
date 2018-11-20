@@ -38,7 +38,7 @@ private:
     bool m_emit = true;
     bool m_direct = true;
     bool m_indirect = true;
-
+    static constexpr int m_maxBounces = 5;
 };
 
 /*
