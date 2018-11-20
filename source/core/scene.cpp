@@ -23,6 +23,12 @@ Scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool
     return m_meshes.Intersects(ray, isect);
 }
 
+auto 
+Scene::Intersects(const Rayf& ray) -> std::optional<Intersection>
+{
+    return m_meshes.Intersects(ray);
+}
+
 bool Scene::IntersectsQuick(const Rayf& ray) const
 {
     //for (const auto& volume : m_boundingVolumes)

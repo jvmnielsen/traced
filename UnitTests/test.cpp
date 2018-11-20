@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "../src/Math/MathUtil.hpp"
-#include "../src/Math/Vec3.hpp"
+#include "../src/math/math_util.hpp"
+#include "../src/math/vec3.hpp"
 
 TEST(TestCaseName, TestName) {
   EXPECT_EQ(1, 1);

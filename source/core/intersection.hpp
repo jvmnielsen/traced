@@ -14,12 +14,15 @@ public:
 
     
     Intersection() {}
-    Intersection(Point3f point, Normal3f geometricNormal);
+
+    Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal, Triangle* triangle);
+
+    //Intersection(Point3f point, Normal3f geometricNormal);
    
 
-    void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);
+    //void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);
 
-    bool HasBeenHit() const;
+    //bool HasBeenHit() const;
     const Point3f& GetPoint() const;
     const Point2f& GetUV() const;
     Triangle* GetTriangle() const;
@@ -36,7 +39,7 @@ public:
     Color3f CalculateEmitted() const;
 
 private:
-    bool            m_hasBeenHit;
+    //bool            m_hasBeenHit;
     Point3f         m_point;
     Point2f         m_uv;
     Triangle*       m_triangle;

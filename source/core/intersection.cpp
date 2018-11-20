@@ -2,15 +2,31 @@
 #include "../math/math_util.hpp"
 //#include "Material.h"
 
+/*
 Intersection::Intersection(
     Point3f point,
     Normal3f geometricNormal)
     : m_point(std::move(point))
     , m_geometricNormal(std::move(geometricNormal))
 {}
+ */
+Intersection::Intersection(
+    Point3f     point,
+    Point2f     uvCoord,
+    Normal3f    geometricNormal,
+    Normal3f    shadingNormal,
+    Triangle*   triangle)
+    : m_point(std::move(point))
+    , m_uv(std::move(uvCoord))
+    , m_triangle(triangle)
+    , m_geometricNormal(std::move(geometricNormal))
+    , m_shadingNormal(std::move(shadingNormal))
+{
+}
 
 //void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);
 
+/*
 void Intersection::Update(
     const Point3f&      point,
     const Point2f&      uvCoord,
@@ -24,9 +40,9 @@ void Intersection::Update(
     m_geometricNormal = geometricNormal;
     m_triangle = triangle;
     m_shadingNormal = shadingNormal;
-}
+} */
 
-bool Intersection::HasBeenHit() const { return m_hasBeenHit; }
+//bool Intersection::HasBeenHit() const { return m_hasBeenHit; }
 const Point3f& Intersection::GetPoint() const { return m_point; }
 const Point2f& Intersection::GetUV() const { return m_uv; }
 Triangle* Intersection::GetTriangle() const { return m_triangle; }

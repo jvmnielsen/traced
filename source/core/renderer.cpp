@@ -47,10 +47,12 @@ void Renderer::Render(int samplesPerPixel)
 
 Color3f Renderer::TraceRay(const Rayf& ray, int depth)
 {
-    Intersection isect;
-    Color3f color{0.0f};
+    //Intersection isect;
+    Color3f color{0.3f};
 
-    if (m_scene->Intersects(ray, isect))
+    std::optional<Intersection> isect = m_scene->Intersects(ray);
+
+    if (isect.has_value())
     {
         /*
         // Contribution from object self-emitting

@@ -6,6 +6,7 @@
 #include "../math/point2.hpp"
 #include "../math/ray.hpp"
 #include "../math/vec3.hpp"
+#include <optional>
 
 
 class Intersection;
@@ -22,8 +23,10 @@ public:
     Triangle(std::array<Point3f, 3>     vertices,
              std::array<Normal3f, 3>    vertexNormals);
 
-    bool Intersects(const Rayf &ray, Intersection& isect);
+    //bool Intersects(const Rayf &ray, Intersection& isect);
     bool IntersectsFast(const Rayf& ray) const;
+    auto Intersects(const Rayf& ray) -> std::optional<Intersection>;
+
 
     auto InterpolateNormalAt(const Point2f& uv) const -> Normal3f;
 

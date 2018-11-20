@@ -33,6 +33,7 @@ Triangle::UpdateEdges() -> void
     m_faceNormal = m_edges[0].CrossProduct(m_edges[1]).Normalize();
 }
 
+/*
 auto
 Triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
 {
@@ -65,10 +66,10 @@ Triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
 
     // Update parameter and intersection as necessary
     ray.NewMaxParameter(parameter);
-    isect.Update(ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric), this);
+    //isect.Update(ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric), this);
    
     return true;
-}
+} */
 
 auto
 Triangle::IntersectsFast(const Rayf& ray) const -> bool
@@ -97,6 +98,41 @@ Triangle::IntersectsFast(const Rayf& ray) const -> bool
 
     return parameter > 0 && parameter <= ray.GetMaxParameter();
 
+}
+
+auto 
+Triangle::Intersects(const Rayf& ray) -> std::optional<Intersection>
+{
+    const auto p_vec = Cross(ray.GetDirection(), m_edges.at(1));
+    const auto det = Dot(m_edges[0], p_vec);
+
+    const auto recipDet = 1 / det;
+
+    Point2f barycentric;
+
+    // barycentric coordinate u
+    const auto t_vec = ray.GetOrigin() - m_vertices[0];
+    barycentric.x = t_vec.DotProduct(p_vec) * recipDet;
+
+    if (barycentric.x < 0 || barycentric.x > 1)
+        return std::nullopt;
+
+    // barycentric coordinate v
+    const auto q_vec = t_vec.CrossProduct(m_edges.at(0));
+    barycentric.y = ray.GetDirection().DotProduct(q_vec) * recipDet;
+
+    if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
+        return std::nullopt;
+
+    const auto parameter = m_edges.at(1).DotProduct(q_vec) * recipDet;
+
+    if (!ray.ParameterWithinBounds(parameter))
+        return std::nullopt;
+
+    // Update parameter and intersection as necessary
+    ray.NewMaxParameter(parameter);
+
+    return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric), this };
 }
 
 auto 

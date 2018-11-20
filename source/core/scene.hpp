@@ -13,7 +13,7 @@ public:
 
     // Does a ray intersect any shapes in the scene?
     auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
-
+    auto Intersects(const Rayf& ray)->std::optional<Intersection>;
 
     // Is there a clear line of sight between two points
     bool LineOfSightBetween(const Point3f& p1, const Point3f& p2) const;

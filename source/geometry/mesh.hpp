@@ -6,6 +6,7 @@
 
 #include "triangle.hpp"
 #include "../core/intersection.hpp"
+#include <optional>
 
 class Transform;
 
@@ -18,6 +19,7 @@ public:
     //Mesh(Mesh&& other) noexcept;
     //auto operator=(const Mesh& other) -> Mesh&;
 
+    auto Intersects(const Rayf& ray) -> std::optional<Intersection>;
 	auto Intersects(const Rayf& ray, Intersection& isect) -> bool;
     auto IntersectsFast(const Rayf& ray) const -> bool;
 

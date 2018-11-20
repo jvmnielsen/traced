@@ -100,7 +100,8 @@ AABB::Intersects(const Rayf& ray, Intersection& isect) const -> bool
 
     IntersectsShape(ray, isect);
 
-    return isect.HasBeenHit();
+    //return isect.HasBeenHit();
+    return true;
 }
 
 bool AABB::IntersectsQuick(const Rayf& ray) const
@@ -183,6 +184,12 @@ auto AABB::IntersectsBox(const Rayf& ray) const -> bool
     }
 
     return true;
+}
+
+auto 
+AABB::IntersectsMesh(const Rayf& ray) const->std::optional<Intersection>
+{
+    return m_mesh->Intersects(ray);
 }
 
 

@@ -55,11 +55,28 @@ Mesh::Mesh(Mesh&& other) noexcept
 bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
     for (auto& triangle : m_triangles)
-        if (triangle.Intersects(ray, isect))
+        //if (triangle.Intersects(ray, isect))
             isect.SetMaterial(m_material.get());
             
-	return isect.HasBeenHit();
+	return true;
 }
+
+auto 
+Mesh::Intersects(const Rayf& ray) -> std::optional<Intersection>
+{
+    std::optional<Intersection> isect;
+    for (auto& triangle : m_triangles) {
+        const auto tmpIsect = triangle.Intersects(ray);
+        if (tmpIsect.has_value())
+            isect = tmpIsect;
+    }
+
+    if (isect.has_value())
+        isect->SetMaterial(m_material.get());
+
+    return isect;//.has_value() ? std::optional<Intersection>{isect.value()} : std::nullopt;
+}
+
 
 bool Mesh::IntersectsFast(const Rayf& ray) const
 {

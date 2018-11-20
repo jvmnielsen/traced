@@ -14,6 +14,7 @@ class BVH {
 public:
     explicit BVH(std::vector<std::unique_ptr<Mesh>> meshes);
 
+    auto Intersects(const Rayf& ray) const->std::optional<Intersection>;
     auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
 
 private:
@@ -25,6 +26,8 @@ private:
 
         auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
         auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
+
+        auto IsInteriorNode() const -> bool;
 
         AABB m_aabb;
         std::unique_ptr<BVHNode> m_leftChild;

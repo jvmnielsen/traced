@@ -244,55 +244,160 @@
     <ClInclude Include="third_party\sdl2\include\SDL_vulkan.h">
       <Filter>SDL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Acceleration\BoundingVolume.hpp" />
-    <ClInclude Include="src\Acceleration\BVH.hpp" />
-    <ClInclude Include="src\Core\Intersection.hpp" />
-    <ClInclude Include="src\Core\Renderer.hpp" />
-    <ClInclude Include="src\Core\Sampler.hpp" />
-    <ClInclude Include="src\Core\Scene.hpp" />
-    <ClInclude Include="src\Geometry\Mesh.hpp" />
-    <ClInclude Include="src\Geometry\Triangle.hpp" />
-    <ClInclude Include="src\Imaging\Camera.hpp" />
-    <ClInclude Include="src\Imaging\Color3.hpp" />
-    <ClInclude Include="src\Imaging\ImageBuffer.hpp" />
-    <ClInclude Include="src\Imaging\Light.hpp" />
-    <ClInclude Include="src\Material\BSDF.hpp" />
-    <ClInclude Include="src\Material\Material.hpp" />
-    <ClInclude Include="src\Math\MathUtil.hpp" />
-    <ClInclude Include="src\Math\Matrix4x4.hpp" />
-    <ClInclude Include="src\Math\Normal3.hpp" />
-    <ClInclude Include="src\Math\Point2.hpp" />
-    <ClInclude Include="src\Math\Point3.hpp" />
-    <ClInclude Include="src\Math\Ray.hpp" />
-    <ClInclude Include="src\Math\Transform.hpp" />
-    <ClInclude Include="src\Math\Vec2.hpp" />
-    <ClInclude Include="src\Math\Vec3.hpp" />
-    <ClInclude Include="src\Utility\Parser.hpp" />
-    <ClInclude Include="src\Utility\Utility.hpp" />
-    <ClInclude Include="src\Utility\Window.hpp" />
+    <ClInclude Include="source\acceleration\aabb.hpp">
+      <Filter>acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="source\acceleration\bvh.hpp">
+      <Filter>acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\scene.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\intersection.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\sampler.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\geometry\mesh.hpp">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="source\geometry\triangle.hpp">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="source\imaging\camera.hpp">
+      <Filter>imaging</Filter>
+    </ClInclude>
+    <ClInclude Include="source\imaging\Color3.hpp">
+      <Filter>imaging</Filter>
+    </ClInclude>
+    <ClInclude Include="source\imaging\image_buffer.hpp">
+      <Filter>imaging</Filter>
+    </ClInclude>
+    <ClInclude Include="source\imaging\Light.hpp">
+      <Filter>imaging</Filter>
+    </ClInclude>
+    <ClInclude Include="source\material\BSDF.hpp">
+      <Filter>material</Filter>
+    </ClInclude>
+    <ClInclude Include="source\material\material.hpp">
+      <Filter>material</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\math_util.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Matrix4x4.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Normal3.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Point2.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Point3.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Ray.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\transform.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Vec2.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Vec3.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\parser.hpp">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\utility.hpp">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\window.hpp">
+      <Filter>utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="SDL">
       <UniqueIdentifier>{ec89b759-0805-47cf-9409-dc813fc7019d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="acceleration">
+      <UniqueIdentifier>{f8be1248-d492-4ae4-af92-d701227f85c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{db6ec7de-334f-42e9-bbaa-f64e7c4bb745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry">
+      <UniqueIdentifier>{c13f1c3a-a480-45b4-8265-ebe261d473d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imaging">
+      <UniqueIdentifier>{9dd52b4a-c41c-440b-8c0a-da15feaff579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="material">
+      <UniqueIdentifier>{0f641482-3124-406a-be01-bf5eb53616cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{2cbbae1d-c3e7-4cc9-ae95-dbe5517491ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{2d21e844-ed3f-429b-b8f6-c865e2962246}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Acceleration\BoundingVolume.cpp" />
-    <ClCompile Include="src\Acceleration\BVH.cpp" />
-    <ClCompile Include="src\Core\Intersection.cpp" />
-    <ClCompile Include="src\Core\Renderer.cpp" />
-    <ClCompile Include="src\Core\Sampler.cpp" />
-    <ClCompile Include="src\Core\Scene.cpp" />
-    <ClCompile Include="src\Geometry\Mesh.cpp" />
-    <ClCompile Include="src\Geometry\Triangle.cpp" />
-    <ClCompile Include="src\Imaging\Camera.cpp" />
-    <ClCompile Include="src\Imaging\ImageBuffer.cpp" />
-    <ClCompile Include="src\Material\BSDF.cpp" />
-    <ClCompile Include="src\Material\Material.cpp" />
-    <ClCompile Include="src\Math\MathUtil.cpp" />
-    <ClCompile Include="src\Math\Transform.cpp" />
-    <ClCompile Include="src\Utility\Parser.cpp" />
-    <ClCompile Include="src\Utility\Window.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="source\acceleration\bvh.cpp">
+      <Filter>acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="source\acceleration\aabb.cpp">
+      <Filter>acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\intersection.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\sampler.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\scene.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\geometry\triangle.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="source\geometry\mesh.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="source\imaging\camera.cpp">
+      <Filter>imaging</Filter>
+    </ClCompile>
+    <ClCompile Include="source\imaging\image_buffer.cpp">
+      <Filter>imaging</Filter>
+    </ClCompile>
+    <ClCompile Include="source\material\BSDF.cpp">
+      <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="source\material\material.cpp">
+      <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\math_util.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\transform.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\parser.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\window.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp" />
   </ItemGroup>
 </Project>

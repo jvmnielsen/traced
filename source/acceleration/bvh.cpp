@@ -75,7 +75,7 @@ auto BVH::BuildTree(int start, int end) -> std::unique_ptr<BVHNode> {
     auto axis = centerBounds.MaximumExtent();
     auto mid = (end + start) / 2;
 
-    std::nth_element(&m_AABBs[start], &m_AABBs[mid], &m_AABBs[end],
+    std::nth_element(&m_AABBs[start], &m_AABBs[mid], &m_AABBs[end-1],
                         [axis](const AABB& a, const AABB& b) {
                             return a.CalculateCenter()[axis] < b.CalculateCenter()[axis];
                         });
@@ -92,15 +92,45 @@ auto BVH::BVHNode::Intersects(const Rayf& ray, Intersection& isect) const -> boo
     // Is the current node in the interior or a leaf?
     if (m_leftChild) {
         return m_leftChild->Intersects(ray, isect);
-    }
-    if (m_rightChild) {
         return m_rightChild->Intersects(ray, isect);
     }
 //    throw std::exception();
     return m_aabb.Intersects(ray, isect);
 }
 
+
+auto 
+BVH::BVHNode::IsInteriorNode() const -> bool
+{
+    return m_leftChild || m_rightChild;
+}
+
+auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional< Intersection> 
+{
+
+    // Do we hit the bounding box?
+    if (!m_aabb.IntersectsBox(ray)) 
+        return std::nullopt;
+    
+    // Is the current node in the interior or a leaf?
+    if (IsInteriorNode()) {
+        auto leftIsect = m_leftChild->Intersects(ray);
+        auto rightIsect = m_rightChild->Intersects(ray);
+        // do right first - it can only have a value if it's closer
+        return rightIsect.has_value() ? rightIsect : leftIsect.has_value() ? leftIsect : std::nullopt; // TODO: figure out if isect is ctored
+    }
+    //    throw std::exception();
+    return m_aabb.IntersectsMesh(ray);
+}
+
+
 auto BVH::Intersects(const Rayf& ray, Intersection& isect) const -> bool
 {
     return m_rootNode->Intersects(ray, isect);
+}
+
+auto 
+BVH::Intersects(const Rayf& ray) const -> std::optional<Intersection>
+{
+    return m_rootNode->Intersects(ray);
 }
