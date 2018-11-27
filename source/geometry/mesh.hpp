@@ -13,7 +13,7 @@ class Transform;
 class Mesh
 {
 public:
-    Mesh();
+    //Mesh();
     explicit Mesh(std::vector<Triangle> triangle);
     //Mesh(const Mesh& other);
     //Mesh(Mesh&& other) noexcept;
@@ -30,10 +30,16 @@ public:
     auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     auto GetMaterial() const -> const Material&;
 
+    auto SampleSurface(float& pdf) -> Intersection;
+
 private:
+
+    auto GetRandomTriangleIndex() -> int;
 
     std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;
+
+    std::mt19937 m_gen;
 
 };
 

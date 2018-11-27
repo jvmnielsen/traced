@@ -5,6 +5,7 @@
 #include "../imaging/color3.hpp"
 #include "../math/vec3.hpp"
 #include "../math/point2.hpp"
+#include "../core/intersection.hpp"
 
 
 class Intersection;
@@ -14,6 +15,8 @@ class Material
 public:
 
     Material();
+
+    virtual auto ComputeScatteringFunctions(Intersection& isect) -> void;
 
     virtual bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) = 0;
 
@@ -25,7 +28,7 @@ public:
 protected:
     Vec3f RandomInUnitSphere();
 
-    //std::shared_ptr<BSDF> m_bsdf;
+    std::shared_ptr<BSDF> m_bsdf;
 
     // to generate random numbers [0,1]
     //std::random_device m_seed;
@@ -38,6 +41,10 @@ class Matte : public Material
 {
 public:
     explicit Matte(const Color3f& a) : m_diffuse(a) {}
+
+    auto ComputeScatteringFunctions(Intersection& isect) -> void override {
+        isect.m_bsdf = m_bsdf.get();
+    }
 
     Matte(const Matte& other) : m_diffuse(other.m_diffuse)
     {
@@ -92,4 +99,9 @@ class DiffuseLight : public Material
 
     bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return false; }
     Color3f Emitted(const Point2f& uv, const Point3f& point) const override { return Color3f{40.0f}; }
-}; 
+};
+
+class Emissive : public Material {
+public:
+    Color3f Emitted(const Point2f& uv, const Point3f& point) const override { return Color3f{40.0f}; }
+};

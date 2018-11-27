@@ -3,8 +3,8 @@
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
         std::vector<std::unique_ptr<Light>> lights)
-    : m_meshes(std::move(meshes))
-    //, m_lights(std::move(lights))
+        : m_meshes(std::move(meshes))
+//, m_lights(std::move(lights))
 {
     m_lights.reserve(lights.size());
 
@@ -14,23 +14,20 @@ Scene::Scene(
 }
 
 auto
-Scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool
-{
+Scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool {
     //for (const auto& light : m_lights)
     //    light->Intersects(ray, isect);
-           
+
     //return isect.HasBeenHit();
     return m_meshes.Intersects(ray, isect);
 }
 
-auto 
-Scene::Intersects(const Rayf& ray) -> std::optional<Intersection>
-{
+auto
+Scene::Intersects(const Rayf& ray) -> std::optional<Intersection> {
     return m_meshes.Intersects(ray);
 }
 
-bool Scene::IntersectsQuick(const Rayf& ray) const
-{
+bool Scene::IntersectsQuick(const Rayf& ray) const {
     //for (const auto& volume : m_boundingVolumes)
     //    if (volume->IntersectsQuick(ray))
     //        return true;
@@ -39,18 +36,89 @@ bool Scene::IntersectsQuick(const Rayf& ray) const
 }
 
 
-
-bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const
-{
+bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const {
     const Vec3f offset = p2 - p1;
     const float distance = offset.Length();
-    Rayf ray{ p1, offset, distance };
+    Rayf ray{p1, offset, distance};
     return !IntersectsQuick(ray);
 }
 
 
-Color3f Scene::SamplePointLights(const Intersection& isect, const Rayf& ray) const
-{
+auto
+Scene::UniformSampleAllLights() const -> Color3f {
+    for (const auto& light : m_lights) {
+
+    }
+}
+
+auto
+Scene::SampleOneLight(const Intersection& isect, Sampler& sampler, const BSDF& bsdf,
+                      const Light& hitLight) const -> Color3f {
+    const auto nLights = m_lights.size();
+
+    if (nLights == 0) return Color3f{0.0f}; // there are no lights
+
+    auto dist = std::uniform_int_distribution<>(0, static_cast<int>(nLights));
+
+    const auto& light = m_lights[sampler.GetRandomInDistribution(dist)];
+
+    //while (light == hitLight) {
+    // implement check to ensure we don't double dip
+    //}
+
+    // multiplying by the number of lights is the same as dividing with the fractional pdf
+    return EstimateDirectLight(isect, sampler, bsdf, light) * nLights;
+}
+
+
+auto
+Scene::EstimateDirectLight(
+        const Intersection& isect,
+        Sampler& sampler,
+        const BSDF& bsdf,
+        const Light& light) const -> Color3f {
+
+    Color3f directLight = Color3f{0.0f};
+    Color3f f;
+    float lightPdf, scatterPdf;
+
+    Color3f li = light.Sample(isect, sampler, &lightPdf);
+    if (lightPdf != 0.0f && !li.IsBlack()) {
+        f = bsdf.Evaluate(isect);
+        scatterPdf = bsdf.Pdf(isect);
+
+        if (scatterPdf != 0.0f && !f.IsBlack()) {
+            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatterPdf);
+            directLight += f * li * weight / lightPdf;
+        }
+    }
+
+    // update isect.inputDir
+    bsdf.Sample(isect, sampler);
+    f = bsdf.Evaluate(isect);
+    scatterPdf = bsdf.Pdf(isect);
+    if (scatterPdf != 0.0f && !f.IsBlack()) {
+        lightPdf = light.PdfLi(isect);
+        if (lightPdf == 0.0f) {
+            return directLight;
+        }
+
+        const auto weight = Math::PowerHeuristic(1, scatterPdf, 1, lightPdf);
+        Color3f li = Light.Le();
+        directLight += f * li * weight / scatterPdf;
+    }
+
+    return directLight;
+}
+
+auto
+Scene::EstimateIndirectLight(const Intersection& isect) const -> Color3f {
+
+    return Color3f{0.3f};
+}
+
+
+Color3f Scene::SamplePointLights(const Intersection& isect, const Rayf& ray) const {
     Color3f color{0.0f};
     /*
     for (auto& light : m_lights)
@@ -95,18 +163,15 @@ Color3f Scene::SampleAreaLights(const Intersection& isect, const Rayf& ray)
     return color;
 } */
 
-Color3f Scene::SampleIndirectLighting(const Intersection& isect, const Rayf& ray)
-{
-    return {0,0,0};
+Color3f Scene::SampleIndirectLighting(const Intersection& isect, const Rayf& ray) {
+    return {0, 0, 0};
 }
 
-void Scene::SetBackgroundColor(const Color3f& color)
-{
+void Scene::SetBackgroundColor(const Color3f& color) {
     m_backgroundColor = color;
 }
 
-Color3f Scene::BackgroundColor() const
-{
+Color3f Scene::BackgroundColor() const {
     return m_backgroundColor;
 }
 

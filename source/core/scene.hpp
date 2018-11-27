@@ -4,6 +4,7 @@
 #include <optional>
 #include "../acceleration/bvh.hpp"
 #include "../imaging/light.hpp"
+#include "../core/sampler.hpp"
 
 class Scene
 {
@@ -19,8 +20,12 @@ public:
     bool LineOfSightBetween(const Point3f& p1, const Point3f& p2) const;
 
 
-    //auto EstimateDirectLight(const Intersection& isect) -> Color3f;
+    auto UniformSampleAllLights() const -> Color3f;
+    auto SampleOneLight(Sampler& sampler) const -> Color3f;
 
+
+    auto EstimateDirectLight(const Intersection& isect) const -> Color3f;
+    auto EstimateIndirectLight(const Intersection& isect) const -> Color3f;
 
     Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
     //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray);
@@ -34,7 +39,7 @@ private:
     Color3f m_backgroundColor;
 
     BVH m_meshes;
-    std::vector<AABB> m_lights;
+    std::vector<Light> m_lights;
 
 
     bool IntersectsQuick(const Rayf& ray) const;

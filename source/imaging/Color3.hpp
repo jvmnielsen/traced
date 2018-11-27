@@ -68,6 +68,10 @@ public:
         return {r * other.r, g * other.g, b*other.b};
     }
 
+    auto IsBlack() const -> bool {
+        return r == 0 && g == 0 && b == 0;
+    }
+
 };
 
 template<typename T>

@@ -15,6 +15,11 @@ namespace Math
         return std::max(low, std::min(high, value));
     }
 
+    inline auto PowerHeuristic(int nf, float fPdf, int ng, float gPdf) -> float {
+        float f = nf * fPdf, g = ng * gPdf;
+        return (f * f) / (f * f + g * g);
+    }
+
     float DegreeToRadian(float degree);
 
     // Solve quadratic equation

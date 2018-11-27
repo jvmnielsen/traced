@@ -3,14 +3,7 @@
 
 Mesh::Mesh(std::vector<Triangle> triangle)
     : m_triangles(std::move(triangle))
-{
-    std::cout << "Constructed mesh!\n";
-
-}
-
-Mesh::Mesh()
-{
-    std::cout << "Constructed mesh!\n";
+    , m_gen(std::random_device()()) {
 }
 
 /*
@@ -171,24 +164,13 @@ Mesh::GetMaterial() const -> const Material&
 }
 
 /*
-auto
-Mesh::GetRandomTriangleVertex() -> int
-{
-    std::uniform_int_distribution<> dist(0, m_triangles.size()-1);
-    return dist(m_gen);
-}
+
 
 Point3f Mesh::GetRandomPointOnSurface()
 {
     return {-1.0, -1.0, -1.0};
 }
 
-auto
-Mesh::GetRandomSurfaceIntersection() -> Intersection
-{
-    auto randTriangle = *m_triangles[GetRandomTriangleVertex()];
-    return randTriangle.GetRandomSurfaceIntersection();
-}
 
 auto 
 Mesh::GetPointOnSurface(const float u, const float v) const -> Point3f
@@ -211,6 +193,21 @@ Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
 }
 
 
+
+
 //inline Point3f GetPointOnSurface(const float u, const float v) const override;
 //inline Point3f GetRandomPointOnSurface() override;
 //inline Intersection GetRandomSurfaceIntersection() override; */
+
+
+auto
+Mesh::GetRandomTriangleIndex() -> int {
+    std::uniform_int_distribution<> dist(0, static_cast<int>(m_triangles.size() - 1));
+    return dist(m_gen);
+}
+
+auto
+Mesh::SampleSurface(float& pdf) -> Intersection {
+    auto randTriangle = m_triangles[GetRandomTriangleIndex()];
+    return randTriangle.SampleSurface(pdf);
+}

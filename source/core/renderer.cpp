@@ -5,18 +5,17 @@ Renderer::Renderer(
     std::unique_ptr<Camera> camera,
     std::unique_ptr<Scene> scene,
     std::shared_ptr<ImageBuffer> buffer)
-    : m_camera(std::move(camera))
-    , m_scene(std::move(scene))
-    , m_buffer(buffer)
-    //, m_sampler(std::move(sampler))
-    , m_gen(std::random_device()())
-    , m_dist(0.0f, 1.0f)
-{
+        : m_camera(std::move(camera))
+        , m_scene(std::move(scene))
+        , m_buffer(std::move(buffer))
+        //, m_sampler(std::move(sampler))
+        , m_gen(std::random_device()())
+        , m_dist(0.0f, 1.0f) {
 }
 
-void Renderer::Render(int samplesPerPixel)
-{
-    Timer<std::milli> timer = {"Rendering took: "};
+void Renderer::Render(int samplesPerPixel) {
+
+    Timer timer { std::string("Rendering took: ") };
 
     const int height = m_buffer->GetHeight();
     const int width = m_buffer->GetWidth();
@@ -36,7 +35,7 @@ void Renderer::Render(int samplesPerPixel)
 
                 const auto ray = m_camera->GetRay(u, v);
 
-                color += TraceRay(ray, 0);
+                color += TracePath(ray, 0);
             }
 
             color /= float(samplesPerPixel);
@@ -45,38 +44,78 @@ void Renderer::Render(int samplesPerPixel)
     }
 }
 
-Color3f Renderer::TraceRay(const Rayf& ray, int depth)
-{
-    //Intersection isect;
-    Color3f color{0.3f};
+auto
+Renderer::TracePath(const Rayf& ray) -> Color3f {
 
-    const auto isect = m_scene->Intersects(ray);
+//<<Find next path vertex and accumulate contribution>>=
+//<<Intersect ray with scene and store intersection in isect>>
+//<<Possibly add emitted light at intersection>>
+//<<Terminate path if ray escaped or maxDepth was reached>>
+//<<Compute scattering functions and skip over medium boundaries>>
+//<<Sample illumination from lights to find path contribution>>
+//<<Sample BSDF to get new path direction>>
+//<<Account for subsurface scattering, if applicable>>
+//<<Possibly terminate the path with Russian roulette>>
 
-    if (!isect.has_value() || depth > m_maxBounces)
-        return m_scene->BackgroundColor();
-        
-    // Contribution from object self-emitting
-    if (ray.IsPrimaryRay() && m_emit)
-        color += isect.value().Emitted();
+    int bounces;
+    bool specularBounce = false;
+    Color3f throughputFactor{ 1.0f };
+    Color3f radiance{ 0.0f };
 
-    // Contribution from direct lighting
-    if (m_direct) // !ray.IsPrimaryRay() ||
-    {
-        //color += estiamteDirectLightFromPointLights(surfel, ray);
-        //color += m_scene->SampleAreaLights(isect, ray);
+    for (bounces = 0; bounces < m_maxBounces; ++bounces) {
+
+        // test ray against objects in the scene
+        auto isect = m_scene->Intersects(ray);
+
+        // If no object was hit, return scene background radiance
+        if (!isect.has_value()) {
+            radiance += throughputFactor * m_scene->BackgroundColor();
+            break;
+        }
+
+        // we only account for self-emitted light on the fist bounce or after a specular bounce
+        // as the object's light contribution is otherwise accounted for by the direct light
+        // contribution on the previous path vertex
+        if (bounces == 0 || specularBounce) {
+            radiance += throughputFactor * isect->Emitted(); // consider making directional
+        }
+
+        // compute scattering functions -- assume a BSDF is always set, as we don't support
+        // participating media
+        isect->ComputeScatteringFunctions();
+
+        // sample direct illumination for non-specular surfaces
+        if (isect->m_bsdf.type != SPECULAR)         {
+            radiance += throughputFactor * m_scene->SampleOneLight();
+        }
+
+        // sample BSDF for new ray direction (wi)
+        Vec3f wo = -ray.GetDirection(), wi;
+        float pdf;
+        BSDF::Type flags;
+        Color3f f = isect->m_bsdf->Sample_f(); // consider returning struct rather than passing by reference
+
+        if (f.IsBlack() || pdf == 0.0f) break;
+
+        // update beta
+        throughputFactor *= f * std::abs(Dot(wi, isect->GetShadingNormal())) / pdf;
+
+        // are we about to perform a specular bound?
+        specularBounce = flags == BSDF::SPECULAR;
+
+        // spawn the new ray to be traced in the next iteration
+        ray = isect.SpawnRay(wi);
+
+        //<<Possibly terminate the path with Russian roulette>>=
+        if (bounces > 3)         {
+            float q = std::max(.05f, 1.0f - throughputFactor.g);
+            if (sampler.Get1D() < q) // generate number [0.0, 1.0)
+                break;
+            throughputFactor /= 1 - q;
+        }
     }
 
-    // Contribution from indirect lighting
-    if (!ray.IsPrimaryRay() || m_indirect)
-        ;
-        //color += estimateIndirectLight(sufel, ray, isEyeRay);
-        
-
-    
-    //color = m_scene->BackgroundColor();
-    
-
-    return color;
+    return radiance;
 }
 
 

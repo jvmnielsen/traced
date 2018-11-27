@@ -28,6 +28,10 @@ struct Point3
         return {x + vec.x, y + vec.y, z + vec.z};
     }
 
+    auto operator+(const Point3<T>& p) const -> Point3 {
+        return {x + p.x, y + p.y, z + p.z};
+    }
+
     Point3 operator-(const Vec3<T>& vec) const
     {
         return {x - vec.x, y - vec.y, z - vec.z};

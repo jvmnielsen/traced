@@ -7,20 +7,21 @@ Triangle::Triangle(
     std::array<Point3f, 3>     vertices,
     std::array<Normal3f, 3>    vertexNormals,
     std::array<Point2f, 3>     uv)
-    : m_vertices(std::move(vertices))
-    , m_vertexNormals(std::move(vertexNormals))
-    , m_uv(std::move(uv))
-{
+        : m_vertices(std::move(vertices))
+        , m_vertexNormals(std::move(vertexNormals))
+        , m_uv(std::move(uv))
+        , m_gen(std::random_device()()) {
+
     UpdateEdges();
 }
 
 Triangle::Triangle(
     std::array<Point3f, 3>     vertices,
     std::array<Normal3f, 3>    vertexNormals)
-    : m_vertices(std::move(vertices))
-    , m_vertexNormals(std::move(vertexNormals))
-{
-    //std::cout << "Triangle constructed\n";
+        : m_vertices(std::move(vertices))
+        , m_vertexNormals(std::move(vertexNormals))
+        , m_gen(std::random_device()()) {
+
     UpdateEdges();
 }
 
@@ -171,28 +172,19 @@ Triangle::GetVertices() const -> const std::array<Point3f, 3>&
     return m_vertices;
 }
 
-/*
-Point3f Triangle::GetPointOnSurface(const float u, const float v) const
-{
-    return m_vertices[0] + u * m_edges[0] + v * m_edges[1];
+auto
+Triangle::GetPointFromUV(const Point2f& uv) const -> Point3f {
+    // https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates
+    // for explanation
+    return uv[0] * m_vertices[0] + uv[1] * m_vertices[1] + (1 - uv[0] - uv[1]) * m_vertices[2];
+    //return m_vertices[0] + uv.x * m_edges[0] + uv.y * m_edges[1];
 }
-
-Point3f Triangle::GetRandomPointOnSurface() 
-{
-    return GetPointOnSurface(m_dist(m_gen), m_dist(m_gen));
-}
-
-Intersection Triangle::GetRandomSurfaceIntersection() 
-{
-    return Intersection{GetRandomPointOnSurface(), m_faceNormal};
-}
-
-
 
 auto
-Triangle::GetBoundingVolume() const -> std::unique_ptr<AABB>
-{
-    return nullptr;
+Triangle::SampleSurface(float& pdf) -> Intersection {
+    pdf = 1 / GetArea();
+    const Point2f uv { m_dist(m_gen), m_dist(m_gen) };
+    return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv), this};
 }
-*/
+
 

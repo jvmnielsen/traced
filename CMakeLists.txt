@@ -46,7 +46,7 @@ set(SOURCE_FILES
         source/utility/utility.hpp
         source/utility/window.hpp source/utility/window.cpp
 
-        source/main.cpp)
+        source/main.cpp source/imaging/light.cpp)
 
 
 

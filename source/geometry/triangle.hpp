@@ -7,7 +7,7 @@
 #include "../math/ray.hpp"
 #include "../math/vec3.hpp"
 #include <optional>
-
+#include <random>
 
 class Intersection;
 class Transform;
@@ -40,6 +40,9 @@ public:
     Intersection GetRandomSurfaceIntersection() override;
     */
 
+    auto SampleSurface(float& pdf) -> Intersection;
+
+    auto Sample(float& pdf) -> Intersection;
 
     const std::array<Point3f, 3>& GetVertices() const;
     //std::unique_ptr<AABB> GetBoundingVolume() const override;
@@ -51,14 +54,16 @@ private:
     Vec3f                       m_faceNormal;       // In cases where vertex normals are not available, use face normal
     std::array<Vec3f, 2>        m_edges;            // Pre-calculated for use in Intercept function
     std::array<Point2f, 3>      m_uv;               // Texture coordinates
-         
-    
 
 	void UpdateEdges();
-    
 
-    
-    //bool m_isSingleSided;
-    //float m_epsilon = 1e-8f;
+    // to generate random numbers [0,1]
+    //std::random_device m_seed;
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<float> m_dist { 0.0f, 1.0f };
+
+
+    auto GetPointFromUV(const Point2f& uv) const -> Point3f;
+
 };
 

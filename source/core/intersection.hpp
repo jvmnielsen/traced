@@ -6,7 +6,7 @@
 #include "../material/material.hpp"
 #include "../imaging/color3.hpp"
 #include "../geometry/triangle.hpp"
-
+#include "../material/bsdf.hpp"
 
 class Intersection
 {
@@ -18,6 +18,8 @@ public:
     Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal, Triangle* triangle);
 
     auto Emitted() const -> Color3f;
+
+    auto ComputeScatteringFunctions() -> void;
 
     //Intersection(Point3f point, Normal3f geometricNormal);
    
@@ -41,6 +43,7 @@ public:
 
     Color3f CalculateEmitted() const;
 
+    BSDF*           m_bsdf;
 private:
     //bool            m_hasBeenHit;
     Point3f         m_point;
@@ -49,4 +52,5 @@ private:
     Normal3f        m_geometricNormal;
     Normal3f        m_shadingNormal;
     Material*       m_material;
+
 };

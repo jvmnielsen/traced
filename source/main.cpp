@@ -12,15 +12,15 @@
 #include "math/transform.hpp"
 
 // arguments necessary for SDL to be multi-platform
-int main(int argc, char * argv[])
-{
+int main(int argc, char * argv[]) {
+
     const unsigned int SCREEN_WIDTH = 720;
     const unsigned int SCREEN_HEIGHT = 480;
 
-    Timer<std::milli> timer{"test took "};
+    Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto teapot = parser.GetMeshFromFile("assets/teapot.obj");
+    auto teapot = parser.GetMeshFromFile("../assets/teapot.obj");
     auto teapot2 = std::make_unique<Mesh>(*teapot);
     
     //teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 42.0f));

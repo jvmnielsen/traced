@@ -6,13 +6,14 @@
 #define RAYTRACER_BSDF_H
 #include "../imaging/color3.hpp"
 #include "../math/vec3.hpp"
+#include "../math/normal3.hpp"
 
 
-class BSDF
-{
-    virtual Color3f Evaluate(
-        const Vec3f& wi,
-        const Vec3f& wo) const = 0;
+class BSDF {
+public:
+    virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f = 0;
+    virtual auto Pdf(const Normal3f& wo, const Normal3f& wi) const -> float = 0;
+    virtual auto Sample(const Normal3f& wo, Normal3f& wi, float& pdf) const -> Color3f = 0;
 
 };
 
@@ -21,13 +22,14 @@ class Lambertian : public BSDF
 public:
     explicit Lambertian(const Color3f& colorMatte = Color3f{0.2f}) : m_colorMatte(colorMatte) { }
 
-    Color3f Evaluate(
-            const Vec3f& wi,
-            const Vec3f& wo) const override;
+    auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
+    auto Pdf(const Normal3f& wo, const Normal3f& wi) const -> float override;
+    auto Sample(const Normal3f& wo, Normal3f& wi, float& pdf) const -> Color3f override;
 
     Color3f m_colorMatte;
 };
 
+/*
 class Phong : public BSDF
 {
 public:
@@ -52,5 +54,5 @@ public:
     float   m_smoothness;
     Vec3f   m_normal;
 };
-
+*/
 #endif //RAYTRACER_BSDF_H
