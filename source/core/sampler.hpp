@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include "../math/vec3.hpp"
 
 class Sampler {
 public:
@@ -7,6 +8,7 @@ public:
 
     auto GetRandomReal() -> float;
     auto GetRandomInDistribution(std::uniform_int_distribution<>& dist) -> int;
+    auto CosineSampleHemisphere() -> Vec3f;
 
 private:
     // to generate random numbers [0,1]

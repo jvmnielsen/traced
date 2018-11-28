@@ -45,7 +45,7 @@ bool Matte::Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& atten
 {
     const auto target = isect.m_point + isect.m_geometricNormal + RandomInUnitSphere(); // Move point into unit-sphere by shifting with normal, then move with random vec
     scattered = Rayf{isect.m_point, target - isect.m_point};
-    attenuation = m_diffuse;
+    attenuation = m_albedo;
     return true;
 }
 

@@ -14,56 +14,50 @@ class Material
 {
 public:
 
-    Material();
+    //Material();
 
-    virtual auto ComputeScatteringFunctions(Intersection& isect) -> void;
+    virtual auto ComputeScatteringFunctions(Intersection& isect) -> void = 0;
 
-    virtual bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) = 0;
+    //virtual bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) = 0;
 
-    virtual Color3f Emitted(const Point2f& uv, const Point3f& point) const { return {0.0f, 0.0f, 0.0f}; }
+    //virtual Color3f Emitted(const Point2f& uv, const Point3f& point) const { return {0.0f, 0.0f, 0.0f}; }
 
-    virtual Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) = 0;
+    //virtual Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) = 0;
 
 
 protected:
-    Vec3f RandomInUnitSphere();
+    //Vec3f RandomInUnitSphere();
 
-    std::shared_ptr<BSDF> m_bsdf;
+    std::unique_ptr<BSDF> m_bsdf;
+
+    //std::shared_ptr<BSDF> m_bsdf;
 
     // to generate random numbers [0,1]
     //std::random_device m_seed;
-    std::mt19937 m_gen;
-    std::uniform_real_distribution<float> m_dist;
+    //std::mt19937 m_gen;
+    //std::uniform_real_distribution<float> m_dist;
 };
+
 
 
 class Matte : public Material 
 {
 public:
-    explicit Matte(const Color3f& a) : m_diffuse(a) {}
+    explicit Matte(const Color3f& albedo) {}
 
     auto ComputeScatteringFunctions(Intersection& isect) -> void override {
-        isect.m_bsdf = m_bsdf.get();
+        //isect.m_bsdf = &m_lambertian;
+
+        std::vector<std::unique_ptr<BxDF>> bxdfs;
+        bxdfs.emplace_back(std::make_unique<Lambertian>(m_albedo));
+
+        isect.m_bsdf = std::make_unique<BSDF>(isect, bxdfs);
     }
 
-    Matte(const Matte& other) : m_diffuse(other.m_diffuse)
-    {
-        std::cout << "Copied matte!\n";
-    }
-
-    Matte(Matte&& other) : m_diffuse(other.m_diffuse)
-    {
-        std::cout << "Moved matte!\n";
-    }
-
-    bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return true; }
-
-    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return m_diffuse / Math::Pi; }
-
-private:
-    
-    Color3f m_diffuse;
+    Color3f m_albedo;
 };
+
+/*
 
 class Metal : public Material
 {
@@ -105,3 +99,5 @@ class Emissive : public Material {
 public:
     Color3f Emitted(const Point2f& uv, const Point3f& point) const override { return Color3f{40.0f}; }
 };
+
+*/

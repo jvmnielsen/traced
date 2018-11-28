@@ -43,7 +43,13 @@ public:
 
     Color3f CalculateEmitted() const;
 
-    BSDF*           m_bsdf;
+    auto GetTangent() const -> const Normal3f& {
+        return m_tangent;
+    }
+
+    Normal3f    m_tangent;
+
+    std::unique_ptr<BSDF>           m_bsdf;
 private:
     //bool            m_hasBeenHit;
     Point3f         m_point;
