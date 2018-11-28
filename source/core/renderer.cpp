@@ -57,15 +57,17 @@ Renderer::TracePath(const Rayf& ray) -> Color3f {
 //<<Account for subsurface scattering, if applicable>>
 //<<Possibly terminate the path with Russian roulette>>
 
+    auto rayLocal = ray;
     int bounces;
     bool specularBounce = false;
     Color3f throughputFactor{ 1.0f };
     Color3f radiance{ 0.0f };
+    Sampler sampler;
 
     for (bounces = 0; bounces < m_maxBounces; ++bounces) {
 
         // test ray against objects in the scene
-        auto isect = m_scene->Intersects(ray);
+        auto isect = m_scene->Intersects(rayLocal);
 
         // If no object was hit, return scene background radiance
         if (!isect.has_value()) {
@@ -85,31 +87,31 @@ Renderer::TracePath(const Rayf& ray) -> Color3f {
         isect->ComputeScatteringFunctions();
 
         // sample direct illumination for non-specular surfaces
-        if (isect->m_bsdf.type != SPECULAR)         {
-            radiance += throughputFactor * m_scene->SampleOneLight();
+        if (isect->m_bsdf->GetType() != BxDFType::Specular)         {
+            radiance += throughputFactor * m_scene->SampleOneLight(isect.value(), sampler, *isect.value().m_bsdf);
         }
 
         // sample BSDF for new ray direction (wi)
-        Vec3f wo = -ray.GetDirection(), wi;
+        Vec3f wo = -rayLocal.GetDirection(), wi;
         float pdf;
-        BSDF::Type flags;
-        Color3f f = isect->m_bsdf->Sample_f(); // consider returning struct rather than passing by reference
+        //BSDF::Type flags;
+        Color3f f = isect->m_bsdf->Sample(wo, wi, pdf, sampler); // consider returning struct rather than passing by reference
 
         if (f.IsBlack() || pdf == 0.0f) break;
 
         // update beta
-        throughputFactor *= f * std::abs(Dot(wi, isect->GetShadingNormal())) / pdf;
+        throughputFactor = throughputFactor * f * std::abs(Dot(wi, isect->GetShadingNormal())) / pdf;
 
         // are we about to perform a specular bound?
-        specularBounce = flags == BSDF::SPECULAR;
+        //specularBounce = flags == BSDF::SPECULAR;
 
         // spawn the new ray to be traced in the next iteration
-        ray = isect.SpawnRay(wi);
+        rayLocal = Ray{isect->GetPoint(), wi}; //isect.SpawnRay(wi);
 
         //<<Possibly terminate the path with Russian roulette>>=
         if (bounces > 3)         {
             float q = std::max(.05f, 1.0f - throughputFactor.g);
-            if (sampler.Get1D() < q) // generate number [0.0, 1.0)
+            if (sampler.GetRandomReal() < q) // generate number [0.0, 1.0)
                 break;
             throughputFactor /= 1 - q;
         }

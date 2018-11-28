@@ -1,10 +1,6 @@
 #pragma once
-
-#include <random>
 #include "../math/ray.hpp"
 #include "../imaging/color3.hpp"
-#include "../math/vec3.hpp"
-#include "../math/point2.hpp"
 #include "../core/intersection.hpp"
 
 

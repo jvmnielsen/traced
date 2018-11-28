@@ -57,7 +57,7 @@ BSDF::Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f {
 }
 
 auto 
-BSDF::Pdf(const Normal3f& wo, const Normal3f& wi) const -> float {
+BSDF::Pdf(const Vec3f& wo, const Vec3f& wi) const -> float {
     //if (m_bxdfs.size() == 0) return 0.0f; TODO: make assertion
     Vec3f woLocal = WorldToLocal(wo), wiLocal = WorldToLocal(wi);
     if (woLocal.z == 0) return 0.0f;
@@ -70,7 +70,7 @@ BSDF::Pdf(const Normal3f& wo, const Normal3f& wi) const -> float {
 }
 
 auto 
-BSDF::Sample(const Normal3f& wo, Normal3f& wi, float& pdf, Sampler& sampler) const -> Color3f {
+BSDF::Sample(const Vec3f& wo, Vec3f& wi, float& pdf, Sampler& sampler) const -> Color3f {
     Vec3f woLocal = WorldToLocal(wo), wiLocal;
     pdf = 0.0f;
     auto radiance = m_bxdfs[0]->Sample(woLocal, wiLocal, pdf, sampler);
@@ -79,6 +79,11 @@ BSDF::Sample(const Normal3f& wo, Normal3f& wi, float& pdf, Sampler& sampler) con
     return radiance;
 }
 
+auto 
+BSDF::GetType() const -> BxDFType {
+    // todo: expand so it includes all
+    return m_bxdfs[0]->m_type;
+}
 
 auto 
 Lambertian::Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f {

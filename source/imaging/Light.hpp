@@ -15,13 +15,27 @@ struct LightingAtPoint
 class Light
 {
 public:
-    Light(std::shared_ptr<Emissive> material, std::unique_ptr<Mesh> mesh);
+    Light(std::unique_ptr<Mesh> mesh);
 
-    auto Sample(const Intersection& ref, Normal3f& wi, float& pdf, Intersection& atLight) const -> Color3f;
+    auto Sample(const Intersection& ref, Normal3f& wi, float& pdf, Intersection& atLight) const -> Color3f {
+        auto isect = m_mesh->SampleSurface(pdf);
+        if (pdf == 0.0f || (isect.GetPoint() - ref.GetPoint()).LengthSquared() == 0.0f) {
+            pdf = 0;
+            return Color3f{0.0f};
+        }
+        wi = Normalize(isect.GetPoint() - ref.GetPoint());
+        return Dot(isect.GetGeometricNormal(), -wi) > 0 ? Color3f{0.3f} : Color3f{0.0f};
+    }
+
+    auto PdfLi(const Intersection& ref, const Vec3f& wi) const -> float {
+        return m_mesh->Pdf(ref, wi);
+    }
+
+    Color3f m_radiance;
 
 protected:
 
-    std::shared_ptr<Emissive>   m_material;
+    //std::shared_ptr<Emissive>   m_material;
     std::unique_ptr<Mesh>       m_mesh;
 };
 

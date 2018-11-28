@@ -49,6 +49,9 @@ public:
 
     Normal3f    m_tangent;
 
+    Vec3f m_wi;
+    Vec3f m_wo;
+
     std::unique_ptr<BSDF>           m_bsdf;
 private:
     //bool            m_hasBeenHit;

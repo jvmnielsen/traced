@@ -37,8 +37,10 @@ public:
     auto WorldToLocal(const Vec3f& v) const -> Vec3f;
 
     auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f;
-    auto Pdf(const Normal3f& wo, const Normal3f& wi) const -> float;
-    auto Sample(const Normal3f& wo, Normal3f& wi, float& pdf, Sampler& sampler) const -> Color3f;
+    auto Pdf(const Vec3f& wo, const Vec3f& wi) const -> float;
+    auto Sample(const Vec3f& wo, Vec3f& wi, float& pdf, Sampler& sampler) const -> Color3f;
+
+    auto GetType() const -> BxDFType;
 
 private:
     std::vector<std::unique_ptr<BxDF>> m_bxdfs;

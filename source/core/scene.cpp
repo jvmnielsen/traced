@@ -52,8 +52,7 @@ Scene::UniformSampleAllLights() const -> Color3f {
 }
 
 auto
-Scene::SampleOneLight(const Intersection& isect, Sampler& sampler, const BSDF& bsdf,
-                      const Light& hitLight) const -> Color3f {
+Scene::SampleOneLight(const Intersection& isect, Sampler& sampler, const BSDF& bsdf) const -> Color3f {
     const auto nLights = m_lights.size();
 
     if (nLights == 0) return Color3f{0.0f}; // there are no lights
@@ -81,30 +80,35 @@ Scene::EstimateDirectLight(
     Color3f directLight = Color3f{0.0f};
     Color3f f;
     float lightPdf, scatterPdf;
+    Normal3f wi;
+    Intersection atLight;
 
-    Color3f li = light.Sample(isect, sampler, &lightPdf);
-    if (lightPdf != 0.0f && !li.IsBlack()) {
-        f = bsdf.Evaluate(isect);
-        scatterPdf = bsdf.Pdf(isect);
+    if (bsdf.GetType() != Specular) {
+        Color3f li = light.Sample(isect, wi, lightPdf, atLight);
 
-        if (scatterPdf != 0.0f && !f.IsBlack()) {
-            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatterPdf);
-            directLight += f * li * weight / lightPdf;
+        if (lightPdf != 0.0f && !li.IsBlack()) {
+            f = bsdf.Evaluate(isect.m_wo, wi);
+            scatterPdf = bsdf.Pdf(isect.m_wo, wi);
+
+            if (scatterPdf != 0.0f && !f.IsBlack()) {
+                const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatterPdf);
+                directLight += f * li * weight / lightPdf;
+            }
         }
     }
 
     // update isect.inputDir
-    bsdf.Sample(isect, sampler);
-    f = bsdf.Evaluate(isect);
-    scatterPdf = bsdf.Pdf(isect);
+    f = bsdf.Sample(isect.m_wo, wi, scatterPdf, sampler);
+    //f = bsdf.Evaluate(isect);
+    //scatterPdf = bsdf.Pdf(isect);
     if (scatterPdf != 0.0f && !f.IsBlack()) {
-        lightPdf = light.PdfLi(isect);
+        lightPdf = light.PdfLi(isect, wi);
         if (lightPdf == 0.0f) {
             return directLight;
         }
 
         const auto weight = Math::PowerHeuristic(1, scatterPdf, 1, lightPdf);
-        Color3f li = Light.Le();
+        Color3f li = light.m_radiance;
         directLight += f * li * weight / scatterPdf;
     }
 
