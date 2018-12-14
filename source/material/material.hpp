@@ -2,11 +2,9 @@
 #include "../math/ray.hpp"
 #include "../imaging/color3.hpp"
 #include "../core/intersection.hpp"
+#include "../material/bsdf.hpp"
 
-
-class Intersection;
-
-class Material  
+class Material
 {
 public:
 
@@ -22,9 +20,9 @@ public:
 
 
 protected:
-    //Vec3f RandomInUnitSphere();
+    Vec3f RandomInUnitSphere();
 
-    std::unique_ptr<BSDF> m_bsdf;
+    //std::unique_ptr<BSDF> m_bsdf;
 
     //std::shared_ptr<BSDF> m_bsdf;
 
@@ -41,14 +39,7 @@ class Matte : public Material
 public:
     explicit Matte(const Color3f& albedo) {}
 
-    auto ComputeScatteringFunctions(Intersection& isect) -> void override {
-        //isect.m_bsdf = &m_lambertian;
-
-        std::vector<std::unique_ptr<BxDF>> bxdfs;
-        bxdfs.emplace_back(std::make_unique<Lambertian>(m_albedo));
-
-        isect.m_bsdf = std::make_unique<BSDF>(isect, bxdfs);
-    }
+    auto ComputeScatteringFunctions(Intersection& isect) -> void override;
 
     Color3f m_albedo;
 };

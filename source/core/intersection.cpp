@@ -27,15 +27,14 @@ Intersection::Intersection(
 auto 
 Intersection::Emitted() const -> Color3f
 {
-    if (m_material)
-        return m_material->Emitted({}, {});
-
-    return Color3f{0};
+    //if (m_material)
+        //return m_material->Emitted({}, {});
+        return Color3f{0};
 }
 
 auto
 Intersection::ComputeScatteringFunctions() -> void {
-    m_material->ComputeScatteringFunctions(*this);
+    //m_material->ComputeScatteringFunctions(*this);
 }
 
 //void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);
@@ -62,11 +61,13 @@ const Point2f& Intersection::GetUV() const { return m_uv; }
 Triangle* Intersection::GetTriangle() const { return m_triangle; }
 const Normal3f& Intersection::GetGeometricNormal() const { return m_geometricNormal; }
 const Normal3f& Intersection::GetShadingNormal() const { return m_shadingNormal; }
+
+/*
 Material* Intersection::GetMaterial() const { return m_material; }
 auto Intersection::SetMaterial(Material* material) -> void
 {
     m_material = material;
-}
+} */
 
 Point3f Intersection::OffsetShadingPoint() const
 {
@@ -80,8 +81,8 @@ Point3f Intersection::OffsetGeometricPoint() const
 
 Color3f Intersection::CalculateEmitted() const
 {
-    if (m_material)
-        return m_material->Emitted(m_uv, m_point);
-    else
+    //if (m_material) return Color3f{0};
+        //return m_material->Emitted(m_uv, m_point);
+    //else
         return Color3f{0.0f};
 }

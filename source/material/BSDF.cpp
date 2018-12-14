@@ -4,6 +4,7 @@
 
 #include "bsdf.hpp"
 #include "../math/math_util.hpp"
+#include "../core/intersection.hpp"
 
 auto 
 BxDF::Pdf(const Normal3f& wo, const Normal3f& wi) const -> float {

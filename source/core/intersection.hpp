@@ -33,8 +33,8 @@ public:
     const Normal3f& GetGeometricNormal() const;
     const Normal3f& GetShadingNormal() const;
     
-    Material* GetMaterial() const;
-    auto SetMaterial(Material* material) -> void;
+    //Material* GetMaterial() const;
+    //auto SetMaterial(Material* material) -> void;
     //auto SetMaterial(Material* material) -> void { m_material = material; }
     //auto SetParentMeshMaterial(Material* material) -> void;
 
@@ -60,6 +60,6 @@ private:
     Triangle*       m_triangle;
     Normal3f        m_geometricNormal;
     Normal3f        m_shadingNormal;
-    Material*       m_material;
+    //Material*       m_material;
 
 };

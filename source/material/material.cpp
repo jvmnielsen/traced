@@ -2,11 +2,15 @@
 #include "../math/normal3.hpp"
 //#include "MathUtil.h"
 
-Material::Material()
-//: m_bsdf(bsdf)
-    : m_gen(std::random_device()())
-    , m_dist(0.0f, 1.0f)
-{ }
+auto
+Matte::ComputeScatteringFunctions(Intersection& isect) -> void {
+    //isect.m_bsdf = &m_lambertian;
+
+    std::vector<std::unique_ptr<BxDF>> bxdfs;
+    bxdfs.emplace_back(std::make_unique<Lambertian>(m_albedo));
+
+    isect.m_bsdf = std::make_unique<BSDF>(isect, std::move(bxdfs));
+}
 
 bool refract(const Vec3f& vec, const Vec3f& n, float ni_over_nt, Vec3f& refracted)
 {
@@ -34,7 +38,7 @@ Vec3f Material::RandomInUnitSphere()
     Vec3f randomVec;
     do
     {
-        randomVec = 2.0f * Point3f{ m_dist(m_gen), m_dist(m_gen), m_dist(m_gen) } - Point3f{ 1.0f, 1.0f, 1.0f };
+        //randomVec = 2.0f * Point3f{ m_dist(m_gen), m_dist(m_gen), m_dist(m_gen) } - Point3f{ 1.0f, 1.0f, 1.0f };
     } while (randomVec.LengthSquared() >= 1.0f);
 
     return randomVec;

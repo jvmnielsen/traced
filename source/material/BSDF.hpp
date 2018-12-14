@@ -7,10 +7,11 @@
 #include "../math/vec3.hpp"
 #include "../math/normal3.hpp"
 #include <vector>
-#include "../core/intersection.hpp"
+#include <array>
+//#include "../core/intersection.hpp"
 #include "../core/sampler.hpp"
 
-//class Intersection;
+class Intersection;
 
 //class Sampler;
 
@@ -20,6 +21,8 @@ class BxDF {
 public:
 
     BxDF(BxDFType type) : m_type(type) { }
+
+    //virtual ~BxDF() = default;
 
     virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const ->Color3f = 0;
     virtual auto Pdf(const Normal3f& wo, const Normal3f& wi) const -> float;
@@ -32,7 +35,7 @@ class BSDF {
 public:
     BSDF() = default;
     BSDF(const Intersection& isect, std::vector<std::unique_ptr<BxDF>> bxdfs);
-
+    //virtual ~BSDF() = default;
     auto LocalToWorld(const Vec3f& v) const -> Vec3f;
     auto WorldToLocal(const Vec3f& v) const -> Vec3f;
 
@@ -55,6 +58,8 @@ class Lambertian : public BxDF
 {
 public:
     Lambertian(const Color3f& radiance = Color3f{0.2f}) : BxDF(BxDFType(Reflection | Diffuse)), m_radiance(radiance) { }
+
+    ~Lambertian() = default;
 
     auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
     //auto Pdf(const Normal3f& wo, const Normal3f& wi) const -> float override;

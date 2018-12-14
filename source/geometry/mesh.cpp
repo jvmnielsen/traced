@@ -49,7 +49,7 @@ bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
 {
     for (auto& triangle : m_triangles)
         //if (triangle.Intersects(ray, isect))
-            isect.SetMaterial(m_material.get());
+            //isect.SetMaterial(m_material.get());
             
 	return true;
 }
@@ -59,13 +59,12 @@ Mesh::Intersects(const Rayf& ray) -> std::optional<Intersection>
 {
     std::optional<Intersection> isect;
     for (auto& triangle : m_triangles) {
-        const auto tmpIsect = triangle.Intersects(ray);
-        if (tmpIsect.has_value())
-            isect = tmpIsect;
+        // the last overridden isect will always be the closest (ray max_param shrinks every time)
+        isect = triangle.Intersects(ray);
     }
 
     if (isect.has_value())
-        isect->SetMaterial(m_material.get());
+        //isect->SetMaterial(m_material.get());
 
     return isect;//.has_value() ? std::optional<Intersection>{isect.value()} : std::nullopt;
 }

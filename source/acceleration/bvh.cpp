@@ -105,7 +105,7 @@ BVH::BVHNode::IsInteriorNode() const -> bool
     return m_leftChild || m_rightChild;
 }
 
-auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional< Intersection> 
+auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional<Intersection>
 {
 
     // Do we hit the bounding box?
@@ -117,7 +117,13 @@ auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional< Intersect
         auto leftIsect = m_leftChild->Intersects(ray);
         auto rightIsect = m_rightChild->Intersects(ray);
         // do right first - it can only have a value if it's closer
-        return rightIsect.has_value() ? rightIsect : leftIsect.has_value() ? leftIsect : std::nullopt; // TODO: figure out if isect is ctored
+        if (rightIsect.has_value()) {
+            return rightIsect;
+        }
+        if (leftIsect.has_value()) {
+            return leftIsect;
+        }
+        return std::nullopt;
     }
     //    throw std::exception();
     return m_aabb.IntersectsMesh(ray);

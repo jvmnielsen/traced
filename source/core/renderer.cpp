@@ -35,7 +35,7 @@ void Renderer::Render(int samplesPerPixel) {
 
                 const auto ray = m_camera->GetRay(u, v);
 
-                color += TracePath(ray, 0);
+                color += TracePath(ray);
             }
 
             color /= float(samplesPerPixel);
