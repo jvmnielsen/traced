@@ -25,16 +25,16 @@ Intersection::Intersection(
 }
 
 auto 
-Intersection::Emitted() const -> Color3f
-{
-    //if (m_material)
-        //return m_material->Emitted({}, {});
-        return Color3f{0};
+Intersection::Emitted() const -> Color3f {
+    if (m_material)
+        return m_material->Emitted({}, {});
+    
+    return Color3f{0};
 }
 
 auto
 Intersection::ComputeScatteringFunctions() -> void {
-    //m_material->ComputeScatteringFunctions(*this);
+    m_material->ComputeScatteringFunctions(*this);
 }
 
 //void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);

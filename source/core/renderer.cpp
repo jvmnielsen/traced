@@ -1,5 +1,6 @@
 #include "renderer.hpp"
 #include "../utility/utility.hpp"
+#include "../material/bsdf.hpp"
 
 Renderer::Renderer(
     std::unique_ptr<Camera> camera,
@@ -20,6 +21,7 @@ void Renderer::Render(int samplesPerPixel) {
     const int height = m_buffer->GetHeight();
     const int width = m_buffer->GetWidth();
 
+    Sampler sampler;
     
     for (int j = height - 1; j >= 0; j--) // size_t causes subscript out of range due to underflow
     {
@@ -33,9 +35,9 @@ void Renderer::Render(int samplesPerPixel) {
                 const auto u = float(i ) / float(width); // + m_dist(m_gen)
                 const auto v = float(j ) / float(height); // + m_dist(m_gen)
 
-                const auto ray = m_camera->GetRay(u, v);
+                auto ray = m_camera->GetRay(u, v);
 
-                color += TracePath(ray);
+                color += TracePath(ray, sampler);
             }
 
             color /= float(samplesPerPixel);
@@ -45,7 +47,7 @@ void Renderer::Render(int samplesPerPixel) {
 }
 
 auto
-Renderer::TracePath(const Rayf& ray) -> Color3f {
+Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
 //<<Find next path vertex and accumulate contribution>>=
 //<<Intersect ray with scene and store intersection in isect>>
@@ -57,21 +59,20 @@ Renderer::TracePath(const Rayf& ray) -> Color3f {
 //<<Account for subsurface scattering, if applicable>>
 //<<Possibly terminate the path with Russian roulette>>
 
-    auto rayLocal = ray;
-    int bounces;
+  
     bool specularBounce = false;
     Color3f throughputFactor{ 1.0f };
-    Color3f radiance{ 0.0f };
-    Sampler sampler;
+    Color3f color{ 0.0f };
 
-    for (bounces = 0; bounces < m_maxBounces; ++bounces) {
+    for (int bounces = 0; bounces < m_maxBounces; ++bounces) { 
 
         // test ray against objects in the scene
-        auto isect = m_scene->Intersects(rayLocal);
+        auto isect = m_scene->Intersects(ray);
+        isect->m_wo = -ray.GetDirection();
 
         // If no object was hit, return scene background radiance
-        if (!isect.has_value()) {
-            radiance += throughputFactor * m_scene->BackgroundColor();
+        if (!isect) {
+            color += throughputFactor * m_scene->BackgroundColor();
             break;
         }
 
@@ -79,18 +80,20 @@ Renderer::TracePath(const Rayf& ray) -> Color3f {
         // as the object's light contribution is otherwise accounted for by the direct light
         // contribution on the previous path vertex
         if (bounces == 0 || specularBounce) {
-            radiance += throughputFactor * isect->Emitted(); // consider making directional
+            color += throughputFactor * isect->Emitted(); // consider making directional
         }
 
         // compute scattering functions -- assume a BSDF is always set, as we don't support
         // participating media
-        isect->ComputeScatteringFunctions();
+        // isect->ComputeScatteringFunctions();
 
         // sample direct illumination for non-specular surfaces
-        if (isect->m_bsdf->GetType() != BxDFType::Specular)         {
-            radiance += throughputFactor * m_scene->SampleOneLight(isect.value(), sampler, *isect.value().m_bsdf);
-        }
+        //if (isect->m_bsdf->GetType() != BxDFType::Specular) {
 
+        // direct lighting
+        color += throughputFactor * m_scene->SampleOneLight(*isect, sampler);
+        
+        
         // sample BSDF for new ray direction (wi)
         Vec3f wo = -rayLocal.GetDirection(), wi;
         float pdf;
@@ -117,7 +120,7 @@ Renderer::TracePath(const Rayf& ray) -> Color3f {
         }
     }
 
-    return radiance;
+    return color;
 }
 
 

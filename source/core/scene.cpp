@@ -49,10 +49,12 @@ Scene::UniformSampleAllLights() const -> Color3f {
     for (const auto& light : m_lights) {
 
     }
+    return Color3f{0.0f};
 }
 
+
 auto
-Scene::SampleOneLight(const Intersection& isect, Sampler& sampler, const BSDF& bsdf) const -> Color3f {
+Scene::SampleOneLight(const Intersection& isect, Sampler& sampler) const -> Color3f {
     const auto nLights = m_lights.size();
 
     if (nLights == 0) return Color3f{0.0f}; // there are no lights
@@ -65,8 +67,8 @@ Scene::SampleOneLight(const Intersection& isect, Sampler& sampler, const BSDF& b
     // implement check to ensure we don't double dip
     //}
 
-    // multiplying by the number of lights is the same as dividing with the fractional pdf
-    return EstimateDirectLight(isect, sampler, bsdf, light) * nLights;
+    // multiplying by the number of lights is the same as dividing with the fractional pdf 1/nLights
+    return EstimateDirectLight(isect, sampler, light) * nLights;
 }
 
 
@@ -74,16 +76,34 @@ auto
 Scene::EstimateDirectLight(
         const Intersection& isect,
         Sampler& sampler,
-        const BSDF& bsdf,
         const Light& light) const -> Color3f {
 
+    Color3f directLight = Color3f{0.0f};
+
+    if (isect.m_material->m_bsdf.GetType() == Specular) {
+        return Color3f{0.0f};
+    }
+
+    float pdf;
+    Normal3f wi;
+    Intersection atLight;
+    Color3f li = light.Sample(isect, wi, pdf, atLight);
+
+    if (pdf != 0.0f && !li.IsBlack()) {
+        directLight += isect.m_material->m_bsdf.Evaluate(isect.m_wo, wi);
+    }
+
+    return directLight;
+
+
+    /*
     Color3f directLight = Color3f{0.0f};
     Color3f f;
     float lightPdf, scatterPdf;
     Normal3f wi;
     Intersection atLight;
 
-    if (bsdf.GetType() != Specular) {
+    if (isect.m_material->m_bsdf.GetType() != Specular) {
         Color3f li = light.Sample(isect, wi, lightPdf, atLight);
 
         if (lightPdf != 0.0f && !li.IsBlack()) {
@@ -112,7 +132,7 @@ Scene::EstimateDirectLight(
         directLight += f * li * weight / scatterPdf;
     }
 
-    return directLight;
+    return directLight; */
 }
 
 auto

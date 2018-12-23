@@ -29,7 +29,7 @@ private:
     std::mt19937 m_gen;
     std::uniform_real_distribution<float> m_dist;
 
-    auto TracePath(const Rayf& ray) -> Color3f;
+    auto TracePath(Rayf& ray, Sampler& sampler) -> Color3f;
 
     //Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
     //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;

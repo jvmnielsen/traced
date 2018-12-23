@@ -6,6 +6,8 @@
 #include "../imaging/light.hpp"
 #include "../core/sampler.hpp"
 
+class BSDF;
+
 class Scene
 {
 public:
@@ -22,9 +24,9 @@ public:
 
     auto UniformSampleAllLights() const -> Color3f;
     //auto SampleOneLight(Sampler& sampler) const -> Color3f;
-    auto SampleOneLight(const Intersection& isect, Sampler& sampler, const BSDF& bsdf) const->Color3f;
+    auto SampleOneLight(const Intersection& isect, Sampler& sampler) const->Color3f;
 
-    auto EstimateDirectLight(const Intersection& isect, Sampler& sampler, const BSDF& bsdf, const Light& light) const -> Color3f;
+    auto EstimateDirectLight(const Intersection& isect, Sampler& sampler, const Light& light) const -> Color3f;
     //auto EstimateDirectLight(const Intersection& isect) const -> Color3f;
     auto EstimateIndirectLight(const Intersection& isect) const -> Color3f;
 

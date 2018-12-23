@@ -29,6 +29,7 @@ public:
 
     auto PdfLi(const Intersection& ref, const Vec3f& wi) const -> float {
         //return m_mesh->Pdf(ref, wi);
+        return 8.0f;
     }
 
     Color3f m_radiance;

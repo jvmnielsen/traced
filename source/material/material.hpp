@@ -1,8 +1,9 @@
 #pragma once
 #include "../math/ray.hpp"
 #include "../imaging/color3.hpp"
+#include "../math/point2.hpp"
+#include "bsdf.hpp"
 #include "../core/intersection.hpp"
-#include "../material/bsdf.hpp"
 
 class Material
 {
@@ -14,17 +15,20 @@ public:
 
     //virtual bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) = 0;
 
-    //virtual Color3f Emitted(const Point2f& uv, const Point3f& point) const { return {0.0f, 0.0f, 0.0f}; }
+    virtual Color3f Emitted(const Point2f& uv, const Point3f& point) const { return {0.0f, 0.0f, 0.0f}; }
 
     //virtual Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) = 0;
 
+    //std::shared_ptr<BSDF> m_bsdf;
+
+    BSDF m_bsdf;
 
 protected:
     Vec3f RandomInUnitSphere();
 
     //std::unique_ptr<BSDF> m_bsdf;
 
-    //std::shared_ptr<BSDF> m_bsdf;
+   
 
     // to generate random numbers [0,1]
     //std::random_device m_seed;

@@ -6,7 +6,8 @@
 #include "../material/material.hpp"
 #include "../imaging/color3.hpp"
 #include "../geometry/triangle.hpp"
-#include "../material/bsdf.hpp"
+
+class Material;
 
 class Intersection
 {
@@ -52,7 +53,9 @@ public:
     Vec3f m_wi;
     Vec3f m_wo;
 
-    std::unique_ptr<BSDF>           m_bsdf;
+    Material*       m_material;
+
+    //std::unique_ptr<BSDF>           m_bsdf;
 private:
     //bool            m_hasBeenHit;
     Point3f         m_point;
@@ -60,6 +63,6 @@ private:
     Triangle*       m_triangle;
     Normal3f        m_geometricNormal;
     Normal3f        m_shadingNormal;
-    //Material*       m_material;
+    
 
 };

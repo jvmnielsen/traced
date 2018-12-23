@@ -9,7 +9,7 @@ Matte::ComputeScatteringFunctions(Intersection& isect) -> void {
     std::vector<std::unique_ptr<BxDF>> bxdfs;
     bxdfs.emplace_back(std::make_unique<Lambertian>(m_albedo));
 
-    isect.m_bsdf = std::make_unique<BSDF>(isect, std::move(bxdfs));
+    m_bsdf = std::make_unique<BSDF>(isect, std::move(bxdfs));
 }
 
 bool refract(const Vec3f& vec, const Vec3f& n, float ni_over_nt, Vec3f& refracted)
