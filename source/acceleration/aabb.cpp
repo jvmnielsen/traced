@@ -54,6 +54,7 @@ AABB::GetShape() const -> const Mesh&
     return *m_mesh;
 }
 
+/*
 auto
 AABB::Intersects(const Rayf& ray, Intersection& isect) const -> bool
 {
@@ -102,9 +103,9 @@ AABB::Intersects(const Rayf& ray, Intersection& isect) const -> bool
 
     //return isect.HasBeenHit();
     return true;
-}
+} */
 
-bool AABB::IntersectsQuick(const Rayf& ray) const
+bool AABB::IntersectsFast(const Rayf& ray) const
 {
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -192,11 +193,10 @@ AABB::IntersectsMesh(const Rayf& ray) const->std::optional<Intersection>
     return m_mesh->Intersects(ray);
 }
 
-
-bool AABB::IntersectsShape(const Rayf& ray, Intersection& isect) const
+auto
+AABB::IntersectsMeshFast(const Rayf& ray) const -> bool
 {
-    return m_mesh->Intersects(ray, isect);
-
+    return m_mesh->IntersectsFast(ray);
 }
 
 auto AABB::GetBounds() const -> const std::array<Point3f, 2>&

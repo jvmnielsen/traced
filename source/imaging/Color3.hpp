@@ -63,7 +63,7 @@ public:
         return *this;
     }
 
-    Color3 operator*(const Color3& other)
+    Color3 operator*(const Color3& other) const
     {
         return {r * other.r, g * other.g, b*other.b};
     }

@@ -8,9 +8,8 @@
 #include "../math/vec3.hpp"
 #include <optional>
 #include <random>
-
-class Intersection;
-class Transform;
+#include "../core/intersection.hpp"
+#include "../math/transform.hpp"
 
 class Triangle
 {
@@ -40,9 +39,7 @@ public:
     Intersection GetRandomSurfaceIntersection() override;
     */
 
-    auto SampleSurface(float& pdf) -> Intersection;
-
-    auto Sample(float& pdf) -> Intersection;
+    auto SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection;
 
     const std::array<Point3f, 3>& GetVertices() const;
     //std::unique_ptr<AABB> GetBoundingVolume() const override;
@@ -57,10 +54,7 @@ private:
 
 	void UpdateEdges();
 
-    // to generate random numbers [0,1]
-    //std::random_device m_seed;
-    std::mt19937 m_gen;
-    std::uniform_real_distribution<float> m_dist { 0.0f, 1.0f };
+    Mesh* m_parentMesh;
 
 
     auto GetPointFromUV(const Point2f& uv) const -> Point3f;

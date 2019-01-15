@@ -2,7 +2,7 @@
 
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
-        std::vector<std::unique_ptr<Light>> lights)
+        std::vector<std::unique_ptr<Mesh>> lights)
         : m_meshes(std::move(meshes))
 //, m_lights(std::move(lights))
 {
@@ -14,25 +14,12 @@ Scene::Scene(
 }
 
 auto
-Scene::Intersects(const Rayf& ray, Intersection& isect) const -> bool {
-    //for (const auto& light : m_lights)
-    //    light->Intersects(ray, isect);
-
-    //return isect.HasBeenHit();
-    return m_meshes.Intersects(ray, isect);
-}
-
-auto
 Scene::Intersects(const Rayf& ray) -> std::optional<Intersection> {
     return m_meshes.Intersects(ray);
 }
 
 bool Scene::IntersectsQuick(const Rayf& ray) const {
-    //for (const auto& volume : m_boundingVolumes)
-    //    if (volume->IntersectsQuick(ray))
-    //        return true;
-
-    return false;
+    return m_meshes.IntersectsFast(ray);
 }
 
 
@@ -76,21 +63,27 @@ auto
 Scene::EstimateDirectLight(
         const Intersection& isect,
         Sampler& sampler,
-        const Light& light) const -> Color3f {
+        const Mesh& light) const -> Color3f {
 
     Color3f directLight = Color3f{0.0f};
 
-    if (isect.m_material->m_bsdf.GetType() == Specular) {
+    if (isect.IsSpecular()) {
         return Color3f{0.0f};
     }
 
-    float pdf;
-    Normal3f wi;
-    Intersection atLight;
-    Color3f li = light.Sample(isect, wi, pdf, atLight);
+    SamplingInfo info;
+    Intersection atLight = light.SampleSurface(info, sampler);
 
-    if (pdf != 0.0f && !li.IsBlack()) {
-        directLight += isect.m_material->m_bsdf.Evaluate(isect.m_wo, wi);
+    if (!LineOfSightBetween(isect.GetPoint(), atLight.GetPoint())) {
+        return Color3f{0.0f};
+    }
+
+    info.toLight = Normalize(atLight.GetPoint() - isect.GetPoint());
+
+    const auto radiance = light.GetMaterial().Emitted(atLight, info);
+
+    if (info.pdf != 0.0f && !radiance.IsBlack()) {
+        directLight += isect.m_material->Evaluate(info) * radiance / info.pdf;
     }
 
     return directLight;

@@ -15,7 +15,7 @@ public:
     explicit BVH(std::vector<std::unique_ptr<Mesh>> meshes);
 
     auto Intersects(const Rayf& ray) const->std::optional<Intersection>;
-    auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
+    auto IntersectsFast(const Rayf& ray) const -> bool;
 
 private:
 
@@ -25,7 +25,7 @@ private:
         BVHNode(int axis, std::unique_ptr<BVHNode> leftChild, std::unique_ptr<BVHNode> rightChild);
 
         auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
-        auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
+        auto IntersectsFast(const Rayf& ray) const -> bool;
 
         auto IsInteriorNode() const -> bool;
 

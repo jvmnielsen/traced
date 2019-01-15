@@ -10,8 +10,7 @@ Triangle::Triangle(
         : m_vertices(std::move(vertices))
         , m_vertexNormals(std::move(vertexNormals))
         , m_uv(std::move(uv))
-        , m_gen(std::random_device()()) {
-
+{
     UpdateEdges();
 }
 
@@ -20,8 +19,7 @@ Triangle::Triangle(
     std::array<Normal3f, 3>    vertexNormals)
         : m_vertices(std::move(vertices))
         , m_vertexNormals(std::move(vertexNormals))
-        , m_gen(std::random_device()()) {
-
+{
     UpdateEdges();
 }
 
@@ -133,7 +131,7 @@ Triangle::Intersects(const Rayf& ray) -> std::optional<Intersection>
     // Update parameter and intersection as necessary
     ray.NewMaxParameter(parameter);
 
-    return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric), this };
+    return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric), m_parentMesh };
 }
 
 auto 
@@ -181,10 +179,10 @@ Triangle::GetPointFromUV(const Point2f& uv) const -> Point3f {
 }
 
 auto
-Triangle::SampleSurface(float& pdf) -> Intersection {
-    pdf = 1 / GetArea();
-    const Point2f uv { m_dist(m_gen), m_dist(m_gen) };
-    return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv), this};
+Triangle::SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection {
+    info.pdf = 1 / GetArea();
+    const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
+    return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv), m_parentMesh};
 }
 
 

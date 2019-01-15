@@ -2,10 +2,7 @@
 #include <memory>
 #include <vector>
 #include <random>
-
-
 #include "triangle.hpp"
-#include "../core/intersection.hpp"
 #include <optional>
 
 class Transform;
@@ -30,11 +27,11 @@ public:
     auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     auto GetMaterial() const -> const Material&;
 
-    auto SampleSurface(float& pdf) -> Intersection;
+    auto SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection;
 
 private:
 
-    auto GetRandomTriangleIndex() -> int;
+    auto GetRandomTriangleIndex(Sampler& sampler) const -> int;
 
     std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;

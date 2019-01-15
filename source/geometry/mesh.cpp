@@ -44,16 +44,6 @@ Mesh::Mesh(Mesh&& other) noexcept
 } */
 
 
-
-bool Mesh::Intersects(const Rayf& ray, Intersection& isect)
-{
-    for (auto& triangle : m_triangles)
-        //if (triangle.Intersects(ray, isect))
-            //isect.SetMaterial(m_material.get());
-            
-	return true;
-}
-
 auto 
 Mesh::Intersects(const Rayf& ray) -> std::optional<Intersection>
 {
@@ -63,15 +53,11 @@ Mesh::Intersects(const Rayf& ray) -> std::optional<Intersection>
         isect = triangle.Intersects(ray);
     }
 
-    if (isect.has_value())
-        //isect->SetMaterial(m_material.get());
-
     return isect;//.has_value() ? std::optional<Intersection>{isect.value()} : std::nullopt;
 }
 
 
-bool Mesh::IntersectsFast(const Rayf& ray) const
-{
+bool Mesh::IntersectsFast(const Rayf& ray) const {
     for (const auto& triangle : m_triangles)
         if (triangle.IntersectsFast(ray))
             return true;
@@ -200,13 +186,13 @@ Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
 
 
 auto
-Mesh::GetRandomTriangleIndex() -> int {
+Mesh::GetRandomTriangleIndex(Sampler& sampler) const -> int {
     std::uniform_int_distribution<> dist(0, static_cast<int>(m_triangles.size() - 1));
-    return dist(m_gen);
+    return sampler.GetRandomInDistribution(dist);
 }
 
 auto
-Mesh::SampleSurface(float& pdf) -> Intersection {
-    auto randTriangle = m_triangles[GetRandomTriangleIndex()];
-    return randTriangle.SampleSurface(pdf);
+Mesh::SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection {
+    auto randTriangle = m_triangles[GetRandomTriangleIndex(sampler)];
+    return randTriangle.SampleSurface(info, sampler);
 }

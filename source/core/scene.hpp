@@ -3,16 +3,14 @@
 #include <memory>
 #include <optional>
 #include "../acceleration/bvh.hpp"
-#include "../imaging/light.hpp"
 #include "../core/sampler.hpp"
-
-class BSDF;
+#include "../imaging/color3.hpp"
 
 class Scene
 {
 public:
 
-    Scene(std::vector<std::unique_ptr<Mesh>> meshes, std::vector<std::unique_ptr<Light>> lights);
+    Scene(std::vector<std::unique_ptr<Mesh>> meshes, std::vector<std::unique_ptr<Mesh>> lights);
 
     // Does a ray intersect any shapes in the scene?
     auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
@@ -24,9 +22,9 @@ public:
 
     auto UniformSampleAllLights() const -> Color3f;
     //auto SampleOneLight(Sampler& sampler) const -> Color3f;
-    auto SampleOneLight(const Intersection& isect, Sampler& sampler) const->Color3f;
+    auto SampleOneLight(const Intersection& isect, Sampler& sampler) const -> Color3f;
 
-    auto EstimateDirectLight(const Intersection& isect, Sampler& sampler, const Light& light) const -> Color3f;
+    auto EstimateDirectLight(const Intersection& isect, Sampler& sampler, const Mesh& light) const -> Color3f;
     //auto EstimateDirectLight(const Intersection& isect) const -> Color3f;
     auto EstimateIndirectLight(const Intersection& isect) const -> Color3f;
 
@@ -42,7 +40,7 @@ private:
     Color3f m_backgroundColor;
 
     BVH m_meshes;
-    std::vector<Light> m_lights;
+    std::vector<Mesh> m_lights;
 
 
     bool IntersectsQuick(const Rayf& ray) const;

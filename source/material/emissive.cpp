@@ -1,11 +1,5 @@
-#include "light.hpp"
+#include "emissive.hpp"
 
-Light::Light(
-    //std::shared_ptr<Emissive> material,
-    std::unique_ptr<Mesh> mesh)
-        //: m_material(std::move(material))
-        : m_mesh(std::move(mesh)) {
-}
 
 /*
 auto

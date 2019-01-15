@@ -1,9 +1,4 @@
-//
-// Created by Jacob Vesti Moeslund Nielsen on 18/11/2018.
-//
-
-#ifndef TRACED_AABB_HPP
-#define TRACED_AABB_HPP
+#pragma once
 
 #include "../math/point3.hpp"
 #include "../math/math_util.hpp"
@@ -23,11 +18,9 @@ public:
 
 
     auto IntersectsMesh(const Rayf& ray) const -> std::optional<Intersection>;
+    auto IntersectsMeshFast(const Rayf& ray) const -> bool;
     auto IntersectsBox(const Rayf& ray) const -> bool;
-
-    auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;
-
-    auto IntersectsQuick(const Rayf& ray) const -> bool;
+    auto IntersectsFast(const Rayf& ray) const -> bool;
 
     auto Diagonal()         const -> Vec3f;
     auto SurfaceArea()      const -> float;
@@ -47,5 +40,3 @@ private:
 
     std::unique_ptr<Mesh> m_mesh;
 };
-
-#endif //TRACED_AABB_HPP

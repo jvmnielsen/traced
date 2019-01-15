@@ -7,7 +7,7 @@ Sampler::Sampler()
 
 auto
 Sampler::GetRandomReal() -> float {
-    return m_realdDist(m_gen);
+    return m_realDist(m_gen);
 }
 
 auto

@@ -36,7 +36,7 @@ int main(int argc, char * argv[]) {
     //teapot->ApplyMaterial(matte);
 
     std::vector<std::unique_ptr<Mesh>> meshes;
-    std::vector<std::unique_ptr<Light>> lights;
+    std::vector<std::unique_ptr<Mesh>> lights;
     meshes.push_back(std::move(teapot));
     meshes.push_back(std::move(teapot2));
 

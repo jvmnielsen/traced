@@ -7,7 +7,7 @@ class ImageBuffer
 public:
     ImageBuffer(size_t screenWidth, size_t screenHeight);
 
-    void AddPixelAt(Color3f& color, size_t i, size_t j); // read/write for pixel at specified location
+    void AddPixelAt(Color3f& color, size_t screenX, size_t screenY); // read/write for pixel at specified location
 
     //void AddPixel(const Color& color);
 

@@ -83,21 +83,6 @@ auto BVH::BuildTree(int start, int end) -> std::unique_ptr<BVHNode> {
     return std::make_unique<BVHNode>(axis, BuildTree(start, mid), BuildTree(mid, end));
 }
 
-auto BVH::BVHNode::Intersects(const Rayf& ray, Intersection& isect) const -> bool {
-
-    // Do we hit the bounding box?
-    if (!m_aabb.IntersectsBox(ray)) {
-        return false;
-    }
-    // Is the current node in the interior or a leaf?
-    if (m_leftChild) {
-        return m_leftChild->Intersects(ray, isect);
-        return m_rightChild->Intersects(ray, isect);
-    }
-//    throw std::exception();
-    return m_aabb.Intersects(ray, isect);
-}
-
 
 auto 
 BVH::BVHNode::IsInteriorNode() const -> bool
@@ -129,14 +114,28 @@ auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional<Intersecti
     return m_aabb.IntersectsMesh(ray);
 }
 
+auto BVH::BVHNode::IntersectsFast(const Rayf& ray) const -> bool {
+    // Do we hit the bounding box?
+    if (!m_aabb.IntersectsBox(ray))
+        return false;
 
-auto BVH::Intersects(const Rayf& ray, Intersection& isect) const -> bool
-{
-    return m_rootNode->Intersects(ray, isect);
+    // Is the current node in the interior or a leaf?
+    if (IsInteriorNode()) {
+        if (m_leftChild->IntersectsFast(ray))
+            return true;
+        if (m_rightChild->Intersects(ray))
+            return true;
+    }
+    return m_aabb.IntersectsFast(ray);
 }
 
 auto 
 BVH::Intersects(const Rayf& ray) const -> std::optional<Intersection>
 {
     return m_rootNode->Intersects(ray);
+}
+
+auto
+BVH::IntersectsFast(const Rayf& ray) const -> bool {
+    return m_rootNode->IntersectsFast(ray);
 }

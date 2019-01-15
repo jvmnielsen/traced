@@ -27,9 +27,8 @@ set(SOURCE_FILES
         source/imaging/camera.hpp source/imaging/camera.cpp
         source/imaging/color3.hpp
         source/imaging/image_buffer.hpp source/imaging/image_buffer.cpp
-        source/imaging/light.hpp
+        source/material/emissive.hpp
 
-        source/material/bsdf.hpp source/material/bsdf.cpp
         source/material/material.hpp source/material/material.cpp
 
         source/math/math_util.hpp source/math/math_util.cpp
@@ -46,7 +45,7 @@ set(SOURCE_FILES
         source/utility/utility.hpp
         source/utility/window.hpp source/utility/window.cpp
 
-        source/main.cpp source/imaging/light.cpp)
+        source/main.cpp source/material/emissive.cpp)
 
 
 

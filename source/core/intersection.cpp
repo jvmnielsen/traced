@@ -1,88 +1,56 @@
 #include "intersection.hpp"
 #include "../math/math_util.hpp"
-//#include "Material.h"
 
-/*
-Intersection::Intersection(
-    Point3f point,
-    Normal3f geometricNormal)
-    : m_point(std::move(point))
-    , m_geometricNormal(std::move(geometricNormal))
-{}
- */
 Intersection::Intersection(
     Point3f     point,
     Point2f     uvCoord,
     Normal3f    geometricNormal,
     Normal3f    shadingNormal,
-    Triangle*   triangle)
+    Mesh*       mesh)
     : m_point(std::move(point))
     , m_uv(std::move(uvCoord))
-    , m_triangle(triangle)
+    , m_mesh(mesh)
     , m_geometricNormal(std::move(geometricNormal))
-    , m_shadingNormal(std::move(shadingNormal))
-{
-}
-
-auto 
-Intersection::Emitted() const -> Color3f {
-    if (m_material)
-        return m_material->Emitted({}, {});
-    
-    return Color3f{0};
+    , m_shadingNormal(std::move(shadingNormal)) {
 }
 
 auto
-Intersection::ComputeScatteringFunctions() -> void {
-    m_material->ComputeScatteringFunctions(*this);
+Intersection::UpdateRayToSampleDir(Rayf& rayToUpdate, const SamplingInfo& info) const -> void {
+    rayToUpdate = Rayf{ m_point, info.toEye };
 }
 
-//void Update(const Point3f& point, const Point2f& uvCoord, const Normal3f& geometricNormal, const Normal3f& shadingNormal, Triangle* shape);
-
-/*
-void Intersection::Update(
-    const Point3f&      point,
-    const Point2f&      uvCoord,
-    const Normal3f&     geometricNormal,
-    const Normal3f&     shadingNormal,
-    Triangle*           triangle)
-{
-    m_hasBeenHit = true;
-    m_point = point;
-    m_uv = uvCoord;
-    m_geometricNormal = geometricNormal;
-    m_triangle = triangle;
-    m_shadingNormal = shadingNormal;
-} */
-
-//bool Intersection::HasBeenHit() const { return m_hasBeenHit; }
-const Point3f& Intersection::GetPoint() const { return m_point; }
-const Point2f& Intersection::GetUV() const { return m_uv; }
-Triangle* Intersection::GetTriangle() const { return m_triangle; }
-const Normal3f& Intersection::GetGeometricNormal() const { return m_geometricNormal; }
-const Normal3f& Intersection::GetShadingNormal() const { return m_shadingNormal; }
-
-/*
-Material* Intersection::GetMaterial() const { return m_material; }
-auto Intersection::SetMaterial(Material* material) -> void
-{
-    m_material = material;
-} */
-
-Point3f Intersection::OffsetShadingPoint() const
-{
+Point3f Intersection::OffsetShadingPoint() const {
     return m_point + m_shadingNormal * Math::Epsilon;
 }
 
-Point3f Intersection::OffsetGeometricPoint() const
-{
+Point3f Intersection::OffsetGeometricPoint() const {
     return m_point + m_geometricNormal * Math::Epsilon;
 }
 
-Color3f Intersection::CalculateEmitted() const
-{
-    //if (m_material) return Color3f{0};
-        //return m_material->Emitted(m_uv, m_point);
-    //else
-        return Color3f{0.0f};
+auto
+Intersection::NewThroughput(const Color3f& currentThroughput, SamplingInfo& info, Sampler& sampler) -> Color3f {
+
+    m_material->Sample(info, sampler);
+    return currentThroughput * m_material->Evaluate(info) / info.pdf;
 }
+
+auto
+Intersection::GetTangent() const -> const Normal3f& {
+    return m_tangent;
+}
+
+auto
+Intersection::GetPoint() const -> const Point3f& {
+    return m_point;
+}
+
+auto
+Intersection::GetGeometricNormal() const -> const Normal3f& {
+    return m_geometricNormal;
+};
+
+auto
+Intersection::IsSpecular() const -> bool {
+    return false;
+}
+
