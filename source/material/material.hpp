@@ -28,7 +28,7 @@ public:
     auto Sample(SamplingInfo& info, Sampler& sampler) const -> void override; // set pdf as well
     auto Evaluate(const SamplingInfo& info) const -> Color3f override;
 
-    Color3f m_albedo;
+    Color3f m_albedo = Color3f{0.3f};
 };
 
 class Emissive : public Matte
@@ -43,7 +43,7 @@ public:
     auto Emitted(const Intersection& atLight, const SamplingInfo& info) const -> Color3f override;
 
 
-    Color3f m_radiance = Color3f{0.9f};
+    Color3f m_radiance = Color3f{0.5f};
 
 };
 

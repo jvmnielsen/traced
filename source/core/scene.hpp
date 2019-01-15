@@ -10,7 +10,7 @@ class Scene
 {
 public:
 
-    Scene(std::vector<std::unique_ptr<Mesh>> meshes, std::vector<std::unique_ptr<Mesh>> lights);
+    Scene(std::vector<std::unique_ptr<Mesh>> meshes, std::vector<Mesh> lights);
 
     // Does a ray intersect any shapes in the scene?
     auto Intersects(const Rayf& ray, Intersection& isect) const -> bool;

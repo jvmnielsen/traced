@@ -90,9 +90,7 @@ BVH::BVHNode::IsInteriorNode() const -> bool
     return m_leftChild || m_rightChild;
 }
 
-auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional<Intersection>
-{
-
+auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     // Do we hit the bounding box?
     if (!m_aabb.IntersectsBox(ray)) 
         return std::nullopt;
@@ -130,8 +128,7 @@ auto BVH::BVHNode::IntersectsFast(const Rayf& ray) const -> bool {
 }
 
 auto 
-BVH::Intersects(const Rayf& ray) const -> std::optional<Intersection>
-{
+BVH::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     return m_rootNode->Intersects(ray);
 }
 

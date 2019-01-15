@@ -188,8 +188,7 @@ auto AABB::IntersectsBox(const Rayf& ray) const -> bool
 }
 
 auto 
-AABB::IntersectsMesh(const Rayf& ray) const->std::optional<Intersection>
-{
+AABB::IntersectsMesh(const Rayf& ray) const->std::optional<Intersection> {
     return m_mesh->Intersects(ray);
 }
 

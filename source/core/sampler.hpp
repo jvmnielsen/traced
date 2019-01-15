@@ -7,7 +7,7 @@ public:
     Sampler();
 
     auto GetRandomReal() -> float;
-    auto GetRandomInDistribution(std::uniform_int_distribution<>& dist) -> int;
+    auto GetRandomInDistribution(int upperBound) -> int;
     auto CosineSampleHemisphere() -> Vec3f;
 
 private:
@@ -15,6 +15,6 @@ private:
     //std::random_device m_seed;
     std::mt19937 m_gen;
     std::uniform_real_distribution<float> m_realDist { 0.0f, 1.0f };
-    std::uniform_int_distribution<> m_intDist;
+    //std::uniform_int_distribution<> m_intDist;
 };
 

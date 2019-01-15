@@ -11,8 +11,8 @@ Sampler::GetRandomReal() -> float {
 }
 
 auto
-Sampler::GetRandomInDistribution(std::uniform_int_distribution<>& dist) -> int {
-    return dist(m_gen);
+Sampler::GetRandomInDistribution(int upperBound) -> int {
+    return static_cast<unsigned int>(GetRandomReal() * (upperBound-1));
 }
 
 auto 

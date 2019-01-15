@@ -40,13 +40,13 @@ ImageBuffer::ImageBuffer(
 auto
 ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void
 {
-    //auto corrected_j = std::abs((int)j - (int)m_screenHeight) - 1; // to correct for j starting at screen_height and decrementing
+    auto correctedY = std::abs((int)screenY - (int)m_screenHeight) - 1; // to correct for j starting at screen_height and decrementing
 
     if ((screenX < m_screenWidth) && (screenY < m_screenHeight)) {
         ConvertToRGB(color);
-        m_buffer[(screenY * m_screenWidth + screenX) * 4    ] = static_cast<unsigned char>(color.r);
-        m_buffer[(screenY * m_screenWidth + screenX) * 4 + 1] = static_cast<unsigned char>(color.g);
-        m_buffer[(screenY * m_screenWidth + screenX) * 4 + 2] = static_cast<unsigned char>(color.b);
-        m_buffer[(screenY * m_screenWidth + screenX) * 4 + 3] = 255;
+        m_buffer[(correctedY * m_screenWidth + screenX) * 4    ] = static_cast<unsigned char>(color.r);
+        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 1] = static_cast<unsigned char>(color.g);
+        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 2] = static_cast<unsigned char>(color.b);
+        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 3] = 255;
     } // maybe add throw
 }

@@ -21,22 +21,23 @@ void Renderer::Render(int samplesPerPixel) {
     const int width = m_buffer->GetWidth();
 
     Sampler sampler;
+    int counter = 0;
 
     // size_t causes subscript out of range due to underflow
     for (int j = height - 1; j >= 0; j--) { // start in the top left
         for (size_t i = 0; i < width; ++i) {
 
             Color3f color{0};
-            //for (size_t s = 0; s < samplesPerPixel; s++) {
+            for (size_t s = 0; s < samplesPerPixel; s++) {
                 const auto u = float(i) / float(width); // + m_dist(m_gen)
                 const auto v = float(j) / float(height); // + m_dist(m_gen)
 
                 auto ray = m_camera->GetRay(u, v);
 
                 color += TracePath(ray, sampler);
-            //}
+            }
 
-            //color /= float(samplesPerPixel);
+            color /= float(samplesPerPixel);
             m_buffer->AddPixelAt(color, i, j);
         }
     }
@@ -67,7 +68,8 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         // as the object's light contribution is otherwise accounted for by the direct light
         // contribution on the previous path vertex
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->m_material->Emitted(*isect, info); // consider making directional
+            //if (isect->m_material)
+                //color += throughput * isect->m_material->Emitted(*isect, info); // consider making directional
         }
 
         // direct lighting
@@ -87,7 +89,6 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
             throughput /= 1 - q;
         }
     }
-
     return color;
 }
 

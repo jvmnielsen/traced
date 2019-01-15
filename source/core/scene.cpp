@@ -2,20 +2,24 @@
 
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
-        std::vector<std::unique_ptr<Mesh>> lights)
+        std::vector<Mesh> lights)
         : m_meshes(std::move(meshes))
-//, m_lights(std::move(lights))
-{
-    m_lights.reserve(lights.size());
-
-    //for (auto& light : lights)
-    //    m_lights.emplace_back(std::move(light));
+        , m_lights(std::move(lights)) {
 
 }
 
 auto
 Scene::Intersects(const Rayf& ray) -> std::optional<Intersection> {
-    return m_meshes.Intersects(ray);
+    auto isect = m_meshes.Intersects(ray);
+
+    for (auto& light : m_lights) {
+        // the last overridden isect will always be the closest (ray max_param shrinks every time)
+        auto tmp = light.Intersects(ray);
+        if (tmp.has_value())
+            isect = tmp;
+    }
+
+    return isect;
 }
 
 bool Scene::IntersectsQuick(const Rayf& ray) const {
@@ -46,9 +50,7 @@ Scene::SampleOneLight(const Intersection& isect, Sampler& sampler) const -> Colo
 
     if (nLights == 0) return Color3f{0.0f}; // there are no lights
 
-    auto dist = std::uniform_int_distribution<>(0, static_cast<int>(nLights));
-
-    const auto& light = m_lights[sampler.GetRandomInDistribution(dist)];
+    const auto& light = m_lights[sampler.GetRandomInDistribution(nLights)];
 
     //while (light == hitLight) {
     // implement check to ensure we don't double dip

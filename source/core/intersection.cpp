@@ -31,6 +31,8 @@ auto
 Intersection::NewThroughput(const Color3f& currentThroughput, SamplingInfo& info, Sampler& sampler) -> Color3f {
 
     m_material->Sample(info, sampler);
+    if (info.pdf == 0.0f)
+        return Color3f{0.0f};
     return currentThroughput * m_material->Evaluate(info) / info.pdf;
 }
 

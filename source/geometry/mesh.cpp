@@ -50,10 +50,17 @@ Mesh::Intersects(const Rayf& ray) -> std::optional<Intersection>
     std::optional<Intersection> isect;
     for (auto& triangle : m_triangles) {
         // the last overridden isect will always be the closest (ray max_param shrinks every time)
-        isect = triangle.Intersects(ray);
+        auto tmp = triangle.Intersects(ray);
+        if (tmp.has_value())
+            isect = tmp;
+    }
+    if (isect.has_value()) {
+        isect->m_material = m_material.get();
+        isect->m_mesh = this;
+        return isect;
     }
 
-    return isect;//.has_value() ? std::optional<Intersection>{isect.value()} : std::nullopt;
+    return std::nullopt;//.has_value() ? std::optional<Intersection>{isect.value()} : std::nullopt;
 }
 
 
@@ -187,12 +194,11 @@ Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
 
 auto
 Mesh::GetRandomTriangleIndex(Sampler& sampler) const -> int {
-    std::uniform_int_distribution<> dist(0, static_cast<int>(m_triangles.size() - 1));
-    return sampler.GetRandomInDistribution(dist);
+    return static_cast<unsigned int>(sampler.GetRandomReal() * (m_triangles.size()-1));
 }
 
 auto
 Mesh::SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection {
-    auto randTriangle = m_triangles[GetRandomTriangleIndex(sampler)];
+    auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
     return randTriangle.SampleSurface(info, sampler);
 }

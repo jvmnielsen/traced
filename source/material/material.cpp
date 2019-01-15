@@ -32,5 +32,5 @@ Matte::Evaluate(const SamplingInfo& info) const -> Color3f {
 
 auto
 Emissive::Emitted(const Intersection& atLight, const SamplingInfo& info) const -> Color3f {
-    return Dot(atLight.GetGeometricNormal(), info.toEye) > 0 ? m_radiance : Color3f{0.0f};
+    return Dot(atLight.GetGeometricNormal(), info.toLight) > 0 ? m_radiance : Color3f{0.0f};
 }
