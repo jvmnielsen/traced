@@ -50,6 +50,11 @@ Intersection::GetGeometricNormal() const -> const Normal3f& {
 };
 
 auto
+Intersection::GetShadingNormal() const -> const Normal3f& {
+    return m_shadingNormal;
+}
+
+auto
 Intersection::IsSpecular() const -> bool {
     return false;
 }

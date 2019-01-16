@@ -46,12 +46,12 @@ Scene::UniformSampleAllLights() const -> Color3f {
 
 
 auto
-Scene::SampleOneLight(const Intersection& isect, Sampler& sampler) const -> Color3f {
+Scene::SampleOneLight(const Intersection& isect, SamplingInfo& info, Sampler& sampler) const -> Color3f {
     const auto nLights = m_lights.size();
 
     if (nLights == 0) return Color3f{0.0f}; // there are no lights
 
-    if (nLights == 1) return EstimateDirectLight(isect, sampler, m_lights[0]);
+    if (nLights == 1) return EstimateDirectLight(isect, info, sampler, m_lights[0]);
 
     int num;
     if (isect.m_lightID.has_value()) {
@@ -65,77 +65,56 @@ Scene::SampleOneLight(const Intersection& isect, Sampler& sampler) const -> Colo
     const auto& light = m_lights[num];
 
     // multiplying by the number of lights is the same as dividing with the fractional pdf 1/nLights
-    return EstimateDirectLight(isect, sampler, light) * nLights;
+    return EstimateDirectLight(isect, info, sampler, light) * nLights;
 }
 
 
 auto
 Scene::EstimateDirectLight(
         const Intersection& isect,
+        SamplingInfo& info,
         Sampler& sampler,
         const Mesh& light) const -> Color3f {
 
     Color3f directLight = Color3f{0.0f};
+    float lightPdf, scatteringPdf;
 
-    if (isect.IsSpecular()) {
-        return Color3f{0.0f};
-    }
-
-    SamplingInfo info;
+    //SamplingInfo info;
     Intersection atLight = light.SampleSurface(info, sampler);
 
-    if (!LineOfSightBetween(isect.GetPoint(), atLight.GetPoint())) {
-        return Color3f{0.0f};
-    }
-
+    bool LoS = LineOfSightBetween(isect.GetPoint(), atLight.GetPoint());
     info.toLight = Normalize(atLight.GetPoint() - isect.GetPoint());
-
     const auto radiance = light.GetMaterial().Emitted(atLight, info.toLight);
+    lightPdf = info.pdf;
 
-    if (info.pdf != 0.0f && !radiance.IsBlack()) {
-        directLight += isect.m_material->Evaluate(info) * radiance / info.pdf;
-    }
+    if (lightPdf > 0.0f && !radiance.IsBlack()) {
+        Color3f f = isect.m_material->Evaluate(info) * std::abs(Dot(info.toLight, isect.GetShadingNormal()));
+        isect.m_material->Pdf(info);
+        scatteringPdf = info.pdf;
 
-    return directLight;
-
-
-    /*
-    Color3f directLight = Color3f{0.0f};
-    Color3f f;
-    float lightPdf, scatterPdf;
-    Normal3f wi;
-    Intersection atLight;
-
-    if (isect.m_material->m_bsdf.GetType() != Specular) {
-        Color3f li = light.Sample(isect, wi, lightPdf, atLight);
-
-        if (lightPdf != 0.0f && !li.IsBlack()) {
-            f = bsdf.Evaluate(isect.m_wo, wi);
-            scatterPdf = bsdf.Pdf(isect.m_wo, wi);
-
-            if (scatterPdf != 0.0f && !f.IsBlack()) {
-                const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatterPdf);
-                directLight += f * li * weight / lightPdf;
+        if (!f.IsBlack() && LoS) {
+            if (!radiance.IsBlack()) {
+                float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+                directLight += f * radiance * weight / lightPdf;
             }
         }
     }
 
-    // update isect.inputDir
-    f = bsdf.Sample(isect.m_wo, wi, scatterPdf, sampler);
-    //f = bsdf.Evaluate(isect);
-    //scatterPdf = bsdf.Pdf(isect);
-    if (scatterPdf != 0.0f && !f.IsBlack()) {
-        lightPdf = light.PdfLi(isect, wi);
-        if (lightPdf == 0.0f) {
-            return directLight;
+    if (!isect.IsSpecular()) {
+        isect.m_material->Sample(info, sampler);
+        Color3f f = isect.m_material->Evaluate(info) * std::abs(Dot(info.toLight, isect.GetShadingNormal()));
+
+        if (!f.IsBlack() && info.pdf > 0) {
+            lightPdf = (isect.GetPoint() - atLight.GetPoint()).LengthSquared() /
+                        std::abs(Dot(atLight.GetGeometricNormal(), -info.toLight)); // * Area());
+            if (lightPdf == 0.0f) {
+                return directLight;
+            }
+            float weight = Math::PowerHeuristic(1, info.pdf, 1, lightPdf);
+            directLight += f * radiance * weight / info.pdf;
         }
-
-        const auto weight = Math::PowerHeuristic(1, scatterPdf, 1, lightPdf);
-        Color3f li = light.m_radiance;
-        directLight += f * li * weight / scatterPdf;
     }
-
-    return directLight; */
+    return directLight;
 }
 
 auto

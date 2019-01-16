@@ -22,9 +22,9 @@ public:
 
     auto UniformSampleAllLights() const -> Color3f;
     //auto SampleOneLight(Sampler& sampler) const -> Color3f;
-    auto SampleOneLight(const Intersection& isect, Sampler& sampler) const -> Color3f;
+    auto SampleOneLight(const Intersection& isect, SamplingInfo& info, Sampler& sampler) const -> Color3f;
 
-    auto EstimateDirectLight(const Intersection& isect, Sampler& sampler, const Mesh& light) const -> Color3f;
+    auto EstimateDirectLight(const Intersection& isect, SamplingInfo& info, Sampler& sampler, const Mesh& light) const -> Color3f;
     //auto EstimateDirectLight(const Intersection& isect) const -> Color3f;
     auto EstimateIndirectLight(const Intersection& isect) const -> Color3f;
 

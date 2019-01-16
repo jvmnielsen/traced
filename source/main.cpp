@@ -31,11 +31,11 @@ int main(int argc, char * argv[]) {
     //Mesh test = *teapot;
     teapot2->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
     teapot2->TransformBy(Transform::Scale({2.25f, 2.25f, 2.25f}));
-    teapot2->TransformBy(Transform::Translate({-6.0f, -2.0f, -8.0f}));
+    teapot2->TransformBy(Transform::Translate({-6.0f, -2.0f, -5.0f}));
 
     //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
     floor.TransformBy(Transform::Scale({2.25f, 2.25f, 2.25f}));
-    floor.TransformBy(Transform::Translate({0.0f, -3.0f, -6.0f}));
+    floor.TransformBy(Transform::Translate({-3.0f, -4.0f, -11.0f}));
 
     auto matte = std::make_shared<Matte>();
     teapot->ApplyMaterial(matte);
@@ -62,7 +62,8 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 50 };
+    std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
     window->CheckForInput(*buffer);

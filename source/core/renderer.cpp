@@ -23,6 +23,7 @@ void Renderer::Render(int samplesPerPixel) {
     Sampler sampler;
     int counter = 0;
 
+    std::cout << "Entering main render-loop\n";
     // size_t causes subscript out of range due to underflow
     for (int j = height - 1; j >= 0; j--) { // start in the top left
         for (size_t i = 0; i < width; ++i) {
@@ -73,7 +74,7 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         }
 
         // direct lighting
-        color += throughput * m_scene->SampleOneLight(*isect, sampler);
+        color += throughput * m_scene->SampleOneLight(*isect, info, sampler);
 
         // sample BSDF for new ray direction
 

@@ -35,6 +35,7 @@ public:
     auto GetTangent() const -> const Normal3f&;
     auto GetPoint() const -> const Point3f&;
     auto GetGeometricNormal() const -> const Normal3f&;
+    auto GetShadingNormal() const -> const Normal3f&;
     auto IsSpecular() const -> bool;
 
     Normal3f    m_tangent;

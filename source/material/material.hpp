@@ -13,9 +13,10 @@ public:
     virtual auto Evaluate(const SamplingInfo& info) const -> Color3f = 0;
 
     virtual auto Emitted(const Intersection& atLight, const Vec3f& dir) const -> Color3f;
+    auto Pdf(SamplingInfo& info) const -> void;
 
 protected:
-    auto Pdf(SamplingInfo& info) const -> void;
+
 
 };
 
