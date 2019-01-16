@@ -9,7 +9,7 @@ Scene::Scene(
 }
 
 auto
-Scene::Intersects(const Rayf& ray) -> std::optional<Intersection> {
+Scene::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     auto isect = m_meshes.Intersects(ray);
 
     for (size_t i = 0; i < m_lights.size(); ++i) {
@@ -37,21 +37,12 @@ bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const {
 
 
 auto
-Scene::UniformSampleAllLights() const -> Color3f {
-    for (const auto& light : m_lights) {
-
-    }
-    return Color3f{0.0f};
-}
-
-
-auto
-Scene::SampleOneLight(const Intersection& isect, SamplingInfo& info, Sampler& sampler) const -> Color3f {
+Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampler) const -> Color3f {
     const auto nLights = m_lights.size();
 
     if (nLights == 0) return Color3f{0.0f}; // there are no lights
 
-    if (nLights == 1) return EstimateDirectLight(isect, info, sampler, m_lights[0]);
+    if (nLights == 1) return EstimateDirectLight(isect, wo, sampler, m_lights[0]);
 
     int num;
     if (isect.m_lightID.has_value()) {
@@ -65,14 +56,14 @@ Scene::SampleOneLight(const Intersection& isect, SamplingInfo& info, Sampler& sa
     const auto& light = m_lights[num];
 
     // multiplying by the number of lights is the same as dividing with the fractional pdf 1/nLights
-    return EstimateDirectLight(isect, info, sampler, light) * nLights;
+    return EstimateDirectLight(isect, wo, sampler, light) * nLights;
 }
 
 
 auto
 Scene::EstimateDirectLight(
         const Intersection& isect,
-        SamplingInfo& info,
+        const Vec3f& wo,
         Sampler& sampler,
         const Mesh& light) const -> Color3f {
 
@@ -80,18 +71,15 @@ Scene::EstimateDirectLight(
     float lightPdf, scatteringPdf;
 
     //SamplingInfo info;
-    Intersection atLight = light.SampleSurface(info, sampler);
+    Intersection atLight = light.SampleSurface(lightPdf, sampler);
 
     bool LoS = LineOfSightBetween(isect.GetPoint(), atLight.GetPoint());
-    info.toLight = Normalize(atLight.GetPoint() - isect.GetPoint());
-    const auto radiance = light.GetMaterial().Emitted(atLight, info.toLight);
-    lightPdf = info.pdf;
+    Vec3f wi = Normalize(atLight.GetPoint() - isect.GetPoint());
+    const auto radiance = light.GetMaterial().Emitted(atLight.GetGeometricNormal(), wi);
 
     if (lightPdf > 0.0f && !radiance.IsBlack()) {
-        Color3f f = isect.m_material->Evaluate(info) * std::abs(Dot(info.toLight, isect.GetShadingNormal()));
-        isect.m_material->Pdf(info);
-        scatteringPdf = info.pdf;
-
+        Color3f f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
+        scatteringPdf = isect.m_material->Pdf(wo, wi);
         if (!f.IsBlack() && LoS) {
             if (!radiance.IsBlack()) {
                 float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
@@ -101,76 +89,25 @@ Scene::EstimateDirectLight(
     }
 
     if (!isect.IsSpecular()) {
-        isect.m_material->Sample(info, sampler);
-        Color3f f = isect.m_material->Evaluate(info) * std::abs(Dot(info.toLight, isect.GetShadingNormal()));
+        Color3f f = isect.m_material->Sample(wo, wi, scatteringPdf, sampler); // overwrites wi
+        f *= std::abs(Dot(wi, isect.GetShadingNormal()));
 
-        if (!f.IsBlack() && info.pdf > 0) {
-            lightPdf = (isect.GetPoint() - atLight.GetPoint()).LengthSquared() /
-                        std::abs(Dot(atLight.GetGeometricNormal(), -info.toLight)); // * Area());
+        if (!f.IsBlack() && scatteringPdf > 0) {
+            lightPdf = light.Pdf(isect.GetPoint(), wi);
             if (lightPdf == 0.0f) {
                 return directLight;
             }
-            float weight = Math::PowerHeuristic(1, info.pdf, 1, lightPdf);
-            directLight += f * radiance * weight / info.pdf;
+
+            auto lightIsect = Intersects(Rayf{isect.GetPoint(), wi});
+
+            if (lightIsect.has_value()) {
+                const auto li = light.GetMaterial().Emitted(lightIsect->GetGeometricNormal(), wi); //check sign of wi
+                float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
+                directLight += f * li * weight / scatteringPdf;
+            }
         }
     }
     return directLight;
-}
-
-auto
-Scene::EstimateIndirectLight(const Intersection& isect) const -> Color3f {
-
-    return Color3f{0.3f};
-}
-
-
-Color3f Scene::SamplePointLights(const Intersection& isect, const Rayf& ray) const {
-    Color3f color{0.0f};
-    /*
-    for (auto& light : m_lights)
-    {
-        if (LineOfSightBetween(isect.OffsetShadingPoint(), light->GetPosition()))
-        {
-            LightingAtPoint info;
-            light->IlluminatePoint(isect.GetPoint(), info);
-
-            const auto w_i = info.directionToLight;
-            const auto w_o = -ray.GetDirection();
-
-            color += isect.GetMaterial()->EvaluateBSDF(w_o, w_i) * info.intensityAtPoint * std::max(0.0f, w_i.DotProduct(isect.GetShadingNormal()));
-        }
-    }
-     */
-    return color;
-}
-
-/*
-Color3f Scene::SampleAreaLights(const Intersection& isect, const Rayf& ray)
-{
-    Color3f color{0.0f};
-    for (auto& light : m_areaLights)
-    {
-        auto lightIsect = light->GetShape().GetRandomSurfaceIntersection();
-        if (LineOfSightBetween(isect.OffsetGeometricPoint(), lightIsect.OffsetGeometricPoint()))
-        {
-            //LightingAtPoint info;
-            //light->IlluminatePoint(isect.GetPoint(), info);
-
-            auto w_i = lightIsect.GetPoint() - isect.GetPoint();
-            const float distanceSquared = w_i.LengthSquared();
-            w_i /= sqrt(distanceSquared);
-
-            color += isect.GetMaterial()->EvaluateBSDF(w_i, -ray.GetDirection())
-                        * light->GetShape().GetMaterial().Emitted(Point2f{0}, Point3f{0})
-                        * std::max(0.0f, w_i.DotProduct(isect.GetShadingNormal()))
-                        * std::max(0.0f, -w_i.DotProduct(lightIsect.GetGeometricNormal()) / distanceSquared);
-        }
-    }
-    return color;
-} */
-
-Color3f Scene::SampleIndirectLighting(const Intersection& isect, const Rayf& ray) {
-    return {0, 0, 0};
 }
 
 void Scene::SetBackgroundColor(const Color3f& color) {

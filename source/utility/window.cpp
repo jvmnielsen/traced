@@ -92,8 +92,8 @@ void Window::CheckForInput(ImageBuffer &pixelBuffer)
     bool running = true;
 
     // Super hacky solution for MacOS 14
-    SDL_PumpEvents();
-    SDL_SetWindowPosition(m_windowHandle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    //SDL_PumpEvents();
+    //SDL_SetWindowPosition(m_windowHandle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     //While application is running 
     while (running)

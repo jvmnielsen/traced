@@ -45,7 +45,7 @@ Mesh::Mesh(Mesh&& other) noexcept
 
 
 auto 
-Mesh::Intersects(const Rayf& ray) -> std::optional<Intersection>
+Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection>
 {
     std::optional<Intersection> isect;
     for (auto& triangle : m_triangles) {
@@ -193,15 +193,23 @@ Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
 
 
 auto
-Mesh::GetRandomTriangleIndex(Sampler& sampler) const -> int {
-    return static_cast<unsigned int>(sampler.GetRandomReal() * (m_triangles.size()-1));
-}
-
-auto
-Mesh::SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection {
+Mesh::SampleSurface(float& pdf, Sampler& sampler) const -> Intersection {
     auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
-    auto lightIsect = randTriangle.SampleSurface(info, sampler);
+    auto lightIsect = randTriangle.SampleSurface(pdf, sampler);
     lightIsect.m_mesh = this;
     lightIsect.m_material = m_material.get();
     return lightIsect;
+}
+
+auto
+Mesh::Pdf(const Point3f& ref, const Vec3f& wi) const -> float {
+    Ray ray = Rayf{ref, wi};
+    auto isect = Intersects(ray);
+    if (isect.has_value()) {
+        float pdf = (ref - isect->GetPoint()).LengthSquared()
+                    / (std::abs(Dot(isect->GetGeometricNormal(), -wi)) * GetSurfaceArea());
+        if (std::isinf(pdf)) pdf = 0.0f;
+        return pdf;
+    }
+    return 0.0f;
 }

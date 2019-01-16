@@ -100,7 +100,7 @@ Triangle::IntersectsFast(const Rayf& ray) const -> bool
 }
 
 auto 
-Triangle::Intersects(const Rayf& ray) -> std::optional<Intersection>
+Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection>
 {
     const auto p_vec = Cross(ray.GetDirection(), m_edges.at(1));
     const auto det = Dot(m_edges[0], p_vec);
@@ -179,8 +179,8 @@ Triangle::GetPointFromUV(const Point2f& uv) const -> Point3f {
 }
 
 auto
-Triangle::SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection {
-    info.pdf = 1 / GetArea();
+Triangle::SampleSurface(float& pdf, Sampler& sampler) const -> Intersection {
+    pdf = 1 / GetArea(); // TODO: figure out if this should be for triangle or whole mesh
     const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
     return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv) };
 }

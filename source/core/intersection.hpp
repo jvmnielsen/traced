@@ -11,23 +11,12 @@
 
 class Mesh;
 
-struct SamplingInfo {
-    Vec3f toLight;
-    Vec3f toEye;
-    float pdf;
-};
-
-
 class Intersection
 {
 public:
     Intersection() {}
 
     Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal);
-
-    //auto Emitted() const -> Color3f;
-    auto NewThroughput(const Color3f& currentThroughput, SamplingInfo& info, Sampler& sampler) -> Color3f;
-    auto UpdateRayToSampleDir(Rayf& rayToUpdate, const SamplingInfo& info) const -> void;
 
     Point3f OffsetShadingPoint() const;
     Point3f OffsetGeometricPoint() const;

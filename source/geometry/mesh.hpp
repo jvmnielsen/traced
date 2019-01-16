@@ -10,14 +10,9 @@ class Transform;
 class Mesh
 {
 public:
-    //Mesh();
     explicit Mesh(std::vector<Triangle> triangle);
-    //Mesh(const Mesh& other);
-    //Mesh(Mesh&& other) noexcept;
-    //auto operator=(const Mesh& other) -> Mesh&;
 
-    auto Intersects(const Rayf& ray) -> std::optional<Intersection>;
-	auto Intersects(const Rayf& ray, Intersection& isect) -> bool;
+    auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
     auto IntersectsFast(const Rayf& ray) const -> bool;
 
 	auto GetSurfaceArea() const -> float;
@@ -27,14 +22,13 @@ public:
     auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     auto GetMaterial() const -> const Material&;
 
-    auto SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection;
+    auto SampleSurface(float& pdf, Sampler& sampler) const -> Intersection;
+
+    auto Pdf(const Point3f& ref, const Vec3f& wi) const -> float;
 
 private:
-
-    auto GetRandomTriangleIndex(Sampler& sampler) const -> int;
-
     std::vector<Triangle>       m_triangles;
-    std::shared_ptr<Material>   m_material;
+	std::shared_ptr<Material>   m_material;
 
     std::mt19937 m_gen;
 

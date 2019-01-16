@@ -33,7 +33,7 @@ ImageBuffer::ImageBuffer(
     m_buffer.reserve(total);
 
     for (unsigned int i = 0; i < total; i++) {
-        m_buffer.emplace_back(255);
+        m_buffer.emplace_back(190);
     }
 }
 

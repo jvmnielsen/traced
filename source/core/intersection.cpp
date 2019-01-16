@@ -12,10 +12,6 @@ Intersection::Intersection(
     , m_shadingNormal(std::move(shadingNormal)) {
 }
 
-auto
-Intersection::UpdateRayToSampleDir(Rayf& rayToUpdate, const SamplingInfo& info) const -> void {
-    rayToUpdate = Rayf{ m_point, info.toEye };
-}
 
 Point3f Intersection::OffsetShadingPoint() const {
     return m_point + m_shadingNormal * Math::Epsilon;
@@ -23,15 +19,6 @@ Point3f Intersection::OffsetShadingPoint() const {
 
 Point3f Intersection::OffsetGeometricPoint() const {
     return m_point + m_geometricNormal * Math::Epsilon;
-}
-
-auto
-Intersection::NewThroughput(const Color3f& currentThroughput, SamplingInfo& info, Sampler& sampler) -> Color3f {
-
-    m_material->Sample(info, sampler);
-    if (info.pdf == 0.0f)
-        return Color3f{0.0f};
-    return currentThroughput * m_material->Evaluate(info) / info.pdf;
 }
 
 auto

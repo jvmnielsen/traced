@@ -9,14 +9,10 @@ class Intersection;
 class Material {
 public:
 
-    virtual auto Sample(SamplingInfo& info, Sampler& sampler) const -> void = 0; // set pdf as well
-    virtual auto Evaluate(const SamplingInfo& info) const -> Color3f = 0;
-
-    virtual auto Emitted(const Intersection& atLight, const Vec3f& dir) const -> Color3f;
-    auto Pdf(SamplingInfo& info) const -> void;
-
-protected:
-
+    virtual auto Sample(const Vec3f& wo, Vec3f& wi, float& pdf, Sampler& sampler) const -> Color3f;
+    virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                       -> Color3f = 0;
+            auto Pdf(const Vec3f& wo, const Vec3f& wi) const                            -> float;
+    virtual auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir) const            -> Color3f;
 
 };
 
@@ -26,10 +22,9 @@ class Matte : public Material
 {
 public:
 
-    auto Sample(SamplingInfo& info, Sampler& sampler) const -> void override; // set pdf as well
-    auto Evaluate(const SamplingInfo& info) const -> Color3f override;
+    auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
 
-    Color3f m_albedo = Color3f{0.3f};
+    Color3f m_attenuation = Color3f{ 0.3f, 0.1f, 0.5f };
 };
 
 class Emissive : public Matte
@@ -41,10 +36,10 @@ public:
     //auto Emitted() const -> Color3f override;
 
 
-    auto Emitted(const Intersection& atLight, const Vec3f& dir) const -> Color3f override;
+    virtual auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir) const -> Color3f;
 
 
-    Color3f m_radiance = Color3f{0.5f};
+    Color3f m_radiance = Color3f{2.5f};
 
 };
 

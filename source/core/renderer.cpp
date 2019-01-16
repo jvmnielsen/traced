@@ -30,8 +30,8 @@ void Renderer::Render(int samplesPerPixel) {
 
             Color3f color{0};
             for (size_t s = 0; s < samplesPerPixel; s++) {
-                const auto u = float(i) / float(width); // + m_dist(m_gen)
-                const auto v = float(j) / float(height); // + m_dist(m_gen)
+                const auto u = (i) / float(width); // + m_dist(m_gen)
+                const auto v = (j) / float(height); // + m_dist(m_gen)
 
                 auto ray = m_camera->GetRay(u, v);
 
@@ -42,6 +42,7 @@ void Renderer::Render(int samplesPerPixel) {
             m_buffer->AddPixelAt(color, i, j);
         }
     }
+    std::cout << "rendering done\n";
 }
 
 auto
@@ -53,34 +54,30 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
     for (int bounces = 0; bounces < m_maxBounces; ++bounces) { 
 
-        // test ray against objects in the scene
         auto isect = m_scene->Intersects(ray);
 
-        // If no object was hit, return scene background radiance
         if (!isect.has_value()) {
             color += throughput * m_scene->BackgroundColor();
             break;
         }
 
-        SamplingInfo info;
-        info.toEye = -ray.GetDirection();
+        auto wo = -ray.GetDirection();
 
-        // we only account for self-emitted light on the fist bounce or after a specular bounce
-        // as the object's light contribution is otherwise accounted for by the direct light
-        // contribution on the previous path vertex
         if (bounces == 0 || lastBounceSpecular) {
-            //if (isect->m_material)
-            color += throughput * isect->m_material->Emitted(*isect, info.toEye);
+            color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo);
         }
 
-        // direct lighting
-        color += throughput * m_scene->SampleOneLight(*isect, info, sampler);
-
-        // sample BSDF for new ray direction
+        color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
 
 
-        throughput = isect->NewThroughput(throughput, info, sampler);
-        isect->UpdateRayToSampleDir(ray, info);
+        Vec3f wi;
+        float pdf;
+        Color3f f = isect->m_material->Sample(wo, wi, pdf, sampler);
+
+        if (f.IsBlack() || pdf == 0.0f) break;
+        throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
+
+        ray = Rayf{ isect->GetPoint(), wi };
 
         //<<Possibly terminate the path with Russian roulette>>=
         if (bounces > 3) {

@@ -24,7 +24,7 @@ public:
 
     //bool Intersects(const Rayf &ray, Intersection& isect);
     bool IntersectsFast(const Rayf& ray) const;
-    auto Intersects(const Rayf& ray) -> std::optional<Intersection>;
+    auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
 
 
     auto InterpolateNormalAt(const Point2f& uv) const -> Normal3f;
@@ -39,7 +39,7 @@ public:
     Intersection GetRandomSurfaceIntersection() override;
     */
 
-    auto SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection;
+    auto SampleSurface(float& pdf, Sampler& sampler) const -> Intersection;
 
     const std::array<Point3f, 3>& GetVertices() const;
     //std::unique_ptr<AABB> GetBoundingVolume() const override;
@@ -53,9 +53,6 @@ private:
     std::array<Point2f, 3>      m_uv;               // Texture coordinates
 
 	void UpdateEdges();
-
-    Mesh* m_parentMesh;
-
 
     auto GetPointFromUV(const Point2f& uv) const -> Point3f;
 
