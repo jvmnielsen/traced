@@ -69,7 +69,7 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         // contribution on the previous path vertex
         if (bounces == 0 || lastBounceSpecular) {
             //if (isect->m_material)
-                //color += throughput * isect->m_material->Emitted(*isect, info); // consider making directional
+            color += throughput * isect->m_material->Emitted(*isect, info.toEye);
         }
 
         // direct lighting

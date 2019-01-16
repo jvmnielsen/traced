@@ -131,7 +131,7 @@ Triangle::Intersects(const Rayf& ray) -> std::optional<Intersection>
     // Update parameter and intersection as necessary
     ray.NewMaxParameter(parameter);
 
-    return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric), m_parentMesh };
+    return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric) };
 }
 
 auto 
@@ -182,7 +182,7 @@ auto
 Triangle::SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection {
     info.pdf = 1 / GetArea();
     const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
-    return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv), m_parentMesh};
+    return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv) };
 }
 
 

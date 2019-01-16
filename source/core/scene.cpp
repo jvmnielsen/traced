@@ -12,11 +12,12 @@ auto
 Scene::Intersects(const Rayf& ray) -> std::optional<Intersection> {
     auto isect = m_meshes.Intersects(ray);
 
-    for (auto& light : m_lights) {
+    for (size_t i = 0; i < m_lights.size(); ++i) {
         // the last overridden isect will always be the closest (ray max_param shrinks every time)
-        auto tmp = light.Intersects(ray);
+        auto tmp = m_lights[i].Intersects(ray);
         if (tmp.has_value())
             isect = tmp;
+            isect->m_lightID = i;
     }
 
     return isect;
@@ -50,11 +51,18 @@ Scene::SampleOneLight(const Intersection& isect, Sampler& sampler) const -> Colo
 
     if (nLights == 0) return Color3f{0.0f}; // there are no lights
 
-    const auto& light = m_lights[sampler.GetRandomInDistribution(nLights)];
+    if (nLights == 1) return EstimateDirectLight(isect, sampler, m_lights[0]);
 
-    //while (light == hitLight) {
-    // implement check to ensure we don't double dip
-    //}
+    int num;
+    if (isect.m_lightID.has_value()) {
+        do {
+            num = sampler.GetRandomInDistribution(nLights);
+        } while (num == isect.m_lightID.value());
+    } else {
+        num = sampler.GetRandomInDistribution(nLights);
+    }
+
+    const auto& light = m_lights[num];
 
     // multiplying by the number of lights is the same as dividing with the fractional pdf 1/nLights
     return EstimateDirectLight(isect, sampler, light) * nLights;
@@ -82,7 +90,7 @@ Scene::EstimateDirectLight(
 
     info.toLight = Normalize(atLight.GetPoint() - isect.GetPoint());
 
-    const auto radiance = light.GetMaterial().Emitted(atLight, info);
+    const auto radiance = light.GetMaterial().Emitted(atLight, info.toLight);
 
     if (info.pdf != 0.0f && !radiance.IsBlack()) {
         directLight += isect.m_material->Evaluate(info) * radiance / info.pdf;

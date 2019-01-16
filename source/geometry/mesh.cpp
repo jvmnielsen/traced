@@ -200,5 +200,8 @@ Mesh::GetRandomTriangleIndex(Sampler& sampler) const -> int {
 auto
 Mesh::SampleSurface(SamplingInfo& info, Sampler& sampler) const -> Intersection {
     auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
-    return randTriangle.SampleSurface(info, sampler);
+    auto lightIsect = randTriangle.SampleSurface(info, sampler);
+    lightIsect.m_mesh = this;
+    lightIsect.m_material = m_material.get();
+    return lightIsect;
 }

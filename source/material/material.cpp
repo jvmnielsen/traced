@@ -4,7 +4,7 @@
 #include "../core/intersection.hpp"
 
 auto
-Material::Emitted(const Intersection& atLight, const SamplingInfo& info) const -> Color3f {
+Material::Emitted(const Intersection& atLight, const Vec3f& dir) const -> Color3f {
     return Color3f{ 0.0f };
 }
 
@@ -28,9 +28,7 @@ Matte::Evaluate(const SamplingInfo& info) const -> Color3f {
     return m_albedo * Math::InvPi;
 }
 
-
-
 auto
-Emissive::Emitted(const Intersection& atLight, const SamplingInfo& info) const -> Color3f {
-    return Dot(atLight.GetGeometricNormal(), info.toLight) > 0 ? m_radiance : Color3f{0.0f};
+Emissive::Emitted(const Intersection& atLight, const Vec3f& dir) const -> Color3f {
+    return Dot(atLight.GetGeometricNormal(), dir) > 0 ? m_radiance : Color3f{0.0f};
 }

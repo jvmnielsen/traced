@@ -12,7 +12,7 @@ public:
     virtual auto Sample(SamplingInfo& info, Sampler& sampler) const -> void = 0; // set pdf as well
     virtual auto Evaluate(const SamplingInfo& info) const -> Color3f = 0;
 
-    virtual auto Emitted(const Intersection& atLight, const SamplingInfo& info) const -> Color3f;
+    virtual auto Emitted(const Intersection& atLight, const Vec3f& dir) const -> Color3f;
 
 protected:
     auto Pdf(SamplingInfo& info) const -> void;
@@ -40,7 +40,7 @@ public:
     //auto Emitted() const -> Color3f override;
 
 
-    auto Emitted(const Intersection& atLight, const SamplingInfo& info) const -> Color3f override;
+    auto Emitted(const Intersection& atLight, const Vec3f& dir) const -> Color3f override;
 
 
     Color3f m_radiance = Color3f{0.5f};

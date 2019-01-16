@@ -21,25 +21,35 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     auto teapot = parser.GetMeshFromFile("../assets/teapot.obj");
-    auto teapot2 = parser.GetMeshFromFile("../assets/plane.obj");;
+    auto teapot2 = parser.GetMeshFromFile("../assets/plane.obj");
+    auto floor = *teapot2;
     
     //teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 90.0f));
     teapot->TransformBy(Transform::Scale({0.1f, 0.1f, 0.1f}));
     teapot->TransformBy(Transform::Translate({-3.0f, -3.0f, -10.0f}));
 
     //Mesh test = *teapot;
-    teapot2->TransformBy(Transform::Rotate({.0f, 0.0f, 1.0f}, 90.0f));
+    teapot2->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
     teapot2->TransformBy(Transform::Scale({2.25f, 2.25f, 2.25f}));
     teapot2->TransformBy(Transform::Translate({-6.0f, -2.0f, -8.0f}));
 
+    //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
+    floor.TransformBy(Transform::Scale({2.25f, 2.25f, 2.25f}));
+    floor.TransformBy(Transform::Translate({0.0f, -3.0f, -6.0f}));
+
     auto matte = std::make_shared<Matte>();
     teapot->ApplyMaterial(matte);
+    floor.ApplyMaterial(matte);
+
     auto light = std::make_shared<Emissive>();
     teapot2->ApplyMaterial(light);
+
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<Mesh> lights;
     meshes.push_back(std::move(teapot));
+    meshes.push_back(std::make_unique<Mesh>(floor));
+
     lights.push_back(*teapot2);
 
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
@@ -52,7 +62,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1000 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1 };
 
     window->InitializeWindow(*buffer);
     window->CheckForInput(*buffer);

@@ -119,12 +119,9 @@ auto BVH::BVHNode::IntersectsFast(const Rayf& ray) const -> bool {
 
     // Is the current node in the interior or a leaf?
     if (IsInteriorNode()) {
-        if (m_leftChild->IntersectsFast(ray))
-            return true;
-        if (m_rightChild->Intersects(ray))
-            return true;
+        return m_leftChild->IntersectsFast(ray) || m_rightChild->IntersectsFast(ray);
     }
-    return m_aabb.IntersectsFast(ray);
+    return m_aabb.IntersectsMeshFast(ray);
 }
 
 auto 

@@ -1,4 +1,6 @@
 #pragma once
+
+#include <optional>
 #include "../math/point3.hpp"
 #include "../math/normal3.hpp"
 #include "../math/point2.hpp"
@@ -21,7 +23,7 @@ class Intersection
 public:
     Intersection() {}
 
-    Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal, Mesh* mesh);
+    Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal);
 
     //auto Emitted() const -> Color3f;
     auto NewThroughput(const Color3f& currentThroughput, SamplingInfo& info, Sampler& sampler) -> Color3f;
@@ -37,9 +39,11 @@ public:
 
     Normal3f    m_tangent;
 
-    Mesh*           m_mesh;
+    const Mesh*           m_mesh;
 
-    Material*       m_material;
+    const Material*       m_material;
+
+    std::optional<int> m_lightID;
 
 private:
 

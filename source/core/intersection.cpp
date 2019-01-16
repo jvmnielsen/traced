@@ -5,11 +5,9 @@ Intersection::Intersection(
     Point3f     point,
     Point2f     uvCoord,
     Normal3f    geometricNormal,
-    Normal3f    shadingNormal,
-    Mesh*       mesh)
+    Normal3f    shadingNormal)
     : m_point(std::move(point))
     , m_uv(std::move(uvCoord))
-    , m_mesh(mesh)
     , m_geometricNormal(std::move(geometricNormal))
     , m_shadingNormal(std::move(shadingNormal)) {
 }
