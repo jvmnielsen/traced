@@ -95,6 +95,8 @@ Scene::EstimateDirectLight(
         if (!f.IsBlack() && scatteringPdf > 0) {
             lightPdf = light.Pdf(isect.GetPoint(), wi);
             if (lightPdf == 0.0f) {
+                if (directLight.IsBlack())
+                    return Color3f{0.1f, 0.2f, 0.3f};
                 return directLight;
             }
 

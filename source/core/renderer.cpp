@@ -67,7 +67,9 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
             color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo);
         }
 
-        color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
+        auto directLight = m_scene->SampleOneLight(*isect, wo, sampler);
+
+        color += throughput * directLight;
 
 
         Vec3f wi;

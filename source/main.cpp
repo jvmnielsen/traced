@@ -21,8 +21,8 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     auto teapot = parser.GetMeshFromFile("../assets/cube.obj");
-    auto plane = parser.GetMeshFromFile("../assets/cube.obj");
-    auto floor = parser.GetMeshFromFile("../assets/cube.obj");
+    auto plane = parser.GetMeshFromFile("../assets/plane.obj");
+    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
 
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, .0f}, 70.0f));
     teapot->TransformBy(Transform::Scale({0.80f, 0.80f, 0.80f}));
@@ -30,7 +30,7 @@ int main(int argc, char * argv[]) {
 
 
     plane->TransformBy(Transform::Rotate({0.0f, 1.0f, .0f}, 40.0f));
-    plane->TransformBy(Transform::Scale({0.25f, 0.25f, 0.25f}));
+    plane->TransformBy(Transform::Scale({0.45f, 0.45f, 0.45f}));
     plane->TransformBy(Transform::Translate({-4.0f, -6.0f, -7.0f}));
 
     //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
@@ -49,7 +49,7 @@ int main(int argc, char * argv[]) {
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<Mesh> lights;
-    meshes.push_back(std::move(teapot));
+    //meshes.push_back(std::move(teapot));
     meshes.push_back(std::move(floor));
 
     lights.push_back(*plane);
@@ -64,7 +64,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 2 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 10 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
