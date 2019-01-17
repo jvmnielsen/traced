@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{74CB1999-C3D9-459B-8CF8-E00DA553902E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>Traced</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -152,7 +152,6 @@
     <ClInclude Include="source\imaging\Color3.hpp" />
     <ClInclude Include="source\imaging\image_buffer.hpp" />
     <ClInclude Include="source\imaging\Light.hpp" />
-    <ClInclude Include="source\material\BSDF.hpp" />
     <ClInclude Include="source\material\material.hpp" />
     <ClInclude Include="source\math\math_util.hpp" />
     <ClInclude Include="source\math\Matrix4x4.hpp" />
@@ -260,7 +259,6 @@
     <ClCompile Include="source\imaging\camera.cpp" />
     <ClCompile Include="source\imaging\image_buffer.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\material\BSDF.cpp" />
     <ClCompile Include="source\material\material.cpp" />
     <ClCompile Include="source\math\math_util.cpp" />
     <ClCompile Include="source\math\transform.cpp" />

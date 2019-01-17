@@ -8,7 +8,6 @@ Renderer::Renderer(
         : m_camera(std::move(camera))
         , m_scene(std::move(scene))
         , m_buffer(std::move(buffer))
-        //, m_sampler(std::move(sampler))
         , m_gen(std::random_device()())
         , m_dist(0.0f, 1.0f) {
 }
@@ -56,11 +55,7 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         auto isect = m_scene->Intersects(ray);
 
-        if (isect.has_value()) {
-            return Color3f{0.3};
-        }
-
-        if (!isect.has_value()) {
+		if (!isect.has_value()) {
             color += throughput * m_scene->BackgroundColor();
             break;
         }

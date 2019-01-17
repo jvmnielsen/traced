@@ -24,7 +24,7 @@ public:
 
     auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
 
-    Color3f m_attenuation = Color3f{ 0.3f, 0.1f, 0.5f };
+    Color3f m_attenuation = Color3f{ 0.18f };
 };
 
 class Emissive : public Matte

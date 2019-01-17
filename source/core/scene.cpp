@@ -12,12 +12,13 @@ auto
 Scene::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     auto isect = m_meshes.Intersects(ray);
 
-    for (size_t i = 0; i < m_lights.size(); ++i) {
+    for (int i = 0; i < m_lights.size(); ++i) {
         // the last overridden isect will always be the closest (ray max_param shrinks every time)
         auto tmp = m_lights[i].Intersects(ray);
-        if (tmp.has_value())
-            isect = tmp;
-            isect->m_lightID = i;
+		if (tmp.has_value()) {
+			isect = tmp;
+			isect->m_lightID = i;
+		}
     }
 
     return isect;

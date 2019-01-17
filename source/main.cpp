@@ -20,22 +20,22 @@ int main(int argc, char * argv[]) {
     Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto teapot = parser.GetMeshFromFile("../assets/cube.obj");
-    auto plane = parser.GetMeshFromFile("../assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
+    auto teapot = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
+    auto plane = parser.GetMeshFromFile("assets/plane.obj");
+    auto floor = parser.GetMeshFromFile("assets/plane.obj");
 
-    teapot->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 45.0f));
+    teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 50.0f));
     //teapot->TransformBy(Transform::Scale({1.80f, 1.80f, 1.80f}));
-    teapot->TransformBy(Transform::Translate({.0f, .03f, -3.0f}));
+    teapot->TransformBy(Transform::Translate({.0f, .0f, -3.0f}));
     auto extent = teapot->GetExtent();
 
-    //plane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, -90.0f));
+    plane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, -120.0f));
     plane->TransformBy(Transform::Scale({0.45f, 0.45f, 0.45f}));
-    plane->TransformBy(Transform::Translate({-2.0f, 0.0f, -3.0f}));
+    plane->TransformBy(Transform::Translate({-2.5f, 1.0f, -3.0f}));
 
     //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
     floor->TransformBy(Transform::Scale({3.25f, 3.25f, 3.25f}));
-    floor->TransformBy(Transform::Translate({0.0f, -1.0f, -3.0f}));
+    floor->TransformBy(Transform::Translate({0.0f, -0.5f, -3.0f}));
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>();
@@ -50,21 +50,21 @@ int main(int argc, char * argv[]) {
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<Mesh> lights;
     meshes.push_back(std::move(teapot));
-    //meshes.push_back(std::move(floor));
+    meshes.push_back(std::move(floor));
 
-    //lights.push_back(*plane);
+    lights.push_back(*plane);
 
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
     scene->SetBackgroundColor(Color3f{0.0f});
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 0.0f, 0.0f), Point3f(0.0f,0.0f,-1.0f),
-                             Vec3f(0.0f,1.0f,0.0f), 90.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 1.0f, 0.0f), Point3f(0.0f,0.0f,-3.0f),
+                             Vec3f(0.0f,1.0f,0.0f), 68.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 2000 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

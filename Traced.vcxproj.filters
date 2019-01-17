@@ -280,9 +280,6 @@
     <ClInclude Include="source\imaging\Light.hpp">
       <Filter>imaging</Filter>
     </ClInclude>
-    <ClInclude Include="source\material\BSDF.hpp">
-      <Filter>material</Filter>
-    </ClInclude>
     <ClInclude Include="source\material\material.hpp">
       <Filter>material</Filter>
     </ClInclude>
@@ -379,9 +376,6 @@
     </ClCompile>
     <ClCompile Include="source\imaging\image_buffer.cpp">
       <Filter>imaging</Filter>
-    </ClCompile>
-    <ClCompile Include="source\material\BSDF.cpp">
-      <Filter>material</Filter>
     </ClCompile>
     <ClCompile Include="source\material\material.cpp">
       <Filter>material</Filter>
