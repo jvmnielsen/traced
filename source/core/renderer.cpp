@@ -56,6 +56,10 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         auto isect = m_scene->Intersects(ray);
 
+        if (isect.has_value()) {
+            return Color3f{0.3};
+        }
+
         if (!isect.has_value()) {
             color += throughput * m_scene->BackgroundColor();
             break;

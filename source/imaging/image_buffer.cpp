@@ -38,7 +38,7 @@ ImageBuffer::ImageBuffer(
 }
 
 auto
-ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void
+ImageBuffer::AddPixelAt(Color3f& color, size_t screenY, size_t screenX) -> void
 {
     auto correctedY = std::abs((int)screenY - (int)m_screenHeight) - 1; // to correct for j starting at screen_height and decrementing
 
