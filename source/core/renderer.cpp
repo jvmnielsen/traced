@@ -29,8 +29,8 @@ void Renderer::Render(int samplesPerPixel) {
 
             Color3f color{0};
             for (size_t s = 0; s < samplesPerPixel; s++) {
-                const auto u = (i) / float(width); // + m_dist(m_gen)
-                const auto v = (j) / float(height); // + m_dist(m_gen)
+                const auto u = (i + sampler.GetRandomReal()) / float(width);
+                const auto v = (j + sampler.GetRandomReal()) / float(height); 
 
                 auto ray = m_camera->GetRay(u, v);
 

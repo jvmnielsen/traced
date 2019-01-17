@@ -38,7 +38,7 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
 
     // get handle
     m_windowHandle = SDL_CreateWindow(
-            "Ray Tracer",
+            "Traced",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             m_screenWidth,

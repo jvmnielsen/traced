@@ -20,14 +20,13 @@ int main(int argc, char * argv[]) {
     Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto teapot = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
-    auto plane = parser.GetMeshFromFile("assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("assets/plane.obj");
+    auto teapot = parser.GetMeshFromFile("../assets/cube.obj"); // NOTE: windows and unix paths differ
+    auto plane = parser.GetMeshFromFile("../assets/plane.obj");
+    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
 
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 50.0f));
     //teapot->TransformBy(Transform::Scale({1.80f, 1.80f, 1.80f}));
     teapot->TransformBy(Transform::Translate({.0f, .0f, -3.0f}));
-    auto extent = teapot->GetExtent();
 
     plane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, -120.0f));
     plane->TransformBy(Transform::Scale({0.45f, 0.45f, 0.45f}));
@@ -39,7 +38,7 @@ int main(int argc, char * argv[]) {
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>();
-    green->m_attenuation = Color3f{0.2, 0.8, 0.3};
+    green->m_attenuation = Color3f{0.2, 0.3, 0.2};
     teapot->ApplyMaterial(green);
     floor->ApplyMaterial(matte);
 
@@ -64,7 +63,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 2000 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
