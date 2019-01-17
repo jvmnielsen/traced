@@ -28,5 +28,5 @@ Matte::Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f {
 
 auto
 Emissive::Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f {
-    return Dot(normalAtLight, dir) > 0 ? m_radiance / distanceSquared : Color3f{0.0f};
+    return Dot(normalAtLight, dir) > 0 ? m_radiance : Color3f{0.0f};
 }

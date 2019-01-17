@@ -34,7 +34,6 @@ Camera::Camera(
     m_vertical = v * 2 * halfHeight;
 }
 
-
 Rayf Camera::GetRay(const float u, const float v) const
 {
     return {m_origin, // origin of the camera

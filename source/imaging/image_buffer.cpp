@@ -44,9 +44,9 @@ ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void
 
     if ((screenX < m_screenWidth) && (screenY < m_screenHeight)) {
         ConvertToRGB(color);
-        m_buffer[(correctedY * m_screenWidth + screenX) * 4    ] = static_cast<unsigned char>(color.r);
-        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 1] = static_cast<unsigned char>(color.g);
+        m_buffer[(screenY * m_screenWidth + screenX) * 4    ] = static_cast<unsigned char>(color.r);
+        m_buffer[(correctedY* m_screenWidth + screenX) * 4 + 1] = static_cast<unsigned char>(color.g);
         m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 2] = static_cast<unsigned char>(color.b);
-        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 3] = 255;
+        m_buffer[(correctedY* m_screenWidth + screenX) * 4 + 3] = 255;
     } // maybe add throw
 }
