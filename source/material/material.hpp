@@ -12,7 +12,7 @@ public:
     virtual auto Sample(const Vec3f& wo, Vec3f& wi, float& pdf, Sampler& sampler) const -> Color3f;
     virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                       -> Color3f = 0;
             auto Pdf(const Vec3f& wo, const Vec3f& wi) const                            -> float;
-    virtual auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir) const            -> Color3f;
+    virtual auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const            -> Color3f;
 
 };
 
@@ -36,10 +36,10 @@ public:
     //auto Emitted() const -> Color3f override;
 
 
-    virtual auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir) const -> Color3f;
+    auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f override;
 
 
-    Color3f m_radiance = Color3f{2.5f};
+    Color3f m_radiance = Color3f{1.5f};
 
 };
 

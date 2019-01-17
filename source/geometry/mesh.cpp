@@ -6,44 +6,6 @@ Mesh::Mesh(std::vector<Triangle> triangle)
     , m_gen(std::random_device()()) {
 }
 
-/*
-auto
-Mesh::operator=(const Mesh& other) -> Mesh&
-{
-    m_triangles.reserve(other.m_triangles.size());
-
-    for (const auto& triangle : other.m_triangles)
-    {
-        auto cpTriangle = triangle;
-        m_triangles.push_back(cpTriangle);
-    }
-
-    m_material = other.m_material;
-
-    return *this;
-}
-
-
-Mesh::Mesh(const Mesh& other)
-{
-    m_triangles.reserve(other.m_triangles.size());
-
-    for (const auto& triangle : other.m_triangles)
-    {
-        auto cpTriangle = triangle;
-        m_triangles.push_back(cpTriangle);
-    }
-
-    m_material = other.m_material;
-}
-
-Mesh::Mesh(Mesh&& other) noexcept
-{
-    std::swap(m_triangles, other.m_triangles);
-    m_material = std::move(other.m_material);
-} */
-
-
 auto 
 Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection>
 {
@@ -155,61 +117,32 @@ Mesh::GetMaterial() const -> const Material&
     return *m_material;
 }
 
-/*
-
-
-Point3f Mesh::GetRandomPointOnSurface()
-{
-    return {-1.0, -1.0, -1.0};
-}
-
-
-auto 
-Mesh::GetPointOnSurface(const float u, const float v) const -> Point3f
-{
-    return Point3f{0};
-}
-
-auto
-Mesh::CalculateShadingNormal(const Intersection& isect) const -> Normal3f
-{
-    return Normal3f{0};
-}
-
-
-auto 
-Mesh::SetParentMeshMaterial(std::shared_ptr<Material> material) -> void
-{
-    for (auto& triangle : m_triangles)
-        triangle->SetParentMeshMaterial(material);
-}
-
-
-
-
-//inline Point3f GetPointOnSurface(const float u, const float v) const override;
-//inline Point3f GetRandomPointOnSurface() override;
-//inline Intersection GetRandomSurfaceIntersection() override; */
-
-
 auto
 Mesh::SampleSurface(float& pdf, Sampler& sampler) const -> Intersection {
     auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
     auto lightIsect = randTriangle.SampleSurface(pdf, sampler);
     lightIsect.m_mesh = this;
     lightIsect.m_material = m_material.get();
+
+    pdf = 1 / GetSurfaceArea(); // TODO: precompute area
+
     return lightIsect;
 }
 
 auto
 Mesh::Pdf(const Point3f& ref, const Vec3f& wi) const -> float {
+    /*
     Ray ray = Rayf{ref, wi};
     auto isect = Intersects(ray);
     if (isect.has_value()) {
+
         float pdf = (ref - isect->GetPoint()).LengthSquared()
                     / (std::abs(Dot(isect->GetGeometricNormal(), -wi)) * GetSurfaceArea());
-        if (std::isinf(pdf)) pdf = 0.0f;
+        if (std::isinf(pdf))
+            pdf = 0.0f;
+        float pdf = 1/GetSurfaceArea();
         return pdf;
     }
-    return 0.0f;
+    return 0.0f; */
+    return 1/GetSurfaceArea();
 }

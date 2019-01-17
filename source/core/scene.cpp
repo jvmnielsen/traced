@@ -24,14 +24,20 @@ Scene::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 }
 
 bool Scene::IntersectsQuick(const Rayf& ray) const {
-    return m_meshes.IntersectsFast(ray);
+    if (m_meshes.IntersectsFast(ray))
+        return true;
+    for (const auto& light : m_lights) {
+        if (light.IntersectsFast(ray))
+            return true;
+    }
+    return false;
 }
 
 
 bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const {
-    const Vec3f offset = p2 - p1;
-    const float distance = offset.Length();
-    Rayf ray{p1, offset, distance};
+    const Vec3f dir = p2 - p1;
+    const float distance = dir.Length();
+    Rayf ray{p1, Normalize(dir), distance};
     return !IntersectsQuick(ray);
 }
 
@@ -45,7 +51,7 @@ Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampl
     if (nLights == 1) return EstimateDirectLight(isect, wo, sampler, m_lights[0]);
 
     int num;
-    if (isect.m_lightID.has_value()) {
+    if (isect.m_lightID.has_value()) { // TODO: make lightID do something
         do {
             num = sampler.GetRandomInDistribution(nLights);
         } while (num == isect.m_lightID.value());
@@ -68,23 +74,26 @@ Scene::EstimateDirectLight(
         const Mesh& light) const -> Color3f {
 
     Color3f directLight = Color3f{0.0f};
-    float lightPdf, scatteringPdf;
+    float lightPdf = 0, scatteringPdf = 0;
+
+    // TODO: set max_param of ray in intersectfast
 
     //SamplingInfo info;
     Intersection atLight = light.SampleSurface(lightPdf, sampler);
 
-    bool LoS = LineOfSightBetween(isect.GetPoint(), atLight.GetPoint());
+    bool LoS = LineOfSightBetween(isect.OffsetGeometricPoint(), atLight.OffsetGeometricPoint());
     Vec3f wi = Normalize(atLight.GetPoint() - isect.GetPoint());
-    const auto radiance = light.GetMaterial().Emitted(atLight.GetGeometricNormal(), wi);
+
+    float distanceSquared = (atLight.GetPoint() - isect.GetPoint()).LengthSquared();
+    const auto radiance = light.GetMaterial().Emitted(atLight.GetGeometricNormal(), -wi, distanceSquared);
 
     if (lightPdf > 0.0f && !radiance.IsBlack()) {
         Color3f f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
         scatteringPdf = isect.m_material->Pdf(wo, wi);
         if (!f.IsBlack() && LoS) {
-            if (!radiance.IsBlack()) {
-                float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
-                directLight += f * radiance * weight / lightPdf;
-            }
+            float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+            directLight += f * radiance * weight / lightPdf;
+
         }
     }
 
@@ -93,21 +102,27 @@ Scene::EstimateDirectLight(
         f *= std::abs(Dot(wi, isect.GetShadingNormal()));
 
         if (!f.IsBlack() && scatteringPdf > 0) {
-            lightPdf = light.Pdf(isect.GetPoint(), wi);
-            if (lightPdf == 0.0f) {
-                if (directLight.IsBlack())
-                    return Color3f{0.1f, 0.2f, 0.3f};
-                return directLight;
-            }
 
-            auto lightIsect = Intersects(Rayf{isect.GetPoint(), wi});
-
+            auto lightIsect = Intersects(Rayf{isect.OffsetGeometricPoint(), wi});
             if (lightIsect.has_value()) {
-                const auto li = light.GetMaterial().Emitted(lightIsect->GetGeometricNormal(), wi); //check sign of wi
+
+                lightPdf = light.Pdf(isect.GetPoint(), wi);
+
+                if (lightPdf == 0.0f) {
+                    return directLight;
+                }
+
+                float distSqrd = (lightIsect->GetPoint() - isect.GetPoint()).LengthSquared();
+                const auto li = light.GetMaterial().Emitted(lightIsect->GetGeometricNormal(), wi, distSqrd); //check sign of wi
                 float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
                 directLight += f * li * weight / scatteringPdf;
             }
         }
+    }
+
+    if (directLight.IsBlack()) {
+        //directLight = Color3f{0.1, 0.1, 0.9};
+        light.GetMaterial().Emitted(atLight.GetGeometricNormal(), wi, distanceSquared);
     }
     return directLight;
 }

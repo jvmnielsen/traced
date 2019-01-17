@@ -155,7 +155,7 @@ Vec3<T> operator/(const T factor, const Vec3<T>& vec)
 template<typename T> auto
 Dot(const Vec3<T>& v1, const Vec3<T>& v2) -> T
 {
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+    return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
 }
 template< typename T > auto
 Cross(const Vec3<T>& v1, const Vec3<T>& v2) -> Vec3<T>

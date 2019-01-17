@@ -26,16 +26,16 @@ int main(int argc, char * argv[]) {
 
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, .0f}, 70.0f));
     teapot->TransformBy(Transform::Scale({0.80f, 0.80f, 0.80f}));
-    teapot->TransformBy(Transform::Translate({-4.0f, -7.8f, -6.0f}));
+    teapot->TransformBy(Transform::Translate({-4.0f, -7.8f, -9.0f}));
 
 
-    plane->TransformBy(Transform::Rotate({0.0f, 1.0f, .0f}, 40.0f));
+    plane->TransformBy(Transform::Rotate({1.0f, 0.0f, .0f}, 180.0f));
     plane->TransformBy(Transform::Scale({0.45f, 0.45f, 0.45f}));
-    plane->TransformBy(Transform::Translate({-4.0f, -6.0f, -7.0f}));
+    plane->TransformBy(Transform::Translate({-4.0f, -6.0f, -9.0f}));
 
     //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
     floor->TransformBy(Transform::Scale({3.25f, 3.25f, 3.25f}));
-    floor->TransformBy(Transform::Translate({-5.0f, -10.0f, -5.0f}));
+    floor->TransformBy(Transform::Translate({-5.0f, -10.0f, -10.0f}));
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>();
@@ -49,7 +49,7 @@ int main(int argc, char * argv[]) {
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<Mesh> lights;
-    //meshes.push_back(std::move(teapot));
+    meshes.push_back(std::move(teapot));
     meshes.push_back(std::move(floor));
 
     lights.push_back(*plane);
@@ -57,14 +57,14 @@ int main(int argc, char * argv[]) {
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
     scene->SetBackgroundColor(Color3f{0.0f});
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 1.0f, 0.0f), Point3f(0.0f,0.0f,-1.0f),
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 0.5f, 0.0f), Point3f(0.0f,0.0f,-1.0f),
                              Vec3f(0.0f,1.0f,0.0f), 60.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
     auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 10 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1000 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

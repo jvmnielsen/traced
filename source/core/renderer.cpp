@@ -63,8 +63,10 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         auto wo = -ray.GetDirection();
 
+        float distanceSquared = (isect->GetPoint() - ray.GetOrigin()).LengthSquared();
+
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo);
+            color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared);
         }
 
         auto directLight = m_scene->SampleOneLight(*isect, wo, sampler);
