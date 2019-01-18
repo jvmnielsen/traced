@@ -1,25 +1,54 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(RayTracer CXX)
+project(Traced)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${RayTracer_SOURCE_DIR}/cmake")
+set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCE_FILES src/main.cpp src/Camera.h src/Camera.cpp src/Controller.h src/Controller.cpp
-        src/HitData.h src/Imaging.h src/Imaging.cpp src/Light.cpp src/Light.h src/Material.cpp
-        src/Material.cpp src/MathUtil.cpp src/MathUtil.h src/Parser.cpp src/Parser.h src/Polygon.cpp
-        src/Polygon.h src/PolygonMesh.cpp src/PolygonMesh.h src/Renderable.h src/Renderable.cpp
-        src/Scene.cpp src/Scene.h src/Sphere.cpp src/Sphere.h src/Window.cpp src/Window.h)
-add_executable(RayTracer ${SOURCE_FILES})
+#add_subdirectory(test)
 
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_ttf REQUIRED)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
-include_directories(${SDL2_INCLUDE_DIR}
-        ${SDL2_IMAGE_INCLUDE_DIR}
-        ${SDL2_TTF_INCLUDE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/third_party/SDL2/include)
 
-target_link_libraries(RayTracer ${SDL2_LIBRARY}
-        ${SDL2_IMAGE_LIBRARIES}
-        ${SDL2_TTF_LIBRARIES})
+file(GLOB LIBRARIES "third_party/SDL2/lib/*.dylib")
+
+set(SOURCE_FILES
+        source/acceleration/bvh.hpp source/acceleration/bvh.cpp
+        source/acceleration/aabb.hpp source/acceleration/aabb.cpp
+
+        source/core/intersection.hpp source/core/intersection.cpp
+        source/core/renderer.hpp source/core/renderer.cpp
+        source/core/sampler.hpp source/core/sampler.cpp
+        source/core/scene.hpp source/core/scene.cpp
+
+        source/geometry/mesh.hpp source/geometry/mesh.cpp
+        source/geometry/triangle.hpp source/geometry/triangle.cpp
+
+        source/imaging/camera.hpp source/imaging/camera.cpp
+        source/imaging/color3.hpp
+        source/imaging/image_buffer.hpp source/imaging/image_buffer.cpp
+        source/material/emissive.hpp
+
+        source/material/material.hpp source/material/material.cpp
+
+        source/math/math_util.hpp source/math/math_util.cpp
+        source/math/matrix4x4.hpp
+        source/math/normal3.hpp
+        source/math/point2.hpp
+        source/math/point3.hpp
+        source/math/ray.hpp
+        source/math/transform.hpp source/math/transform.cpp
+        source/math/vec2.hpp
+        source/math/vec3.hpp
+
+        source/utility/parser.hpp source/utility/parser.cpp
+        source/utility/utility.hpp
+        source/utility/window.hpp source/utility/window.cpp
+
+        source/main.cpp source/material/emissive.cpp)
+
+
+
+add_executable(Traced ${SOURCE_FILES})
+target_link_libraries(Traced ${LIBRARIES})
+
