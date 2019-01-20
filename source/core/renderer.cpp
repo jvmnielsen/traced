@@ -1,5 +1,7 @@
 #include "renderer.hpp"
 #include "../utility/utility.hpp"
+#include <thread>
+#include <future>
 
 Renderer::Renderer(
     std::unique_ptr<Camera> camera,
@@ -12,6 +14,92 @@ Renderer::Renderer(
         , m_dist(0.0f, 1.0f) {
 }
 
+
+
+auto
+Renderer::Render() -> void {
+    
+    //std::vector<std::future<std::vector<Color3f>>> futures;
+    std::size_t numCores = std::thread::hardware_concurrency();
+    std::vector<ScreenSegment> segments;
+
+    constexpr int numSegments = 3;
+    constexpr int totalSegments = numSegments * numSegments;
+
+    segments.reserve(totalSegments);
+
+    const auto widthInterval = m_buffer->GetWidth() / numSegments;
+    const auto heightInterval = m_buffer->GetHeight() / numSegments;
+
+    for (int i = 0; i < numSegments; ++i) {
+        for (int j = 0; j < numSegments; ++j) {
+            segments.emplace_back(
+                ScreenSegment(Point2i(widthInterval * j, m_buffer->GetHeight() - heightInterval * (i + 1)), Point2i(widthInterval * (j + 1), m_buffer->GetHeight() - heightInterval * i))
+                //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
+            );
+        }
+    }
+
+    const int samplesPerPixel = 1;
+
+    std::vector<std::vector<Color3f>> renderResult;
+
+    renderResult.reserve(totalSegments);
+
+    for (const auto& segment : segments) {
+        renderResult.emplace_back(RenderScreenSegment(segment, samplesPerPixel)); // parallelize
+    }
+
+    std::vector<Color3f> flattened;
+    for (int i = 0; i < m_buffer->GetWidth() * m_buffer->GetHeight(); ++i) {
+        flattened.emplace_back(Color3f{0});
+    }
+
+    for (int v = 0; v < segments.size(); ++v) {
+        for (int i = 0; i < heightInterval; ++i) {
+            for (int j = 0; j < widthInterval; ++j) {
+                const int yComponent = (int)m_buffer->GetWidth() * std::abs(segments.at(v).upperBound.y - i - (int)m_buffer->GetHeight());
+                const int xComponent = j + segments.at(v).lowerBound.x;
+                flattened[yComponent + xComponent] = renderResult.at(v).at(i * widthInterval + j);
+            }
+        }
+    }
+
+    m_buffer->ConvertToPixelBuffer(flattened);
+
+}
+
+auto
+Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> std::vector<Color3f> {
+ 
+    Sampler sampler;
+    int numPixels = (segment.upperBound.y - segment.lowerBound.y) * (segment.upperBound.x - segment.lowerBound.x);
+
+    std::vector<Color3f> result;
+    result.reserve(numPixels);
+
+    // size_t causes subscript out of range due to underflow
+    for (int j = segment.upperBound.y - 1; j >= segment.lowerBound.y; j--) { // start in the top left
+        for (int i = segment.lowerBound.x; i < segment.upperBound.x; ++i) {
+
+            Color3f color{0};
+            for (size_t s = 0; s < samplesPerPixel; ++s) {
+                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetWidth());
+                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetHeight());
+
+                auto ray = m_camera->GetRay(u, v);
+
+                color += TracePath(ray, sampler);
+            }
+
+            color /= float(samplesPerPixel);
+            result.push_back(color);
+        }
+    }
+    return result;
+}
+
+/*
 void Renderer::Render(int samplesPerPixel) {
 
     Timer timer { std::string("Rendering took: ") };
@@ -20,8 +108,8 @@ void Renderer::Render(int samplesPerPixel) {
     const int width = m_buffer->GetWidth();
 
     Sampler sampler;
-    int counter = 0;
 
+    
     std::cout << "Entering main render-loop\n";
     // size_t causes subscript out of range due to underflow
     for (int j = height - 1; j >= 0; j--) { // start in the top left
@@ -29,8 +117,8 @@ void Renderer::Render(int samplesPerPixel) {
 
             Color3f color{0};
             for (size_t s = 0; s < samplesPerPixel; s++) {
-                const auto u = (i + sampler.GetRandomReal()) / float(width);
-                const auto v = (j + sampler.GetRandomReal()) / float(height); 
+                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(width);
+                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(height); 
 
                 auto ray = m_camera->GetRay(u, v);
 
@@ -41,8 +129,8 @@ void Renderer::Render(int samplesPerPixel) {
             m_buffer->AddPixelAt(color, i, j);
         }
     }
-    std::cout << "rendering done\n";
 }
+*/
 
 auto
 Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {

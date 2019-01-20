@@ -20,9 +20,9 @@ int main(int argc, char * argv[]) {
     Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto teapot = parser.GetMeshFromFile("../assets/cube.obj"); // NOTE: windows and unix paths differ
-    auto plane = parser.GetMeshFromFile("../assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
+    auto teapot = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
+    auto plane = parser.GetMeshFromFile("assets/plane.obj");
+    auto floor = parser.GetMeshFromFile("assets/plane.obj");
 
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 50.0f));
     //teapot->TransformBy(Transform::Scale({1.80f, 1.80f, 1.80f}));
@@ -63,7 +63,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer) };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

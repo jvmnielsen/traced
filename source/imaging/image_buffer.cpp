@@ -37,6 +37,20 @@ ImageBuffer::ImageBuffer(
     }
 }
 
+
+auto
+ImageBuffer::ConvertToPixelBuffer(std::vector<Color3f> colors) -> void {
+   
+    for (int i = 0; i < colors.size(); ++i) {
+        ConvertToRGB(colors[i]);
+        m_buffer[i * 4    ] = colors[i].r;
+        m_buffer[i * 4 + 1] = colors[i].g;
+        m_buffer[i * 4 + 2] = colors[i].b;
+        m_buffer[i * 4 + 3] = 255;
+    }
+
+}
+
 auto
 ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void
 {
