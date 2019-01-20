@@ -18,17 +18,21 @@ public:
 
     //void Render(int samplesPerPixel);
     auto Render() -> void;
-    
 
-private:
 
     struct ScreenSegment {
-        ScreenSegment(Point2i lower, Point2i upper) : lowerBound(std::move(lower)), upperBound(std::move(upper)) { }
+        ScreenSegment(Point2i lower, Point2i upper) : lowerBound(std::move(lower)), upperBound(std::move(upper)) {}
         Point2i lowerBound;
         Point2i upperBound;
     };
 
     auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)->std::vector<Color3f>;
+
+private:
+
+    
+
+    
 
     std::unique_ptr<Camera>      m_camera;
     std::unique_ptr<Scene>       m_scene;
