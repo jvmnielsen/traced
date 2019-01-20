@@ -19,59 +19,67 @@ Renderer::Renderer(
 auto
 Renderer::Render() -> void {
     
-    Timer timer{std::string{"Main render loop: "}};
+    int samplesPerPixel = 1;
 
-    //std::vector<std::future<std::vector<Color3f>>> futures;
-    //std::size_t numCores = std::thread::hardware_concurrency();
-    std::vector<ScreenSegment> segments;
+    for (;;) {
+        Timer timer{std::string{"Main render loop: "}};
 
-    constexpr int numSegments = 3;
-    constexpr int totalSegments = numSegments * numSegments;
+        //std::vector<std::future<std::vector<Color3f>>> futures;
+        //std::size_t numCores = std::thread::hardware_concurrency();
+        std::vector<ScreenSegment> segments;
 
-    segments.reserve(totalSegments);
+        constexpr int numSegments = 3;
+        constexpr int totalSegments = numSegments * numSegments;
 
-    const auto widthInterval = m_buffer->GetWidth() / numSegments;
-    const auto heightInterval = m_buffer->GetHeight() / numSegments;
+        segments.reserve(totalSegments);
 
-    for (int i = 0; i < numSegments; ++i) {
-        for (int j = 0; j < numSegments; ++j) {
-            segments.emplace_back(
-                ScreenSegment(Point2i(widthInterval * j, m_buffer->GetHeight() - heightInterval * (i + 1)), Point2i(widthInterval * (j + 1), m_buffer->GetHeight() - heightInterval * i))
-                //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
-            );
-        }
-    }
+        const auto widthInterval = m_buffer->GetWidth() / numSegments;
+        const auto heightInterval = m_buffer->GetHeight() / numSegments;
 
-    const int samplesPerPixel = 1;
-
-    std::vector<std::future<std::vector<Color3f>>> futures;
-    std::vector<std::vector<Color3f>> renderResult;
-    //renderResult.reserve(totalSegments);
-
-    for (auto& segment : segments) {
-        futures.emplace_back(std::async([this, &segment, samplesPerPixel] { return RenderScreenSegment(segment, samplesPerPixel); })); // parallelize
-    }
-
-    for (auto& future : futures) {
-        renderResult.emplace_back(future.get());
-    }
-
-    std::vector<Color3f> flattened;
-    for (int i = 0; i < m_buffer->GetWidth() * m_buffer->GetHeight(); ++i) {
-        flattened.emplace_back(Color3f{0});
-    }
-
-    for (int v = 0; v < segments.size(); ++v) {
-        for (int i = 0; i < heightInterval; ++i) {
-            for (int j = 0; j < widthInterval; ++j) {
-                const int yComponent = (int)m_buffer->GetWidth() * std::abs(segments.at(v).upperBound.y - i - (int)m_buffer->GetHeight());
-                const int xComponent = j + segments.at(v).lowerBound.x;
-                flattened[yComponent + xComponent] = renderResult.at(v).at(i * widthInterval + j);
+        for (int i = 0; i < numSegments; ++i) {
+            for (int j = 0; j < numSegments; ++j) {
+                segments.emplace_back(
+                    ScreenSegment(Point2i(widthInterval * j, m_buffer->GetHeight() - heightInterval * (i + 1)),
+                    Point2i(widthInterval * (j + 1), m_buffer->GetHeight() - heightInterval * i))
+                    //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
+                );
             }
         }
-    }
 
-    m_buffer->ConvertToPixelBuffer(flattened);
+
+
+        std::vector<std::future<std::vector<Color3f>>> futures;
+        std::vector<std::vector<Color3f>> renderResult;
+        //renderResult.reserve(totalSegments);
+
+        for (auto& segment : segments) {
+            futures.emplace_back(std::async([this, &segment, samplesPerPixel] { return RenderScreenSegment(segment, samplesPerPixel); })); // parallelize
+        }
+
+        for (auto& future : futures) {
+            renderResult.emplace_back(future.get());
+        }
+
+        std::vector<Color3f> flattened;
+        for (int i = 0; i < m_buffer->GetWidth() * m_buffer->GetHeight(); ++i) {
+            flattened.emplace_back(Color3f{0});
+        }
+
+        for (int v = 0; v < segments.size(); ++v) {
+            for (int i = 0; i < heightInterval; ++i) {
+                for (int j = 0; j < widthInterval; ++j) {
+                    const int yComponent = (int)m_buffer->GetWidth() * std::abs(segments.at(v).upperBound.y - i - (int)m_buffer->GetHeight());
+                    const int xComponent = j + segments.at(v).lowerBound.x;
+                    flattened[yComponent + xComponent] = renderResult.at(v).at(i * widthInterval + j);
+                }
+            }
+        }
+
+        m_buffer->ConvertToPixelBuffer(flattened);
+
+        samplesPerPixel *= 2;
+
+    }
 
 }
 
