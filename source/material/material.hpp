@@ -39,7 +39,7 @@ public:
     auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f override;
 
 
-    Color3f m_radiance = Color3f{1.5f};
+    Color3f m_radiance = Color3f{20.5f};
 
 };
 

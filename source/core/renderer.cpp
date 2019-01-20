@@ -46,8 +46,6 @@ Renderer::Render() -> void {
             }
         }
 
-
-
         std::vector<std::future<std::vector<Color3f>>> futures;
         std::vector<std::vector<Color3f>> renderResult;
         //renderResult.reserve(totalSegments);
@@ -83,6 +81,14 @@ Renderer::Render() -> void {
 
 }
 
+inline Color3f de_nan(const Color3f& c) {
+    Color3f temp = c;
+    if (!(temp.r == temp.r)) temp.r = 0;
+    if (!(temp.g == temp.g)) temp.g = 0;
+    if (!(temp.b == temp.b)) temp.b = 0;
+    return temp;
+}
+
 auto
 Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> std::vector<Color3f> {
  
@@ -103,7 +109,8 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
 
                 auto ray = m_camera->GetRay(u, v);
 
-                color += TracePath(ray, sampler);
+                auto tmp = TracePath(ray, sampler);
+                color += de_nan(tmp);
             }
 
             color /= float(samplesPerPixel);
@@ -192,6 +199,12 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
             throughput /= 1 - q;
         }
     }
+
+    if (color.r > 1.0f || color.g > 1.0f || color.b > 1.0f)
+    {
+        //return Color3f{0.5f, 0.1f, 0.1f};
+    }
+
     return color;
 }
 

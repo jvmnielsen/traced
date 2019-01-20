@@ -23,24 +23,37 @@ int main(int argc, char * argv[]) {
     auto teapot = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
     auto plane = parser.GetMeshFromFile("assets/plane.obj");
     auto floor = parser.GetMeshFromFile("assets/plane.obj");
+    auto wall = parser.GetMeshFromFile("assets/plane.obj");
+    auto wall2 = parser.GetMeshFromFile("assets/plane.obj");
 
     teapot->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 50.0f));
     //teapot->TransformBy(Transform::Scale({1.80f, 1.80f, 1.80f}));
-    teapot->TransformBy(Transform::Translate({.0f, .0f, -3.0f}));
+    teapot->TransformBy(Transform::Translate({.0f, .0f, -2.3f}));
 
-    plane->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, -120.0f));
+    plane->TransformBy(Transform::Rotate({0.1f, 0.0f, 1.0f}, -100.0f));
     plane->TransformBy(Transform::Scale({0.45f, 0.45f, 0.45f}));
-    plane->TransformBy(Transform::Translate({-2.5f, 1.0f, -3.0f}));
+    plane->TransformBy(Transform::Translate({-2.2f, 1.0f, -2.4f}));
 
     //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
     floor->TransformBy(Transform::Scale({3.25f, 3.25f, 3.25f}));
     floor->TransformBy(Transform::Translate({0.0f, -0.5f, -3.0f}));
+
+    wall->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 90.0f));
+    wall->TransformBy(Transform::Scale({3.25f, 3.25f, 3.25f}));
+    wall->TransformBy(Transform::Translate({2.5f, -0.5f, -3.0f}));
+    
+    wall2->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
+    wall2->TransformBy(Transform::Scale({3.25f, 3.25f, 3.25f}));
+    wall2->TransformBy(Transform::Translate({0.0f, -0.5f, -3.6f}));
+
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>();
     green->m_attenuation = Color3f{0.2, 0.3, 0.2};
     teapot->ApplyMaterial(green);
     floor->ApplyMaterial(matte);
+    wall->ApplyMaterial(matte);
+    wall2->ApplyMaterial(matte);
 
     auto light = std::make_shared<Emissive>();
     plane->ApplyMaterial(light);
@@ -50,6 +63,8 @@ int main(int argc, char * argv[]) {
     std::vector<Mesh> lights;
     meshes.push_back(std::move(teapot));
     meshes.push_back(std::move(floor));
+    meshes.push_back(std::move(wall));
+    meshes.push_back(std::move(wall2));
 
     lights.push_back(*plane);
 
