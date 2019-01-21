@@ -4,16 +4,39 @@
 #include "../core/intersection.hpp"
 
 auto
-Material::Sample(const Vec3f& wo, Vec3f& wi, float& pdf, Sampler& sampler) const -> Color3f {
-    wi = sampler.CosineSampleHemisphere(); // transform into local coord system
+Material::Sample(const Vec3f& wo, Vec3f& wi, float& pdf, const Vec3f& normal, Sampler& sampler) const -> Color3f {
+    
+    std::array<Vec3f, 3> onb{};
+
+    onb[2] = normal;
+
+    Vec3f a;
+    if (normal.x > 0.9f) {
+        a = Vec3f{0, 1, 0};
+    }
+    else {
+        a = Vec3f{1, 0, 0};
+    }
+
+    onb[1] = Cross(onb[2], a).Normalize();
+    onb[0] = Cross(onb[2], onb[1]);
+
+    
+    wi = sampler.CosineSampleHemisphere(normal);
     if (wo.z < 0) wi *= -1; // flip to match direction
-    pdf = Pdf(wo, wi);
+    pdf = Pdf(onb[2], wi);
     return Evaluate(wo, wi); // called by derived class
 }
 
 auto
 Material::Pdf(const Vec3f& wo, const Vec3f& wi) const -> float {
-    return Math::SameHemisphere(wo, wi) ? std::abs(wi.z) * Math::InvPi : 0;
+    //return Math::SameHemisphere(wo, wi) ? std::abs(wi.z) * Math::InvPi : 0;
+    const auto cosine = Dot(wi, wo);
+    if (cosine > 0)
+    {
+        return cosine / Math::Pi;
+    }
+    return 0;
 }
 
 auto

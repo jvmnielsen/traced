@@ -9,7 +9,7 @@ class Intersection;
 class Material {
 public:
 
-    virtual auto Sample(const Vec3f& wo, Vec3f& wi, float& pdf, Sampler& sampler) const -> Color3f;
+    virtual auto Sample(const Vec3f& wo, Vec3f& wi, float& pdf, const Vec3f& normal, Sampler& sampler) const -> Color3f;
     virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                       -> Color3f = 0;
             auto Pdf(const Vec3f& wo, const Vec3f& wi) const                            -> float;
     virtual auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const            -> Color3f;

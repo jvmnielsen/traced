@@ -94,12 +94,14 @@ Scene::EstimateDirectLight(
         if (!f.IsBlack() && LoS) {
             float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
             directLight += f * radiance * weight / lightPdf;
-
+            if (directLight.r > 1.0f || directLight.g > 1.0f || directLight.b > 1.0f) {
+                return Color3f{0.5f, 0.1f, 0.1f};
+            }
         }
     }
 
     if (!isect.IsSpecular()) {
-        Color3f f = isect.m_material->Sample(wo, wi, scatteringPdf, sampler); // overwrites wi
+        Color3f f = isect.m_material->Sample(wo, wi, scatteringPdf, isect.GetShadingNormal(), sampler); // overwrites wi
         f *= std::abs(Dot(wi, isect.GetShadingNormal()));
 
         if (!f.IsBlack() && scatteringPdf > 0) {
@@ -117,13 +119,11 @@ Scene::EstimateDirectLight(
                 const auto li = light.GetMaterial().Emitted(lightIsect->GetGeometricNormal(), wi, distSqrd); //check sign of wi
                 float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
                 directLight += f * li * weight / scatteringPdf;
+                if (directLight.r > 1.0f || directLight.g > 1.0f || directLight.b > 1.0f) {
+                    return Color3f{0.5f, 0.1f, 0.1f};
+                }
             }
         }
-    }
-
-    if (directLight.IsBlack()) {
-        //directLight = Color3f{0.1, 0.1, 0.9};
-        light.GetMaterial().Emitted(atLight.GetGeometricNormal(), wi, distanceSquared);
     }
     return directLight;
 }

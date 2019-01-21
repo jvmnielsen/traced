@@ -16,10 +16,15 @@ public:
         std::unique_ptr<Scene> scene,
         std::shared_ptr<ImageBuffer> buffer);
 
-    //void Render(int samplesPerPixel);
-    auto Render() -> void;
+    auto Render(int samplesPerPixel) -> void;
+    auto RenderProgressive() -> void;
 
 
+ 
+
+private:
+
+    
     struct ScreenSegment {
         ScreenSegment(Point2i lower, Point2i upper) : lowerBound(std::move(lower)), upperBound(std::move(upper)) {}
         Point2i lowerBound;
@@ -27,11 +32,6 @@ public:
     };
 
     auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)->std::vector<Color3f>;
-
-private:
-
-    
-
     
 
     std::unique_ptr<Camera>      m_camera;

@@ -17,7 +17,7 @@ Renderer::Renderer(
 
 
 auto
-Renderer::Render() -> void {
+Renderer::RenderProgressive() -> void {
     
     int samplesPerPixel = 1;
 
@@ -81,6 +81,64 @@ Renderer::Render() -> void {
 
 }
 
+
+auto
+Renderer::Render(int samplesPerPixel) -> void {
+
+    Timer timer{std::string{"Main render loop: "}};
+
+    //std::vector<std::future<std::vector<Color3f>>> futures;
+    //std::size_t numCores = std::thread::hardware_concurrency();
+    std::vector<ScreenSegment> segments;
+
+    constexpr int numSegments = 3;
+    constexpr int totalSegments = numSegments * numSegments;
+
+    segments.reserve(totalSegments);
+
+    const auto widthInterval = m_buffer->GetWidth() / numSegments;
+    const auto heightInterval = m_buffer->GetHeight() / numSegments;
+
+    for (int i = 0; i < numSegments; ++i) {
+        for (int j = 0; j < numSegments; ++j) {
+            segments.emplace_back(
+                ScreenSegment(Point2i(widthInterval * j, m_buffer->GetHeight() - heightInterval * (i + 1)),
+                Point2i(widthInterval * (j + 1), m_buffer->GetHeight() - heightInterval * i))
+                //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
+            );
+        }
+    }
+
+    std::vector<std::future<std::vector<Color3f>>> futures;
+    std::vector<std::vector<Color3f>> renderResult;
+    //renderResult.reserve(totalSegments);
+
+    for (auto& segment : segments) {
+        futures.emplace_back(std::async([this, &segment, samplesPerPixel] { return RenderScreenSegment(segment, samplesPerPixel); })); // parallelize
+    }
+
+    for (auto& future : futures) {
+        renderResult.emplace_back(future.get());
+    }
+
+    std::vector<Color3f> flattened;
+    for (int i = 0; i < m_buffer->GetWidth() * m_buffer->GetHeight(); ++i) {
+        flattened.emplace_back(Color3f{0});
+    }
+
+    for (int v = 0; v < segments.size(); ++v) {
+        for (int i = 0; i < heightInterval; ++i) {
+            for (int j = 0; j < widthInterval; ++j) {
+                const int yComponent = (int)m_buffer->GetWidth() * std::abs(segments.at(v).upperBound.y - i - (int)m_buffer->GetHeight());
+                const int xComponent = j + segments.at(v).lowerBound.x;
+                flattened[yComponent + xComponent] = renderResult.at(v).at(i * widthInterval + j);
+            }
+        }
+    }
+
+    m_buffer->ConvertToPixelBuffer(flattened);
+}
+
 inline Color3f de_nan(const Color3f& c) {
     Color3f temp = c;
     if (!(temp.r == temp.r)) temp.r = 0;
@@ -92,6 +150,8 @@ inline Color3f de_nan(const Color3f& c) {
 auto
 Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> std::vector<Color3f> {
  
+    Timer timer{std::string{"Screen segment: "}};
+
     Sampler sampler;
     int numPixels = (segment.upperBound.y - segment.lowerBound.y) * (segment.upperBound.x - segment.lowerBound.x);
 
@@ -158,14 +218,20 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
     bool lastBounceSpecular = false;
     Color3f throughput{ 1.0f };
-    Color3f color{ 0.0f };
+    
+
+    std::vector<Color3f> lightContrib;
+    std::vector<Color3f> throughputs;
+    std::vector<float> pdfs;
+
 
     for (int bounces = 0; bounces < m_maxBounces; ++bounces) { 
 
         auto isect = m_scene->Intersects(ray);
 
 		if (!isect.has_value()) {
-            color += throughput * m_scene->BackgroundColor();
+            //color += throughput * m_scene->BackgroundColor();
+            lightContrib.push_back(throughput * m_scene->BackgroundColor());
             break;
         }
 
@@ -174,38 +240,57 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         float distanceSquared = (isect->GetPoint() - ray.GetOrigin()).LengthSquared();
 
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared);
+            //color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared);
+            lightContrib.push_back(throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared));
         }
 
         auto directLight = m_scene->SampleOneLight(*isect, wo, sampler);
 
-        color += throughput * directLight;
+      
 
+        //color += throughput * directLight;
+        lightContrib.push_back(throughput * directLight);
+        throughputs.push_back(throughput);
 
         Vec3f wi;
         float pdf;
-        Color3f f = isect->m_material->Sample(wo, wi, pdf, sampler);
+        Color3f f = isect->m_material->Sample(wo, wi, pdf, isect->GetShadingNormal(), sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
         throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
+        pdfs.push_back(pdf);
 
         ray = Rayf{ isect->GetPoint(), wi };
 
+        
         //<<Possibly terminate the path with Russian roulette>>=
+        /*
         if (bounces > 3) {
             float q = std::max(.05f, 1.0f - throughput.g);
             if (sampler.GetRandomReal() < q) // generate number [0.0, 1.0)
                 break;
             throughput /= 1 - q;
-        }
+        }*/
+    }
+
+    Color3f color{0.0f};
+
+    for (const auto& contrib : lightContrib) {
+        color += contrib;
     }
 
     if (color.r > 1.0f || color.g > 1.0f || color.b > 1.0f)
     {
-        //return Color3f{0.5f, 0.1f, 0.1f};
+        return Color3f{0.5f, 0.1f, 0.1f};
     }
 
-    return color;
+    Color3f color2{0.0f};
+
+    for (const auto& contrib : lightContrib) {
+        color2 += contrib;
+    }
+
+    return color2;
 }
 
 

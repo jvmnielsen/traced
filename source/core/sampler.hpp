@@ -8,7 +8,7 @@ public:
 
     auto GetRandomReal() -> float;
     auto GetRandomInDistribution(int upperBound) -> int;
-    auto CosineSampleHemisphere() -> Vec3f;
+    auto CosineSampleHemisphere(const Vec3f& normal) -> Vec3f;
 
 private:
     // to generate random numbers [0,1]

@@ -32,7 +32,7 @@ int main(int argc, char * argv[]) {
 
     plane->TransformBy(Transform::Rotate({0.1f, 0.0f, 1.0f}, -100.0f));
     plane->TransformBy(Transform::Scale({0.45f, 0.45f, 0.45f}));
-    plane->TransformBy(Transform::Translate({-2.2f, 1.0f, -2.4f}));
+    plane->TransformBy(Transform::Translate({-2.9f, 1.0f, -2.4f}));
 
     //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
     floor->TransformBy(Transform::Scale({3.25f, 3.25f, 3.25f}));
@@ -78,7 +78,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer) };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 10 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
