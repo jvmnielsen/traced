@@ -1,5 +1,4 @@
 #pragma once
-#include <random>
 #include "scene.hpp"
 #include "../imaging/camera.hpp"
 #include "../imaging/image_buffer.hpp"
@@ -31,7 +30,7 @@ private:
         Point2i upperBound;
     };
 
-    auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)->std::vector<Color3f>;
+    auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> std::vector<Color3f>;
     
 
     std::unique_ptr<Camera>      m_camera;
@@ -39,20 +38,11 @@ private:
     std::shared_ptr<ImageBuffer> m_buffer;
     //std::unique_ptr<Sampler>     m_sampler;
 
-    // to generate random numbers [0,1]
-    //std::random_device m_seed;
-    std::mt19937 m_gen;
-    std::uniform_real_distribution<float> m_dist;
-
     auto TracePath(Rayf& ray, Sampler& sampler) -> Color3f;
 
     //Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
     //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
     //Color3f SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const;
-
-    bool m_emit = true;
-    bool m_direct = true;
-    bool m_indirect = true;
     static constexpr int m_maxBounces = 5;
 };
 

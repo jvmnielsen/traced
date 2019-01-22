@@ -319,6 +319,9 @@
     <ClInclude Include="source\utility\window.hpp">
       <Filter>utility</Filter>
     </ClInclude>
+    <ClInclude Include="source\math\ONB.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="SDL">
@@ -393,5 +396,8 @@
       <Filter>utility</Filter>
     </ClCompile>
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\math\ONB.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

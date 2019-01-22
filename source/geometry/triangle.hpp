@@ -1,13 +1,11 @@
 #pragma once
 
-#include <memory>
 #include "../math/point3.hpp"
 #include "../math/normal3.hpp"
 #include "../math/point2.hpp"
 #include "../math/ray.hpp"
 #include "../math/vec3.hpp"
 #include <optional>
-#include <random>
 #include "../core/intersection.hpp"
 #include "../math/transform.hpp"
 

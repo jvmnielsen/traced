@@ -9,9 +9,7 @@ Renderer::Renderer(
     std::shared_ptr<ImageBuffer> buffer)
         : m_camera(std::move(camera))
         , m_scene(std::move(scene))
-        , m_buffer(std::move(buffer))
-        , m_gen(std::random_device()())
-        , m_dist(0.0f, 1.0f) {
+        , m_buffer(std::move(buffer)) {
 }
 
 
@@ -254,7 +252,7 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         Vec3f wi;
         float pdf;
-        Color3f f = isect->m_material->Sample(wo, wi, pdf, isect->GetShadingNormal(), sampler);
+        Color3f f = isect->m_material->Sample(wo, wi, pdf, *isect, sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
         throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
@@ -279,18 +277,7 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         color += contrib;
     }
 
-    if (color.r > 1.0f || color.g > 1.0f || color.b > 1.0f)
-    {
-        return Color3f{0.5f, 0.1f, 0.1f};
-    }
-
-    Color3f color2{0.0f};
-
-    for (const auto& contrib : lightContrib) {
-        color2 += contrib;
-    }
-
-    return color2;
+    return color;
 }
 
 

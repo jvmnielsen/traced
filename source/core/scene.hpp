@@ -3,8 +3,6 @@
 #include <memory>
 #include <optional>
 #include "../acceleration/bvh.hpp"
-#include "../core/sampler.hpp"
-#include "../imaging/color3.hpp"
 
 class Scene
 {

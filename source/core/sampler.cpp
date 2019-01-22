@@ -2,6 +2,7 @@
 #include "../math/math_util.hpp"
 #include "../math/normal3.hpp"
 
+
 Sampler::Sampler()
         : m_gen(std::random_device()()) {
 }
@@ -17,22 +18,9 @@ Sampler::GetRandomInDistribution(int upperBound) -> int {
 }
 
 auto 
-Sampler::CosineSampleHemisphere(const Vec3f& normal) -> Vec3f {
+Sampler::CosineSampleHemisphere(const ONB& basis) -> Vec3f {
     
-    std::array<Vec3f, 3> onb{};
-
-    onb[2] = normal;
-
-    Vec3f a;
-    if (normal.x > 0.9f) {
-        a = Vec3f{0, 1, 0};
-    } else {
-        a = Vec3f{1, 0, 0};
-    }
-
-    onb[1] = Cross(onb[2], a).Normalize();
-    onb[0] = Cross(onb[2], onb[1]);
-
+    
     const auto r1 = GetRandomReal();
     const auto r2 = GetRandomReal();
     const auto z = std::sqrt(1 - r2);
@@ -41,5 +29,7 @@ Sampler::CosineSampleHemisphere(const Vec3f& normal) -> Vec3f {
     const auto y = std::sin(phi) * 2 * std::sqrt(r2);
     const auto sampled = Normalize(Vec3f{ x, y, z });
 
-    return sampled.x * onb[0] + sampled.y * onb[1] + sampled.z * onb[2];
+    return basis.ConvertToLocal(sampled);
+
+    //return sampled.x * onb[0] + sampled.y * onb[1] + sampled.z * onb[2];
 }

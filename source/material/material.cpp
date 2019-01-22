@@ -1,39 +1,21 @@
 #include "material.hpp"
-#include "../math/normal3.hpp"
 #include "../math/math_util.hpp"
 #include "../core/intersection.hpp"
 
 auto
-Material::Sample(const Vec3f& wo, Vec3f& wi, float& pdf, const Vec3f& normal, Sampler& sampler) const -> Color3f {
+Material::Sample(const Vec3f& wo, Vec3f& wi, float& pdf, const Intersection& isect, Sampler& sampler) const -> Color3f {
     
-    std::array<Vec3f, 3> onb{};
-
-    onb[2] = normal;
-
-    Vec3f a;
-    if (normal.x > 0.9f) {
-        a = Vec3f{0, 1, 0};
-    }
-    else {
-        a = Vec3f{1, 0, 0};
-    }
-
-    onb[1] = Cross(onb[2], a).Normalize();
-    onb[0] = Cross(onb[2], onb[1]);
-
-    
-    wi = sampler.CosineSampleHemisphere(normal);
+    wi = sampler.CosineSampleHemisphere(isect.GetOrthonormalBasis());
     if (wo.z < 0) wi *= -1; // flip to match direction
-    pdf = Pdf(onb[2], wi);
+    pdf = Pdf(wi, isect.GetOrthonormalBasis());
     return Evaluate(wo, wi); // called by derived class
 }
 
 auto
-Material::Pdf(const Vec3f& wo, const Vec3f& wi) const -> float {
+Material::Pdf(const Vec3f& dir, const ONB& basis) const -> float {
     //return Math::SameHemisphere(wo, wi) ? std::abs(wi.z) * Math::InvPi : 0;
-    const auto cosine = Dot(wi, wo);
-    if (cosine > 0)
-    {
+    const auto cosine = Dot(Normalize(dir), basis[2]);
+    if (cosine > 0) {
         return cosine / Math::Pi;
     }
     return 0;

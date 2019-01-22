@@ -1,6 +1,8 @@
 #pragma once
 #include <random>
 #include "../math/vec3.hpp"
+#include "../math/ONB.h"
+
 
 class Sampler {
 public:
@@ -8,7 +10,7 @@ public:
 
     auto GetRandomReal() -> float;
     auto GetRandomInDistribution(int upperBound) -> int;
-    auto CosineSampleHemisphere(const Vec3f& normal) -> Vec3f;
+    auto CosineSampleHemisphere(const ONB& basis) -> Vec3f;
 
 private:
     // to generate random numbers [0,1]

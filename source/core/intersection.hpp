@@ -2,11 +2,7 @@
 
 #include <optional>
 #include "../math/point3.hpp"
-#include "../math/normal3.hpp"
 #include "../math/point2.hpp"
-#include "../imaging/color3.hpp"
-#include "../math/ray.hpp"
-#include "sampler.hpp"
 #include "../material/material.hpp"
 
 class Mesh;
@@ -14,20 +10,20 @@ class Mesh;
 class Intersection
 {
 public:
-    Intersection() {}
+    //Intersection() = default;
 
     Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal);
 
     Point3f OffsetShadingPoint() const;
     Point3f OffsetGeometricPoint() const;
 
-    auto GetTangent() const -> const Normal3f&;
+   
     auto GetPoint() const -> const Point3f&;
     auto GetGeometricNormal() const -> const Normal3f&;
     auto GetShadingNormal() const -> const Normal3f&;
     auto IsSpecular() const -> bool;
 
-    Normal3f    m_tangent;
+    auto GetOrthonormalBasis() const -> const ONB&;
 
     const Mesh*           m_mesh;
 
@@ -37,6 +33,7 @@ public:
 
 private:
 
+    ONB m_orthonormal;
 
     Point3f         m_point;
     Point2f         m_uv;
