@@ -23,7 +23,7 @@ public:
 
     auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
 
-    Color3f m_attenuation = Color3f{ 0.18f };
+    Color3f m_attenuation = Color3f{ 0.38f };
 };
 
 class Emissive : public Matte
@@ -38,7 +38,7 @@ public:
     auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f override;
 
 
-    Color3f m_radiance = Color3f{20.5f};
+    Color3f m_radiance = Color3f{500.0f};
 
 };
 

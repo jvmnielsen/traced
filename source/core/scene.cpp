@@ -86,7 +86,7 @@ Scene::EstimateDirectLight(
     Vec3f wi = Normalize(atLight.GetPoint() - isect.GetPoint());
 
     float distanceSquared = (atLight.GetPoint() - isect.GetPoint()).LengthSquared();
-    const auto radiance = light.GetMaterial().Emitted(atLight.GetGeometricNormal(), -wi, distanceSquared);
+    const auto radiance = light.GetMaterial().Emitted(atLight.GetShadingNormal(), -wi, distanceSquared);
 
     if (lightPdf > 0.0f && !radiance.IsBlack()) {
         Color3f f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
@@ -113,7 +113,7 @@ Scene::EstimateDirectLight(
                 }
 
                 float distSqrd = (lightIsect->GetPoint() - isect.GetPoint()).LengthSquared();
-                const auto li = light.GetMaterial().Emitted(lightIsect->GetGeometricNormal(), wi, distSqrd); //check sign of wi
+                const auto li = light.GetMaterial().Emitted(lightIsect->GetShadingNormal(), wi, distSqrd); //check sign of wi
                 float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
                 directLight += f * li * weight / scatteringPdf;
             }

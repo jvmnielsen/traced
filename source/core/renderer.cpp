@@ -26,7 +26,7 @@ Renderer::RenderProgressive() -> void {
         //std::size_t numCores = std::thread::hardware_concurrency();
         std::vector<ScreenSegment> segments;
 
-        constexpr int numSegments = 3;
+        constexpr int numSegments = 4;
         constexpr int totalSegments = numSegments * numSegments;
 
         segments.reserve(totalSegments);
@@ -89,7 +89,7 @@ Renderer::Render(int samplesPerPixel) -> void {
     //std::size_t numCores = std::thread::hardware_concurrency();
     std::vector<ScreenSegment> segments;
 
-    constexpr int numSegments = 3;
+    constexpr int numSegments = 4;
     constexpr int totalSegments = numSegments * numSegments;
 
     segments.reserve(totalSegments);

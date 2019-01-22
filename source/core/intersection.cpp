@@ -10,7 +10,7 @@ Intersection::Intersection(
     , m_uv(std::move(uvCoord))
     , m_geometricNormal(std::move(geometricNormal))
     , m_shadingNormal(std::move(shadingNormal)) 
-    , m_orthonormal(geometricNormal) {  
+    , m_orthonormal(shadingNormal) {  
 }
 
 
