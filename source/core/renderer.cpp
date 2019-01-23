@@ -277,6 +277,11 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         color += contrib;
     }
 
+    if (color.r > 1.0f && color.g > 1.0f && color.b > 1.0f)
+    {
+        std::cout << "Greater than 1!\n";
+    }
+
     return color;
 }
 

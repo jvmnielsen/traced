@@ -28,9 +28,8 @@ public:
 
 private:
     std::vector<Triangle>       m_triangles;
-	std::shared_ptr<Material>   m_material;
-
-    std::mt19937 m_gen;
+    std::shared_ptr<Material>   m_material;
+    float                       m_surfaceArea;
 
 };
 

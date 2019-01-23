@@ -2,8 +2,9 @@
 #include "mesh.hpp"
 
 Mesh::Mesh(std::vector<Triangle> triangle)
-    : m_triangles(std::move(triangle))
-    , m_gen(std::random_device()()) {
+    : m_triangles(std::move(triangle)) {
+
+    m_surfaceArea = GetSurfaceArea();
 }
 
 auto 
@@ -124,7 +125,7 @@ Mesh::SampleSurface(float& pdf, Sampler& sampler) const -> Intersection {
     lightIsect.m_mesh = this;
     lightIsect.m_material = m_material.get();
 
-    pdf = 1 / GetSurfaceArea(); // TODO: precompute area
+    pdf = 1 / m_surfaceArea;
 
     return lightIsect;
 }

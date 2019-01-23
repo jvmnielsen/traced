@@ -102,7 +102,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1000 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

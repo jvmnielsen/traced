@@ -35,6 +35,9 @@ auto
 Emissive::Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f {
     //return Dot(normalAtLight, dir) > 0 ? m_radiance / distanceSquared : Color3f{0.0f};
 
+
+    Color3f m_radiance = Color3f{200.9f};
+
     if (Dot(normalAtLight, dir) > 0) {
         Color3f light = m_radiance / distanceSquared;
         if (light.r > m_radiance.r || light.g > m_radiance.g || light.g > m_radiance.g) {
