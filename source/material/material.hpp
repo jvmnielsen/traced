@@ -7,11 +7,12 @@ class Intersection;
 
 class Material {
 public:
+    Material() = default;
 
-    virtual auto Sample(const Vec3f& wo, Vec3f& wi, float& pdf, const Intersection& isect, Sampler& sampler) const -> Color3f;
+    virtual auto Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const->std::tuple<Vec3f, double, Color3f>;
     virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                       -> Color3f = 0;
-            auto Pdf(const Vec3f& dir, const ONB& basis) const                            -> float;
-    virtual auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const            -> Color3f;
+            auto Pdf(const Vec3f& dir, const ONB& basis) const                           -> float;
+    virtual auto Emitted(const Intersection& isect, const Vec3f& dir) const            -> Color3f;
 
 };
 
@@ -23,7 +24,7 @@ public:
 
     auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
 
-    Color3f m_attenuation = Color3f{ 0.38f };
+    Color3f m_attenuation = Color3f{ 0.58f };
 };
 
 class Emissive : public Matte
@@ -35,7 +36,9 @@ public:
     //auto Emitted() const -> Color3f override;
 
 
-    auto Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f override;
+    auto Emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f override;
+
+    Color3f m_radiance = Color3f{1.0};
 
 };
 

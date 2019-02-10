@@ -4,7 +4,7 @@
 
 class ONB {
 public:
-    //ONB() = default;
+  
     ONB(const Normal3f&  axis);
     auto operator[](int i) const -> const Normal3f&;
     auto ConvertToLocal(const Vec3f& vec) const -> Vec3f;

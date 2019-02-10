@@ -119,16 +119,39 @@ Mesh::GetMaterial() const -> const Material&
 }
 
 auto
-Mesh::SampleSurface(float& pdf, Sampler& sampler) const -> Intersection {
+Mesh::SampleSurface(Sampler& sampler) const -> Intersection {
     auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
-    auto lightIsect = randTriangle.SampleSurface(pdf, sampler);
-    lightIsect.m_mesh = this;
-    lightIsect.m_material = m_material.get();
-
-    pdf = 1 / m_surfaceArea;
-
-    return lightIsect;
+    return randTriangle.SampleSurface(sampler);
 }
+
+auto 
+Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const-> std::tuple<Intersection, Vec3f, double, Color3f>
+{
+    auto sampled = SampleSurface(sampler);
+
+    auto wi = (sampled.GetPoint() - ref.GetPoint()).Normalize();
+    auto pdf = 1.0 / m_surfaceArea;
+
+    if (wi.LengthSquared() == 0)
+        pdf = 0;
+    else {
+        // convert to solid angle
+        auto dot = std::abs(Dot(sampled.GetGeometricNormal(), -wi));
+        if (dot != 0.0)
+            pdf *= (sampled.GetPoint() - ref.GetPoint()).LengthSquared() / dot;
+                
+        // TODO: check pdf is not inf
+    }
+
+    sampled.m_mesh = this;
+    sampled.m_material = m_material.get();
+
+    if (pdf == 0)
+        return std::make_tuple(sampled, wi, pdf, Color3f::Black());
+
+    return std::make_tuple(sampled, wi, pdf, m_material->Emitted(sampled, wi));
+}
+
 
 auto
 Mesh::Pdf(const Point3f& ref, const Vec3f& wi) const -> float {

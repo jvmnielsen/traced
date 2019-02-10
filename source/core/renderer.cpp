@@ -89,7 +89,7 @@ Renderer::Render(int samplesPerPixel) -> void {
     //std::size_t numCores = std::thread::hardware_concurrency();
     std::vector<ScreenSegment> segments;
 
-    constexpr int numSegments = 4;
+    constexpr int numSegments = 3;
     constexpr int totalSegments = numSegments * numSegments;
 
     segments.reserve(totalSegments);
@@ -167,8 +167,8 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
 
                 auto ray = m_camera->GetRay(u, v);
 
-                auto tmp = TracePath(ray, sampler);
-                color += de_nan(tmp);
+                color += TracePath(ray, sampler);
+                //color += de_nan(tmp);
             }
 
             color /= float(samplesPerPixel);
@@ -177,39 +177,6 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
     }
     return result;
 }
-
-/*
-void Renderer::Render(int samplesPerPixel) {
-
-    Timer timer { std::string("Rendering took: ") };
-
-    const int height = m_buffer->GetHeight();
-    const int width = m_buffer->GetWidth();
-
-    Sampler sampler;
-
-    
-    std::cout << "Entering main render-loop\n";
-    // size_t causes subscript out of range due to underflow
-    for (int j = height - 1; j >= 0; j--) { // start in the top left
-        for (size_t i = 0; i < width; ++i) {
-
-            Color3f color{0};
-            for (size_t s = 0; s < samplesPerPixel; s++) {
-                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(width);
-                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(height); 
-
-                auto ray = m_camera->GetRay(u, v);
-
-                color += TracePath(ray, sampler);
-            }
-
-            color /= float(samplesPerPixel);
-            m_buffer->AddPixelAt(color, i, j);
-        }
-    }
-}
-*/
 
 auto
 Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
@@ -237,28 +204,24 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         auto wo = -ray.GetDirection();
 
-        float distanceSquared = (isect->GetPoint() - ray.GetOrigin()).LengthSquared();
-
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared);
+            color += throughput * isect->m_material->Emitted(*isect, wo);
             //lightContrib.push_back(throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared));
         }
 
-        auto directLight = m_scene->SampleOneLight(*isect, wo, sampler);
+        color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
 
       
 
-        color += throughput * directLight;
+        //color += throughput * directLight;
         //lightContrib.push_back(throughput * directLight);
         //throughputs.push_back(throughput);
 
-        Vec3f wi;
-        float pdf;
-        Color3f f = isect->m_material->Sample(wo, wi, pdf, *isect, sampler);
+        auto [wi, pdf, f] = isect->m_material->Sample(wo, *isect, sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
         throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
-        pdfs.push_back(pdf);
+        //pdfs.push_back(pdf);
 
         ray = Rayf{ isect->GetPoint(), wi };
 

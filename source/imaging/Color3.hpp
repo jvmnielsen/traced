@@ -92,9 +92,9 @@ Color3<T> operator/(T factor, const Color3<T>& color)
 template<typename T>
 auto ClampColor(Color3<T>& col) -> void
 {
-    col.r = Math::Clamp(1.0, 0.0, col.r);
-    col.g = Math::Clamp(1.0, 0.0, col.g);
-    col.b = Math::Clamp(1.0, 0.0, col.b);
+    col.r = Math::Clamp<double>(0.0, 1.0, col.r);
+    col.g = Math::Clamp<double>(0.0, 1.0, col.g);
+    col.b = Math::Clamp<double>(0.0, 1.0, col.b);
 }
 
 

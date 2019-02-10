@@ -22,7 +22,9 @@ public:
     auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     auto GetMaterial() const -> const Material&;
 
-    auto SampleSurface(float& pdf, Sampler& sampler) const -> Intersection;
+    auto SampleSurface(Sampler& sampler) const -> Intersection;
+    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const->std::tuple<Intersection, Vec3f, double, Color3f>;
+
 
     auto Pdf(const Point3f& ref, const Vec3f& wi) const -> float;
 

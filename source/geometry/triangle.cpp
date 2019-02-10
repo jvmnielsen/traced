@@ -179,7 +179,7 @@ Triangle::GetPointFromUV(const Point2f& uv) const -> Point3f {
 }
 
 auto
-Triangle::SampleSurface(float& pdf, Sampler& sampler) const -> Intersection {
+Triangle::SampleSurface(Sampler& sampler) const -> Intersection {
     //pdf = 1 / GetArea(); // TODO: figure out if this should be for triangle or whole mesh
     const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
     return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv) };

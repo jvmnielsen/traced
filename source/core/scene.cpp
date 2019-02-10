@@ -47,7 +47,7 @@ auto
 Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampler) const -> Color3f {
     const auto nLights = m_lights.size();
 
-    if (nLights == 0) return Color3f{0.0f}; // there are no lights
+    if (nLights == 0) return Color3f::Black(); // there are no lights
 
     if (nLights == 1) return EstimateDirectLight(isect, wo, sampler, m_lights[0]);
 
@@ -68,63 +68,98 @@ Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampl
 
 
 auto
+Scene::SampleLightSource(
+        const Intersection& isect,
+        const Vec3f& wo,
+        Sampler& sampler,
+        const Mesh& light) const -> Color3f {
+    
+
+    Color3f directLight = Color3f::Black();
+
+    // TODO: set max_param of ray in intersectfast
+
+   
+    auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
+
+    
+    
+    if (lightPdf > 0.0f && !li.IsBlack()) {
+        const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
+        const auto scatteringPdf = isect.m_material->Pdf(wi, isect.GetOrthonormalBasis());
+
+        const auto LoS = LineOfSightBetween(isect.OffsetGeometricPoint(), atLight.OffsetGeometricPoint());
+
+        if (!f.IsBlack() && LoS) {
+            float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+            directLight += f * li * weight / lightPdf;
+            //if (directLight.r < 0.3 || directLight.b < 0.3 || directLight.g < 0.3)
+                //std::cout << "light_source\n";
+        }
+    }
+
+    //ClampColor(directLight);
+
+    return directLight;
+}
+
+auto
+Scene::SampleBSDF(const Intersection& isect,
+        const Vec3f& wo,
+        Sampler& sampler,
+        const Mesh& light) const -> Color3f 
+{
+
+    if (!isect.IsSpecular()) {
+        auto [wi, scatteringPdf, f] = isect.m_material->Sample(wo, isect, sampler); // overwrites wi
+        f *= std::abs(Dot(wi, isect.GetShadingNormal()));
+
+        if (!f.IsBlack() && scatteringPdf > 0) {
+
+            auto lightPdf = light.Pdf(isect.GetPoint(), wi);
+
+            if (lightPdf == 0.0f) {
+                return Color3f::Black();
+            }
+
+            auto lightIsect = Intersects(Rayf{isect.OffsetGeometricPoint(), wi});
+
+            auto li = Color3f::Black();
+            
+            if (lightIsect.has_value()) 
+                li = lightIsect->m_material->Emitted(*lightIsect, -wi);
+          
+            if (!li.IsBlack()) {
+                float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
+                auto directLight = f * li * weight / scatteringPdf;
+                ClampColor(directLight);
+                return directLight;
+            }
+      
+            //const auto li = light.GetMaterial().Emitted(*lightIsect, wi); //check sign of wi
+        }
+    }
+
+    return Color3f::Black();
+}
+
+
+auto
 Scene::EstimateDirectLight(
         const Intersection& isect,
         const Vec3f& wo,
         Sampler& sampler,
         const Mesh& light) const -> Color3f {
 
-    Color3f directLight = Color3f{0.0f};
-    float lightPdf = 0, scatteringPdf = 0;
+    Color3f directLight = Color3f::Black();
+   
+    directLight += SampleLightSource(isect, wo, sampler, light);
+    //if (directLight.r > 0.0 || directLight.b > 0.0 || directLight.g > 0.0)
+        //std::cout << "light_source\n";
+    directLight += SampleBSDF(isect, wo, sampler, light);
+    //if (directLight.r > 0.0 || directLight.b > 0.0 || directLight.g > 0.0)
+        //std::cout << "bsdf\n";
 
-    // TODO: set max_param of ray in intersectfast
-
-    //SamplingInfo info;
-    Intersection atLight = light.SampleSurface(lightPdf, sampler);
-
-    bool LoS = LineOfSightBetween(isect.OffsetGeometricPoint(), atLight.OffsetGeometricPoint());
-    Vec3f wi = Normalize(atLight.GetPoint() - isect.GetPoint());
-
-    float distanceSquared = (atLight.GetPoint() - isect.GetPoint()).LengthSquared();
-    const auto radiance = light.GetMaterial().Emitted(atLight.GetShadingNormal(), -wi, distanceSquared);
-
-    if (lightPdf > 0.0f && !radiance.IsBlack()) {
-        Color3f f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
-        scatteringPdf = isect.m_material->Pdf(wi, isect.GetOrthonormalBasis());
-        if (!f.IsBlack() && LoS) {
-            float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
-            directLight += f * radiance * weight / lightPdf;
-            if (directLight.r > 1.0f && directLight.g > 1.0f && directLight.b > 1.0f) {
-                //std::cout << "Greater than, direct1!\n";
-            }
-        }
-    }
-
-    if (!isect.IsSpecular()) {
-        Color3f f = isect.m_material->Sample(wo, wi, scatteringPdf, isect, sampler); // overwrites wi
-        f *= std::abs(Dot(wi, isect.GetShadingNormal()));
-
-        if (!f.IsBlack() && scatteringPdf > 0) {
-
-            auto lightIsect = Intersects(Rayf{isect.OffsetGeometricPoint(), wi});
-            if (lightIsect.has_value()) {
-
-                lightPdf = light.Pdf(isect.GetPoint(), wi);
-
-                if (lightPdf == 0.0f) {
-                    return directLight;
-                }
-
-                float distSqrd = (lightIsect->GetPoint() - isect.GetPoint()).LengthSquared();
-                const auto li = light.GetMaterial().Emitted(lightIsect->GetShadingNormal(), wi, distSqrd); //check sign of wi
-                float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
-                directLight += f * li * weight / scatteringPdf;
-                if (directLight.r > 1.0f && directLight.g > 1.0f && directLight.b > 1.0f) {
-                    //std::cout << "Greater than 1, direct2!\n";
-                }
-            }
-        }
-    }
     return directLight;
 }
 

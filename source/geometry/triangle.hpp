@@ -37,7 +37,7 @@ public:
     Intersection GetRandomSurfaceIntersection() override;
     */
 
-    auto SampleSurface(float& pdf, Sampler& sampler) const -> Intersection;
+    auto SampleSurface(Sampler& sampler) const -> Intersection;
 
     const std::array<Point3f, 3>& GetVertices() const;
     //std::unique_ptr<AABB> GetBoundingVolume() const override;

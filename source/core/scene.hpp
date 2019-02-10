@@ -27,5 +27,8 @@ private:
     std::vector<Mesh> m_lights;
     bool IntersectsQuick(const Rayf& ray) const;
 
+    auto SampleLightSource(const Intersection& isect, const Vec3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f;
+    auto SampleBSDF(const Intersection& isect, const Vec3f& wo, Sampler& sampler, const Mesh& light) const->Color3f;
+
 };
 

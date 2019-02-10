@@ -3,12 +3,12 @@
 #include "../core/intersection.hpp"
 
 auto
-Material::Sample(const Vec3f& wo, Vec3f& wi, float& pdf, const Intersection& isect, Sampler& sampler) const -> Color3f {
+Material::Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, double, Color3f> {
     
-    wi = sampler.CosineSampleHemisphere(isect.GetOrthonormalBasis());
+    auto wi = sampler.CosineSampleHemisphere(isect.GetOrthonormalBasis());
     if (wo.z < 0) wi *= -1; // flip to match direction
-    pdf = Pdf(wi, isect.GetOrthonormalBasis());
-    return Evaluate(wo, wi); // called by derived class
+    const auto pdf = Pdf(wi, isect.GetOrthonormalBasis());
+    return std::make_tuple(wi, pdf, Evaluate(wo, wi)); // called by derived class
 }
 
 auto
@@ -22,8 +22,8 @@ Material::Pdf(const Vec3f& dir, const ONB& basis) const -> float {
 }
 
 auto
-Material::Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f {
-    return Color3f{0.0f};
+Material::Emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f {
+    return Color3f::Black();
 }
 
 auto
@@ -32,22 +32,6 @@ Matte::Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f {
 }
 
 auto
-Emissive::Emitted(const Vec3f& normalAtLight, const Vec3f& dir, float distanceSquared) const -> Color3f {
-    //return Dot(normalAtLight, dir) > 0 ? Color3f{100.0f} / distanceSquared : Color3f{0.0f};
-
-
-    Color3f m_radiance = Color3f{1.0f};
-
-    if (Dot(normalAtLight, dir) > 0) {
-
-        //return m_radiance;
-        Color3f light = m_radiance / distanceSquared;
-        if (light.r > m_radiance.r || light.g > m_radiance.g || light.g > m_radiance.g) {
-            return m_radiance;
-        }
-        return light;
-        
-            
-    }
-    return Color3f{0.0f};
+Emissive::Emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f {
+    return Dot(isect.GetShadingNormal(), dir) > 0 ? m_radiance : Color3f::Black();
 }

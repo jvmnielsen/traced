@@ -10,7 +10,6 @@ class Mesh;
 class Intersection
 {
 public:
-    //Intersection() = default;
 
     Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal);
 
@@ -37,7 +36,6 @@ private:
 
     Point3f         m_point;
     Point2f         m_uv;
-    //Triangle*       m_triangle;
     Normal3f        m_geometricNormal;
     Normal3f        m_shadingNormal;
 };
