@@ -223,13 +223,15 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
     std::vector<float> pdfs;
 
 
+    Color3f color{0.0f};
+
     for (int bounces = 0; bounces < m_maxBounces; ++bounces) { 
 
         auto isect = m_scene->Intersects(ray);
 
 		if (!isect.has_value()) {
-            //color += throughput * m_scene->BackgroundColor();
-            lightContrib.push_back(throughput * m_scene->BackgroundColor());
+            color += throughput * m_scene->BackgroundColor();
+            //lightContrib.push_back(throughput * m_scene->BackgroundColor());
             break;
         }
 
@@ -238,17 +240,17 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         float distanceSquared = (isect->GetPoint() - ray.GetOrigin()).LengthSquared();
 
         if (bounces == 0 || lastBounceSpecular) {
-            //color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared);
-            lightContrib.push_back(throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared));
+            color += throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared);
+            //lightContrib.push_back(throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared));
         }
 
         auto directLight = m_scene->SampleOneLight(*isect, wo, sampler);
 
       
 
-        //color += throughput * directLight;
-        lightContrib.push_back(throughput * directLight);
-        throughputs.push_back(throughput);
+        color += throughput * directLight;
+        //lightContrib.push_back(throughput * directLight);
+        //throughputs.push_back(throughput);
 
         Vec3f wi;
         float pdf;
@@ -260,28 +262,13 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         ray = Rayf{ isect->GetPoint(), wi };
 
-        
-        //<<Possibly terminate the path with Russian roulette>>=
-        /*
         if (bounces > 3) {
-            float q = std::max(.05f, 1.0f - throughput.g);
-            if (sampler.GetRandomReal() < q) // generate number [0.0, 1.0)
+            float q = std::max(color.r, std::max(color.g, color.b));
+            if (sampler.GetRandomReal() > q) // generate number [0.0, 1.0)
                 break;
-            throughput /= 1 - q;
-        }*/
+            throughput /= q;
+        }
     }
-
-    Color3f color{0.0f};
-
-    for (const auto& contrib : lightContrib) {
-        color += contrib;
-    }
-
-    if (color.r > 1.0f && color.g > 1.0f && color.b > 1.0f)
-    {
-        std::cout << "Greater than 1!\n";
-    }
-
     return color;
 }
 

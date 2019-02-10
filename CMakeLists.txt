@@ -40,6 +40,8 @@ set(SOURCE_FILES
         source/math/transform.hpp source/math/transform.cpp
         source/math/vec2.hpp
         source/math/vec3.hpp
+        source/math/onb.hpp
+        source/math/onb.cpp
 
         source/utility/parser.hpp source/utility/parser.cpp
         source/utility/utility.hpp

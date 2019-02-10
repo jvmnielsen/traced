@@ -95,7 +95,7 @@ Scene::EstimateDirectLight(
             float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
             directLight += f * radiance * weight / lightPdf;
             if (directLight.r > 1.0f && directLight.g > 1.0f && directLight.b > 1.0f) {
-                std::cout << "Greater than, direct1!\n";
+                //std::cout << "Greater than, direct1!\n";
             }
         }
     }
@@ -120,7 +120,7 @@ Scene::EstimateDirectLight(
                 float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
                 directLight += f * li * weight / scatteringPdf;
                 if (directLight.r > 1.0f && directLight.g > 1.0f && directLight.b > 1.0f) {
-                    std::cout << "Greater than 1, direct2!\n";
+                    //std::cout << "Greater than 1, direct2!\n";
                 }
             }
         }

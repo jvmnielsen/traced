@@ -17,7 +17,7 @@ public:
     constexpr int BitsPerByte() { return m_bitsPerByte; }
     constexpr int Channels() { return m_channels; }
 
-    auto ImageBuffer::ConvertToPixelBuffer(std::vector<Color3f> colors) -> void;
+    auto ConvertToPixelBuffer(std::vector<Color3f> colors) -> void;
 
     std::vector<unsigned char>* PtrToBuffer() { return &m_buffer; }
     std::vector<unsigned char> m_buffer;   // flattened raw RGB array used by SDL

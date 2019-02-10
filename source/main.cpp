@@ -20,12 +20,12 @@ int main(int argc, char * argv[]) {
     Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto cube1 = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
+    auto cube1 = parser.GetMeshFromFile("../assets/cube.obj"); // NOTE: windows and unix paths differ
     auto cube2 = std::make_unique<Mesh>(*cube1);
-    auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto leftWall = parser.GetMeshFromFile("assets/plane.obj");
+    auto lightSource = parser.GetMeshFromFile("../assets/sphere.obj");
+    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
+    auto rightWall = parser.GetMeshFromFile("../assets/plane.obj");
+    auto leftWall = parser.GetMeshFromFile("../assets/plane.obj");
     auto backWall = std::make_unique<Mesh>(*leftWall);
     auto ceiling = std::make_unique<Mesh>(*leftWall);
 
@@ -88,7 +88,7 @@ int main(int argc, char * argv[]) {
     meshes.push_back(std::move(rightWall));
     meshes.push_back(std::move(leftWall));
     meshes.push_back(std::move(backWall));
-    //meshes.push_back(std::move(ceiling));
+    meshes.push_back(std::move(ceiling));
 
     lights.push_back(*lightSource);
 
@@ -102,7 +102,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 10 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
