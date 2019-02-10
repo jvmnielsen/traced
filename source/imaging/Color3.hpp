@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "../math/math_util.hpp"
 
 template<typename T>
 class Color3
@@ -10,6 +11,8 @@ public:
     Color3() : r(0), g(0), b(0) { }
     explicit Color3(T val) : r(val), g(val), b(val) { }
     Color3(T r_, T g_, T b_) : r(r_), g(g_), b(b_) { }
+
+    static auto Black() -> Color3 { return Color3{0.0}; }
 
     Color3 operator*(T factor) const
     {
@@ -84,6 +87,14 @@ template<typename T>
 Color3<T> operator/(T factor, const Color3<T>& color)
 {
     return Color3<T>{ color.r * factor, color.g * factor, color.b * factor };
+}
+
+template<typename T>
+auto ClampColor(Color3<T>& col) -> void
+{
+    col.r = Math::Clamp(1.0, 0.0, col.r);
+    col.g = Math::Clamp(1.0, 0.0, col.g);
+    col.b = Math::Clamp(1.0, 0.0, col.b);
 }
 
 
