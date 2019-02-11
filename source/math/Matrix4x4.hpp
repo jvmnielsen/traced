@@ -11,6 +11,8 @@ private:
     std::array<std::array<T, 4>, 4> m;
 public:
 
+    Matrix4x4() : m(getIdentity()) { }
+
     Matrix4x4
     (T a00, T a01, T a02, T a03,
      T a10, T a11, T a12, T a13,
@@ -21,15 +23,14 @@ public:
              a20, a21, a22, a23,
              a30, a31, a32, a33}) {}
 
-    Matrix4x4() {}
+    //Matrix4x4() {}
 
     T& operator()(int i, int j) { return m[i][j]; }
     const T& operator()(int i, int j) const { return m[i][j]; }
 
     explicit Matrix4x4(const std::array<std::array<float, 4>, 4>& _m) : m(_m) {}
 
-    explicit Matrix4x4(T val)
-    {
+    explicit Matrix4x4(T val) {
         for (auto& subArray : m)
             for (auto& value : subArray)
                 value = val;
@@ -37,8 +38,7 @@ public:
 
     Matrix4x4(const Matrix4x4& mtx) : m(mtx.m) { }
 
-    Matrix4x4 Transpose() const
-    {
+    Matrix4x4 Transpose() const {
         Matrix4x4 tmp;
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
@@ -47,23 +47,19 @@ public:
         return tmp;
     }
 
-    Matrix4x4 getIdentity() const
-    {
-        return Matrix4x4{{ 1, 0, 0, 0,
-                              0, 1, 0, 0,
-                              0, 0, 1, 0,
-                              0, 0, 0, 1 }};
+    static auto getIdentity() -> std::array<std::array<T, 4>, 4> {
+        return { 1, 0, 0, 0,
+                 0, 1, 0, 0,
+                 0, 0, 1, 0,
+                 0, 0, 0, 1 };
     }
 
-    void setIdentity()
-    {
-        constexpr auto identity = std::array<std::array<T, 4>, 4>
-        { 1, 0, 0, 0,
+    auto setIdentity() -> void {
+        m = 
+          { 1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1 };
-
-        m = identity;
     }
 
     Matrix4x4 Invert() const
@@ -149,6 +145,16 @@ public:
         Multiply(*this, other, tmp);
         return tmp;
     }
+
+
+    Matrix4x4& operator*=(const Matrix4x4& other) {
+        
+        Matrix4x4 tmp;
+        Multiply(*this, other, tmp);
+        *this = tmp;
+        return *this;
+    }
+
 
     Point3f Multiply(const Point3f& point) const
     {

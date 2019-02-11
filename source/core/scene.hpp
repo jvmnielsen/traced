@@ -8,7 +8,7 @@ class Scene
 {
 public:
 
-    Scene(std::vector<std::unique_ptr<Mesh>> meshes, std::vector<Mesh> lights);
+    Scene(std::vector<std::unique_ptr<Mesh>> meshes, std::vector<std::unique_ptr<Mesh>> lights);
 
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
 
@@ -24,7 +24,7 @@ public:
 private:
     Color3f m_backgroundColor;
     BVH m_meshes;
-    std::vector<Mesh> m_lights;
+    std::vector<std::unique_ptr<Mesh>> m_lights;
     bool IntersectsQuick(const Rayf& ray) const;
 
     auto SampleLightSource(const Intersection& isect, const Vec3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f;

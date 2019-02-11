@@ -1,44 +1,50 @@
 #include "transform.hpp"
 #include "math_util.hpp"
 
-Transform Transform::Translate(const Vec3f& vec)
-{
-    Matrix4x4f mat = {
+
+auto
+Transform::Translate(const Vec3f& vec) -> Transform& {
+    
+    
+    m_mat *= {
         1, 0, 0, vec.x,
         0, 1, 0, vec.y,
         0, 0, 1, vec.z,
         0, 0, 0,     1
     };
-    Matrix4x4f invMat = {
+    m_invMat *= {
         1, 0, 0, -vec.x,
         0, 1, 0, -vec.y,
         0, 0, 1, -vec.z,
         0, 0, 0,      1
     };
 
-    return Transform{ mat, invMat };
+    return *this;
 }
 
-Transform Transform::Scale(const Vec3f& vec)
+auto 
+Transform::Scale(const Vec3f& vec) -> Transform&
 {
-    Matrix4x4f mat = {
+    m_mat *= {
         vec.x,     0,     0, 0,
             0, vec.y,     0, 0,
             0,     0, vec.z, 0,
             0,     0,     0, 1
     };
 
-    Matrix4x4f invMat = {
-        1.0f/vec.x,          0,          0, 0,
-        0,          1.0f/vec.y,          0, 0,
-        0,                   0, 1.0f/vec.z, 0,
-        0,                   0,          0, 1
+    m_invMat *= {
+        1.0f/vec.x,          0,         0,  0,
+        0,          1.0f/vec.y,         0,  0,
+        0,                  0, 1.0f/vec.z,  0,
+        0,                  0,         0,  1
     };
-    return Transform{ mat, invMat };
+
+    return *this;
 }
 
-Transform Transform::Rotate(const Vec3f& axis, float angle)
-{
+auto
+Transform::Rotate(const Vec3f& axis, float angle) -> Transform& {
+
     const auto normAxis = Normalize(axis);
     const auto rad = Math::DegreeToRadian(angle);
 
@@ -67,9 +73,10 @@ Transform Transform::Rotate(const Vec3f& axis, float angle)
     mat(3, 2) = 0;
     mat(3, 3) = 1;
 
-    Matrix4x4f transpose = mat.Transpose();
+    m_mat *= mat;
+    m_invMat *= mat.Transpose();
 
-    return Transform(mat, transpose);
+    return *this;
 }
 
 /*

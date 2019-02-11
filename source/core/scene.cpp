@@ -2,7 +2,7 @@
 
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
-        std::vector<Mesh> lights)
+        std::vector<std::unique_ptr<Mesh>> lights)
         : m_meshes(std::move(meshes))
         , m_lights(std::move(lights)) {
 
@@ -14,7 +14,7 @@ Scene::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
     for (int i = 0; i < m_lights.size(); ++i) {
         // the last overridden isect will always be the closest (ray max_param shrinks every time)
-        auto tmp = m_lights[i].Intersects(ray);
+        auto tmp = m_lights[i]->Intersects(ray);
 		if (tmp.has_value()) {
 			isect = tmp;
 			isect->m_lightID = i;
@@ -28,7 +28,7 @@ bool Scene::IntersectsQuick(const Rayf& ray) const {
     if (m_meshes.IntersectsFast(ray))
         return true;
     for (const auto& light : m_lights) {
-        if (light.IntersectsFast(ray))
+        if (light->IntersectsFast(ray))
             return true;
     }
     return false;
@@ -49,7 +49,7 @@ Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampl
 
     if (nLights == 0) return Color3f::Black(); // there are no lights
 
-    if (nLights == 1) return EstimateDirectLight(isect, wo, sampler, m_lights[0]);
+    if (nLights == 1) return EstimateDirectLight(isect, wo, sampler, *m_lights[0]);
 
     int num;
     if (isect.m_lightID.has_value()) { // TODO: make lightID do something
@@ -63,7 +63,7 @@ Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampl
     const auto& light = m_lights[num];
 
     // multiplying by the number of lights is the same as dividing with the fractional pdf 1/nLights
-    return EstimateDirectLight(isect, wo, sampler, light) * nLights;
+    return EstimateDirectLight(isect, wo, sampler, *light) * nLights;
 }
 
 
@@ -147,7 +147,7 @@ Scene::EstimateDirectLight(
 
     Color3f directLight = Color3f::Black();
    
-    //directLight += SampleLightSource(isect, wo, sampler, light);
+    directLight += SampleLightSource(isect, wo, sampler, light);
  
     directLight += SampleBSDF(isect, wo, sampler, light);
     

@@ -16,12 +16,14 @@ AABB::AABB(std::unique_ptr<Mesh> mesh)
     m_center = CalculateCenter();
 }
 
+
 AABB::AABB(const AABB& other)
         : m_bounds(other.m_bounds)
         , m_mesh(std::make_unique<Mesh>(*other.m_mesh))
         , m_center(other.m_center)
 {
-}
+} 
+
 
 auto
 AABB::operator=(const AABB& other) -> AABB&
@@ -38,7 +40,7 @@ AABB::operator=(const AABB& other) -> AABB&
         m_center = other.m_center;
 
     return *this;
-}
+} 
 
 
 

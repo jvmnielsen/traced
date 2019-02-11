@@ -36,10 +36,12 @@ bool Mesh::IntersectsFast(const Rayf& ray) const {
 }
 
 
-void Mesh::TransformBy(const Transform& transform)
-{
+void Mesh::TransformBy(std::unique_ptr<Transform> transform) {
+
+    m_transformToWorld = std::move(transform);
+
     for (auto& triangle : m_triangles)
-        triangle.TransformBy(transform);
+        triangle.TransformBy(*m_transformToWorld);
 }
 
 /*

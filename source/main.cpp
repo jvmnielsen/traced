@@ -21,30 +21,42 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     auto cube1 = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
-    auto cube2 = std::make_unique<Mesh>(*cube1);
+    auto cube2 = parser.GetMeshFromFile("assets/cube.obj");
     auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
     auto floor = parser.GetMeshFromFile("assets/plane.obj");
     auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
     auto leftWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto backWall = std::make_unique<Mesh>(*leftWall);
-    auto ceiling = std::make_unique<Mesh>(*leftWall);
+    //auto backWall = std::make_unique<Mesh>(*leftWall);
+    //auto ceiling = std::make_unique<Mesh>(*leftWall);
 
-    cube1->TransformBy(Transform::Scale({6.0f, 12.0f, 6.0f}));
-    cube1->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 20.0f));
-    cube1->TransformBy(Transform::Translate({-3.f, -4.1f, -3.0f}));
+    auto cube1Transform = std::make_unique<Transform>();
+    cube1Transform->Translate({-3.f, -4.1f, -3.0f});
+    cube1Transform->Scale({6.0, 12.0, 6.0});
+    //cube1Transform->Rotate({0.0, 1.0, 0.0}, 20.0);
+    
+    cube1->TransformBy(std::move(cube1Transform));
 
-    cube2->TransformBy(Transform::Scale({5.5f, 8.0f, 5.5f}));
-    cube2->TransformBy(Transform::Rotate({0.0f, 1.0f, 0.0f}, 70.0f));
-    cube2->TransformBy(Transform::Translate({4.f, -6.1f, 2.f}));
+    auto cube2Transform = std::make_unique<Transform>();
+    cube2Transform->Translate({4.f, -6.1f, 2.f});
+    cube2Transform->Scale({5.5f, 8.0f, 5.5f});
+    //cube2Transform->Rotate({0.0f, 1.0f, 0.0f}, 70.0f);
+    cube2->TransformBy(std::move(cube2Transform));
 
 
-    lightSource->TransformBy(Transform::Rotate({0.0f, .0f, 1.0f}, 180.0f));
-    lightSource->TransformBy(Transform::Scale({3.17f, 3.17f, 3.17f}));
-    lightSource->TransformBy(Transform::Translate({0.0f, 9.9f, 0.0f}));
+    auto lightTransform = std::make_unique<Transform>();
+    lightTransform->Translate({0.0f, 9.9f, 0.0f});
+    lightTransform->Scale({3.17f, 3.17f, 3.17f});
+    //lightTransform->Rotate({0.0f, .0f, 1.0f}, 180.0f);
+    lightSource->TransformBy(std::move(lightTransform));
+    
+    auto floorTransform = std::make_unique<Transform>();
+    floorTransform->Translate({0.0f, -10.0f, 0.0f});
+    floorTransform->Scale({10.0f, 10.0f, 10.0f});
+    floor->TransformBy(std::move(floorTransform));
 
-    //floor.TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 70.0f));
-    floor->TransformBy(Transform::Scale({10.0f, 10.0f, 10.0f}));
-    floor->TransformBy(Transform::Translate({0.0f, -10.0f, 0.0f}));
+
+
+    /*
 
     rightWall->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 90.0f));
     rightWall->TransformBy(Transform::Scale({10.0f, 10.0f, 10.0f}));
@@ -61,6 +73,7 @@ int main(int argc, char * argv[]) {
     ceiling->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 180.0f));
     ceiling->TransformBy(Transform::Scale({10.0f, 10.0f, 10.0f}));
     ceiling->TransformBy(Transform::Translate({0.0f, 10.0f, 0.0f}));
+    */
 
 
     auto matte = std::make_shared<Matte>();
@@ -73,24 +86,24 @@ int main(int argc, char * argv[]) {
     floor->ApplyMaterial(matte);
     rightWall->ApplyMaterial(red);
     leftWall->ApplyMaterial(green);
-    backWall->ApplyMaterial(matte);
-    ceiling->ApplyMaterial(matte);
+    //backWall->ApplyMaterial(matte);
+    //ceiling->ApplyMaterial(matte);
 
     auto light = std::make_shared<Emissive>();
     lightSource->ApplyMaterial(light);
 
 
     std::vector<std::unique_ptr<Mesh>> meshes;
-    std::vector<Mesh> lights;
+    std::vector<std::unique_ptr<Mesh>> lights;
     meshes.push_back(std::move(cube1));
     meshes.push_back(std::move(cube2));
     meshes.push_back(std::move(floor));
-    meshes.push_back(std::move(rightWall));
-    meshes.push_back(std::move(leftWall));
-    meshes.push_back(std::move(backWall));
-    meshes.push_back(std::move(ceiling));
+    //meshes.push_back(std::move(rightWall));
+    //meshes.push_back(std::move(leftWall));
+    //meshes.push_back(std::move(backWall));
+    //meshes.push_back(std::move(ceiling));
 
-    lights.push_back(*lightSource);
+    lights.push_back(std::move(lightSource));
 
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
     scene->SetBackgroundColor(Color3f{0.0f});
