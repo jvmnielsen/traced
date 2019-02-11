@@ -120,27 +120,25 @@ Mesh::GetMaterial() const -> const Material&
 
 auto
 Mesh::SampleSurface(Sampler& sampler) const -> Intersection {
-    auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
+    const auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
     return randTriangle.SampleSurface(sampler);
 }
 
 auto 
-Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const-> std::tuple<Intersection, Vec3f, double, Color3f>
+Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Vec3f, double, Color3f>
 {
     auto sampled = SampleSurface(sampler);
 
     auto wi = (sampled.GetPoint() - ref.GetPoint()).Normalize();
-    auto pdf = 1.0 / m_surfaceArea;
+    double pdf = 0; // = 1.0 / m_surfaceArea;
 
     if (wi.LengthSquared() == 0)
         pdf = 0;
     else {
         // convert to solid angle
-        auto dot = std::abs(Dot(sampled.GetGeometricNormal(), -wi));
-        if (dot != 0.0)
-            pdf *= (sampled.GetPoint() - ref.GetPoint()).LengthSquared() / dot;
-                
-        // TODO: check pdf is not inf
+        auto denom = std::abs(Dot(sampled.GetGeometricNormal(), -wi)) * GetSurfaceArea();
+        if (denom != 0.0)
+            pdf = (sampled.GetPoint() - ref.GetPoint()).LengthSquared() / denom;
     }
 
     sampled.m_mesh = this;
@@ -149,24 +147,26 @@ Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const-> std::tupl
     if (pdf == 0)
         return std::make_tuple(sampled, wi, pdf, Color3f::Black());
 
-    return std::make_tuple(sampled, wi, pdf, m_material->Emitted(sampled, wi));
+    return std::make_tuple(sampled, wi, pdf, m_material->Emitted(sampled, -wi));
 }
 
 
 auto
-Mesh::Pdf(const Point3f& ref, const Vec3f& wi) const -> float {
-    /*
-    Ray ray = Rayf{ref, wi};
+Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> float {
+    
+    Ray ray = Rayf{ref.GetPoint(), wi};
     auto isect = Intersects(ray);
     if (isect.has_value()) {
 
-        float pdf = (ref - isect->GetPoint()).LengthSquared()
-                    / (std::abs(Dot(isect->GetGeometricNormal(), -wi)) * GetSurfaceArea());
-        if (std::isinf(pdf))
-            pdf = 0.0f;
-        float pdf = 1/GetSurfaceArea();
-        return pdf;
+        const auto denom = std::abs(Dot(isect->GetGeometricNormal(), -wi)) * GetSurfaceArea();
+
+        if (denom == 0)
+            return 0;
+
+        return (ref.GetPoint() - isect->GetPoint()).LengthSquared() / denom;
     }
-    return 0.0f; */
+    return 0; 
+
+   
     return 1/GetSurfaceArea();
 }

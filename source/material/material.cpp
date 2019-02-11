@@ -14,6 +14,7 @@ Material::Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) c
 auto
 Material::Pdf(const Vec3f& dir, const ONB& basis) const -> float {
     //return Math::SameHemisphere(wo, wi) ? std::abs(wi.z) * Math::InvPi : 0;
+    return Dot(basis.w(), dir) / Math::Pi;
     const auto cosine = Dot(Normalize(dir), basis[2]);
     if (cosine > 0) {
         return cosine / Math::Pi;

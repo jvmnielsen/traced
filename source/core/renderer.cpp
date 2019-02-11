@@ -190,31 +190,33 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
     std::vector<float> pdfs;
 
 
-    Color3f color{0.0f};
+    //Color3f color{0.0f};
+
+    Color3f color = Color3f::Black();
 
     for (int bounces = 0; bounces < m_maxBounces; ++bounces) { 
 
         auto isect = m_scene->Intersects(ray);
 
 		if (!isect.has_value()) {
-            color += throughput * m_scene->BackgroundColor();
-            //lightContrib.push_back(throughput * m_scene->BackgroundColor());
+            //color += throughput * m_scene->BackgroundColor();
+            lightContrib.push_back(throughput * m_scene->BackgroundColor());
             break;
         }
 
         auto wo = -ray.GetDirection();
 
-        if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->m_material->Emitted(*isect, wo);
-            //lightContrib.push_back(throughput * isect->m_material->Emitted(isect->GetGeometricNormal(), wo, distanceSquared));
-        }
+        //if (bounces == 0 || lastBounceSpecular) {
+        color += throughput * isect->m_material->Emitted(*isect, wo);
+            //lightContrib.push_back(throughput * isect->m_material->Emitted(*isect, wo));
+        //}
 
         color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
 
       
 
         //color += throughput * directLight;
-        //lightContrib.push_back(throughput * directLight);
+        //lightContrib.push_back(throughput *  m_scene->SampleOneLight(*isect, wo, sampler));
         //throughputs.push_back(throughput);
 
         auto [wi, pdf, f] = isect->m_material->Sample(wo, *isect, sampler);
@@ -225,13 +227,23 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         ray = Rayf{ isect->GetPoint(), wi };
 
+        
         if (bounces > 3) {
             float q = std::max(color.r, std::max(color.g, color.b));
             if (sampler.GetRandomReal() > q) // generate number [0.0, 1.0)
                 break;
             throughput /= q;
-        }
+        } 
+    
     }
+
+    
+    for (const auto& col : lightContrib)
+        color += col;
+
+    if (color.g > 0.5)
+        const int h = 3;
+
     return color;
 }
 

@@ -24,7 +24,7 @@ public:
 
     auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
 
-    Color3f m_attenuation = Color3f{ 0.58f };
+    Color3f m_attenuation = Color3f{ 0.38f };
 };
 
 class Emissive : public Matte
@@ -34,7 +34,7 @@ public:
     //auto Sample(SamplingInfo& info, Sampler& sampler) const -> void override; // set pdf as well
     //auto Evaluate(const SamplingInfo& info) const -> Color3f override;
     //auto Emitted() const -> Color3f override;
-
+    
 
     auto Emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f override;
 

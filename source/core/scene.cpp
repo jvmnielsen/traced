@@ -74,15 +74,9 @@ Scene::SampleLightSource(
         Sampler& sampler,
         const Mesh& light) const -> Color3f {
     
-
     Color3f directLight = Color3f::Black();
 
-    // TODO: set max_param of ray in intersectfast
-
-   
     auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
-
-    
     
     if (lightPdf > 0.0f && !li.IsBlack()) {
         const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
@@ -93,7 +87,7 @@ Scene::SampleLightSource(
         if (!f.IsBlack() && LoS) {
             float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
             directLight += f * li * weight / lightPdf;
-            //if (directLight.r < 0.3 || directLight.b < 0.3 || directLight.g < 0.3)
+            if (directLight.r < 0.3 || directLight.b < 0.3 || directLight.g < 0.3);
                 //std::cout << "light_source\n";
         }
     }
@@ -116,7 +110,7 @@ Scene::SampleBSDF(const Intersection& isect,
 
         if (!f.IsBlack() && scatteringPdf > 0) {
 
-            auto lightPdf = light.Pdf(isect.GetPoint(), wi);
+            auto lightPdf = light.Pdf(isect, wi);
 
             if (lightPdf == 0.0f) {
                 return Color3f::Black();
@@ -153,12 +147,10 @@ Scene::EstimateDirectLight(
 
     Color3f directLight = Color3f::Black();
    
-    directLight += SampleLightSource(isect, wo, sampler, light);
-    //if (directLight.r > 0.0 || directLight.b > 0.0 || directLight.g > 0.0)
-        //std::cout << "light_source\n";
+    //directLight += SampleLightSource(isect, wo, sampler, light);
+ 
     directLight += SampleBSDF(isect, wo, sampler, light);
-    //if (directLight.r > 0.0 || directLight.b > 0.0 || directLight.g > 0.0)
-        //std::cout << "bsdf\n";
+    
 
     return directLight;
 }

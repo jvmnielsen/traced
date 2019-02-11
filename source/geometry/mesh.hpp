@@ -26,7 +26,7 @@ public:
     auto SampleAsLight(const Intersection& ref, Sampler& sampler) const->std::tuple<Intersection, Vec3f, double, Color3f>;
 
 
-    auto Pdf(const Point3f& ref, const Vec3f& wi) const -> float;
+    auto Pdf(const Intersection& ref, const Vec3f& wi) const -> float;
 
 private:
     std::vector<Triangle>       m_triangles;
