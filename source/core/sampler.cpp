@@ -18,18 +18,26 @@ Sampler::GetRandomInDistribution(int upperBound) -> int {
 }
 
 auto 
-Sampler::CosineSampleHemisphere(const ONB& basis) -> Vec3f {
+Sampler::CosineSampleHemisphere() -> Point3f {
     
     
     const auto r1 = GetRandomReal();
     const auto r2 = GetRandomReal();
+
+    const auto x = std::cos(2 * Math::Pi * r1) * std::sqrt(1 - r2);
+    const auto y = std::sin(2 * Math::Pi * r1) * std::sqrt(1 - r2);
+    const auto z = std::sqrt(r2);
+
+    return {x, y, z};
+
+    /*
     const auto z = std::sqrt(1 - r2);
     const auto phi = 2 * Math::Pi * r1;
     const auto x = std::cos(phi) * 2 * std::sqrt(r2);
     const auto y = std::sin(phi) * 2 * std::sqrt(r2);
     const auto sampled = Normalize(Vec3f{ x, y, z });
 
-    return basis.ConvertToLocal(sampled);
+    return basis.ConvertToLocal(sampled); */
 
     //return sampled.x * onb[0] + sampled.y * onb[1] + sampled.z * onb[2];
 }

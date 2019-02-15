@@ -149,10 +149,10 @@ auto
 Triangle::TransformBy(const Transform& transform) -> void
 {
     for (auto& vertex : m_vertices)
-        transform(vertex);
+        vertex = transform(vertex);
 
     for (auto& normal : m_vertexNormals)
-        transform(normal);
+        normal = transform(normal);
 
     // precompute again
     UpdateEdges();

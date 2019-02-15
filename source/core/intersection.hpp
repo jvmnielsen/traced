@@ -23,6 +23,9 @@ public:
     auto IsSpecular() const -> bool;
 
     auto GetOrthonormalBasis() const -> const ONB&;
+    auto GetTransformedSampledVec(Sampler& sampler) const -> Vec3f;
+
+
 
     const Mesh*           m_mesh;
 

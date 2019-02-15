@@ -20,33 +20,32 @@ int main(int argc, char * argv[]) {
     Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto cube1 = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
-    auto cube2 = parser.GetMeshFromFile("assets/cube.obj");
-    auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto leftWall = parser.GetMeshFromFile("assets/plane.obj");
-    //auto backWall = std::make_unique<Mesh>(*leftWall);
-    //auto ceiling = std::make_unique<Mesh>(*leftWall);
+    auto cube1 = parser.GetMeshFromFile("../assets/cube.obj"); // NOTE: windows and unix paths differ
+    auto cube2 = parser.GetMeshFromFile("../assets/cube.obj");
+    auto lightSource = parser.GetMeshFromFile("../assets/plane.obj");
+    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
+    auto rightWall = parser.GetMeshFromFile("../assets/plane.obj");
+    auto leftWall = parser.GetMeshFromFile("../assets/plane.obj");
+    auto backWall = parser.GetMeshFromFile("../assets/plane.obj");
+    auto ceiling = parser.GetMeshFromFile("../assets/plane.obj");
 
     auto cube1Transform = std::make_unique<Transform>();
     cube1Transform->Translate({-3.f, -4.1f, -3.0f});
+    cube1Transform->Rotate({0.0, 1.0, 0.0}, 20.0);
     cube1Transform->Scale({6.0, 12.0, 6.0});
-    //cube1Transform->Rotate({0.0, 1.0, 0.0}, 20.0);
-    
     cube1->TransformBy(std::move(cube1Transform));
 
     auto cube2Transform = std::make_unique<Transform>();
     cube2Transform->Translate({4.f, -6.1f, 2.f});
+    cube2Transform->Rotate({0.0f, 1.0f, 0.0f}, 70.0f);
     cube2Transform->Scale({5.5f, 8.0f, 5.5f});
-    //cube2Transform->Rotate({0.0f, 1.0f, 0.0f}, 70.0f);
     cube2->TransformBy(std::move(cube2Transform));
 
 
     auto lightTransform = std::make_unique<Transform>();
     lightTransform->Translate({0.0f, 9.9f, 0.0f});
+    lightTransform->Rotate({0.0f, .0f, 1.0f}, 180.0f);
     lightTransform->Scale({3.17f, 3.17f, 3.17f});
-    //lightTransform->Rotate({0.0f, .0f, 1.0f}, 180.0f);
     lightSource->TransformBy(std::move(lightTransform));
     
     auto floorTransform = std::make_unique<Transform>();
@@ -55,25 +54,29 @@ int main(int argc, char * argv[]) {
     floor->TransformBy(std::move(floorTransform));
 
 
+    auto rightTransform = std::make_unique<Transform>();
+    rightTransform->Translate({10.f, 0.0f, 0.0f});
+    rightTransform->Rotate({0.0f, 0.0f, 1.0f}, 90.0f);
+    rightTransform->Scale({10.0f, 10.0f, 10.0f});
+    rightWall->TransformBy(std::move(rightTransform));
 
-    /*
+    auto leftTransform = std::make_unique<Transform>();
+    leftTransform->Translate({-10.0f, 0.0f, 0.0f});
+    leftTransform->Rotate({0.0f, 0.0f, 1.0f}, -90.0f);
+    leftTransform->Scale({10.0f, 10.0f, 10.0f});
+    leftWall->TransformBy(std::move(leftTransform));
 
-    rightWall->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 90.0f));
-    rightWall->TransformBy(Transform::Scale({10.0f, 10.0f, 10.0f}));
-    rightWall->TransformBy(Transform::Translate({10.f, 0.0f, 0.0f}));
-    
-    leftWall->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, -90.0f));
-    leftWall->TransformBy(Transform::Scale({10.0f, 10.0f, 10.0f}));
-    leftWall->TransformBy(Transform::Translate({-10.0f, 0.0f, 0.0f}));
+    auto backTransform = std::make_unique<Transform>();
+    backTransform->Translate({0.0f, 0.f, -10.0f});
+    backTransform->Rotate({1.0f, 0.0f, 0.0f}, 90.0f);
+    backTransform->Scale({10.0f, 10.0f, 10.0f});
+    backWall->TransformBy(std::move(backTransform));
 
-    backWall->TransformBy(Transform::Rotate({1.0f, 0.0f, 0.0f}, 90.0f));
-    backWall->TransformBy(Transform::Scale({10.0f, 10.0f, 10.0f}));
-    backWall->TransformBy(Transform::Translate({0.0f, 0.f, -10.0f}));
-
-    ceiling->TransformBy(Transform::Rotate({0.0f, 0.0f, 1.0f}, 180.0f));
-    ceiling->TransformBy(Transform::Scale({10.0f, 10.0f, 10.0f}));
-    ceiling->TransformBy(Transform::Translate({0.0f, 10.0f, 0.0f}));
-    */
+    auto ceilingTransform = std::make_unique<Transform>();
+    ceilingTransform->Translate({0.0f, 10.0f, 0.0f});
+    ceilingTransform->Rotate({0.0f, 0.0f, 1.0f}, 180.0f);
+    ceilingTransform->Scale({10.0f, 10.0f, 10.0f});
+    ceiling->TransformBy(std::move(ceilingTransform));
 
 
     auto matte = std::make_shared<Matte>();
@@ -86,8 +89,8 @@ int main(int argc, char * argv[]) {
     floor->ApplyMaterial(matte);
     rightWall->ApplyMaterial(red);
     leftWall->ApplyMaterial(green);
-    //backWall->ApplyMaterial(matte);
-    //ceiling->ApplyMaterial(matte);
+    backWall->ApplyMaterial(matte);
+    ceiling->ApplyMaterial(matte);
 
     auto light = std::make_shared<Emissive>();
     lightSource->ApplyMaterial(light);
@@ -95,8 +98,8 @@ int main(int argc, char * argv[]) {
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<std::unique_ptr<Mesh>> lights;
-    meshes.push_back(std::move(cube1));
-    meshes.push_back(std::move(cube2));
+    //meshes.push_back(std::move(cube1));
+    //meshes.push_back(std::move(cube2));
     meshes.push_back(std::move(floor));
     //meshes.push_back(std::move(rightWall));
     //meshes.push_back(std::move(leftWall));

@@ -172,3 +172,9 @@ Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> float {
    
     return 1/GetSurfaceArea();
 }
+
+
+auto
+Mesh::GetPreTransformedPoint(const Point3f& p) const -> Point3f {
+    return m_transformToWorld->Inverse(p);
+}

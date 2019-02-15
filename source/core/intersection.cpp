@@ -1,5 +1,7 @@
 #include "intersection.hpp"
 #include "../math/math_util.hpp"
+#include "../geometry/mesh.hpp"
+
 
 Intersection::Intersection(
     Point3f     point,
@@ -47,4 +49,18 @@ Intersection::IsSpecular() const -> bool {
 auto
 Intersection::GetOrthonormalBasis() const -> const ONB& {
     return m_orthonormal;
+}
+
+auto
+Intersection::GetTransformedSampledVec(Sampler& sampler) const -> Vec3f {
+    const auto cosSamplePoint = sampler.CosineSampleHemisphere();
+
+    const auto& transform = m_mesh->GetTransform();
+
+    const auto originalPoint = transform.Inverse(m_point);
+    const auto offsetFromOrig = originalPoint - Point3f{0};
+    const auto offsetSample = cosSamplePoint + offsetFromOrig;
+    const auto transformedSample = transform(offsetSample);
+    return transformedSample - m_point;
+
 }

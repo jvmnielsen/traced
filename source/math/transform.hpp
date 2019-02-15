@@ -25,12 +25,13 @@ public:
     auto Translate(const Vec3f& vec) -> Transform&;
     auto Scale(const Vec3f& vec) -> Transform&;
     auto Rotate(const Vec3f& axis, float angle) -> Transform&;
-    // static Transform Perspective(float FieldOfView, float ClipNear, float ClipFar); // not needed for now
 
-    //auto TransformAffine(const Point3f& point) const -> Point3f;
-    void operator()(Point3f& point) const;
-    void operator()(Vec3f& vec) const;
-    void operator()(Normal3f& normal) const;
+    auto operator()(const Point3f& point) const -> Point3f;
+    auto operator()(const Vec3f& vec) const -> Vec3f;
+    auto operator()(const Normal3f& normal) const -> Normal3f;
+
+    auto Inverse(const Point3f& p) const -> Point3f;
+
 private:
 
     

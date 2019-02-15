@@ -199,8 +199,8 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         auto isect = m_scene->Intersects(ray);
 
 		if (!isect.has_value()) {
-            //color += throughput * m_scene->BackgroundColor();
-            lightContrib.push_back(throughput * m_scene->BackgroundColor());
+            color += throughput * m_scene->BackgroundColor();
+            //lightContrib.push_back(throughput * m_scene->BackgroundColor());
             break;
         }
 
@@ -212,12 +212,6 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         //}
 
         color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
-
-      
-
-        //color += throughput * directLight;
-        //lightContrib.push_back(throughput *  m_scene->SampleOneLight(*isect, wo, sampler));
-        //throughputs.push_back(throughput);
 
         auto [wi, pdf, f] = isect->m_material->Sample(wo, *isect, sampler);
 
@@ -238,8 +232,8 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
     }
 
     
-    for (const auto& col : lightContrib)
-        color += col;
+    //for (const auto& col : lightContrib)
+        //color += col;
 
     if (color.g > 0.5)
         const int h = 3;

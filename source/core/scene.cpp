@@ -79,8 +79,8 @@ Scene::SampleLightSource(
     auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
     
     if (lightPdf > 0.0f && !li.IsBlack()) {
-        const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
-        const auto scatteringPdf = isect.m_material->Pdf(wi, isect.GetOrthonormalBasis());
+        const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wo, isect.GetShadingNormal()));
+        const auto scatteringPdf = isect.m_material->Pdf(wo, wi);
 
         const auto LoS = LineOfSightBetween(isect.OffsetGeometricPoint(), atLight.OffsetGeometricPoint());
 

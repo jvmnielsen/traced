@@ -2,6 +2,8 @@
 
 #include "../core/sampler.hpp"
 #include "../imaging/color3.hpp"
+#include "../math/onb.hpp"
+
 
 class Intersection;
 
@@ -9,10 +11,10 @@ class Material {
 public:
     Material() = default;
 
-    virtual auto Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const->std::tuple<Vec3f, double, Color3f>;
-    virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                       -> Color3f = 0;
-            auto Pdf(const Vec3f& dir, const ONB& basis) const                           -> float;
-    virtual auto Emitted(const Intersection& isect, const Vec3f& dir) const            -> Color3f;
+    virtual auto Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, double, Color3f>;
+    virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                           -> Color3f = 0;
+            auto Pdf(const Vec3f& wo, const Vec3f& wi) const                                -> float;
+    virtual auto Emitted(const Intersection& isect, const Vec3f& dir) const                 -> Color3f;
 
 };
 
