@@ -6,13 +6,13 @@ auto
 Transform::Translate(const Vec3f& vec) -> Transform& {
     
     
-    m_mat *= {
+    m_matrix *= {
         1, 0, 0, vec.x,
         0, 1, 0, vec.y,
         0, 0, 1, vec.z,
         0, 0, 0,     1
     };
-    m_invMat *= {
+    m_inverse *= {
         1, 0, 0, -vec.x,
         0, 1, 0, -vec.y,
         0, 0, 1, -vec.z,
@@ -25,14 +25,14 @@ Transform::Translate(const Vec3f& vec) -> Transform& {
 auto 
 Transform::Scale(const Vec3f& vec) -> Transform&
 {
-    m_mat *= {
+    m_matrix *= {
         vec.x,     0,     0, 0,
             0, vec.y,     0, 0,
             0,     0, vec.z, 0,
             0,     0,     0, 1
     };
 
-    m_invMat *= {
+    m_inverse *= {
         1.0f/vec.x,          0,         0,  0,
         0,          1.0f/vec.y,         0,  0,
         0,                  0, 1.0f/vec.z,  0,
@@ -73,8 +73,8 @@ Transform::Rotate(const Vec3f& axis, float angle) -> Transform& {
     mat(3, 2) = 0;
     mat(3, 3) = 1;
 
-    m_mat *= mat;
-    m_invMat *= mat.Transpose();
+    m_matrix *= mat;
+    m_inverse *= mat.Transpose();
 
     return *this;
 }
@@ -82,12 +82,12 @@ Transform::Rotate(const Vec3f& axis, float angle) -> Transform& {
 /*
 Point3f Transform::TransformAffine(const Point3f& point) const
 {
-    const auto x = m_mat(0,0) * point.x + m_mat(0,1) * point.y
-                 + m_mat(0,2) * point.z + m_mat(0,3);
-    const auto y = m_mat(1,0) * point.x + m_mat(1,1) * point.y
-                 + m_mat(1,2) * point.z + m_mat(1,3);
-    const auto z = m_mat(2,0) * point.x + m_mat(2,1) * point.y
-                 + m_mat(2,2) * point.z + m_mat(2,3);
+    const auto x = m_matrix(0,0) * point.x + m_matrix(0,1) * point.y
+                 + m_matrix(0,2) * point.z + m_matrix(0,3);
+    const auto y = m_matrix(1,0) * point.x + m_matrix(1,1) * point.y
+                 + m_matrix(1,2) * point.z + m_matrix(1,3);
+    const auto z = m_matrix(2,0) * point.x + m_matrix(2,1) * point.y
+                 + m_matrix(2,2) * point.z + m_matrix(2,3);
     return { x, y, z};
 } */
 
@@ -95,10 +95,10 @@ Point3f Transform::TransformAffine(const Point3f& point) const
 auto
 Transform::operator()(const Point3f& point) const -> Point3f {
 
-    const auto x = m_mat(0,0) * point.x + m_mat(0,1) * point.y + m_mat(0,2) * point.z + m_mat(0,3);
-    const auto y = m_mat(1,0) * point.x + m_mat(1,1) * point.y + m_mat(1,2) * point.z + m_mat(1,3);
-    const auto z = m_mat(2,0) * point.x + m_mat(2,1) * point.y + m_mat(2,2) * point.z + m_mat(2,3);
-    const auto w = m_mat(3,0) * point.x + m_mat(3,1) * point.y + m_mat(3,2) * point.z + m_mat(3,3);
+    const auto x = m_matrix(0,0) * point.x + m_matrix(0,1) * point.y + m_matrix(0,2) * point.z + m_matrix(0,3);
+    const auto y = m_matrix(1,0) * point.x + m_matrix(1,1) * point.y + m_matrix(1,2) * point.z + m_matrix(1,3);
+    const auto z = m_matrix(2,0) * point.x + m_matrix(2,1) * point.y + m_matrix(2,2) * point.z + m_matrix(2,3);
+    const auto w = m_matrix(3,0) * point.x + m_matrix(3,1) * point.y + m_matrix(3,2) * point.z + m_matrix(3,3);
 
     return {x/w, y/w, z/w};
 }
@@ -106,9 +106,9 @@ Transform::operator()(const Point3f& point) const -> Point3f {
 auto
 Transform::operator()(const Vec3f& vec) const -> Vec3f {
 
-    const auto x = m_mat(0,0) * vec.x + m_mat(0,1) * vec.y + m_mat(0,2) * vec.z;
-    const auto y = m_mat(1,0) * vec.x + m_mat(1,1) * vec.y + m_mat(1,2) * vec.z;
-    const auto z = m_mat(2,0) * vec.x + m_mat(2,1) * vec.y + m_mat(2,2) * vec.z;
+    const auto x = m_matrix(0,0) * vec.x + m_matrix(0,1) * vec.y + m_matrix(0,2) * vec.z;
+    const auto y = m_matrix(1,0) * vec.x + m_matrix(1,1) * vec.y + m_matrix(1,2) * vec.z;
+    const auto z = m_matrix(2,0) * vec.x + m_matrix(2,1) * vec.y + m_matrix(2,2) * vec.z;
     return {x, y, z};
 }
 
@@ -116,20 +116,31 @@ auto
 Transform::operator()(const Normal3f& normal) const -> Normal3f {
 
     // Note indices: we're using the transpose
-    const auto x = m_invMat(0,0) * normal.x + m_invMat(1,0) * normal.y + m_invMat(2,0) * normal.z;
-    const auto y = m_invMat(0,1) * normal.x + m_invMat(1,1) * normal.y + m_invMat(2,1) * normal.z;
-    const auto z = m_invMat(0,2) * normal.x + m_invMat(1,2) * normal.y + m_invMat(2,2) * normal.z;
+    const auto x = m_inverse(0,0) * normal.x + m_inverse(1,0) * normal.y + m_inverse(2,0) * normal.z;
+    const auto y = m_inverse(0,1) * normal.x + m_inverse(1,1) * normal.y + m_inverse(2,1) * normal.z;
+    const auto z = m_inverse(0,2) * normal.x + m_inverse(1,2) * normal.y + m_inverse(2,2) * normal.z;
     return {x, y, z};
 }
 
 auto
 Transform::Inverse(const Point3f& point) const -> Point3f {
 
-    const auto x = m_invMat(0,0) * point.x + m_invMat(0,1) * point.y + m_invMat(0,2) * point.z + m_invMat(0,3);
-    const auto y = m_invMat(1,0) * point.x + m_invMat(1,1) * point.y + m_invMat(1,2) * point.z + m_invMat(1,3);
-    const auto z = m_invMat(2,0) * point.x + m_invMat(2,1) * point.y + m_invMat(2,2) * point.z + m_invMat(2,3);
-    const auto w = m_invMat(3,0) * point.x + m_invMat(3,1) * point.y + m_invMat(3,2) * point.z + m_invMat(3,3);
+    const auto x = m_inverse(0,0) * point.x + m_inverse(0,1) * point.y + m_inverse(0,2) * point.z + m_inverse(0,3);
+    const auto y = m_inverse(1,0) * point.x + m_inverse(1,1) * point.y + m_inverse(1,2) * point.z + m_inverse(1,3);
+    const auto z = m_inverse(2,0) * point.x + m_inverse(2,1) * point.y + m_inverse(2,2) * point.z + m_inverse(2,3);
+    const auto w = m_inverse(3,0) * point.x + m_inverse(3,1) * point.y + m_inverse(3,2) * point.z + m_inverse(3,3);
 
     return {x/w, y/w, z/w};
 }
+
+auto Transform::Inverse(const Vec3f& p) const -> Vec3f
+{
+    return {0,0,0};
+}
+
+auto Transform::Inverse(const Normal3f& p) const -> Normal3f
+{
+    return {0,0,0};
+}
+
 

@@ -44,7 +44,7 @@ bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const {
 
 
 auto
-Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampler) const -> Color3f {
+Scene::SampleOneLight(const Intersection& isect, const Normal3f& wo, Sampler& sampler) const -> Color3f {
     const auto nLights = m_lights.size();
 
     if (nLights == 0) return Color3f::Black(); // there are no lights
@@ -69,10 +69,10 @@ Scene::SampleOneLight(const Intersection& isect, const Vec3f& wo, Sampler& sampl
 
 auto
 Scene::SampleLightSource(
-        const Intersection& isect,
-        const Vec3f& wo,
-        Sampler& sampler,
-        const Mesh& light) const -> Color3f {
+    const Intersection& isect,
+    const Normal3f& wo,
+    Sampler& sampler,
+    const Mesh& light) const -> Color3f {
     
     Color3f directLight = Color3f::Black();
 
@@ -99,9 +99,9 @@ Scene::SampleLightSource(
 
 auto
 Scene::SampleBSDF(const Intersection& isect,
-        const Vec3f& wo,
-        Sampler& sampler,
-        const Mesh& light) const -> Color3f 
+                  const Normal3f& wo,
+                  Sampler& sampler,
+                  const Mesh& light) const -> Color3f 
 {
 
     if (!isect.IsSpecular()) {
@@ -140,10 +140,10 @@ Scene::SampleBSDF(const Intersection& isect,
 
 auto
 Scene::EstimateDirectLight(
-        const Intersection& isect,
-        const Vec3f& wo,
-        Sampler& sampler,
-        const Mesh& light) const -> Color3f {
+    const Intersection& isect,
+    const Normal3f& wo,
+    Sampler& sampler,
+    const Mesh& light) const -> Color3f {
 
     Color3f directLight = Color3f::Black();
    

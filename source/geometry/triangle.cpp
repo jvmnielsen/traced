@@ -29,7 +29,7 @@ Triangle::UpdateEdges() -> void
 {
     m_edges[0]   = m_vertices[1] - m_vertices[0];
     m_edges[1]   = m_vertices[2] - m_vertices[0];
-    m_faceNormal = m_edges[0].CrossProduct(m_edges[1]).Normalize();
+    m_faceNormal = Normalize(Cross(m_edges[0], m_edges[1]));
 }
 
 /*
@@ -71,10 +71,11 @@ Triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
 } */
 
 auto
-Triangle::IntersectsFast(const Rayf& ray) const -> bool
-{
-    const auto p_vec = ray.GetDirection().CrossProduct(m_edges.at(1));
-    const auto det = m_edges.at(0).DotProduct(p_vec);
+Triangle::IntersectsFast(const Rayf& ray) const -> bool {
+
+    const auto dir = static_cast<Vec3f>(ray.GetDirection());
+    const auto p_vec = Cross(dir, m_edges.at(1));
+    const auto det = Dot(m_edges.at(0), p_vec);
 
     // precompute for performance
     const auto inverted_det = 1 / det;
@@ -83,26 +84,27 @@ Triangle::IntersectsFast(const Rayf& ray) const -> bool
 
     // barycentric coordinate u
     const auto t_vec = ray.GetOrigin() - m_vertices[0];
-    barycentric.x = t_vec.DotProduct(p_vec) * inverted_det;
+    barycentric.x = Dot(t_vec, p_vec) * inverted_det;
     if (barycentric.x < 0 || barycentric.x > 1)
         return false;
 
     // barycentric coordinate v
-    const auto q_vec = t_vec.CrossProduct(m_edges.at(0));
-    barycentric.y = ray.GetDirection().DotProduct( q_vec ) * inverted_det;
+    const auto q_vec = Cross(t_vec, m_edges.at(0));
+    barycentric.y = Dot(dir, q_vec) * inverted_det;
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return false;
 
-    const auto parameter = m_edges.at(1).DotProduct(q_vec) * inverted_det;
+    const auto parameter = Dot(m_edges.at(1), q_vec) * inverted_det;
 
     return parameter > 0 && parameter <= ray.GetMaxParameter();
 
 }
 
 auto 
-Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection>
-{
-    const auto p_vec = Cross(ray.GetDirection(), m_edges.at(1));
+Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
+    
+    const auto dir = static_cast<Vec3f>(ray.GetDirection());
+    const auto p_vec = Cross(dir, m_edges.at(1));
     const auto det = Dot(m_edges[0], p_vec);
 
     const auto recipDet = 1 / det;
@@ -111,19 +113,19 @@ Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection>
 
     // barycentric coordinate u
     const auto t_vec = ray.GetOrigin() - m_vertices[0];
-    barycentric.x = t_vec.DotProduct(p_vec) * recipDet;
+    barycentric.x = Dot(t_vec, p_vec) * recipDet;
 
     if (barycentric.x < 0 || barycentric.x > 1)
         return std::nullopt;
 
     // barycentric coordinate v
-    const auto q_vec = t_vec.CrossProduct(m_edges.at(0));
-    barycentric.y = ray.GetDirection().DotProduct(q_vec) * recipDet;
+    const auto q_vec = Cross(t_vec, m_edges.at(0));
+    barycentric.y = Dot(dir, q_vec) * recipDet;
 
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return std::nullopt;
 
-    const auto parameter = m_edges.at(1).DotProduct(q_vec) * recipDet;
+    const auto parameter = Dot(m_edges.at(1), q_vec) * recipDet;
 
     if (!ray.ParameterWithinBounds(parameter))
         return std::nullopt;

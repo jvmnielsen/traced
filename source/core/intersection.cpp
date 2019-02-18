@@ -11,8 +11,8 @@ Intersection::Intersection(
     : m_point(std::move(point))
     , m_uv(std::move(uvCoord))
     , m_geometricNormal(std::move(geometricNormal))
-    , m_shadingNormal(std::move(shadingNormal)) 
-    , m_orthonormal(shadingNormal) {  
+    , m_shadingNormal(std::move(shadingNormal)) {
+    //, m_orthonormal(shadingNormal) {  
 }
 
 
@@ -46,18 +46,21 @@ Intersection::IsSpecular() const -> bool {
     return false;
 }
 
+/*
 auto
 Intersection::GetOrthonormalBasis() const -> const ONB& {
     return m_orthonormal;
-}
+}*/
 
 auto
-Intersection::GetTransformedSampledVec(Sampler& sampler) const -> Vec3f {
+Intersection::GetTransformedSampledVec(Sampler& sampler) const -> Normal3f
+{
     const auto cosSamplePoint = sampler.CosineSampleHemisphere();
 
     const auto& transform = m_mesh->GetTransform();
+    const auto& inverse = transform.m_inverse;
 
-    const auto originalPoint = transform.Inverse(m_point);
+    const auto originalPoint = inverse.Multiply(m_point);
     const auto offsetFromOrig = originalPoint - Point3f{0};
     const auto offsetSample = cosSamplePoint + offsetFromOrig;
     const auto transformedSample = transform(offsetSample);

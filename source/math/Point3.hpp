@@ -1,5 +1,7 @@
 #pragma once
-#include "vec3.hpp"
+#include "normal3.hpp"
+#include "math_util.hpp"
+
 
 template<typename T>
 struct Point3
@@ -23,18 +25,24 @@ struct Point3
         return *this;
     }
 
-    Point3 operator+(const Vec3<T>& vec) const
-    {
+    auto operator+(const Vec3<T>& vec) const -> Point3 {
         return {x + vec.x, y + vec.y, z + vec.z};
+    }
+
+    auto operator+(const Normal3<T>& n) const -> Point3 {
+        return {x + n.x, y + n.y, z + n.z};
     }
 
     auto operator+(const Point3<T>& p) const -> Point3 {
         return {x + p.x, y + p.y, z + p.z};
     }
 
-    Point3 operator-(const Vec3<T>& vec) const
-    {
+    auto operator-(const Vec3<T>& vec) const -> Point3 {
         return {x - vec.x, y - vec.y, z - vec.z};
+    }
+
+    auto operator-(const Normal3<T>& n) const -> Point3 {
+        return {x - n.x, y - n.y, z - n.z};
     }
 
     bool operator==(const Point3& other) const
@@ -48,19 +56,12 @@ struct Point3
     }
 
     // Accessors
-    T operator[](const uint8_t i) const
-    {
+    T operator[](const uint8_t i) const {
         return (&x)[i];
     }
 
-    T& operator[](const uint8_t i)
-    {
+    T& operator[](const uint8_t i) {
         return (&x)[i];
-    }
-
-    void PrettyPrint() const
-    {
-        std::cout << "( " << x << ", " << y << ", " << z << " )\n";
     }
 };
 
@@ -78,6 +79,6 @@ Point3<T> operator/(const T factor, const Point3<T>& point)
 }
 
 
-typedef Point3<float> Point3f;
+typedef Point3<FLOAT> Point3f;
 typedef Point3<int> Point3i;
-typedef Point3<double> Point3d;
+//typedef Point3<double> Point3d;

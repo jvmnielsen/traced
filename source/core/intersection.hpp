@@ -22,8 +22,8 @@ public:
     auto GetShadingNormal() const -> const Normal3f&;
     auto IsSpecular() const -> bool;
 
-    auto GetOrthonormalBasis() const -> const ONB&;
-    auto GetTransformedSampledVec(Sampler& sampler) const -> Vec3f;
+    //auto GetOrthonormalBasis() const -> const ONB&;
+    auto GetTransformedSampledVec(Sampler& sampler) const -> Normal3f;
 
 
 
@@ -35,7 +35,7 @@ public:
 
 private:
 
-    ONB m_orthonormal;
+    //ONB m_orthonormal;
 
     Point3f         m_point;
     Point2f         m_uv;

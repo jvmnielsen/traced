@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 
+// todo: clean up
+
 template<typename T>
 class Vec2
 {
@@ -81,18 +83,6 @@ public:
         return Vec2<T>{ x * other.y - other.x * y };
     }
 
-    constexpr Vec2& Normalize()
-    {
-        T length = this->Length();
-        if (length > 0) // avoid division by 0
-        {
-            T invertedLength = 1 / length;
-            x *= invertedLength;
-            y *= invertedLength;
-        }
-        return *this;
-    }
-
     constexpr Vec2 operator-() const
     {
         return {-x, -y};
@@ -153,6 +143,6 @@ Vec2<T> operator/(const T factor, const Vec2<T>& vec)
 }
 
 
-typedef Vec2<float> Vec2f;
+typedef Vec2<FLOAT> Vec2f;
 typedef Vec2<int> Vec2i;
-typedef Vec2<double> Vec2d;
+//typedef Vec2<double> Vec2d;

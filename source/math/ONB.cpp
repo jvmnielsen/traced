@@ -1,7 +1,7 @@
 #include "onb.hpp"
 
 
-
+/*
 ONB::ONB(const Normal3f& axis) {
 
     m_basis[2] = axis;
@@ -27,4 +27,4 @@ auto
 ONB::operator[](int i) const -> const Normal3f&
 {
     return m_basis[i];
-}
+} */

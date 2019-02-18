@@ -11,16 +11,16 @@ class Transform
 public:
 
     
-    Transform(const Matrix4x4f& mat, const Matrix4x4f& invMat) : m_mat(mat), m_invMat(invMat) {}
-    Transform() : m_mat(Matrix4x4f::getIdentity()), m_invMat(Matrix4x4f::getIdentity()) { }
+    //Transform(const Matrix4x4f& matrix) : m_matrix(matrix) { }
+    Transform() = default;
 
     /*
-    explicit Transform(const Matrix4x4f& mat) : m_mat(mat) {
-        m_invMat = m_mat.Invert();
+    explicit Transform(const Matrix4x4f& mat) : m_matrix(mat) {
+        m_inverse = m_matrix.Inverse();
     }*/
 
-    //Matrix4x4f GetMatrix() const { return m_mat; }
-    //Matrix4x4f GetInverseMatrix() const { return m_invMat; }
+    //Matrix4x4f GetMatrix() const { return m_matrix; }
+    //Matrix4x4f GetInverseMatrix() const { return m_inverse; }
 
     auto Translate(const Vec3f& vec) -> Transform&;
     auto Scale(const Vec3f& vec) -> Transform&;
@@ -31,13 +31,12 @@ public:
     auto operator()(const Normal3f& normal) const -> Normal3f;
 
     auto Inverse(const Point3f& p) const -> Point3f;
+    auto Inverse(const Vec3f& p) const -> Vec3f;
+    auto Inverse(const Normal3f& p) const -> Normal3f;
+    //auto Inverse() const -> Transform;
 
-private:
-
-    
-
-    Matrix4x4f m_mat;
-    Matrix4x4f m_invMat;
+    Matrix4x4f m_matrix;
+    Matrix4x4f m_inverse;
 };
 
 

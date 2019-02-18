@@ -29,14 +29,14 @@ public:
     auto GetMaterial() const -> const Material&;
 
     auto SampleSurface(Sampler& sampler) const -> Intersection;
-    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const->std::tuple<Intersection, Vec3f, double, Color3f>;
+    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const->std::tuple<Intersection, Normal3f, double, Color3f>;
 
 
     auto GetPreTransformedPoint(const Point3f& p) const -> Point3f;
 	auto GetTransform() const -> const Transform& { return *m_transformToWorld; }
 
 
-    auto Pdf(const Intersection& ref, const Vec3f& wi) const -> float;
+    auto Pdf(const Intersection& ref, const Normal3f& wi) const -> float;
 
 private:
     std::vector<Triangle>       m_triangles;

@@ -1,19 +1,19 @@
 #pragma once
 #include "point3.hpp"
-#include "vec3.hpp"
+#include "normal3.hpp"
 #include <array>
 #include "math_util.hpp"
 
 enum class RayType { PrimaryRay, ShadowRay };
 
-template< typename T >
+template<typename T>
 class Ray
 {
 public:
-    constexpr Ray() = default;
+    Ray() = default;
 
     Ray(const Point3<T>& origin,
-        const Vec3<T>& direction,
+        const Normal3<T>& direction,
         const T maxParam = Math::Infinity,
         const T minParam = 0.0001,
         const RayType& rayType = RayType::PrimaryRay)
@@ -29,10 +29,10 @@ public:
         m_sign[2] = m_reciprocDir.z < 0;
     }
 
-    const Point3<T>& GetOrigin() const { return m_origin; }
-    const Vec3<T>& GetDirection() const { return m_direction; }
-    Point3<T> PointAtParameter(const float t) const { return m_origin + m_direction * t; }
-    const RayType& GetRayType() const { return m_rayType; }
+    auto GetOrigin() const -> const Point3<T>& { return m_origin; }
+    auto GetDirection() const -> const Normal3<T>& { return m_direction; }
+    auto PointAtParameter(const float t) const -> Point3<T> { return m_origin + m_direction * t; }
+    auto GetRayType() const -> const RayType& { return m_rayType; }
 
     void NewMaxParameter(const T maxParam) const { m_maxParam = maxParam; }
     T GetMaxParameter() const { return m_maxParam; }
@@ -48,7 +48,7 @@ public:
 
 private:
     Point3<T> m_origin;
-    Vec3<T> m_direction;
+    Normal3<T> m_direction;
     RayType m_rayType;
 
     mutable T m_maxParam;
@@ -58,6 +58,6 @@ private:
     std::array<int, 3> m_sign; // used in AABB intersection test
 };
 
-typedef Ray<float> Rayf;
+typedef Ray<FLOAT> Rayf;
 typedef Ray<int> Rayi;
-typedef Ray<double> Rayd;
+//typedef Ray<double> Rayd;

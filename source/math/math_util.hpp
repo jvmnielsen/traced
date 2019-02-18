@@ -1,40 +1,56 @@
 #pragma once
 
 #include <array>
-#include "vec3.hpp"
+//#include "normal3.hpp"
+#include <optional>
 
-namespace Math
-{
-    static constexpr float  Infinity    = std::numeric_limits<float>::max();
-    static constexpr float  NegInfinity = std::numeric_limits<float>::min();
-    static constexpr float  Pi          = 3.14159265358979323846f;
-    static constexpr float  InvPi       = 0.31830988618379067154f;
-    static constexpr float  Epsilon     = 1e-5f;
+#define FLOAT double
+
+namespace Math {
+
+    static constexpr FLOAT  Infinity    = std::numeric_limits<FLOAT>::max();
+    static constexpr FLOAT  NegInfinity = std::numeric_limits<FLOAT>::min();
+    static constexpr FLOAT  Pi          = 3.14159265358979323846;
+    static constexpr FLOAT  InvPi       = 0.31830988618379067154;
+    static constexpr FLOAT  Epsilon     = 1e-5;
 
     template<typename T>
-    T Clamp(T low, T high, T value)
-    {
+    T Clamp(T low, T high, T value) {
         return std::max(low, std::min(high, value));
     }
 
-    inline auto PowerHeuristic(int nf, float fPdf, int ng, float gPdf) -> float {
-        float f = nf * fPdf, g = ng * gPdf;
+    inline auto PowerHeuristic(int nf, FLOAT fPdf, int ng, FLOAT gPdf) -> float {
+        const auto f = nf * fPdf, g = ng * gPdf;
         return (f * f) / (f * f + g * g);
     }
 
-    inline auto SameHemisphere(const Vec3f& u, const Vec3f v) -> bool {
-        return u.z * v.z > 0;
+    template<typename T>
+    auto DegreeToRadian(T degree) -> T {
+        return degree * Pi / 180.0;
     }
 
-    float DegreeToRadian(float degree);
+    // Returns in order smallest to largest solution
+    template<typename T>
+    auto SolveQuadratic(T a, T b, T c) -> std::optional<std::tuple<T, T>> {
+       
+        const auto discr = b * b - 4 * a * c;
 
-    // Solve quadratic equation
-    // Smallest solution is returned in solutionOne
-    bool SolveQuadratic(
-            const float a,
-            const float b,
-            const float c,
-            float& solutionOne,
-            float& solutionTwo);
+        if (discr < 0) return std::nullopt;
+
+        if (discr == 0) {
+            const auto simpleSolu = -0.5 * b / a;
+            return std::make_tuple(simpleSolu, simpleSolu);
+        }
+          
+        const auto q = (b > 0) ? -0.5 * (b + sqrt(discr)) : -0.5 * (b - sqrt(discr));
+
+        const auto solutionOne = q / a;
+        const auto solutionTwo = c / q;
+
+        if (solutionOne > solutionTwo)
+            std::swap(solutionOne, solutionTwo);
+
+        return std::make_tuple(solutionOne, solutionTwo);
+    }
 
 }

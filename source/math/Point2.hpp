@@ -1,5 +1,6 @@
 #pragma once
 #include "vec2.hpp"
+#include "math_util.hpp"
 
 template<typename T>
 struct Point2
@@ -54,6 +55,5 @@ struct Point2
     }
 };
 
-typedef Point2<float> Point2f;
+typedef Point2<FLOAT> Point2f;
 typedef Point2<int> Point2i;
-typedef Point2<double> Point2d;

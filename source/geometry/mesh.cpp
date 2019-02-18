@@ -127,11 +127,11 @@ Mesh::SampleSurface(Sampler& sampler) const -> Intersection {
 }
 
 auto 
-Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Vec3f, double, Color3f>
+Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, double, Color3f>
 {
     auto sampled = SampleSurface(sampler);
 
-    auto wi = (sampled.GetPoint() - ref.GetPoint()).Normalize();
+    auto wi = Normalize(sampled.GetPoint() - ref.GetPoint());
     double pdf = 0; // = 1.0 / m_surfaceArea;
 
     if (wi.LengthSquared() == 0)
@@ -154,7 +154,7 @@ Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tup
 
 
 auto
-Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> float {
+Mesh::Pdf(const Intersection& ref, const Normal3f& wi) const -> float {
     
     Ray ray = Rayf{ref.GetPoint(), wi};
     auto isect = Intersects(ray);

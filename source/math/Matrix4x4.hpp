@@ -62,8 +62,7 @@ public:
             0, 0, 0, 1 };
     }
 
-    Matrix4x4 Invert() const
-    {
+    auto Inverse() const -> Matrix4x4 {
         //static_assert(N == M, "Matrix is not square!");
 
         Matrix4x4 tmp = *this;
@@ -186,4 +185,4 @@ public:
         std::cout << "| " << std::setw(4) << m[3][0] << ", " << std::setw(4) << m[3][1] << ", " << std::setw(4) << m[3][2] << ", " << std::setw(4) << m[3][3] << std::setw(4) << " |\n";
     }
 };
-typedef Matrix4x4<float> Matrix4x4f;
+typedef Matrix4x4<FLOAT> Matrix4x4f;

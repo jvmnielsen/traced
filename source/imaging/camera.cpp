@@ -1,5 +1,6 @@
 #include "camera.hpp"
 #include "../math/math_util.hpp"
+#include "../math/normal3.hpp"
 
 Camera::Camera(const float v_fov, const float aspect)
 {
@@ -15,7 +16,7 @@ Camera::Camera(const float v_fov, const float aspect)
 Camera::Camera(
         const Point3f& look_from,
         const Point3f& look_at,
-        const Vec3f& v_up,
+        const Normal3f& v_up,
         const float v_fov,
         const float aspect)
 {
@@ -25,16 +26,16 @@ Camera::Camera(
 
     m_origin = look_from;
 
-    const auto w = (look_from - look_at).Normalize();
-    const auto u = (v_up.CrossProduct(w)).Normalize();
-    const auto v = w.CrossProduct(u);
+    const auto w = Normalize(look_from - look_at);
+    const auto u = Cross(v_up, w);
+    const auto v = Cross(w, u);
 
     m_lowerLeftCorner = m_origin - u * halfWidth - v * halfHeight - w;
     m_horizontal = u * 2 * halfWidth;
     m_vertical = v * 2 * halfHeight;
 }
 
-Rayf Camera::GetRay(const float u, const float v) const
+Rayf Camera::GetRay(double u, double v) const
 {
     return {m_origin, // origin of the camera
             m_lowerLeftCorner + m_horizontal * u + m_vertical * v - m_origin}; // scale from lower left - origin for vector pointing to this point

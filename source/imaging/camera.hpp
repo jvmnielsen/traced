@@ -11,9 +11,9 @@ public:
     ~Camera() = default;
 
     Camera(float v_fov, float aspect);
-    Camera(const Point3f& look_from, const Point3f& look_at, const Vec3f& v_up, const float v_fov, const float aspect);
+    Camera(const Point3f& look_from, const Point3f& look_at, const Normal3f& v_up, const float v_fov, const float aspect);
 
-    Rayf GetRay(const float u, const float v) const;
+    Rayf GetRay(double u, double v) const;
 
 private:
     Point3f m_origin;

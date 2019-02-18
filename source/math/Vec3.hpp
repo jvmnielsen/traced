@@ -1,6 +1,9 @@
 #pragma once
-#include <iostream>
 #include <cmath>
+#include "math_util.hpp"
+
+template< typename T >
+struct Normal3;
 
 template<typename T>
 struct Vec3 {
@@ -12,133 +15,89 @@ struct Vec3 {
 
     Vec3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
 
-    T LengthSquared() const
-    {
+    Vec3(const Normal3<T>& n) : x(n.x), y(n.y), z(n.z) { }
+
+    auto LengthSquared() const -> T {
         return x * x + y * y + z * z;
     }
 
-    T Length() const
-    {
+    auto Length() const -> T {
         return std::sqrt(LengthSquared());
     }
 
-    Vec3 operator*(const T factor) const
-    {
+    auto operator*(const T factor) const -> Vec3 {
         return Vec3{x * factor, y * factor, z * factor};
     }
 
-    Vec3& operator*=(const T factor)
-    {
+    auto operator*=(const T factor) -> Vec3& {
         x *= factor;
         y *= factor;
         z *= factor;
         return *this;
     }
 
-    Vec3 operator/(const T factor) const
-    {
+    auto operator/(const T factor) const -> Vec3 {
         return Vec3{x / factor, y / factor, z / factor};
     }
 
-    Vec3& operator/=(const T factor)
-    {
+    auto operator/=(const T factor) -> Vec3& {
         x /= factor;
         y /= factor;
         z /= factor;
         return *this;
     }
 
-    Vec3 operator+(const Vec3 &other) const
-    {
+    auto operator+(const Vec3 &other) const -> Vec3 {
         return Vec3{x + other.x, y + other.y, z + other.z};
     }
 
-    Vec3 operator+=(const Vec3 &other)
-    {
+    auto operator+=(const Vec3 &other) -> Vec3 {
         x += other.x;
         y += other.y;
         z += other.z;
         return *this;
     }
 
-    Vec3 operator-(const Vec3 &other) const
-    {
+    auto operator-(const Vec3 &other) const -> Vec3 {
         return Vec3<T>{x - other.x, y - other.y, z - other.z};
     }
 
-    Vec3& operator-=(const Vec3 &other)
-    {
+    auto operator-=(const Vec3 &other) -> Vec3& {
         x -= other.x;
         y -= other.y;
         z -= other.z;
         return *this;
     }
 
-    T DotProduct(const Vec3& other) const
-    {
-        return x * other.x + y * other.y + z * other.z;
-    }
-
-    Vec3 CrossProduct(const Vec3& other) const
-    {
-        return Vec3<T>{
-            y * other.z - z * other.y,
-                z * other.x - x * other.z,
-                x * other.y - y * other.x};
-    }
-
-    Vec3& Normalize()
-    {
-        T length = this->Length();
-        if (length > 0) // avoid division by 0
-        {
-            T invertedLength = 1 / length;
-            x *= invertedLength;
-            y *= invertedLength;
-            z *= invertedLength;
-        }
-        return *this;
-    }
-
-    Vec3 operator-() const
-    {
+    auto operator-() const -> Vec3 {
         return Vec3{-x, -y, -z};
     }
 
-    
-    bool operator==(const Vec3& other)
-    {
+    auto operator==(const Vec3& other) -> bool {
         return x == other.x && y == other.y && z == other.z;
     }
 
-    bool operator!=(const Vec3& other)
-    {
+    auto operator!=(const Vec3& other) -> bool {
         return x != other.x || y != other.y || z != other.z;
     }
 
     // Accessors
-    T operator[](const uint8_t i) const
-    {
+    auto operator[](const uint8_t i) const -> T {
         return (&x)[i];
     }
 
-    T& operator[](const uint8_t i)
-    {
+    auto operator[](const uint8_t i) -> T& {
         return (&x)[i];
-    }
-
-    void PrettyPrint() const
-    {
-        std::cout << "[ " << x << ", " << y << ", " << z << " ]\n";
     }
 };
 
+/*
 template< typename T > auto
 operator==(const Vec3<T>& v1, const Vec3<T>& v2) -> bool
 {
     return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
 }
-
+*/
 
 template<typename T>
 Vec3<T> operator*(const T factor, const Vec3<T>& vec)
@@ -157,15 +116,20 @@ Dot(const Vec3<T>& v1, const Vec3<T>& v2) -> T
 {
     return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
 }
+
 template< typename T > auto
 Cross(const Vec3<T>& v1, const Vec3<T>& v2) -> Vec3<T>
 {
     return Vec3<T>{
-        v1.y * v2.z - v1.z * v2.y,
+            v1.y * v2.z - v1.z * v2.y,
             v1.z * v2.x - v1.x * v2.z,
             v1.x * v2.y - v1.y * v2.x};
 }
 
-typedef Vec3<float> Vec3f;
+template<typename T>
+auto SameHemisphere(const Vec3<T>& u, const Vec3<T>& v) -> bool {
+    return u.z * v.z > 0;
+}
+
+typedef Vec3<FLOAT> Vec3f;
 typedef Vec3<int> Vec3i;
-typedef Vec3<double> Vec3d;

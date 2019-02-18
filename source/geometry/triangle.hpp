@@ -46,7 +46,7 @@ public:
 private:
     std::array<Point3f, 3>      m_vertices;         // Three points making up the triangle
     std::array<Normal3f, 3>     m_vertexNormals;    // Normal at each vertex, used to interpolate a normal across the face
-    Vec3f                       m_faceNormal;       // In cases where vertex normals are not available, use face normal
+    Normal3f                    m_faceNormal;       // In cases where vertex normals are not available, use face normal
     std::array<Vec3f, 2>        m_edges;            // Pre-calculated for use in Intercept function
     std::array<Point2f, 3>      m_uv;               // Texture coordinates
 
