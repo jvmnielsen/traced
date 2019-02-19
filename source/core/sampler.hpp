@@ -11,7 +11,7 @@ public:
 
     auto GetRandomReal() -> float;
     auto GetRandomInDistribution(int upperBound) -> int;
-    auto CosineSampleHemisphere() -> Point3f;
+    auto CosineSampleHemisphere() -> Normal3f;
 
 private:
     // to generate random numbers [0,1]

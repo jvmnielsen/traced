@@ -4,8 +4,10 @@
 auto
 Material::Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Normal3f, double, Color3f> {
     
-    //auto sampledPoint = sampler.CosineSampleHemisphere();
+    //const auto sampled = sampler.CosineSampleHemisphere();
     //auto origPoint = isect.m_mesh
+    //const auto onb = ONB{isect.GetShadingNormal()};
+    //auto wi = onb.ConvertToLocal(sampled);
     auto wi = isect.GetTransformedSampledVec(sampler);
     if (wo.z < 0) wi = -wi; // flip to match direction
     const auto pdf = Pdf(wo, wi);

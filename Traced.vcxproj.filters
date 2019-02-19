@@ -319,7 +319,7 @@
     <ClInclude Include="source\utility\window.hpp">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\ONB.h">
+    <ClInclude Include="source\math\onb.hpp">
       <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>
@@ -396,7 +396,7 @@
       <Filter>utility</Filter>
     </ClCompile>
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\math\ONB.cpp">
+    <ClCompile Include="source\math\onb.cpp">
       <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>

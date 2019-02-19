@@ -18,7 +18,7 @@ Sampler::GetRandomInDistribution(int upperBound) -> int {
 }
 
 auto 
-Sampler::CosineSampleHemisphere() -> Point3f {
+Sampler::CosineSampleHemisphere() -> Normal3f {
     
     
     const auto r1 = GetRandomReal();

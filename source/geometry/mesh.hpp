@@ -29,7 +29,7 @@ public:
     auto GetMaterial() const -> const Material&;
 
     auto SampleSurface(Sampler& sampler) const -> Intersection;
-    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const->std::tuple<Intersection, Normal3f, double, Color3f>;
+    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, FLOAT, Color3f>;
 
 
     auto GetPreTransformedPoint(const Point3f& p) const -> Point3f;
@@ -41,7 +41,7 @@ public:
 private:
     std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;
-    float                       m_surfaceArea;
+    FLOAT                       m_surfaceArea;
     std::unique_ptr<Transform>  m_transformToWorld;
 
 };

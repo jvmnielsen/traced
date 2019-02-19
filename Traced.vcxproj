@@ -156,7 +156,7 @@
     <ClInclude Include="source\math\math_util.hpp" />
     <ClInclude Include="source\math\Matrix4x4.hpp" />
     <ClInclude Include="source\math\Normal3.hpp" />
-    <ClInclude Include="source\math\ONB.h" />
+    <ClInclude Include="source\math\onb.hpp" />
     <ClInclude Include="source\math\Point2.hpp" />
     <ClInclude Include="source\math\Point3.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
@@ -262,7 +262,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\material\material.cpp" />
     <ClCompile Include="source\math\math_util.cpp" />
-    <ClCompile Include="source\math\ONB.cpp" />
+    <ClCompile Include="source\math\onb.cpp" />
     <ClCompile Include="source\math\transform.cpp" />
     <ClCompile Include="source\utility\parser.cpp" />
     <ClCompile Include="source\utility\window.cpp" />

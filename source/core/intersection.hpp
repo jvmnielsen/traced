@@ -11,7 +11,7 @@ class Intersection
 {
 public:
 
-    Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal);
+    Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal, Normal3f tangent);
 
     Point3f OffsetShadingPoint() const;
     Point3f OffsetGeometricPoint() const;
@@ -20,6 +20,8 @@ public:
     auto GetPoint() const -> const Point3f&;
     auto GetGeometricNormal() const -> const Normal3f&;
     auto GetShadingNormal() const -> const Normal3f&;
+    auto GetTangent() const -> const Normal3f&;
+
     auto IsSpecular() const -> bool;
 
     //auto GetOrthonormalBasis() const -> const ONB&;
@@ -41,4 +43,5 @@ private:
     Point2f         m_uv;
     Normal3f        m_geometricNormal;
     Normal3f        m_shadingNormal;
+    Normal3f        m_tangent;
 };

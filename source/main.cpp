@@ -82,8 +82,8 @@ int main(int argc, char * argv[]) {
     green->m_attenuation = Color3f{0.2, 0.7, 0.2};
     auto red = std::make_shared<Matte>();
     red->m_attenuation = Color3f{0.7, 0.2, 0.2};
-    cube1->ApplyMaterial(matte);
-    cube2->ApplyMaterial(matte);
+    cube1->ApplyMaterial(red);
+    cube2->ApplyMaterial(green);
     floor->ApplyMaterial(matte);
     rightWall->ApplyMaterial(red);
     leftWall->ApplyMaterial(green);
@@ -96,8 +96,8 @@ int main(int argc, char * argv[]) {
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<std::unique_ptr<Mesh>> lights;
-    //meshes.push_back(std::move(cube1));
-    //meshes.push_back(std::move(cube2));
+    meshes.push_back(std::move(cube1));
+    meshes.push_back(std::move(cube2));
     meshes.push_back(std::move(floor));
     //meshes.push_back(std::move(rightWall));
     //meshes.push_back(std::move(leftWall));

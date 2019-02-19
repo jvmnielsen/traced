@@ -133,14 +133,15 @@ Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     // Update parameter and intersection as necessary
     ray.NewMaxParameter(parameter);
 
+
+
     return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric) };
 }
 
 auto 
-Triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f
-{
-    // for flat shading simply return the face normal
-    const auto normal = m_vertexNormals[0] * (1 - uv.x - uv.y)
+Triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f {
+
+    const auto normal =   m_vertexNormals[0] * (1 - uv.x - uv.y)
                         + m_vertexNormals[1] * uv.x
                         + m_vertexNormals[2] * uv.y;
 

@@ -16,6 +16,10 @@ public:
             auto Pdf(const Normal3f& wo, const Normal3f& wi) const                                -> float;
     virtual auto Emitted(const Intersection& isect, const Normal3f& dir) const                       -> Color3f;
 
+    //auto LocalToWorld(const Normal3f& n) const -> Normal3f;
+    //auto WorldToLocal(const Normal3f& n) const -> Normal3f;
+
+
 };
 
 

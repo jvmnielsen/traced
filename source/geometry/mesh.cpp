@@ -127,12 +127,12 @@ Mesh::SampleSurface(Sampler& sampler) const -> Intersection {
 }
 
 auto 
-Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, double, Color3f>
+Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, FLOAT, Color3f>
 {
     auto sampled = SampleSurface(sampler);
 
     auto wi = Normalize(sampled.GetPoint() - ref.GetPoint());
-    double pdf = 0; // = 1.0 / m_surfaceArea;
+    FLOAT pdf = 0; // = 1.0 / m_surfaceArea;
 
     if (wi.LengthSquared() == 0)
         pdf = 0;
