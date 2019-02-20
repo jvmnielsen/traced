@@ -28,15 +28,16 @@ public:
     auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     auto GetMaterial() const -> const Material&;
 
-    auto SampleSurface(Sampler& sampler) const -> Intersection;
-    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, FLOAT, Color3f>;
+    auto SampleRandomTriangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
+    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, FLOAT, Color3f>;
+    auto Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     auto GetPreTransformedPoint(const Point3f& p) const -> Point3f;
 	auto GetTransform() const -> const Transform& { return *m_transformToWorld; }
 
 
-    auto Pdf(const Intersection& ref, const Normal3f& wi) const -> float;
+    auto Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT;
 
 private:
     std::vector<Triangle>       m_triangles;

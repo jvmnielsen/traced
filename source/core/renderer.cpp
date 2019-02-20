@@ -206,10 +206,10 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
 
         auto wo = -ray.GetDirection();
 
-        //if (bounces == 0 || lastBounceSpecular) {
+        if (bounces == 0 || lastBounceSpecular) {
         color += throughput * isect->m_material->Emitted(*isect, wo);
             //lightContrib.push_back(throughput * isect->m_material->Emitted(*isect, wo));
-        //}
+        }
 
         color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
 

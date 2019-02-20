@@ -11,9 +11,9 @@ class Material {
 public:
     Material() = default;
 
-    virtual auto Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Normal3f, double, Color3f>;
+    virtual auto Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f>;
     virtual auto Evaluate(const Normal3f& wo, const Normal3f& wi) const                           -> Color3f = 0;
-            auto Pdf(const Normal3f& wo, const Normal3f& wi) const                                -> float;
+            auto Pdf(const Normal3f& wo, const Normal3f& wi) const                                -> FLOAT;
     virtual auto Emitted(const Intersection& isect, const Normal3f& dir) const                       -> Color3f;
 
     //auto LocalToWorld(const Normal3f& n) const -> Normal3f;
@@ -30,7 +30,7 @@ public:
 
     auto Evaluate(const Normal3f& wo, const Normal3f& wi) const -> Color3f override;
 
-    Color3f m_attenuation = Color3f{ 0.38f };
+    Color3f m_attenuation = Color3f{ 0.38 };
 };
 
 class Emissive : public Matte

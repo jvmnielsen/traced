@@ -176,13 +176,5 @@ public:
 
         return {a, b, c};
     }
-
-    void PrettyPrint() const
-    {
-        std::cout << "| " << std::setw(4) << m[0][0] << ", " << std::setw(4) << m[0][1] << ", " << std::setw(4) << m[0][2] << ", " << std::setw(4) << m[0][3] << std::setw(4) << " |\n";
-        std::cout << "| " << std::setw(4) << m[1][0] << ", " << std::setw(4) << m[1][1] << ", " << std::setw(4) << m[1][2] << ", " << std::setw(4) << m[1][3] << std::setw(4) << " |\n";
-        std::cout << "| " << std::setw(4) << m[2][0] << ", " << std::setw(4) << m[2][1] << ", " << std::setw(4) << m[2][2] << ", " << std::setw(4) << m[2][3] << std::setw(4) << " |\n";
-        std::cout << "| " << std::setw(4) << m[3][0] << ", " << std::setw(4) << m[3][1] << ", " << std::setw(4) << m[3][2] << ", " << std::setw(4) << m[3][3] << std::setw(4) << " |\n";
-    }
 };
 typedef Matrix4x4<FLOAT> Matrix4x4f;

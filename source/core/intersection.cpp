@@ -7,22 +7,16 @@ Intersection::Intersection(
     Point3f     point,
     Point2f     uvCoord,
     Normal3f    geometricNormal,
-    Normal3f    shadingNormal,
-    Normal3f    tangent)
+    Normal3f    shadingNormal)
     : m_point(std::move(point)),
       m_uv(std::move(uvCoord)),
       m_geometricNormal(std::move(geometricNormal)),
-      m_shadingNormal(std::move(shadingNormal)), 
-      m_tangent(std::move(tangent)) {
-    //, m_orthonormal(shadingNormal) {  
+      //m_shadingNormal(std::move(shadingNormal)),
+      //m_tangent(std::move(tangent)) {
+      m_shadingBasis(shadingNormal) {
 }
 
-
-Point3f Intersection::OffsetShadingPoint() const {
-    return m_point + m_shadingNormal * Math::Epsilon;
-}
-
-Point3f Intersection::OffsetGeometricPoint() const {
+Point3f Intersection::PointOffset() const {
     return m_point + m_geometricNormal * Math::Epsilon;
 }
 
@@ -38,12 +32,7 @@ Intersection::GetGeometricNormal() const -> const Normal3f& {
 
 auto
 Intersection::GetShadingNormal() const -> const Normal3f& {
-    return m_shadingNormal;
-}
-
-auto 
-Intersection::GetTangent() const -> const Normal3f& {
-    return m_tangent;
+    return m_shadingBasis.Normal();
 }
 
 auto
@@ -57,6 +46,7 @@ Intersection::GetOrthonormalBasis() const -> const ONB& {
     return m_orthonormal;
 }*/
 
+/*
 auto
 Intersection::GetTransformedSampledVec(Sampler& sampler) const -> Normal3f {
     const auto cosSamplePoint = sampler.CosineSampleHemisphere();
@@ -69,4 +59,4 @@ Intersection::GetTransformedSampledVec(Sampler& sampler) const -> Normal3f {
     //const auto transformedSample = transform(offsetSample);
     //return Normalize(transformedSample - m_point);
     return Normal3f{0,0,0};
-}
+} */

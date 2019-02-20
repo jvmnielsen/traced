@@ -29,7 +29,7 @@ public:
 
     auto TransformBy(const Transform& transform) -> void;
 
-    auto GetArea() const -> float;
+    auto GetArea() const -> FLOAT;
 
     /*
     Point3f GetPointOnSurface(const float u, const float v) const override;
@@ -37,7 +37,7 @@ public:
     Intersection GetRandomSurfaceIntersection() override;
     */
 
-    auto SampleSurface(Sampler& sampler) const -> Intersection;
+    auto SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     const std::array<Point3f, 3>& GetVertices() const;
     //std::unique_ptr<AABB> GetBoundingVolume() const override;

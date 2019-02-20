@@ -17,18 +17,39 @@ Sampler::GetRandomInDistribution(int upperBound) -> int {
     return static_cast<unsigned int>(GetRandomReal() * (upperBound-1));
 }
 
+auto
+Sampler::GetRandom2D() -> Point2f {
+    return { GetRandomReal(), GetRandomReal() };
+}
+
+auto
+Sampler::SampleDisk() -> Point2f {
+    const auto randPoint = GetRandom2D();
+    // map to [-1,1]
+    const auto offset = Point2f{ 2.0 * randPoint.x - 1.0, 2.0 * randPoint.y - 1.0 };
+
+    if (offset.x == 0.0 && offset.y == 0.0)
+        return { 0.0, 0.0 };
+
+    FLOAT theta, r;
+    if (std::abs(offset.x) > std::abs(offset.y)) {
+        r = offset.x;
+        theta = Math::Pi / 4 * (offset.y / offset.x); // Todo: precalc pi values
+    } else {
+        r = offset.y;
+        theta = Math::Pi / 2 - Math::Pi / 4 * (offset.x / offset.y);
+    }
+    return { std::cos(theta) * r, std::sin(theta) * r };
+
+}
+
 auto 
 Sampler::CosineSampleHemisphere() -> Normal3f {
     
-    
-    const auto r1 = GetRandomReal();
-    const auto r2 = GetRandomReal();
+    const auto p = SampleDisk();
+    FLOAT z = std::sqrt(std::max((FLOAT)0, 1 - p.x * p.x - p.y * p.y));
+    return Normalize(Vec3f{ p.x, p.y, z });
 
-    const auto x = std::cos(2 * Math::Pi * r1) * std::sqrt(1 - r2);
-    const auto y = std::sin(2 * Math::Pi * r1) * std::sqrt(1 - r2);
-    const auto z = std::sqrt(r2);
-
-    return {x, y, z};
 
     /*
     const auto z = std::sqrt(1 - r2);
@@ -40,4 +61,11 @@ Sampler::CosineSampleHemisphere() -> Normal3f {
     return basis.ConvertToLocal(sampled); */
 
     //return sampled.x * onb[0] + sampled.y * onb[1] + sampled.z * onb[2];
+}
+
+auto
+Sampler::UniformSampleTriangle() -> Point2f {
+    const auto p = GetRandom2D();
+    FLOAT su0 = std::sqrt(p[0]);
+    return { 1 - su0, p[1] * su0 };
 }

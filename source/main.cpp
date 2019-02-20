@@ -20,14 +20,14 @@ int main(int argc, char * argv[]) {
     Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto cube1 = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
-    auto cube2 = parser.GetMeshFromFile("assets/cube.obj");
-    auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto leftWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto backWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto ceiling = parser.GetMeshFromFile("assets/plane.obj");
+    auto cube1 = parser.GetMeshFromFile("../assets/cube.obj"); // NOTE: windows and unix paths differ
+    auto cube2 = parser.GetMeshFromFile("../assets/cube.obj");
+    auto lightSource = parser.GetMeshFromFile("../assets/plane.obj");
+    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
+    auto rightWall = parser.GetMeshFromFile("../assets/plane.obj");
+    auto leftWall = parser.GetMeshFromFile("../assets/plane.obj");
+    auto backWall = parser.GetMeshFromFile("../assets/plane.obj");
+    auto ceiling = parser.GetMeshFromFile("../assets/plane.obj");
 
     auto cube1Transform = std::make_unique<Transform>();
     cube1Transform->Translate({-3., -4.1, -3.0}).Rotate({0.0, 1.0, 0.0}, 20.0).Scale({6.0, 12.0, 6.0});
@@ -82,8 +82,8 @@ int main(int argc, char * argv[]) {
     green->m_attenuation = Color3f{0.2, 0.7, 0.2};
     auto red = std::make_shared<Matte>();
     red->m_attenuation = Color3f{0.7, 0.2, 0.2};
-    cube1->ApplyMaterial(red);
-    cube2->ApplyMaterial(green);
+    cube1->ApplyMaterial(matte);
+    cube2->ApplyMaterial(matte);
     floor->ApplyMaterial(matte);
     rightWall->ApplyMaterial(red);
     leftWall->ApplyMaterial(green);
@@ -99,10 +99,10 @@ int main(int argc, char * argv[]) {
     meshes.push_back(std::move(cube1));
     meshes.push_back(std::move(cube2));
     meshes.push_back(std::move(floor));
-    //meshes.push_back(std::move(rightWall));
-    //meshes.push_back(std::move(leftWall));
-    //meshes.push_back(std::move(backWall));
-    //meshes.push_back(std::move(ceiling));
+    meshes.push_back(std::move(rightWall));
+    meshes.push_back(std::move(leftWall));
+    meshes.push_back(std::move(backWall));
+    meshes.push_back(std::move(ceiling));
 
     lights.push_back(std::move(lightSource));
 

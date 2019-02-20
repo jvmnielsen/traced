@@ -162,8 +162,7 @@ Triangle::TransformBy(const Transform& transform) -> void
 }
 
 auto 
-Triangle::GetArea() const -> float
-{
+Triangle::GetArea() const -> FLOAT {
     return 0.5f * Cross(m_edges[0], m_edges[1]).Length();
 }
 
@@ -182,10 +181,11 @@ Triangle::GetPointFromUV(const Point2f& uv) const -> Point3f {
 }
 
 auto
-Triangle::SampleSurface(Sampler& sampler) const -> Intersection {
+Triangle::SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
     //pdf = 1 / GetArea(); // TODO: figure out if this should be for triangle or whole mesh
-    const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
-    return Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv) };
+    //const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
+    const auto uv = sampler.UniformSampleTriangle();
+    return std::make_tuple(Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv) }, 1 / GetArea());
 }
 
 

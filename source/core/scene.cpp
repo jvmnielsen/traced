@@ -76,19 +76,15 @@ Scene::SampleLightSource(
     
     Color3f directLight = Color3f::Black();
 
-    auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
+    const auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
     
     if (lightPdf > 0.0f && !li.IsBlack()) {
-        const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wo, isect.GetShadingNormal()));
+        const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
         const auto scatteringPdf = isect.m_material->Pdf(wo, wi);
 
-        const auto LoS = LineOfSightBetween(isect.OffsetGeometricPoint(), atLight.OffsetGeometricPoint());
-
-        if (!f.IsBlack() && LoS) {
+        if (!f.IsBlack() && LineOfSightBetween(isect.PointOffset(), atLight.PointOffset())) {
             float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
             directLight += f * li * weight / lightPdf;
-            if (directLight.r < 0.3 || directLight.b < 0.3 || directLight.g < 0.3);
-                //std::cout << "light_source\n";
         }
     }
 
@@ -98,13 +94,10 @@ Scene::SampleLightSource(
 }
 
 auto
-Scene::SampleBSDF(const Intersection& isect,
-                  const Normal3f& wo,
-                  Sampler& sampler,
-                  const Mesh& light) const -> Color3f 
-{
+Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
 
     if (!isect.IsSpecular()) {
+
         auto [wi, scatteringPdf, f] = isect.m_material->Sample(wo, isect, sampler); // overwrites wi
         f *= std::abs(Dot(wi, isect.GetShadingNormal()));
 
@@ -116,7 +109,7 @@ Scene::SampleBSDF(const Intersection& isect,
                 return Color3f::Black();
             }
 
-            auto lightIsect = Intersects(Rayf{isect.OffsetGeometricPoint(), wi});
+            auto lightIsect = Intersects(Rayf{isect.PointOffset(), wi});
 
             auto li = Color3f::Black();
             
@@ -147,7 +140,7 @@ Scene::EstimateDirectLight(
 
     Color3f directLight = Color3f::Black();
    
-    directLight += SampleLightSource(isect, wo, sampler, light);
+    //directLight += SampleLightSource(isect, wo, sampler, light);
  
     directLight += SampleBSDF(isect, wo, sampler, light);
     

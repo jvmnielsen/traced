@@ -121,40 +121,44 @@ Mesh::GetMaterial() const -> const Material&
 }
 
 auto
-Mesh::SampleSurface(Sampler& sampler) const -> Intersection {
+Mesh::SampleRandomTriangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
     const auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
     return randTriangle.SampleSurface(sampler);
+}
+
+auto
+Mesh::Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
+    auto [sampledIsect, pdf] = SampleRandomTriangle(sampler);
+    const auto wi = Normalize(sampledIsect.GetPoint() - ref.GetPoint());
+
+    sampledIsect.m_mesh = this;
+    sampledIsect.m_material = m_material.get();
+
+    const auto denom = std::abs(Dot(sampledIsect.GetGeometricNormal(), -wi)) * GetSurfaceArea();
+
+    if (denom != 0.0)
+        pdf *= (sampledIsect.GetPoint() - ref.GetPoint()).LengthSquared() / denom;
+
+    return std::make_tuple(sampledIsect, pdf);
+
 }
 
 auto 
 Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, FLOAT, Color3f>
 {
-    auto sampled = SampleSurface(sampler);
+    const auto [sampledIsect, pdf] = Sample(ref, sampler);
 
-    auto wi = Normalize(sampled.GetPoint() - ref.GetPoint());
-    FLOAT pdf = 0; // = 1.0 / m_surfaceArea;
-
-    if (wi.LengthSquared() == 0)
-        pdf = 0;
-    else {
-        // convert to solid angle
-        auto denom = std::abs(Dot(sampled.GetGeometricNormal(), -wi)) * GetSurfaceArea();
-        if (denom != 0.0)
-            pdf = (sampled.GetPoint() - ref.GetPoint()).LengthSquared() / denom;
-    }
-
-    sampled.m_mesh = this;
-    sampled.m_material = m_material.get();
+    const auto wi = Normalize(sampledIsect.GetPoint() - ref.GetPoint());
 
     if (pdf == 0)
-        return std::make_tuple(sampled, wi, pdf, Color3f::Black());
+        return std::make_tuple(sampledIsect, wi, pdf, Color3f::Black());
 
-    return std::make_tuple(sampled, wi, pdf, m_material->Emitted(sampled, -wi));
+    return std::make_tuple(sampledIsect, wi, pdf, m_material->Emitted(sampledIsect, -wi));
 }
 
 
 auto
-Mesh::Pdf(const Intersection& ref, const Normal3f& wi) const -> float {
+Mesh::Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT {
     
     Ray ray = Rayf{ref.GetPoint(), wi};
     auto isect = Intersects(ray);
@@ -167,10 +171,7 @@ Mesh::Pdf(const Intersection& ref, const Normal3f& wi) const -> float {
 
         return (ref.GetPoint() - isect->GetPoint()).LengthSquared() / denom;
     }
-    return 0; 
-
-   
-    return 1/GetSurfaceArea();
+    return 0;
 }
 
 
