@@ -5,7 +5,7 @@ ONB::ONB(const Normal3f& normal) {
     m_basis[2] = normal;
 
     Normal3f a;
-    if (normal.x > 0.9) { // is the normal the x-axis?
+    if (std::abs(normal.x) > 0.9) { // is the normal the x-axis?
         a = Normal3f{0.0, 1.0, 0.0};
     } else {
         a = Normal3f{1.0, 0.0, 0.0};

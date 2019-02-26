@@ -26,7 +26,7 @@ Renderer::RenderProgressive() -> void {
         //std::size_t numCores = std::thread::hardware_concurrency();
         std::vector<ScreenSegment> segments;
 
-        constexpr int numSegments = 4;
+        constexpr int numSegments = 3;
         constexpr int totalSegments = numSegments * numSegments;
 
         segments.reserve(totalSegments);
@@ -186,13 +186,11 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 
     Color3f color = Color3f::Black();
 
-    for (int bounces = 0; bounces < m_maxBounces; ++bounces) { 
+    for (int bounces = 0; bounces < 2; ++bounces) { 
 
         auto isect = m_scene->Intersects(ray);
 
 		if (!isect.has_value()) {
-           // color += throughput * m_scene->BackgroundColor();
-            //lightContrib.push_back(throughput * m_scene->BackgroundColor());
             break;
         }
 
@@ -200,33 +198,29 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 
         if (bounces == 0 || lastBounceSpecular) {
             color += throughput * isect->m_material->Emitted(*isect, wo);
-            //lightContrib.push_back(throughput * isect->m_material->Emitted(*isect, wo));
         }
 
         color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
+
 
         auto [wi, pdf, f] = isect->m_material->Sample(wo, *isect, sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
 
         throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
-        //ClampColor(throughput);
-        //const auto tmp = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf;
 
-        //throughput = tmp;
 
         ray = Rayf{ isect->GetPoint(), wi };
-
         
         if (bounces > 3) {
             float q = std::max(color.r, std::max(color.g, color.b));
             if (sampler.GetRandomReal() > q) // generate number [0.0, 1.0)
                 break;
             throughput /= q;
-        }
+        } 
     }
 
-    return (color);
+    return color;
 }
 
 

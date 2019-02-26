@@ -46,19 +46,20 @@ Sampler::SampleDisk() -> Point2f {
 auto 
 Sampler::CosineSampleHemisphere() -> Normal3f {
     
-    const auto p = SampleDisk();
-    FLOAT z = std::sqrt(std::max((FLOAT)0, 1 - p.x * p.x - p.y * p.y));
-    return Normalize(Vec3f{ p.x, p.y, z });
+    //const auto p = SampleDisk();
+    //FLOAT z = std::sqrt(std::max((FLOAT)0, 1 - p.x * p.x - p.y * p.y));
+    //return Normalize(Vec3f{ p.x, p.y, z });
 
-
-    /*
+    const auto r1 = GetRandomReal();
+    const auto r2 = GetRandomReal();
+    
     const auto z = std::sqrt(1 - r2);
     const auto phi = 2 * Math::Pi * r1;
     const auto x = std::cos(phi) * 2 * std::sqrt(r2);
     const auto y = std::sin(phi) * 2 * std::sqrt(r2);
-    const auto sampled = Normalize(Vec3f{ x, y, z });
+    return Normalize(Vec3f{ x, y, z });
 
-    return basis.ConvertToLocal(sampled); */
+    //return basis.ConvertToLocal(sampled); */
 
     //return sampled.x * onb[0] + sampled.y * onb[1] + sampled.z * onb[2];
 }

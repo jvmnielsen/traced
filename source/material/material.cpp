@@ -8,15 +8,15 @@ Material::Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler
     //if (wo.z == 0) return
     auto wi = isect.GetShadingBasis().ConvertToLocal(sampler.CosineSampleHemisphere());
     //if (wo.z < 0) wi = -wi; // flip to match direction
-    const auto pdf = Pdf(isect.GetShadingNormal(), wi);
+    const auto pdf = Pdf(isect, wi);
     //const auto wiWorld = isect.GetShadingBasis().LocalToWorld(wi);
     return std::make_tuple(wi, pdf, Evaluate(wo, wi)); // called by derived class
 }
 
 auto
-Material::Pdf(const Normal3f& wo, const Normal3f& wi) const -> FLOAT {
+Material::Pdf(const Intersection& isect, const Normal3f& wi) const -> FLOAT {
     //return SameHemisphere(wo, wi) ? std::abs(wi.z) * Math::InvPi : 0;
-    return Dot(wo, wi) / Math::Pi;
+    return Dot(isect.GetShadingNormal(), wi) / Math::Pi;
     /*
     const auto cosine = Dot(Normalize(dir), wi[2]);
     if (cosine > 0) {

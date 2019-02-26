@@ -74,7 +74,7 @@ Scene::SampleLightSource(const Intersection& isect, const Normal3f& wo, Sampler&
     
     if (lightPdf > 0.0f && !li.IsBlack()) {
         const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
-        const auto scatteringPdf = isect.m_material->Pdf(wo, wi);
+        const auto scatteringPdf = isect.m_material->Pdf(isect, wi);
 
         if (!f.IsBlack() && LineOfSightBetween(isect.PointOffset(), atLight.PointOffset())) {
             const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);

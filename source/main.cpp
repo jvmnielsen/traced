@@ -34,7 +34,7 @@ int main(int argc, char * argv[]) {
     cube1->TransformBy(std::move(cube1Transform));
 
     auto cube2Transform = std::make_unique<Transform>();
-    cube2Transform->Translate({4., -6.1, 2.});
+    cube2Transform->Translate({4., -6.1, 2.7});
     cube2Transform->Rotate({0.0f, 1.0f, 0.0f}, 70.0f);
     cube2Transform->Scale({5.5, 8.0, 5.5});
     cube2->TransformBy(std::move(cube2Transform));
@@ -79,9 +79,9 @@ int main(int argc, char * argv[]) {
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>();
-    green->m_attenuation = Color3f{0.2, 0.7, 0.2};
+    green->m_attenuation = Color3f{0.3, 0.8, 0.3};
     auto red = std::make_shared<Matte>();
-    red->m_attenuation = Color3f{0.7, 0.2, 0.2};
+    red->m_attenuation = Color3f{0.8, 0.3, 0.3};
     cube1->ApplyMaterial(matte);
     cube2->ApplyMaterial(matte);
     floor->ApplyMaterial(matte);
@@ -116,7 +116,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1000 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
