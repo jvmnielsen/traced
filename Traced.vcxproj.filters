@@ -277,9 +277,6 @@
     <ClInclude Include="source\imaging\image_buffer.hpp">
       <Filter>imaging</Filter>
     </ClInclude>
-    <ClInclude Include="source\imaging\Light.hpp">
-      <Filter>imaging</Filter>
-    </ClInclude>
     <ClInclude Include="source\material\material.hpp">
       <Filter>material</Filter>
     </ClInclude>

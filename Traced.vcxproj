@@ -151,7 +151,6 @@
     <ClInclude Include="source\imaging\camera.hpp" />
     <ClInclude Include="source\imaging\Color3.hpp" />
     <ClInclude Include="source\imaging\image_buffer.hpp" />
-    <ClInclude Include="source\imaging\Light.hpp" />
     <ClInclude Include="source\material\material.hpp" />
     <ClInclude Include="source\math\math_util.hpp" />
     <ClInclude Include="source\math\Matrix4x4.hpp" />

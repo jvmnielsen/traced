@@ -20,14 +20,14 @@ int main(int argc, char * argv[]) {
     Timer timer{std::string("test took ")};
 
     Parser parser;
-    auto cube1 = parser.GetMeshFromFile("../assets/cube.obj"); // NOTE: windows and unix paths differ
-    auto cube2 = parser.GetMeshFromFile("../assets/cube.obj");
-    auto lightSource = parser.GetMeshFromFile("../assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("../assets/plane.obj");
-    auto rightWall = parser.GetMeshFromFile("../assets/plane.obj");
-    auto leftWall = parser.GetMeshFromFile("../assets/plane.obj");
-    auto backWall = parser.GetMeshFromFile("../assets/plane.obj");
-    auto ceiling = parser.GetMeshFromFile("../assets/plane.obj");
+    auto cube1 = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
+    auto cube2 = parser.GetMeshFromFile("assets/cube.obj");
+    auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
+    auto floor = parser.GetMeshFromFile("assets/plane.obj");
+    auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
+    auto leftWall = parser.GetMeshFromFile("assets/plane.obj");
+    auto backWall = parser.GetMeshFromFile("assets/plane.obj");
+    auto ceiling = parser.GetMeshFromFile("assets/plane.obj");
 
     auto cube1Transform = std::make_unique<Transform>();
     cube1Transform->Translate({-3., -4.1, -3.0}).Rotate({0.0, 1.0, 0.0}, 20.0).Scale({6.0, 12.0, 6.0});
@@ -116,7 +116,7 @@ int main(int argc, char * argv[]) {
     
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 10 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

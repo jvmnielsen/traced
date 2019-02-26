@@ -32,7 +32,7 @@ Intersection::GetGeometricNormal() const -> const Normal3f& {
 
 auto
 Intersection::GetShadingNormal() const -> const Normal3f& {
-    return m_shadingBasis.Normal();
+    return m_shadingBasis.W();
 }
 
 auto
