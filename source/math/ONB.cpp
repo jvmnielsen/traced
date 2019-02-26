@@ -23,14 +23,14 @@ ONB::ConvertToLocal(const Vec3f& vec) const -> Vec3f {
 
 auto
 ONB::WorldToLocal(const Normal3f& n) const -> Vec3f {
-    return Vec3f(Dot(n, Bitangent()), Dot(n, Tangent()), Dot(n, Normal()));
+    return Vec3f(Dot(n, Tangent()), Dot(n, Bitangent()), Dot(n, Normal()));
 }
 
 auto
 ONB::LocalToWorld(const Normal3f& n) const -> Vec3f {
-    return { Bitangent().x * n.x + Tangent().x * n.y + Normal().x * n.z,
-             Bitangent().y * n.x + Tangent().y * n.y + Normal().y * n.z,
-             Bitangent().z * n.x + Tangent().z * n.y + Normal().z * n.z };
+    return { Tangent().x * n.x + Bitangent().x * n.y + Normal().x * n.z,
+             Tangent().y * n.x + Bitangent().y * n.y + Normal().y * n.z,
+             Tangent().z * n.x + Bitangent().z * n.y + Normal().z * n.z };
 }
 
 auto

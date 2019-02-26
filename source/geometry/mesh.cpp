@@ -169,7 +169,8 @@ Mesh::Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT {
         if (denom == 0)
             return 0;
 
-        return (ref.GetPoint() - isect->GetPoint()).LengthSquared() / denom;
+        const auto a =  (ref.GetPoint() - isect->GetPoint()).LengthSquared() / denom;
+        return a;
     }
     return 0;
 }

@@ -167,7 +167,7 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
 
                 auto ray = m_camera->GetRay(u, v);
 
-                color += TracePath(ray, sampler);
+                color += OutgoingLight(ray, sampler);
                 //color += de_nan(tmp);
             }
 
@@ -179,18 +179,10 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
 }
 
 auto
-Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
+Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 
     bool lastBounceSpecular = false;
     Color3f throughput{ 1.0f };
-    
-
-    std::vector<Color3f> lightContrib;
-    std::vector<Color3f> throughputs;
-    std::vector<float> pdfs;
-
-
-    //Color3f color{0.0f};
 
     Color3f color = Color3f::Black();
 
@@ -199,7 +191,7 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         auto isect = m_scene->Intersects(ray);
 
 		if (!isect.has_value()) {
-            color += throughput * m_scene->BackgroundColor();
+           // color += throughput * m_scene->BackgroundColor();
             //lightContrib.push_back(throughput * m_scene->BackgroundColor());
             break;
         }
@@ -207,7 +199,7 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         auto wo = -ray.GetDirection();
 
         if (bounces == 0 || lastBounceSpecular) {
-        color += throughput * isect->m_material->Emitted(*isect, wo);
+            color += throughput * isect->m_material->Emitted(*isect, wo);
             //lightContrib.push_back(throughput * isect->m_material->Emitted(*isect, wo));
         }
 
@@ -216,8 +208,12 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
         auto [wi, pdf, f] = isect->m_material->Sample(wo, *isect, sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
+
         throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
-        //pdfs.push_back(pdf);
+        //ClampColor(throughput);
+        //const auto tmp = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf;
+
+        //throughput = tmp;
 
         ray = Rayf{ isect->GetPoint(), wi };
 
@@ -227,18 +223,10 @@ Renderer::TracePath(Rayf& ray, Sampler& sampler) -> Color3f {
             if (sampler.GetRandomReal() > q) // generate number [0.0, 1.0)
                 break;
             throughput /= q;
-        } 
-    
+        }
     }
 
-    
-    //for (const auto& col : lightContrib)
-        //color += col;
-
-    if (color.g > 0.5)
-        const int h = 3;
-
-    return color;
+    return (color);
 }
 
 

@@ -2,13 +2,15 @@
 #include "../core/intersection.hpp"
 
 auto
-Material::Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f> {
+Material::Sample(const Normal3f& worldWo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f> {
 
-    const auto localWo = isect.GetShadingBasis().WorldToLocal(wo);
+    const auto wo = isect.GetShadingBasis().WorldToLocal(worldWo);
+    //if (wo.z == 0) return
     auto wi = sampler.CosineSampleHemisphere();
     if (wo.z < 0) wi = -wi; // flip to match direction
     const auto pdf = Pdf(wo, wi);
-    return std::make_tuple(isect.GetShadingBasis().LocalToWorld(wi), pdf, Evaluate(wo, wi)); // called by derived class
+    const auto wiWorld = isect.GetShadingBasis().LocalToWorld(wi);
+    return std::make_tuple(wiWorld, pdf, Evaluate(wo, wi)); // called by derived class
 }
 
 auto

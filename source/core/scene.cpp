@@ -37,7 +37,7 @@ bool Scene::IntersectsQuick(const Rayf& ray) const {
 
 bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const {
     const Vec3f dir = p2 - p1;
-    const float distance = dir.Length();
+    const auto distance = dir.Length();
     Rayf ray{p1, Normalize(dir), distance};
     return !IntersectsQuick(ray);
 }
@@ -68,13 +68,7 @@ Scene::SampleOneLight(const Intersection& isect, const Normal3f& wo, Sampler& sa
 
 
 auto
-Scene::SampleLightSource(
-    const Intersection& isect,
-    const Normal3f& wo,
-    Sampler& sampler,
-    const Mesh& light) const -> Color3f {
-    
-    Color3f directLight = Color3f::Black();
+Scene::SampleLightSource(const Intersection& isect, const Normal3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
 
     const auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
     
@@ -83,14 +77,11 @@ Scene::SampleLightSource(
         const auto scatteringPdf = isect.m_material->Pdf(wo, wi);
 
         if (!f.IsBlack() && LineOfSightBetween(isect.PointOffset(), atLight.PointOffset())) {
-            float weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
-            directLight += f * li * weight / lightPdf;
+            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
+            return f * li * weight / lightPdf;
         }
     }
-
-    //ClampColor(directLight);
-
-    return directLight;
+    return Color3f::Black();
 }
 
 auto
@@ -98,7 +89,7 @@ Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sample
 
     if (!isect.IsSpecular()) {
 
-        auto [wi, scatteringPdf, f] = isect.m_material->Sample(wo, isect, sampler); // overwrites wi
+        auto [wi, scatteringPdf, f] = isect.m_material->Sample(wo, isect, sampler);
         f *= std::abs(Dot(wi, isect.GetShadingNormal()));
 
         if (!f.IsBlack() && scatteringPdf > 0) {
@@ -117,13 +108,10 @@ Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sample
                 li = lightIsect->m_material->Emitted(*lightIsect, -wi);
           
             if (!li.IsBlack()) {
-                float weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
+                const auto weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
                 auto directLight = f * li * weight / scatteringPdf;
-                ClampColor(directLight);
                 return directLight;
             }
-      
-            //const auto li = light.GetMaterial().Emitted(*lightIsect, wi); //check sign of wi
         }
     }
 
@@ -140,7 +128,7 @@ Scene::EstimateDirectLight(
 
     Color3f directLight = Color3f::Black();
    
-    //directLight += SampleLightSource(isect, wo, sampler, light);
+    directLight += SampleLightSource(isect, wo, sampler, light);
  
     directLight += SampleBSDF(isect, wo, sampler, light);
     

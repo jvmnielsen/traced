@@ -38,7 +38,7 @@ private:
     std::shared_ptr<ImageBuffer> m_buffer;
     //std::unique_ptr<Sampler>     m_sampler;
 
-    auto TracePath(Rayf& ray, Sampler& sampler) -> Color3f;
+    auto OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f;
 
     //Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
     //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
