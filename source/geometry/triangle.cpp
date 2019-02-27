@@ -133,7 +133,7 @@ Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     // Update parameter and intersection as necessary
     ray.NewMaxParameter(parameter);
 
-
+    //const auto shaded = InterpolateNormalAt(barycentric);
 
     return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric) };
 }

@@ -73,8 +73,8 @@ Scene::SampleLightSource(const Intersection& isect, const Normal3f& wo, Sampler&
     const auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
     
     if (lightPdf > 0.0f && !li.IsBlack()) {
-        const auto f = isect.m_material->Evaluate(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
-        const auto scatteringPdf = isect.m_material->Pdf(isect, wi);
+        const auto f = isect.EvaluateMaterial(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
+        const auto scatteringPdf = isect.MaterialPdf(wi);
 
         if (!f.IsBlack() && LineOfSightBetween(isect.PointOffset(), atLight.PointOffset())) {
             const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
@@ -89,7 +89,7 @@ Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sample
 
     if (!isect.IsSpecular()) {
 
-        auto [wi, scatteringPdf, f] = isect.m_material->Sample(wo, isect, sampler);
+        auto [wi, scatteringPdf, f] = isect.SampleMaterial(wo, sampler);
         f *= std::abs(Dot(wi, isect.GetShadingNormal()));
 
         if (!f.IsBlack() && scatteringPdf > 0) {
@@ -105,7 +105,7 @@ Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sample
             auto li = Color3f::Black();
             
             if (lightIsect.has_value()) 
-                li = lightIsect->m_material->Emitted(*lightIsect, -wi);
+                li = lightIsect->Emitted(-wi);
           
             if (!li.IsBlack()) {
                 const auto weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);

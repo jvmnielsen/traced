@@ -15,9 +15,9 @@ void ConvertToRGB(Color3f& color)
 {
     GammaEncode(color, 2.2f);
 
-    color.r = 255 * Math::Clamp(0.0f, 1.0f, color.r);
-    color.g = 255 * Math::Clamp(0.0f, 1.0f, color.g);
-    color.b = 255 * Math::Clamp(0.0f, 1.0f, color.b);
+    color.r = 255 * Math::Clamp(0.0, 1.0, color.r);
+    color.g = 255 * Math::Clamp(0.0, 1.0, color.g);
+    color.b = 255 * Math::Clamp(0.0, 1.0, color.b);
 }
 
 

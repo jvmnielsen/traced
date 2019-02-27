@@ -85,12 +85,10 @@ Renderer::Render(int samplesPerPixel) -> void {
 
     Timer timer{std::string{"Main render loop: "}};
 
-    //std::vector<std::future<std::vector<Color3f>>> futures;
-    //std::size_t numCores = std::thread::hardware_concurrency();
     std::vector<ScreenSegment> segments;
 
-    constexpr int numSegments = 3;
-    constexpr int totalSegments = numSegments * numSegments;
+    const auto numSegments = std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
+    const auto totalSegments = numSegments * numSegments;
 
     segments.reserve(totalSegments);
 
@@ -135,14 +133,6 @@ Renderer::Render(int samplesPerPixel) -> void {
     }
 
     m_buffer->ConvertToPixelBuffer(flattened);
-}
-
-inline Color3f de_nan(const Color3f& c) {
-    Color3f temp = c;
-    if (!(temp.r == temp.r)) temp.r = 0;
-    if (!(temp.g == temp.g)) temp.g = 0;
-    if (!(temp.b == temp.b)) temp.b = 0;
-    return temp;
 }
 
 auto
@@ -197,13 +187,13 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
         auto wo = -ray.GetDirection();
 
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->m_material->Emitted(*isect, wo);
+            color += throughput * isect->Emitted(wo);
         }
 
         color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
 
 
-        auto [wi, pdf, f] = isect->m_material->Sample(wo, *isect, sampler);
+        auto [wi, pdf, f] = isect->SampleMaterial(wo, sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
 

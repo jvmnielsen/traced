@@ -18,8 +18,7 @@ Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection>
             isect = tmp;
     }
     if (isect.has_value()) {
-        isect->m_material = m_material.get();
-        isect->m_mesh = this;
+        isect->SetMeshAndMaterial(this, m_material.get());
         return isect;
     }
 
@@ -131,8 +130,7 @@ Mesh::Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Inte
     auto [sampledIsect, pdf] = SampleRandomTriangle(sampler);
     const auto wi = Normalize(sampledIsect.GetPoint() - ref.GetPoint());
 
-    sampledIsect.m_mesh = this;
-    sampledIsect.m_material = m_material.get();
+    sampledIsect.SetMeshAndMaterial(this, m_material.get());
 
     const auto denom = std::abs(Dot(sampledIsect.GetGeometricNormal(), -wi)) * GetSurfaceArea();
 

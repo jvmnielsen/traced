@@ -30,7 +30,7 @@ public:
 
     auto Evaluate(const Normal3f& wo, const Normal3f& wi) const -> Color3f override;
 
-    Color3f m_attenuation = Color3f{ 0.48 };
+    Color3f m_attenuation = Color3f{ 0.78 };
 };
 
 class Emissive : public Matte

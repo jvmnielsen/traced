@@ -53,4 +53,14 @@ namespace Math {
         return std::make_tuple(solutionOne, solutionTwo);
     }
 
+    template<typename T>
+    auto Lerp(T t, T v1, T v2) -> T {
+        return (1 - t) * v1 + t * v2;
+    }
+
+    template<typename T>
+    auto Square(T a) -> T {
+        return a * a;
+    }
+
 }

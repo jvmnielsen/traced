@@ -151,6 +151,8 @@
     <ClInclude Include="source\imaging\camera.hpp" />
     <ClInclude Include="source\imaging\Color3.hpp" />
     <ClInclude Include="source\imaging\image_buffer.hpp" />
+    <ClInclude Include="source\material\disney.hpp" />
+    <ClInclude Include="source\material\emissive.hpp" />
     <ClInclude Include="source\material\material.hpp" />
     <ClInclude Include="source\math\math_util.hpp" />
     <ClInclude Include="source\math\Matrix4x4.hpp" />
@@ -259,6 +261,8 @@
     <ClCompile Include="source\imaging\camera.cpp" />
     <ClCompile Include="source\imaging\image_buffer.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\material\disney.cpp" />
+    <ClCompile Include="source\material\emissive.cpp" />
     <ClCompile Include="source\material\material.cpp" />
     <ClCompile Include="source\math\math_util.cpp" />
     <ClCompile Include="source\math\onb.cpp" />

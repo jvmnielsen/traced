@@ -97,7 +97,12 @@ auto ClampColor(Color3<T>& col) -> void
     col.b = Math::Clamp<double>(0.0, 1.0, col.b);
 }
 
+template<typename T>
+auto Lerp(T t, const Color3<T>& s1, const Color3<T>& s2) -> Color3<T> {
+    return (1 - t) * s1 + t * s2;
+}
 
-typedef Color3<float> Color3f;
+
+typedef Color3<FLOAT> Color3f;
 typedef Color3<uint8_t > Color3ui8;
 typedef Color3<unsigned short> Color3ui16;

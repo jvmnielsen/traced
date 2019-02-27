@@ -40,6 +40,37 @@ Intersection::IsSpecular() const -> bool {
     return false;
 }
 
+auto 
+Intersection::SampleMaterial(const Normal3f& wo, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f> {
+    return m_material->Sample(wo, *this, sampler);
+}
+
+auto 
+Intersection::Emitted(const Normal3f& dir) const -> Color3f {
+    return m_material->Emitted(*this, dir);
+}
+
+auto 
+Intersection::MaterialPdf(const Normal3f& wi) const -> FLOAT {
+    return m_material->Pdf(*this, wi);
+}
+
+auto 
+Intersection::EvaluateMaterial(const Normal3f& wo, const Normal3f& wi) const -> Color3f {
+    return m_material->Evaluate(wo, wi);
+}
+
+auto 
+Intersection::RayTowards(const Normal3f& dir) const -> Rayf {
+    return {m_point, dir};
+}
+
+auto 
+Intersection::SetMeshAndMaterial(const Mesh* mesh, const Material* material) -> void {
+    m_mesh = mesh;
+    m_material = material;
+}
+
 /*
 auto
 Intersection::GetOrthonormalBasis() const -> const ONB& {

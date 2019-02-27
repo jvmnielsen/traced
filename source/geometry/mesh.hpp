@@ -39,7 +39,7 @@ public:
 
     auto Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT;
 
-//private:
+private:
     std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;
     FLOAT                       m_surfaceArea;

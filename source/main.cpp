@@ -11,14 +11,8 @@
 #include <thread>
 #include "math/transform.hpp"
 
-// arguments necessary for SDL to be multi-platform
-int main(int argc, char * argv[]) {
-
-    const unsigned int SCREEN_WIDTH = 600;
-    const unsigned int SCREEN_HEIGHT = 600;
-
-    Timer timer{std::string("test took ")};
-
+auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
+{
     Parser parser;
     auto cube1 = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
     auto cube2 = parser.GetMeshFromFile("assets/cube.obj");
@@ -45,7 +39,7 @@ int main(int argc, char * argv[]) {
     lightTransform->Rotate({0.0f, .0f, 1.0}, 180.0);
     lightTransform->Scale({3.17, 3.17, 3.17});
     lightSource->TransformBy(std::move(lightTransform));
-    
+
     auto floorTransform = std::make_unique<Transform>();
     floorTransform->Translate({0.0, -10.0, 0.0});
     floorTransform->Scale({10.0, 10.0, 10.0});
@@ -109,14 +103,72 @@ int main(int argc, char * argv[]) {
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
     scene->SetBackgroundColor(Color3f{0.0f});
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 0.0f, 40.0f), Point3f(0.0f,0.0f,-1.0f),
-                             Vec3f(0.0f,1.0f,0.0f), 40.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 0.0f, 40.0f), Point3f(0.0f, 0.0f, -1.0f),
+                             Vec3f(0.0f, 1.0f, 0.0f), 40.0f, float(600) / float(600));
+
+    return std::make_tuple(std::move(scene), std::move(camera));
+}
+
+// arguments necessary for SDL to be multi-platform
+int main(int argc, char * argv[]) {
+
+    const unsigned int SCREEN_WIDTH = 600;
+    const unsigned int SCREEN_HEIGHT = 600;
+
+    Timer timer{std::string("test took ")};
+
+    Parser parser;
+    auto floor = parser.GetMeshFromFile("assets/plane.obj");
+    auto cube1 = parser.GetMeshFromFile("assets/sphere2.obj");
+    auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
+
+
+    auto cube1Transform = std::make_unique<Transform>();
+    cube1Transform->Translate({0, 0.7, -.8}).Scale({.5, .5, 0.5});
+    cube1->TransformBy(std::move(cube1Transform));
+
+    auto floorTransform = std::make_unique<Transform>();
+    floorTransform->Scale({20.0, 20.0, 20.0});
+    floor->TransformBy(std::move(floorTransform));
+
+    auto lightTransform = std::make_unique<Transform>();
+    lightTransform->Translate({-1.2, 4.9, -2.1});
+    lightTransform->Rotate({0.0f, .0f, 1.0}, 160.0);
+    lightTransform->Scale({2., 2.0, 2.0});
+    lightSource->TransformBy(std::move(lightTransform));
+
+    auto light = std::make_shared<Emissive>();
+    lightSource->ApplyMaterial(light);
+
+    auto matte = std::make_shared<Matte>();
+    auto green = std::make_shared<Matte>();
+    green->m_attenuation = Color3f{0.3, 0.8, 0.3};
+    auto red = std::make_shared<Matte>();
+    red->m_attenuation = Color3f{0.8, 0.3, 0.3};
+    cube1->ApplyMaterial(green);
+    floor->ApplyMaterial(matte);
+
+    std::vector<std::unique_ptr<Mesh>> meshes;
+    std::vector<std::unique_ptr<Mesh>> lights;
+    meshes.push_back(std::move(cube1));
+    meshes.push_back(std::move(floor));
+
+
+    lights.push_back(std::move(lightSource));
+
+    auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
+    scene->SetBackgroundColor(Color3f{0.0f});
+
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 3.0f, 3.0f), Point3f(0.0f, 0.0f, -2.0f),
+                            Vec3f(0.0f, 1.0f, 0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+
+    //auto [scene, camera] = CornellBox();
+    
     auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
-    
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1000 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

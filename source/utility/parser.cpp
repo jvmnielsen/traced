@@ -51,18 +51,13 @@ void Parser::ParseFile(const std::string& filename)
         if (split_str.empty()) // checks will crash with empty vector
             continue;
 
-		if (split_str[0] == "v") // vertex
-		{
+		if (split_str[0] == "v") { // vertex
 			m_vertex.emplace_back(Point3f(std::stof(split_str[1]),
 				std::stof(split_str[2]),
 				std::stof(split_str[3])));
-		}
-	    else if (split_str[0] == "vt") // texture coordinate
-		{
-			m_texture_coord.emplace_back(Point2f{std::stof(split_str[1]), std::stof(split_str[2])});
-		}
-		else if (split_str[0] == "vn") // normal
-		{
+		} else if (split_str[0] == "vt") { // texture coordinate
+			//m_texture_coord.emplace_back(Point2f{std::stof(split_str[1]), std::stof(split_str[2])});
+		} else if (split_str[0] == "vn") { // normal
 			m_normals.emplace_back(
                 Vec3f{
                     std::stof(split_str[1]),
@@ -77,15 +72,19 @@ void Parser::ParseFile(const std::string& filename)
                     continue;
 
                 auto ordering = split_string(split_str[i], "/");
+          
                 // faces are ordered 1/1/1 (vertex, texture, normal)
                 m_vertex_ordering.push_back(std::stoi(ordering[0]));
 
-                if (!ordering[1].empty()) // may be empty
-                    m_texture_coord_ordering.push_back(std::stoi(ordering[1]));
-
-
-                if (!ordering[2].empty()) // may be empty
-                    m_normal_ordering.push_back( std::stoi(ordering[2]));
+                if (ordering.size() == 2) {
+                    m_texture_coord_ordering.push_back(std::stoi(ordering.at(1)));
+                }
+                if (ordering.size() == 3) {
+                    if (!ordering.at(1).empty())
+                        m_texture_coord_ordering.push_back(std::stoi(ordering.at(1)));
+                    if (!ordering.at(2).empty())
+                        m_normal_ordering.push_back(std::stoi(ordering.at(2)));
+                }
             }
 		}
 	}
@@ -100,18 +99,17 @@ std::unique_ptr<Mesh> Parser::ConstructMesh()
 
 	triangles.reserve(m_vertex_ordering.size() / 3);
 
-	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3)
-	{
+	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3) {
 		triangles.emplace_back(
 				std::array<Point3f, 3> {
-						m_vertex[m_vertex_ordering[i    ] - 1],
-						m_vertex[m_vertex_ordering[i + 1] - 1],
-						m_vertex[m_vertex_ordering[i + 2] - 1],
+						m_vertex.at(m_vertex_ordering.at(i    ) - 1),
+						m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
+						m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
 				},
 				std::array<Normal3f, 3> {
-						m_normals[m_normal_ordering[i    ] - 1],
-						m_normals[m_normal_ordering[i + 1] - 1],
-						m_normals[m_normal_ordering[i + 2] - 1],
+						m_normals.at(m_normal_ordering.at(i    ) - 1),
+						m_normals.at(m_normal_ordering.at(i + 1) - 1),
+						m_normals.at(m_normal_ordering.at(i + 2) - 1),
 				});
 	}
 
