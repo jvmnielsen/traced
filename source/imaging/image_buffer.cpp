@@ -1,6 +1,7 @@
 #include <cmath>
 #include "image_buffer.hpp"
 #include "../math/math_util.hpp"
+#include <mutex>
 
 void GammaEncode(Color3f& color, float gamma)
 {
@@ -41,6 +42,9 @@ ImageBuffer::ImageBuffer(
 auto
 ImageBuffer::ConvertToPixelBuffer(std::vector<Color3f> colors) -> void {
    
+    
+    std::scoped_lock<std::mutex> guard(m_mutex);
+
     for (int i = 0; i < colors.size(); ++i) {
         ConvertToRGB(colors[i]);
         m_buffer[i * 4    ] = colors[i].r;
@@ -51,16 +55,16 @@ ImageBuffer::ConvertToPixelBuffer(std::vector<Color3f> colors) -> void {
 
 }
 
+// note it's safe to concurrently write to individual elements of std::vector 
 auto
-ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void
-{
-    auto correctedY = std::abs((int)screenY - (int)m_screenHeight) - 1; // to correct for j starting at screen_height and decrementing
+ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void {
+    auto correctedY = std::abs(static_cast<int>(screenY) - static_cast<int>(m_screenHeight)) - 1; // to correct for j starting at screen_height and decrementing
 
-    if ((screenX < m_screenWidth) && (screenY < m_screenHeight)) {
+    if (screenX < m_screenWidth && screenY < m_screenHeight) {
         ConvertToRGB(color);
-        m_buffer[(correctedY * m_screenWidth + screenX) * 4    ] = static_cast<unsigned char>(color.r);
-        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 1] = static_cast<unsigned char>(color.g);
-        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 2] = static_cast<unsigned char>(color.b);
-        m_buffer[(correctedY * m_screenWidth + screenX) * 4 + 3] = 255;
+        m_buffer.at((correctedY * m_screenWidth + screenX) * 4    ) = static_cast<unsigned char>(color.r);
+        m_buffer.at((correctedY * m_screenWidth + screenX) * 4 + 1) = static_cast<unsigned char>(color.g);
+        m_buffer.at((correctedY * m_screenWidth + screenX) * 4 + 2) = static_cast<unsigned char>(color.b);
+        m_buffer.at((correctedY * m_screenWidth + screenX) * 4 + 3) = 255;
     } // maybe add throw
 }

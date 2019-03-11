@@ -1,6 +1,7 @@
 #pragma once
 #include "color3.hpp"
 #include <vector>
+#include <mutex>
 
 class ImageBuffer
 {
@@ -26,7 +27,7 @@ private:
     size_t  m_screenHeight;                     // height of screen in pixels 
     // std::vector<Color>         m_backBuffer;    // array filled during rendering
 
-
+    std::mutex m_mutex;
     const int m_channels;		// number of channels per pixel (4 for RGBA)
     const int m_bitsPerByte;	// bits per byte, used by SDL
 };

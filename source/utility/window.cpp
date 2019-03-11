@@ -1,8 +1,5 @@
 #include "window.hpp"
 #include <iostream>
-#include <ratio>
-#include <chrono>
-#include <algorithm>
 
 Window::Window( const uint32_t screenWidth,
                 const uint32_t screenHeight )
@@ -36,6 +33,14 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
         return false;
     }
 
+    //SDL_Window* window;
+    //SDL_Renderer* renderer;
+
+    SDL_CreateWindowAndRenderer(m_screenWidth, m_screenHeight, SDL_WINDOW_SHOWN | SDL_RENDERER_PRESENTVSYNC, &m_windowHandle, &m_renderer);
+
+    SDL_SetWindowTitle(m_windowHandle, "Traced");
+
+    /*
     // get handle
     m_windowHandle = SDL_CreateWindow(
             "Traced",
@@ -52,7 +57,7 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
     }
 
     // create renderer here for now
-    m_renderer = SDL_CreateRenderer(m_windowHandle, -1, SDL_RENDERER_SOFTWARE);
+    //m_renderer = SDL_CreateRenderer(m_windowHandle, -1, SDL_RENDERER_SOFTWARE);
 
     // get surface of window 
     m_screenSurface = SDL_GetWindowSurface( m_windowHandle );
@@ -61,7 +66,7 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
     {
         std::cout << "SDL surface could not be created. Error: " << SDL_GetError();
         return false;
-    }
+    } */
 
     m_texture = SDL_CreateTexture(
             m_renderer,
@@ -70,19 +75,21 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
             buffer.GetWidth(),
             buffer.GetHeight());
 
-    m_pixels = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
+    //m_pixels = &buffer.m_buffer[0]; //&buffer.m_pixel_data[0];
 
-    SDL_SetWindowPosition(m_windowHandle, 0, 0);
-
-
+    
     return true;
 }
 
-void Window::UpdateTexture(ImageBuffer &buffer)
+void Window::UpdateTexture(ImageBuffer& buffer)
 {
-    SDL_UpdateTexture(m_texture, NULL, m_pixels, buffer.GetWidth() * sizeof(uint32_t));
+    //int pitch = buffer.GetWidth() * sizeof(uint32_t);
+    //SDL_LockTexture(m_texture, NULL, (void**)&buffer.m_buffer[0], &pitch);
+    SDL_UpdateTexture(m_texture, NULL, &buffer.m_buffer[0], buffer.GetWidth() * sizeof(uint32_t));
+    //m_pixels = &buffer.m_buffer[0];
+    //SDL_UnlockTexture(m_texture);
 
-    //SDL_RenderClear( m_renderer ); // might not be necessary
+    SDL_RenderClear( m_renderer ); // might not be necessary
     SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);
     SDL_RenderPresent(m_renderer);
 }
@@ -91,11 +98,32 @@ void Window::CheckForInput(ImageBuffer &pixelBuffer)
 {
     bool running = true;
 
-    SDL_SetWindowPosition(m_windowHandle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    //SDL_SetWindowPosition(m_windowHandle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+
+    Uint32 startTime = 0;
+    Uint32 endTime = 0;
+    Uint32 delta = 0;
+    short timePerFrame = 32; // miliseconds
+
 
     //While application is running 
     while (running)
     {
+
+        if (!startTime) {
+            // get the time in ms passed from the moment the program started
+            startTime = SDL_GetTicks();
+        }
+        else {
+            delta = endTime - startTime; // how many ms for a frame
+        }
+
+        // if less than 16ms, delay 
+        if (delta < timePerFrame) {
+            SDL_Delay(timePerFrame - delta);
+        }
+
         UpdateTexture(pixelBuffer);
 
         //Handle events on queue
@@ -107,6 +135,9 @@ void Window::CheckForInput(ImageBuffer &pixelBuffer)
                 running = false;
             }
         }
+
+        startTime = endTime;
+        endTime = SDL_GetTicks();
     } 
 }
 

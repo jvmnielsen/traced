@@ -16,21 +16,23 @@ public:
         std::shared_ptr<ImageBuffer> buffer);
 
     auto Render(int samplesPerPixel) -> void;
-    auto RenderProgressive() -> void;
+    //auto RenderProgressive() -> void;
 
 
  
 
 private:
 
+    std::mutex m_mutex;
     
     struct ScreenSegment {
-        ScreenSegment(Point2i lower, Point2i upper) : lowerBound(std::move(lower)), upperBound(std::move(upper)) {}
+        ScreenSegment(Point2i lower, Point2i upper, size_t _index) : lowerBound(std::move(lower)), upperBound(std::move(upper)), index(_index) {}
         Point2i lowerBound;
         Point2i upperBound;
+        size_t index;
     };
 
-    auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> std::vector<Color3f>;
+    auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> bool;
     
 
     std::unique_ptr<Camera>      m_camera;
