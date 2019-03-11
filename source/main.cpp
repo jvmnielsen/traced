@@ -119,7 +119,7 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.GetMeshFromFile("assets/sphere2.obj");
+    auto cube1 = parser.GetMeshFromFile("assets/bunny.obj");
     auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
     auto floor = parser.GetMeshFromFile("assets/plane.obj");
     auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
@@ -129,7 +129,7 @@ int main(int argc, char * argv[]) {
 
 
     auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0, 0.6, -.8}).Scale({.5, .5, 0.5});
+    cube1Transform->Translate({0, 0.2, -1.8}).Scale(Vec3f{1.2});
     cube1->TransformBy(std::move(cube1Transform));
 
     auto floorTransform = std::make_unique<Transform>();
@@ -196,8 +196,8 @@ int main(int argc, char * argv[]) {
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
     scene->SetBackgroundColor(Color3f{0.0f});
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 3.0f, 4.0f), Point3f(0.0f, 0.0f, -3.0f),
-                            Vec3f(0.0f, 1.0f, 0.0f), 45.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 5.0f, 3.0f), Point3f(0.0f, 0.0f, -3.0f),
+                            Vec3f(0.0f, 1.0f, 0.0f), 55.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
 
     //auto [scene, camera] = CornellBox();
     
