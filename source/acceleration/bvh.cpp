@@ -43,7 +43,12 @@ BVH::BVHNode::BVHNode(
 BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes) {
 
     for (auto& shape : meshes) {
-        m_AABBs.emplace_back(std::move(shape));
+        const auto internalBoundingBoxes = shape->GetInternalBoundingBoxes();
+        if (!internalBoundingBoxes.empty()) {
+            
+        } else {
+            m_AABBs.emplace_back(std::move(shape));
+        }
     }
 
     m_rootNode = BuildTree(0, static_cast<int>(m_AABBs.size()));

@@ -1,22 +1,39 @@
 
 #include "mesh.hpp"
+#include <functional>
+#include "../acceleration/aabb.hpp"
 
 Mesh::Mesh(std::vector<Triangle> triangle)
     : m_triangles(std::move(triangle)) {
 
+    if (m_triangles.size() > lowerBoundForTriangleCount) {
+        const auto numDivisions = [](size_t listSize) { return static_cast<int>(std::sqrt(listSize)); };
+        GenerateInternalBoundingBoxes(numDivisions(m_triangles.size()));
+    }
     m_surfaceArea = GetSurfaceArea();
 }
 
+
 auto 
-Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection>
-{
+Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
+
     std::optional<Intersection> isect;
-    for (auto& triangle : m_triangles) {
-        // the last overridden isect will always be the closest (ray max_param shrinks every time)
-        auto tmp = triangle.Intersects(ray);
-        if (tmp.has_value())
-            isect = tmp;
+
+    if (this->IsHollow()) {
+        for (auto& aabb : m_internalBoundingBoxes) {
+            auto tmp = aabb.Intersects(ray);
+            if (tmp.has_value())
+                isect = tmp;
+        }
+    } else {
+        for (auto& triangle : m_triangles) {
+            // the last overridden isect will always be the closest (ray max_param shrinks every time)
+            auto tmp = triangle.Intersects(ray);
+            if (tmp.has_value())
+                isect = tmp;
+        }
     }
+
     if (isect.has_value()) {
         isect->SetMeshAndMaterial(this, m_material.get());
         return isect;
@@ -65,35 +82,31 @@ std::unique_ptr<Mesh> Mesh::Clone()
 
 
 auto 
-Mesh::GetExtent() const->std::array<Point3f, 2>
-{
-    float minX = Math::Infinity;
-    float minY = Math::Infinity;
-    float minZ = Math::Infinity;
-    float maxX = -Math::Infinity;
-    float maxY = -Math::Infinity;
-    float maxZ = -Math::Infinity;
-    for (const auto& triangle : m_triangles)
-    {
-        for (const auto& vertices : triangle.GetVertices())
-        {
-            if (vertices.x < minX)
-                minX = vertices.x;
-            if (vertices.y < minY)
-                minY = vertices.y;
-            if (vertices.z < minZ)
-                minZ = vertices.z;
+Mesh::GetExtent() const -> std::array<Point3f, 2> {
 
-            if (vertices.x > maxX)
-                maxX = vertices.x;
-            if (vertices.y > maxY)
-                maxY = vertices.y;
-            if (vertices.z > maxZ)
-                maxZ = vertices.z;
+    Point3f min{ Math::Infinity };
+    Point3f max{ -Math::Infinity };
+
+    for (const auto& triangle : m_triangles) {
+        for (const auto& vertices : triangle.GetVertices()) {
+
+            auto assignMin = [&min, &vertices] (int axis) {
+                if (vertices[axis] < min[axis])
+                    min[axis] = vertices[axis];
+            };
+
+            auto assignMax = [&max, &vertices](int axis) {
+                if (vertices[axis] > max[axis])
+                    max[axis] = vertices[axis];
+            };
+        
+            for (int axis = 0; axis < 3; ++axis) {
+                assignMin(axis);
+                assignMax(axis);
+            }
         }
     }
-    Point3f min { minX, minY, minZ };
-    Point3f max { maxX, maxY, maxZ };
+   
     return std::array<Point3f, 2>{ min, max };
 }
 
@@ -178,3 +191,62 @@ auto
 Mesh::GetPreTransformedPoint(const Point3f& p) const -> Point3f {
     return m_transformToWorld->Inverse(p);
 }
+
+
+auto 
+Mesh::SetTrianglesInsideBounds(AABB& bounds) -> void {
+    
+    std::vector<Triangle> insideBounds;
+
+    for (const auto triangle : m_triangles) 
+        for (const auto& vertex : triangle.GetVertices()) 
+                if (bounds.InsideBounds(vertex))
+                    insideBounds.push_back(triangle);
+
+    bounds.SetMesh(std::make_unique<Mesh>(std::move(insideBounds)));
+}
+
+
+
+auto 
+Mesh::GenerateInternalBoundingBoxes(std::size_t numDivisions) -> void {
+    
+    const auto totalExtent = GetExtent();
+    std::vector<AABB> internalBounds;
+    internalBounds.reserve(numDivisions);
+
+    const auto axisValueForIntervals = [&totalExtent, numDivisions] (int axis) {
+        return (totalExtent.at(1)[axis] - totalExtent.at(0)[axis]) / numDivisions;
+    };
+
+    std::array<FLOAT, 3> lengthIntervals = {
+        axisValueForIntervals(0),
+        axisValueForIntervals(1),
+        axisValueForIntervals(2)
+    };
+
+    const auto generateAxisValueForBounds = [&totalExtent, &lengthIntervals] (std::size_t iteration, int axis) {
+        return totalExtent.at(0)[axis] + iteration * lengthIntervals.at(axis);
+    };
+
+    for (size_t i = 0; i < numDivisions; ++i) {
+        for (size_t j = 0; j < numDivisions; ++j) {
+            for (size_t k = 0; k < numDivisions; ++k) {
+
+                auto generatePoint = [=](int offset) {
+                    return Point3f{ generateAxisValueForBounds(i + offset, 0),
+                                    generateAxisValueForBounds(j + offset, 1),
+                                    generateAxisValueForBounds(k + offset, 2)};
+                };
+
+                internalBounds.emplace_back(AABB(generatePoint(0), generatePoint(1)));
+            }
+        }
+    }
+
+    for (auto& aabb : internalBounds) 
+        SetTrianglesInsideBounds(aabb);
+    
+    m_triangles.clear();
+}
+

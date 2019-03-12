@@ -130,7 +130,7 @@ Scene::EstimateDirectLight(
    
     directLight += SampleLightSource(isect, wo, sampler, light);
  
-    directLight += SampleBSDF(isect, wo, sampler, light);
+    //directLight += SampleBSDF(isect, wo, sampler, light);
     
 
     return directLight;

@@ -13,6 +13,8 @@ public:
     AABB(Point3f lowerBound = Point3f{Math::Infinity}, Point3f upperBound = Point3f{-Math::Infinity});
     explicit AABB(std::unique_ptr<Mesh> mesh);
 
+    AABB(std::unique_ptr<Mesh> mesh, std::array<Point3f, 2> bounds);
+
     AABB(const AABB& other);
     auto operator=(const AABB& other) -> AABB&;
 
@@ -21,6 +23,8 @@ public:
     auto IntersectsMeshFast(const Rayf& ray) const -> bool;
     auto IntersectsBox(const Rayf& ray) const -> bool;
     auto IntersectsFast(const Rayf& ray) const -> bool;
+    auto Intersects(const Rayf& ray) const->std::optional<Intersection>;
+
 
     auto Diagonal()         const -> Vec3f;
     auto SurfaceArea()      const -> float;
@@ -31,6 +35,10 @@ public:
     auto MaximumExtent()    const -> int;
     auto CalculateCenter()  const -> Point3f;
     auto GetShape()         const -> const Mesh&;
+
+    auto InsideBounds(const Point3f& p) const -> bool;
+
+    auto SetMesh(std::unique_ptr<Mesh> mesh) { m_mesh = std::move(mesh); }
 
 private:
     bool IntersectsShape(const Rayf& ray, Intersection& isect) const;

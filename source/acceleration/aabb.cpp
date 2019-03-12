@@ -2,6 +2,7 @@
 // Created by Jacob Vesti Moeslund Nielsen on 18/11/2018.
 //
 #include "aabb.hpp"
+#include <functional>
 
 AABB::AABB(Point3f lowerBound, Point3f upperBound)
         : m_bounds({lowerBound, upperBound})
@@ -15,6 +16,11 @@ AABB::AABB(std::unique_ptr<Mesh> mesh)
 {
     m_center = CalculateCenter();
 }
+
+AABB::AABB(std::unique_ptr<Mesh> mesh, std::array<Point3f, 2> bounds)
+    : m_bounds(bounds),
+      m_mesh(std::move(mesh))
+{ }
 
 
 AABB::AABB(const AABB& other)
@@ -189,6 +195,47 @@ auto AABB::IntersectsBox(const Rayf& ray) const -> bool
     return true;
 }
 
+
+auto AABB::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+    tmin = (m_bounds[ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tmax = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
+    tymin = (m_bounds[ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
+    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
+
+    if ((tmin > tymax) || (tymin > tmax))
+        return false;
+
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    tzmin = (m_bounds[ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
+    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
+
+    if ((tmin > tzmax) || (tzmin > tmax))
+        return false;
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+
+    //return ( (tmin < t1) && (tmax > t0) );
+
+    auto parameter = tmin;
+
+    if (parameter < 0) {
+        parameter = tmax;
+        if (parameter < 0)
+            return false;
+    }
+
+    return m_mesh->Intersects(ray);
+}
+
+
 auto 
 AABB::IntersectsMesh(const Rayf& ray) const->std::optional<Intersection> {
     return m_mesh->Intersects(ray);
@@ -249,4 +296,19 @@ AABB::MaximumExtent() const -> int
         return 1;
     else
         return 2;
+}
+
+
+auto 
+AABB::InsideBounds(const Point3f& p) const -> bool {
+    
+    const auto isNotInsideBoundsForAxis = [*this, &p] (int axis) {
+        return p[axis] < this->LowerBound()[axis] || p[axis] > this->UpperBound()[axis];
+    };
+
+    for (int axis = 0; axis < 3; ++axis) 
+        if (isNotInsideBoundsForAxis(axis))
+            return false;
+    
+    return true;
 }

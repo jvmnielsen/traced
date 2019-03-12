@@ -325,6 +325,9 @@
     <ClInclude Include="source\material\disney.hpp">
       <Filter>material</Filter>
     </ClInclude>
+    <ClInclude Include="functional_utility.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="SDL">

@@ -14,10 +14,16 @@ class BVH {
 public:
     explicit BVH(std::vector<std::unique_ptr<Mesh>> meshes);
 
+
+
     auto Intersects(const Rayf& ray) const->std::optional<Intersection>;
     auto IntersectsFast(const Rayf& ray) const -> bool;
 
+    
+
 private:
+
+  
 
     struct BVHNode {
 

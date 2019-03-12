@@ -6,6 +6,7 @@
 #include <optional>
 
 class Transform;
+class AABB;
 
 class Mesh
 {
@@ -39,11 +40,24 @@ public:
 
     auto Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT;
 
+    //auto HasInternalBoundingBoxes() const -> bool { return !m_internalBoundingBoxes.empty(); }
+    auto GetInternalBoundingBoxes() const -> const std::vector<AABB>& { return m_internalBoundingBoxes; }
+
+    auto IsHollow() const -> bool { return m_triangles.empty(); }
+
 private:
+
+    auto GenerateInternalBoundingBoxes(std::size_t numDivisions) -> void;
+    auto SetTrianglesInsideBounds(AABB& bounds) -> void; 
+
+    std::vector<AABB> m_internalBoundingBoxes;
+
     std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;
     FLOAT                       m_surfaceArea;
     std::unique_ptr<Transform>  m_transformToWorld;
+
+    static constexpr int lowerBoundForTriangleCount = 10;
 
 };
 

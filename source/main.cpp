@@ -119,7 +119,7 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.GetMeshFromFile("assets/bunny.obj");
+    auto cube1 = parser.GetMeshFromFile("assets/cube.obj");
     auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
     auto floor = parser.GetMeshFromFile("assets/plane.obj");
     auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
@@ -205,7 +205,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 100 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 10 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
