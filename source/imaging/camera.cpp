@@ -4,7 +4,7 @@
 
 Camera::Camera(const float v_fov, const float aspect)
 {
-    const auto theta = v_fov * Math::Pi / 180; // degrees to radians
+    const auto theta = v_fov * Math::Constants::Pi / 180; // degrees to radians
     const auto half_height = static_cast<float>(tan(theta / 2));
     const auto half_width = aspect * half_height;
     m_lowerLeftCorner = Point3f(-half_width, -half_height, -1.0f);
@@ -26,9 +26,9 @@ Camera::Camera(
 
     m_origin = look_from;
 
-    const auto w = Normalize(look_from - look_at);
-    const auto u = Cross(v_up, w);
-    const auto v = Cross(w, u);
+    const auto w = Normal3f(look_from - look_at);
+    const auto u = Normal3f{cross(v_up, w)};
+    const auto v = Normal3f{cross(w, u)};
 
     m_lowerLeftCorner = m_origin - u * halfWidth - v * halfHeight - w;
     m_horizontal = u * 2 * halfWidth;

@@ -34,10 +34,10 @@ Sampler::SampleDisk() -> Point2f {
     FLOAT theta, r;
     if (std::abs(offset.x) > std::abs(offset.y)) {
         r = offset.x;
-        theta = Math::Pi / 4 * (offset.y / offset.x); // Todo: precalc pi values
+        theta = Math::Constants::Pi / 4 * (offset.y / offset.x); // Todo: precalc pi values
     } else {
         r = offset.y;
-        theta = Math::Pi / 2 - Math::Pi / 4 * (offset.x / offset.y);
+        theta = Math::Constants::Pi / 2 - Math::Constants::Pi / 4 * (offset.x / offset.y);
     }
     return { std::cos(theta) * r, std::sin(theta) * r };
 
@@ -54,10 +54,10 @@ Sampler::CosineSampleHemisphere() -> Normal3f {
     const auto r2 = GetRandomReal();
     
     const auto z = std::sqrt(1 - r2);
-    const auto phi = 2 * Math::Pi * r1;
+    const auto phi = 2 * Math::Constants::Pi * r1;
     const auto x = std::cos(phi) * 2 * std::sqrt(r2);
     const auto y = std::sin(phi) * 2 * std::sqrt(r2);
-    return Normalize(Vec3f{ x, y, z });
+    return Normal3f{Vec3f{ x, y, z }};
 
     //return basis.ConvertToLocal(sampled); */
 

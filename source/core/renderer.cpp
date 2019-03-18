@@ -201,7 +201,7 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
             break;
         }
 
-        auto wo = -ray.GetDirection();
+        auto wo = -ray.direction();
 
         if (bounces == 0 || lastBounceSpecular) {
             color += throughput * isect->Emitted(wo);
@@ -214,7 +214,7 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 
         if (f.IsBlack() || pdf == 0.0f) break;
 
-        throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
+        throughput = throughput * std::abs(dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
 
 
         ray = Rayf{ isect->GetPoint(), wi };

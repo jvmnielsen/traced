@@ -6,7 +6,7 @@ Material::Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler
 
     //const auto wo = isect.GetShadingBasis().WorldToLocal(worldWo);
     //if (wo.z == 0) return
-    auto wi = isect.GetShadingBasis().ConvertToLocal(sampler.CosineSampleHemisphere());
+    auto wi = isect.GetShadingBasis().convert_to_local(sampler.CosineSampleHemisphere());
     //if (wo.z < 0) wi = -wi; // flip to match direction
     const auto pdf = Pdf(isect, wi);
     //const auto wiWorld = isect.GetShadingBasis().LocalToWorld(wi);
@@ -16,7 +16,7 @@ Material::Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler
 auto
 Material::Pdf(const Intersection& isect, const Normal3f& wi) const -> FLOAT {
     //return SameHemisphere(wo, wi) ? std::abs(wi.z) * Math::InvPi : 0;
-    return Dot(isect.GetShadingNormal(), wi) / Math::Pi;
+    return dot(isect.GetShadingNormal(), wi) / Math::Constants::Pi;
     /*
     const auto cosine = Dot(Normalize(dir), wi[2]);
     if (cosine > 0) {
@@ -32,10 +32,10 @@ Material::Emitted(const Intersection& isect, const Normal3f& dir) const -> Color
 
 auto
 Matte::Evaluate(const Normal3f& wo, const Normal3f& wi) const -> Color3f {
-    return m_attenuation * Math::InvPi;
+    return m_attenuation * Math::Constants::MinFloat;
 }
 
 auto
 Emissive::Emitted(const Intersection& isect, const Normal3f& dir) const -> Color3f {
-    return Dot(isect.GetShadingNormal(), dir) > 0 ? m_radiance : Color3f::Black();
+    return dot(isect.GetShadingNormal(), dir) > 0 ? m_radiance : Color3f::Black();
 }

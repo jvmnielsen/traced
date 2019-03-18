@@ -17,7 +17,7 @@ Intersection::Intersection(
 }
 
 Point3f Intersection::PointOffset() const {
-    return m_point + m_geometricNormal * Math::Epsilon;
+    return m_point + m_geometricNormal * Math::Constants::Epsilon;
 }
 
 auto
@@ -32,7 +32,7 @@ Intersection::GetGeometricNormal() const -> const Normal3f& {
 
 auto
 Intersection::GetShadingNormal() const -> const Normal3f& {
-    return m_shadingBasis.W();
+    return m_shadingBasis.w();
 }
 
 auto

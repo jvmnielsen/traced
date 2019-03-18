@@ -30,7 +30,7 @@ Triangle::UpdateEdges() -> void
 {
     m_edges[0]   = m_vertices[1] - m_vertices[0];
     m_edges[1]   = m_vertices[2] - m_vertices[0];
-    m_faceNormal = Normalize(Cross(m_edges[0], m_edges[1]));
+    m_faceNormal = Normal3f(cross(m_edges[0], m_edges[1]));
 }
 
 /*
@@ -74,9 +74,9 @@ Triangle::Intersects(const Rayf& ray, Intersection& isect) -> bool
 auto
 Triangle::IntersectsFast(const Rayf& ray) const -> bool {
 
-    const auto dir = static_cast<Vec3f>(ray.GetDirection());
-    const auto p_vec = Cross(dir, m_edges.at(1));
-    const auto det = Dot(m_edges.at(0), p_vec);
+    const auto dir = static_cast<Vec3f>(ray.direction());
+    const auto p_vec = cross(dir, m_edges.at(1));
+    const auto det = dot(m_edges.at(0), p_vec);
 
     // precompute for performance
     const auto inverted_det = 1 / det;
@@ -84,59 +84,59 @@ Triangle::IntersectsFast(const Rayf& ray) const -> bool {
     Vec2f barycentric{0};
 
     // barycentric coordinate u
-    const auto t_vec = ray.GetOrigin() - m_vertices[0];
-    barycentric.x = Dot(t_vec, p_vec) * inverted_det;
+    const auto t_vec = ray.origin() - m_vertices[0];
+    barycentric.x = dot(t_vec, p_vec) * inverted_det;
     if (barycentric.x < 0 || barycentric.x > 1)
         return false;
 
     // barycentric coordinate v
-    const auto q_vec = Cross(t_vec, m_edges.at(0));
-    barycentric.y = Dot(dir, q_vec) * inverted_det;
+    const auto q_vec = cross(t_vec, m_edges.at(0));
+    barycentric.y = dot(dir, q_vec) * inverted_det;
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return false;
 
-    const auto parameter = Dot(m_edges.at(1), q_vec) * inverted_det;
+    const auto parameter = dot(m_edges.at(1), q_vec) * inverted_det;
 
-    return parameter > 0 && parameter <= ray.GetMaxParameter();
+    return parameter > 0 && parameter <= ray.max_parameter();
 
 }
 
 auto 
 Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     
-    const auto dir = static_cast<Vec3f>(ray.GetDirection());
-    const auto p_vec = Cross(dir, m_edges.at(1));
-    const auto det = Dot(m_edges[0], p_vec);
+    const auto dir = static_cast<Vec3f>(ray.direction());
+    const auto p_vec = cross(dir, m_edges.at(1));
+    const auto det = dot(m_edges[0], p_vec);
 
     const auto recipDet = 1 / det;
 
     Point2f barycentric;
 
     // barycentric coordinate u
-    const auto t_vec = ray.GetOrigin() - m_vertices[0];
-    barycentric.x = Dot(t_vec, p_vec) * recipDet;
+    const auto t_vec = ray.origin() - m_vertices[0];
+    barycentric.x = dot(t_vec, p_vec) * recipDet;
 
     if (barycentric.x < 0 || barycentric.x > 1)
         return std::nullopt;
 
     // barycentric coordinate v
-    const auto q_vec = Cross(t_vec, m_edges.at(0));
-    barycentric.y = Dot(dir, q_vec) * recipDet;
+    const auto q_vec = cross(t_vec, m_edges.at(0));
+    barycentric.y = dot(dir, q_vec) * recipDet;
 
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return std::nullopt;
 
-    const auto parameter = Dot(m_edges.at(1), q_vec) * recipDet;
+    const auto parameter = dot(m_edges.at(1), q_vec) * recipDet;
 
-    if (!ray.ParameterWithinBounds(parameter))
+    if (!ray.within_bounds(parameter))
         return std::nullopt;
 
     // Update parameter and intersection as necessary
-    ray.NewMaxParameter(parameter);
+    ray.update_max_parameter(parameter);
 
     //const auto shaded = InterpolateNormalAt(barycentric);
 
-    return Intersection{ ray.PointAtParameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric) };
+    return Intersection{ ray.point_at_parameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric) };
 }
 
 auto 
@@ -146,7 +146,7 @@ Triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f {
                         + m_vertexNormals[1] * uv.x
                         + m_vertexNormals[2] * uv.y;
 
-    return Normalize(normal);
+    return Normal3f(normal);
 }
 
 auto
@@ -164,7 +164,7 @@ Triangle::TransformBy(const Transform& transform) -> void
 
 auto 
 Triangle::GetArea() const -> FLOAT {
-    return 0.5f * Cross(m_edges[0], m_edges[1]).Length();
+    return 0.5f * cross(m_edges[0], m_edges[1]).length();
 }
 
 auto
@@ -190,14 +190,14 @@ Triangle::SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOA
 }
 
 auto 
-Triangle::CalculateBounds() const -> std::pair<Point3f, Point3f> {
+Triangle::calculate_bounds() const -> Bounds {
     
     Point3f min{Math::Constants::MaxFloat};
     Point3f max{Math::Constants::MinFloat};
 
     for (const auto& vertex : m_vertices) {
-        min = vertex.ElementwiseMin(min);
-        max = vertex.ElementwiseMax(max);
+        min = elementwise_min(min, vertex);
+        max = elementwise_max(max, vertex);
     }
 
     return {min, max};

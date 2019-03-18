@@ -1,9 +1,7 @@
 #pragma once
 #include <random>
-#include "../math/vec3.hpp"
-//#include "../math/onb.hpp"
-#include "../math/point3.hpp"
 #include "../math/point2.hpp"
+#include "../math/normal3.hpp"
 
 
 class Sampler {

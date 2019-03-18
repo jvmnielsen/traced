@@ -14,48 +14,48 @@ public:
 
     Ray(const Point3<T>& origin,
         const Normal3<T>& direction,
-        const T maxParam = Math::Infinity,
+        const T maxParam = Math::Constants::MaxFloat,
         const T minParam = 0.0001,
         const RayType& rayType = RayType::PrimaryRay)
         : m_origin(origin)
         , m_direction(direction)
-        , m_maxParam(maxParam)
-        , m_minParam(minParam)
-        , m_rayType(rayType)
-        , m_reciprocDir(1 / direction.x, 1 / direction.y, 1 / direction.z)
+        , m_max_param(maxParam)
+        , m_min_param(minParam)
+        , m_ray_type(rayType)
+        , m_inverse_dir(1 / direction.x(), 1 / direction.y(), 1 / direction.z())
     {
-        m_sign[0] = m_reciprocDir.x < 0;
-        m_sign[1] = m_reciprocDir.y < 0;
-        m_sign[2] = m_reciprocDir.z < 0;
+        m_inverse_signs[0] = m_inverse_dir.x() < 0;
+        m_inverse_signs[1] = m_inverse_dir.y() < 0;
+        m_inverse_signs[2] = m_inverse_dir.z() < 0;
     }
 
-    auto GetOrigin() const -> const Point3<T>& { return m_origin; }
-    auto GetDirection() const -> const Normal3<T>& { return m_direction; }
-    auto PointAtParameter(const float t) const -> Point3<T> { return m_origin + m_direction * t; }
-    auto GetRayType() const -> const RayType& { return m_rayType; }
+    auto origin() const -> const Point3<T>& { return m_origin; }
+    auto direction() const -> const Normal3<T>& { return m_direction; }
+    auto point_at_parameter(const T t) const -> Point3<T> { return m_origin + m_direction * t; }
 
-    void NewMaxParameter(const T maxParam) const { m_maxParam = maxParam; }
-    T GetMaxParameter() const { return m_maxParam; }
-    T GetMinParameter() const { return m_minParam; }
-    bool ParameterWithinBounds(const T parameter) const { return parameter < m_maxParam && parameter > m_minParam; }
-    bool ParameterWithinUpperBound(const T parameter) const { return parameter < m_maxParam; }
+    auto update_max_parameter(const T maxParam) const -> void   { m_max_param = maxParam; }
+    auto max_parameter()                        const -> T      { return m_max_param; }
+    auto min_parameter()                        const -> T      { return m_minParam; }
+    
+    auto within_bounds(const T parameter)      const -> bool    { return parameter < m_max_param && parameter > m_min_param; }
+    auto within_upper_bound(const T parameter) const -> bool    { return parameter < m_max_param; }
 
+    auto inverse_signs()     const -> const std::array<int, 3>& { return m_inverse_signs; }
+    auto inverse_direction() const -> const Vec3f&              { return m_inverse_dir; }
 
-    const std::array<int, 3>& GetReciprocSigns() const { return m_sign; }
-    const Vec3f& GetReciprocDirection() const { return m_reciprocDir; }
-
-    bool IsPrimaryRay() const { return m_rayType == RayType::PrimaryRay; }
+    //bool IsPrimaryRay() const { return m_ray_type == RayType::PrimaryRay; }
 
 private:
     Point3<T> m_origin;
     Normal3<T> m_direction;
-    RayType m_rayType;
+    RayType m_ray_type;
 
-    mutable T m_maxParam;
-    T m_minParam;
+    mutable T m_max_param;
+    T m_min_param;
 
-    Vec3f m_reciprocDir;
-    std::array<int, 3> m_sign; // used in AABB intersection test
+    // used in AABB intersection test
+    Vec3f m_inverse_dir;
+    std::array<int, 3> m_inverse_signs; 
 };
 
 typedef Ray<FLOAT> Rayf;

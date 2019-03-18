@@ -1,6 +1,8 @@
 #pragma once
 #include "vec2.hpp"
 #include "math_util.hpp"
+#include "Vec3.hpp"
+
 
 template<typename T>
 struct Point2
@@ -25,12 +27,12 @@ struct Point2
 
     Point2 operator+(const Vec3<T>& vec) const
     {
-        return {x + vec.x, y + vec.y};
+        return {x + vec.x(), y + vec.y()};
     }
 
     Point2 operator-(const Vec3<T>& vec) const
     {
-        return {x - vec.x, y - vec.y};
+        return {x - vec.x(), y - vec.y()};
     }
 
     bool operator==(const Point2& other) const

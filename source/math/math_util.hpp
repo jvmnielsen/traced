@@ -31,7 +31,7 @@ namespace Math {
 
     template<typename T>
     auto DegreeToRadian(T degree) -> T {
-        return degree * Pi / 180.0;
+        return degree * Constants::Pi / 180.0;
     }
 
     // Returns in order smallest to largest solution

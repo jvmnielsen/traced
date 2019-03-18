@@ -70,7 +70,7 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
     ceilingTransform->Scale({10.0, 10.0, 10.0});
     ceiling->TransformBy(std::move(ceilingTransform));
 
-
+    /*
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>();
     green->m_attenuation = Color3f{0.3, 0.8, 0.3};
@@ -85,7 +85,7 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
     ceiling->ApplyMaterial(matte);
 
     auto light = std::make_shared<Emissive>();
-    lightSource->ApplyMaterial(light);
+    lightSource->ApplyMaterial(light); */
 
 
     std::vector<std::unique_ptr<Mesh>> meshes;
@@ -166,6 +166,7 @@ int main(int argc, char * argv[]) {
     lightTransform->Scale({3., 3.0, 3.0});
     lightSource->TransformBy(std::move(lightTransform));
 
+    /*
     auto light = std::make_shared<Emissive>();
     lightSource->ApplyMaterial(light);
 
@@ -180,11 +181,11 @@ int main(int argc, char * argv[]) {
     leftWall->ApplyMaterial(green);
     backWall->ApplyMaterial(matte);
     ceiling->ApplyMaterial(matte);
-
+    */
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<std::unique_ptr<Mesh>> lights;
-    cube1->GenerateInternalBoundingBoxes(3);
+    //cube1->generate_internal_bounding_boxes(3);
     meshes.push_back(std::move(cube1));
     meshes.push_back(std::move(floor));
     //meshes.push_back(std::move(rightWall));

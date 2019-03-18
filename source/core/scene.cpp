@@ -37,8 +37,8 @@ bool Scene::IntersectsQuick(const Rayf& ray) const {
 
 bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const {
     const Vec3f dir = p2 - p1;
-    const auto distance = dir.Length();
-    Rayf ray{p1, Normalize(dir), distance};
+    const auto distance = dir.length();
+    Rayf ray{p1, Normal3f(dir), distance};
     return !IntersectsQuick(ray);
 }
 
@@ -73,7 +73,7 @@ Scene::SampleLightSource(const Intersection& isect, const Normal3f& wo, Sampler&
     const auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
     
     if (lightPdf > 0.0f && !li.IsBlack()) {
-        const auto f = isect.EvaluateMaterial(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
+        const auto f = isect.EvaluateMaterial(wo, wi) * std::abs(dot(wi, isect.GetShadingNormal()));
         const auto scatteringPdf = isect.MaterialPdf(wi);
 
         if (!f.IsBlack() && LineOfSightBetween(isect.PointOffset(), atLight.PointOffset())) {
@@ -90,7 +90,7 @@ Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sample
     if (!isect.IsSpecular()) {
 
         auto [wi, scatteringPdf, f] = isect.SampleMaterial(wo, sampler);
-        f *= std::abs(Dot(wi, isect.GetShadingNormal()));
+        f *= std::abs(dot(wi, isect.GetShadingNormal()));
 
         if (!f.IsBlack() && scatteringPdf > 0) {
 

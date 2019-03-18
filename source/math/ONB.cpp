@@ -4,20 +4,22 @@ ONB::ONB(const Normal3f& normal) {
 
     m_basis[2] = normal;
 
-    Normal3f a;
-    if (std::abs(normal.x) > 0.9) { // is the normal the x-axis?
-        a = Normal3f{0.0, 1.0, 0.0};
+    Vec3f tmp;
+    if (std::abs(normal.x()) > 0.9) { // is the normal the x-axis?
+        tmp = Vec3f{0.0, 1.0, 0.0};
     } else {
-        a = Normal3f{1.0, 0.0, 0.0};
+        tmp = Vec3f{1.0, 0.0, 0.0};
     }
 
-    m_basis[1] = Cross(m_basis[2], a);
-    m_basis[0] = Cross(m_basis[1], m_basis[2]);
+    const auto a = Normal3f{tmp};
+
+    m_basis[1] = cross(m_basis[2], a);
+    m_basis[0] = cross(m_basis[1], m_basis[2]);
 }
 
 auto
-ONB::ConvertToLocal(const Vec3f& vec) const -> Vec3f {
-    return m_basis[0] * vec.x + m_basis[1] * vec.y + m_basis[2] * vec.z;
+ONB::convert_to_local(const Vec3f& vec) const -> Vec3f {
+    return m_basis[0] * vec.x() + m_basis[1] * vec.y() + m_basis[2] * vec.z();
 }
 
 /*

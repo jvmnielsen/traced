@@ -4,203 +4,88 @@
 #include "aabb.hpp"
 #include <functional>
 #include "../geometry/mesh.hpp"
+#include "../geometry/bounds.hpp"
 
 AABB::AABB(std::unique_ptr<Mesh> mesh)
-        : m_bounds(mesh->GetExtent())
-        , m_mesh(std::move(mesh))
+    : m_bounds(mesh->calculate_bounds()),
+      m_center(m_bounds.center()),
+      m_mesh(std::move(mesh))
 {
-    m_center = m_bounds.Center();
+}
+
+AABB::AABB(Bounds bounds)
+    : m_bounds(std::move(bounds)),
+      m_center(bounds.center())
+{
 }
 
 AABB::AABB(std::unique_ptr<Mesh> mesh, Bounds bounds)
     : m_bounds(std::move(bounds)),
-      m_center(bounds.Center()),
+      m_center(bounds.center()),
       m_mesh(std::move(mesh))
 { }
 
+
+AABB::AABB(const AABB& other)
+    : m_bounds(other.m_bounds),
+      m_mesh(std::make_unique<Mesh>(*other.m_mesh)),
+      m_center(other.m_center)
+{
+}
+
+auto AABB::operator=(const AABB& other) -> AABB&
+{
+    if (&other == this)
+        return *this;
+    
+    m_bounds = other.m_bounds;
+
+    if (other.m_mesh)
+        m_mesh = std::make_unique<Mesh>(*other.m_mesh);
+
+    m_center = other.m_center;
+
+    return *this;
+}
+
+
 auto
-AABB::Center() const -> const Point3f&
+AABB::center() const -> const Point3f&
 {
     return m_center;
 }
 
-auto
-AABB::GetShape() const -> const Mesh&
-{
-    return *m_mesh;
-}
-
-/*
-auto
-AABB::Intersects(const Rayf& ray, Intersection& isect) const -> bool
-{
-    // "An Efficient and Robust Ray-Box Intersection Algorithm"
-    // Journal of graphics tools, 10(1):49-54, 2005
-
-    float tmin, tmax, tymin, tymax, tzmin, tzmax;
-
-    tmin  = (m_bounds[    ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tmax  = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tymin = (m_bounds[    ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
-    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
-
-    if ( (tmin > tymax) || (tymin > tmax) )
-        return false;
-
-    if (tymin > tmin)
-        tmin = tymin;
-    if (tymax < tmax)
-        tmax = tymax;
-
-    tzmin = (m_bounds[    ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-
-    if ( (tmin > tzmax) || (tzmin > tmax) )
-        return false;
-    if (tzmin > tmin)
-        tmin = tzmin;
-    if (tzmax < tmax)
-        tmax = tzmax;
-
-    //return ( (tmin < t1) && (tmax > t0) );
-
-    auto parameter = tmin; // > 0 ? tmin : tmax > 0 ? tmax : 0; //= tmin;
-
-    if (parameter < 0) {
-        parameter = tmax;
-        if (parameter < 0)
-            return false;
-    }
-
-    if (!ray.ParameterWithinUpperBound(parameter)) // We're only checking the upper bounds as we may be
-        return false;                             // within a BV already
-
-    IntersectsShape(ray, isect);
-
-    //return isect.HasBeenHit();
-    return true;
-} */
-
-bool AABB::IntersectsFast(const Rayf& ray) const
-{
-    float tmin, tmax, tymin, tymax, tzmin, tzmax;
-
-    tmin  = (m_bounds[    ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tmax  = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tymin = (m_bounds[    ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
-    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
-
-    if ( (tmin > tymax) || (tymin > tmax) )
-        return false;
-
-    if (tymin > tmin)
-        tmin = tymin;
-    if (tymax < tmax)
-        tmax = tymax;
-
-    tzmin = (m_bounds[    ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-
-    if ( (tmin > tzmax) || (tzmin > tmax) )
-        return false;
-    if (tzmin > tmin)
-        tmin = tzmin;
-    if (tzmax < tmax)
-        tmax = tzmax;
-
-    //return ( (tmin < t1) && (tmax > t0) );
-
-    auto parameter = tmin;
-
-    if (parameter < 0)
-    {
-        parameter = tmax;
-        if (parameter < 0)
-            return false;
-    }
-
+bool AABB::IntersectsFast(const Rayf& ray) const {
     return m_mesh->IntersectsFast(ray);
 }
 
-auto AABB::IntersectsBox(const Rayf& ray) const -> bool
-{
-    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
 
-    tmin  = (m_bounds[    ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tmax  = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tymin = (m_bounds[    ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
-    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
+    auto min = 0.0;
+    auto max = Math::Constants::MaxFloat;
 
-    if ( (tmin > tymax) || (tymin > tmax) )
-        return false;
+    for (int axis = 0; axis < 3; ++axis) {
+        // use the precomputed sign of the ray to avoid having to swap t_near and t_far
+        const auto t_near = (m_bounds[ray.inverse_signs()[axis]][axis] - ray.origin()[axis]) * ray.inverse_direction()[axis];
+        const auto t_far  = (m_bounds[1 - ray.inverse_signs()[axis]][axis] - ray.origin()[axis]) * ray.inverse_direction()[axis];
 
-    if (tymin > tmin)
-        tmin = tymin;
-    if (tymax < tmax)
-        tmax = tymax;
+        // we want the smallest max and largest min
+        min = t_near > min ? t_near : min;
+        max = t_far < max ? t_far : max;
 
-    tzmin = (m_bounds[    ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-
-    if ( (tmin > tzmax) || (tzmin > tmax) )
-        return false;
-    if (tzmin > tmin)
-        tmin = tzmin;
-    if (tzmax < tmax)
-        tmax = tzmax;
-
-    //return ( (tmin < t1) && (tmax > t0) );
-
-    auto parameter = tmin;
-
-    if (parameter < 0)
-    {
-        parameter = tmax;
-        if (parameter < 0)
-            return false;
     }
 
-    return true;
+    // is the box behind us or are we inside it == false
+    return min >= 0;
 }
 
 
 auto AABB::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
-    float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (m_bounds[ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tmax = (m_bounds[1 - ray.GetReciprocSigns().at(0)].x - ray.GetOrigin().x) * ray.GetReciprocDirection().x;
-    tymin = (m_bounds[ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
-    tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
-
-    if ((tmin > tymax) || (tymin > tmax))
-        return std::nullopt;
-
-    if (tymin > tmin)
-        tmin = tymin;
-    if (tymax < tmax)
-        tmax = tymax;
-
-    tzmin = (m_bounds[ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-    tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
-
-    if ((tmin > tzmax) || (tzmin > tmax))
-        return std::nullopt;
-    if (tzmin > tmin)
-        tmin = tzmin;
-    if (tzmax < tmax)
-        tmax = tzmax;
-
-    //return ( (tmin < t1) && (tmax > t0) );
-
-    auto parameter = tmin;
-
-    if (parameter < 0) {
-        parameter = tmax;
-        if (parameter < 0)
-            return std::nullopt;
-    }
-
-    return m_mesh->Intersects(ray);
+    if (intersects_bounds(ray))
+        return m_mesh->Intersects(ray);
+    
+    return std::nullopt;
 }
 
 
@@ -215,69 +100,7 @@ AABB::IntersectsMeshFast(const Rayf& ray) const -> bool
     return m_mesh->IntersectsFast(ray);
 }
 
-auto AABB::GetBounds() const -> const Bounds&
+auto AABB::bounds() const -> const Bounds&
 {
     return m_bounds;
-}
-
-
-
-auto
-Bounds::Diagonal() const -> Vec3f {
-    return {m_upper - m_lower};
-}
-
-auto
-Bounds::SurfaceArea() const -> FLOAT {
-    const auto diagonal = Diagonal();
-    return 2.0 * (diagonal.x * diagonal.y + diagonal.x * diagonal.z + diagonal.y * diagonal.z);
-}
-
-
-auto
-Bounds::CalculateCenter() const -> Point3f
-{
-    return m_lower + Diagonal() * 0.5f;
-}
-
-
-auto
-Bounds::MaximumExtent() const -> int {
-    const auto diagonal = Diagonal();
-    if (diagonal.x > diagonal.y && diagonal.x > diagonal.z)
-        return 0;
-
-    if (diagonal.y > diagonal.z)
-        return 1;
-    
-    return 2;
-}
-
-
-auto Bounds::IsInside(const Point3f& point) const -> bool {
-   
-    /*
-    const auto isInsideBoundsForAxis = [this, p] (int axis) {
-        return p[axis] >= LowerBound()[axis] && p[axis] <= UpperBound()[axis];
-    };
-
-    for (int axis = 0; axis < 3; ++axis)
-        if (!isInsideBoundsForAxis(axis))
-            return false;
-
-    */
-    return true;
-}
-
-auto
-Bounds::Overlaps(const Bounds& other) const ->  bool {
-    return     m_upper.x() >= other.Lower().x() && m_lower.x() <= other.Upper().x()
-            && m_upper.y() >= other.Lower().y() && m_lower.y() <= other.Upper().y()
-            && m_upper.z() >= other.Lower().z() && m_lower.z() <= other.Upper().z();
-}
-
-
-auto 
-AABB::DoesNotContainMesh() const -> bool {
-    return m_mesh->IsHollow();
 }

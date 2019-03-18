@@ -8,6 +8,7 @@
 #include <optional>
 #include "../core/intersection.hpp"
 #include "../math/transform.hpp"
+#include "bounds.hpp"
 
 class Triangle
 {
@@ -37,7 +38,7 @@ public:
     Intersection GetRandomSurfaceIntersection() override;
     */
 
-    auto CalculateBounds() const -> std::pair<Point3f, Point3f>;
+    auto calculate_bounds() const -> Bounds;
 
     auto SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
