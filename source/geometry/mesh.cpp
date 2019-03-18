@@ -6,12 +6,14 @@
 Mesh::Mesh(std::vector<Triangle> triangle)
     : m_triangles(std::move(triangle)) {
 
+    /*
     if (m_triangles.size() > lowerBoundForTriangleCount) {
-        const auto numDivisions = [](size_t listSize) { return static_cast<int>(std::sqrt(listSize)); };
-        GenerateInternalBoundingBoxes(numDivisions(m_triangles.size()));
-    }
+        GenerateInternalBoundingBoxes(static_cast<int>(std::sqrt(m_triangles.size())));
+    }*/
     m_surfaceArea = GetSurfaceArea();
 }
+
+
 
 
 auto 
@@ -19,7 +21,7 @@ Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
     std::optional<Intersection> isect;
 
-    if (this->IsHollow()) {
+    if (!m_internalBoundingBoxes.empty()) {
         for (auto& aabb : m_internalBoundingBoxes) {
             auto tmp = aabb.Intersects(ray);
             if (tmp.has_value())
@@ -198,12 +200,19 @@ Mesh::SetTrianglesInsideBounds(AABB& bounds) -> void {
     
     std::vector<Triangle> insideBounds;
 
-    for (const auto triangle : m_triangles) 
-        for (const auto& vertex : triangle.GetVertices()) 
-                if (bounds.InsideBounds(vertex))
-                    insideBounds.push_back(triangle);
+    for (const auto triangle : m_triangles) {
+        for (const auto& vertex : triangle.GetVertices()) {
+            if (bounds.PointInsideBounds(vertex)) {
+                insideBounds.push_back(triangle);
+                break;
+            }
+        }
+    }
 
-    bounds.SetMesh(std::make_unique<Mesh>(std::move(insideBounds)));
+    auto new_mesh = std::make_unique<Mesh>(std::move(insideBounds));
+    new_mesh->ApplyMaterial(m_material);
+
+    bounds.SetMesh(std::move(new_mesh));
 }
 
 
@@ -216,7 +225,7 @@ Mesh::GenerateInternalBoundingBoxes(std::size_t numDivisions) -> void {
     internalBounds.reserve(numDivisions);
 
     const auto axisValueForIntervals = [&totalExtent, numDivisions] (int axis) {
-        return (totalExtent.at(1)[axis] - totalExtent.at(0)[axis]) / numDivisions;
+        return std::abs(totalExtent.at(1)[axis] - totalExtent.at(0)[axis]) / numDivisions;
     };
 
     std::array<FLOAT, 3> lengthIntervals = {
@@ -239,14 +248,29 @@ Mesh::GenerateInternalBoundingBoxes(std::size_t numDivisions) -> void {
                                     generateAxisValueForBounds(k + offset, 2)};
                 };
 
-                internalBounds.emplace_back(AABB(generatePoint(0), generatePoint(1)));
+                internalBounds.emplace_back(generatePoint(0), generatePoint(1));
             }
         }
     }
 
     for (auto& aabb : internalBounds) 
         SetTrianglesInsideBounds(aabb);
-    
-    m_triangles.clear();
+
+    internalBounds.erase(std::remove_if(internalBounds.begin(), internalBounds.end(), [](const AABB& bound) { return bound.DoesNotContainMesh(); }), internalBounds.end());
+    m_internalBoundingBoxes = internalBounds;
+
+    //m_triangles.clear();
+}
+
+
+auto
+Mesh::GetInternalBoundingBoxes() const -> const std::vector<AABB>&
+{
+    return m_internalBoundingBoxes;
+}
+
+auto Mesh::IsHollow() const -> bool
+{
+    return m_triangles.empty();
 }
 

@@ -8,11 +8,16 @@
 
 namespace Math {
 
-    static constexpr FLOAT  Infinity    = std::numeric_limits<FLOAT>::max();
-    static constexpr FLOAT  NegInfinity = std::numeric_limits<FLOAT>::min();
-    static constexpr FLOAT  Pi          = 3.14159265358979323846;
-    static constexpr FLOAT  InvPi       = 0.31830988618379067154;
-    static constexpr FLOAT  Epsilon     = 1e-5;
+    struct Constants
+    {
+        static constexpr FLOAT  MaxFloat = std::numeric_limits<FLOAT>::max();
+        static constexpr FLOAT  MinFloat = std::numeric_limits<FLOAT>::min();
+        static constexpr FLOAT  Pi = 3.14159265358979323846;
+        static constexpr FLOAT  InvPi = 0.31830988618379067154;
+        static constexpr FLOAT  Epsilon = 1e-5;
+    };
+
+    
 
     template<typename T>
     T Clamp(T low, T high, T value) {

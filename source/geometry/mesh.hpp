@@ -4,20 +4,25 @@
 #include <random>
 #include "triangle.hpp"
 #include <optional>
+#include "../acceleration/aabb.hpp"
 
 class Transform;
-class AABB;
+//class AABB;
 
 class Mesh
 {
 public:
     explicit Mesh(std::vector<Triangle> triangle);
 
+    /*
     Mesh(const Mesh& other) 
     : m_triangles(other.m_triangles), 
       m_material(other.m_material), 
       m_surfaceArea(other.m_surfaceArea), 
-      m_transformToWorld(std::make_unique<Transform>(*other.m_transformToWorld)) {} 
+      m_transformToWorld(std::make_unique<Transform>(*other.m_transformToWorld)),
+      //m_internalBoundingBoxes(other.m_internalBoundingBoxes)
+    {
+    } */
 
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
     auto IntersectsFast(const Rayf& ray) const -> bool;
@@ -35,19 +40,23 @@ public:
     auto Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     auto GetPreTransformedPoint(const Point3f& p) const -> Point3f;
-	auto GetTransform() const -> const Transform& { return *m_transformToWorld; }
+	//auto GetTransform() const -> const Transform& { return *m_transformToWorld; }
 
 
     auto Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT;
 
     //auto HasInternalBoundingBoxes() const -> bool { return !m_internalBoundingBoxes.empty(); }
-    auto GetInternalBoundingBoxes() const -> const std::vector<AABB>& { return m_internalBoundingBoxes; }
+    auto GetInternalBoundingBoxes() const -> const std::vector<AABB>&; 
 
-    auto IsHollow() const -> bool { return m_triangles.empty(); }
+    auto IsHollow() const -> bool;
+
+    auto GenerateInternalBoundingBoxes(std::size_t numDivisions) -> void;
 
 private:
 
-    auto GenerateInternalBoundingBoxes(std::size_t numDivisions) -> void;
+    //Mesh(std::vector<Triangle> triangle, bool isInternal);
+
+    
     auto SetTrianglesInsideBounds(AABB& bounds) -> void; 
 
     std::vector<AABB> m_internalBoundingBoxes;

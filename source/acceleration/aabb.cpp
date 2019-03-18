@@ -3,52 +3,20 @@
 //
 #include "aabb.hpp"
 #include <functional>
-
-AABB::AABB(Point3f lowerBound, Point3f upperBound)
-        : m_bounds({lowerBound, upperBound})
-        , m_mesh(nullptr)
-{
-}
+#include "../geometry/mesh.hpp"
 
 AABB::AABB(std::unique_ptr<Mesh> mesh)
         : m_bounds(mesh->GetExtent())
         , m_mesh(std::move(mesh))
 {
-    m_center = CalculateCenter();
+    m_center = m_bounds.Center();
 }
 
-AABB::AABB(std::unique_ptr<Mesh> mesh, std::array<Point3f, 2> bounds)
-    : m_bounds(bounds),
+AABB::AABB(std::unique_ptr<Mesh> mesh, Bounds bounds)
+    : m_bounds(std::move(bounds)),
+      m_center(bounds.Center()),
       m_mesh(std::move(mesh))
 { }
-
-
-AABB::AABB(const AABB& other)
-        : m_bounds(other.m_bounds)
-        , m_mesh(std::make_unique<Mesh>(*other.m_mesh))
-        , m_center(other.m_center)
-{
-} 
-
-
-auto
-AABB::operator=(const AABB& other) -> AABB&
-{
-    if (&other == this)
-        return *this;
-
-    m_bounds = other.m_bounds;
-
-    if (other.m_mesh)
-        m_mesh = std::make_unique<Mesh>(*other.m_mesh);
-
-    if (other.m_center != m_center)
-        m_center = other.m_center;
-
-    return *this;
-} 
-
-
 
 auto
 AABB::Center() const -> const Point3f&
@@ -205,7 +173,7 @@ auto AABB::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     tymax = (m_bounds[1 - ray.GetReciprocSigns().at(1)].y - ray.GetOrigin().y) * ray.GetReciprocDirection().y;
 
     if ((tmin > tymax) || (tymin > tmax))
-        return false;
+        return std::nullopt;
 
     if (tymin > tmin)
         tmin = tymin;
@@ -216,7 +184,7 @@ auto AABB::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     tzmax = (m_bounds[1 - ray.GetReciprocSigns().at(2)].z - ray.GetOrigin().z) * ray.GetReciprocDirection().z;
 
     if ((tmin > tzmax) || (tzmin > tmax))
-        return false;
+        return std::nullopt;
     if (tzmin > tmin)
         tmin = tzmin;
     if (tzmax < tmax)
@@ -229,7 +197,7 @@ auto AABB::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     if (parameter < 0) {
         parameter = tmax;
         if (parameter < 0)
-            return false;
+            return std::nullopt;
     }
 
     return m_mesh->Intersects(ray);
@@ -247,68 +215,69 @@ AABB::IntersectsMeshFast(const Rayf& ray) const -> bool
     return m_mesh->IntersectsFast(ray);
 }
 
-auto AABB::GetBounds() const -> const std::array<Point3f, 2>&
+auto AABB::GetBounds() const -> const Bounds&
 {
     return m_bounds;
 }
 
+
+
 auto
-AABB::LowerBound() const -> const Point3f&
-{
-    return m_bounds[0];
+Bounds::Diagonal() const -> Vec3f {
+    return {m_upper - m_lower};
 }
 
 auto
-AABB::UpperBound() const -> const Point3f&
-{
-    return m_bounds[1];
-}
-
-
-auto
-AABB::Diagonal() const -> Vec3f
-{
-    return {m_bounds[1] - m_bounds[0]};
-}
-
-auto
-AABB::SurfaceArea() const -> float
-{
+Bounds::SurfaceArea() const -> FLOAT {
     const auto diagonal = Diagonal();
-    return 2 * (diagonal.x * diagonal.y + diagonal.x * diagonal.z + diagonal.y * diagonal.z);
+    return 2.0 * (diagonal.x * diagonal.y + diagonal.x * diagonal.z + diagonal.y * diagonal.z);
 }
 
 
 auto
-AABB::CalculateCenter() const -> Point3f
+Bounds::CalculateCenter() const -> Point3f
 {
-    return m_bounds[0] + Diagonal() * 0.5f;
+    return m_lower + Diagonal() * 0.5f;
 }
 
 
 auto
-AABB::MaximumExtent() const -> int
-{
+Bounds::MaximumExtent() const -> int {
     const auto diagonal = Diagonal();
     if (diagonal.x > diagonal.y && diagonal.x > diagonal.z)
         return 0;
-    else if (diagonal.y > diagonal.z)
+
+    if (diagonal.y > diagonal.z)
         return 1;
-    else
-        return 2;
+    
+    return 2;
+}
+
+
+auto Bounds::IsInside(const Point3f& point) const -> bool {
+   
+    /*
+    const auto isInsideBoundsForAxis = [this, p] (int axis) {
+        return p[axis] >= LowerBound()[axis] && p[axis] <= UpperBound()[axis];
+    };
+
+    for (int axis = 0; axis < 3; ++axis)
+        if (!isInsideBoundsForAxis(axis))
+            return false;
+
+    */
+    return true;
+}
+
+auto
+Bounds::Overlaps(const Bounds& other) const ->  bool {
+    return     m_upper.x() >= other.Lower().x() && m_lower.x() <= other.Upper().x()
+            && m_upper.y() >= other.Lower().y() && m_lower.y() <= other.Upper().y()
+            && m_upper.z() >= other.Lower().z() && m_lower.z() <= other.Upper().z();
 }
 
 
 auto 
-AABB::InsideBounds(const Point3f& p) const -> bool {
-    
-    const auto isNotInsideBoundsForAxis = [*this, &p] (int axis) {
-        return p[axis] < this->LowerBound()[axis] || p[axis] > this->UpperBound()[axis];
-    };
-
-    for (int axis = 0; axis < 3; ++axis) 
-        if (isNotInsideBoundsForAxis(axis))
-            return false;
-    
-    return true;
+AABB::DoesNotContainMesh() const -> bool {
+    return m_mesh->IsHollow();
 }

@@ -129,7 +129,7 @@ int main(int argc, char * argv[]) {
 
 
     auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0, 0.2, -1.8}).Scale(Vec3f{1.2});
+    cube1Transform->Translate({0, 0.0, -2.0});// .Rotate({0,1,0}, 60);// .Scale(Vec3f{1.2});
     cube1->TransformBy(std::move(cube1Transform));
 
     auto floorTransform = std::make_unique<Transform>();
@@ -184,12 +184,13 @@ int main(int argc, char * argv[]) {
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<std::unique_ptr<Mesh>> lights;
+    cube1->GenerateInternalBoundingBoxes(3);
     meshes.push_back(std::move(cube1));
     meshes.push_back(std::move(floor));
-    meshes.push_back(std::move(rightWall));
-    meshes.push_back(std::move(leftWall));
-    meshes.push_back(std::move(backWall));
-    meshes.push_back(std::move(ceiling));
+    //meshes.push_back(std::move(rightWall));
+    //meshes.push_back(std::move(leftWall));
+    //meshes.push_back(std::move(backWall));
+    //meshes.push_back(std::move(ceiling));
 
     lights.push_back(std::move(lightSource));
 

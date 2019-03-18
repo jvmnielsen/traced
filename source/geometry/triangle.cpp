@@ -2,6 +2,7 @@
 #include <cmath>
 #include "../core/intersection.hpp"
 #include "../math/transform.hpp"
+#include <numeric>
 
 Triangle::Triangle(
     std::array<Point3f, 3>     vertices,
@@ -188,4 +189,16 @@ Triangle::SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOA
     return std::make_tuple(Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv) }, 1 / GetArea());
 }
 
+auto 
+Triangle::CalculateBounds() const -> std::pair<Point3f, Point3f> {
+    
+    Point3f min{Math::Constants::MaxFloat};
+    Point3f max{Math::Constants::MinFloat};
 
+    for (const auto& vertex : m_vertices) {
+        min = vertex.ElementwiseMin(min);
+        max = vertex.ElementwiseMax(max);
+    }
+
+    return {min, max};
+}

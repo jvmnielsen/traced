@@ -37,6 +37,8 @@ public:
     Intersection GetRandomSurfaceIntersection() override;
     */
 
+    auto CalculateBounds() const -> std::pair<Point3f, Point3f>;
+
     auto SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     const std::array<Point3f, 3>& GetVertices() const;
