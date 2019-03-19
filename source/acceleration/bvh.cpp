@@ -1,14 +1,5 @@
 #include "bvh.hpp"
-
-BVH::BVHNode::BVHNode(
-            std::unique_ptr<BVHNode> leftChild,
-            std::unique_ptr<BVHNode> rightChild)
-        : m_aabb(bounds_union(leftChild->m_aabb.bounds(), rightChild->m_aabb.bounds()))
-        , m_left_child(std::move(leftChild))
-        , m_right_child(std::move(rightChild)) {
-}
-
-
+#include "../geometry/mesh.hpp"
 
 BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes) {
 
@@ -91,6 +82,22 @@ auto BVH::BVHNode::IntersectsFast(const Rayf& ray) const -> bool {
         return m_left_child->IntersectsFast(ray) || m_right_child->IntersectsFast(ray);
     }
     return m_aabb.IntersectsMeshFast(ray);
+}
+
+BVH::BVHNode::BVHNode(
+        std::unique_ptr<BVHNode> leftChild,
+        std::unique_ptr<BVHNode> rightChild)
+        : m_aabb(bounds_union(leftChild->m_aabb.bounds(), rightChild->m_aabb.bounds()))
+        , m_left_child(std::move(leftChild))
+        , m_right_child(std::move(rightChild)) {
+}
+
+BVH::BVHNode::BVHNode(AABB aabb)
+    : m_aabb(std::move(aabb)),
+      m_right_child(nullptr),
+      m_left_child(nullptr)
+{
+
 }
 
 auto 

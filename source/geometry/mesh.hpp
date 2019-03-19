@@ -3,7 +3,7 @@
 #include <vector>
 #include "triangle.hpp"
 #include <optional>
-#include "../acceleration/aabb.hpp"
+//#include "../acceleration/bvh.hpp"
 
 
 class Transform;
@@ -17,12 +17,12 @@ public:
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
     auto IntersectsFast(const Rayf& ray) const -> bool;
 
-	auto GetSurfaceArea() const -> float;
+	auto GetSurfaceArea() const -> FLOAT;
     auto calculate_bounds() const -> Bounds;
     auto TransformBy(std::shared_ptr<Transform> transform) -> void;
 
     //auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
-    auto GetMaterial() const -> const Material&;
+    //auto GetMaterial() const -> const Material&;
 
     auto SampleRandomTriangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
@@ -33,7 +33,7 @@ public:
 	//auto GetTransform() const -> const Transform& { return *m_transformToWorld; }
 
 
-    auto triangle_count() const -> std::size_t { return m_triangles.size(); }
+    auto triangle_count() const -> std::size_t;
 
     auto Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT;
 

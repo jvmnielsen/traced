@@ -28,9 +28,12 @@ class Matte : public Material
 {
 public:
 
+    explicit Matte(Color3f attenuation = Color3f{0.68}) : m_attenuation(attenuation) {}
+
     auto Evaluate(const Normal3f& wo, const Normal3f& wi) const -> Color3f override;
 
-    Color3f m_attenuation = Color3f{ 0.78 };
+private:
+    Color3f m_attenuation;
 };
 
 class Emissive : public Matte

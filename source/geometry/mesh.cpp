@@ -90,20 +90,12 @@ Mesh::calculate_bounds() const -> Bounds {
 }
 
 auto
-Mesh::GetSurfaceArea() const -> float
-{
+Mesh::GetSurfaceArea() const -> FLOAT {
     auto sum = 0.0;
     for (const auto& triangle : m_triangles)
         sum += triangle.GetArea();
 
     return sum;
-}
-
-
-auto
-Mesh::GetMaterial() const -> const Material&
-{
-    return *m_material;
 }
 
 auto
@@ -221,4 +213,8 @@ Mesh::assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bo
 
 auto Mesh::generate_internal_aabbs() const ->std::vector<AABB> {
     return assign_triangles_to_internal_bounds(generate_internal_bounding_boxes());
+}
+
+auto Mesh::triangle_count() const -> std::size_t {
+    return m_triangles.size();
 }

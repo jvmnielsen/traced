@@ -11,8 +11,10 @@
 #include <thread>
 #include "math/transform.hpp"
 
+/*
 auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
 {
+
     Parser parser;
     auto cube1 = parser.GetMeshFromFile("assets/cube.obj"); // NOTE: windows and unix paths differ
     auto cube2 = parser.GetMeshFromFile("assets/cube.obj");
@@ -70,7 +72,6 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
     ceilingTransform->Scale({10.0, 10.0, 10.0});
     ceiling->TransformBy(std::move(ceilingTransform));
 
-    /*
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>();
     green->m_attenuation = Color3f{0.3, 0.8, 0.3};
@@ -85,7 +86,7 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
     ceiling->ApplyMaterial(matte);
 
     auto light = std::make_shared<Emissive>();
-    lightSource->ApplyMaterial(light); */
+    lightSource->ApplyMaterial(light);
 
 
     std::vector<std::unique_ptr<Mesh>> meshes;
@@ -107,7 +108,7 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
                              Vec3f(0.0f, 1.0f, 0.0f), 40.0f, float(600) / float(600));
 
     return std::make_tuple(std::move(scene), std::move(camera));
-}
+} */
 
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[]) {
@@ -115,17 +116,23 @@ int main(int argc, char * argv[]) {
     constexpr unsigned int SCREEN_WIDTH = 600;
     constexpr unsigned int SCREEN_HEIGHT = 600;
 
-    Timer timer{std::string("test took ")};
+    auto matte = std::make_shared<Matte>();
+    auto green = std::make_shared<Matte>(Color3f{0.3, 0.8, 0.3});
+    auto red = std::make_shared<Matte>(Color3f{0.8, 0.3, 0.3});
+    auto light = std::make_shared<Emissive>();
+
+    const auto cube = "../assets/cube.obj";
+    const auto plane = "../assets/plane.obj";
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.GetMeshFromFile("assets/cube.obj");
-    auto lightSource = parser.GetMeshFromFile("assets/plane.obj");
-    auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto rightWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto leftWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto backWall = parser.GetMeshFromFile("assets/plane.obj");
-    auto ceiling = parser.GetMeshFromFile("assets/plane.obj");
+    auto cube1 = parser.construct_mesh_from_file(cube, green);
+    auto lightSource = parser.construct_mesh_from_file(plane, light);
+    auto floor = parser.construct_mesh_from_file(plane, matte);
+    auto rightWall = parser.construct_mesh_from_file(plane, matte);
+    auto leftWall = parser.construct_mesh_from_file(plane, matte);
+    auto backWall = parser.construct_mesh_from_file(plane, matte);
+    auto ceiling = parser.construct_mesh_from_file(plane, matte);
 
 
     auto cube1Transform = std::make_unique<Transform>();
@@ -166,22 +173,7 @@ int main(int argc, char * argv[]) {
     lightTransform->Scale({3., 3.0, 3.0});
     lightSource->TransformBy(std::move(lightTransform));
 
-    /*
-    auto light = std::make_shared<Emissive>();
-    lightSource->ApplyMaterial(light);
 
-    auto matte = std::make_shared<Matte>();
-    auto green = std::make_shared<Matte>();
-    green->m_attenuation = Color3f{0.3, 0.8, 0.3};
-    auto red = std::make_shared<Matte>();
-    red->m_attenuation = Color3f{0.8, 0.3, 0.3};
-    cube1->ApplyMaterial(green);
-    floor->ApplyMaterial(matte);
-    rightWall->ApplyMaterial(red);
-    leftWall->ApplyMaterial(green);
-    backWall->ApplyMaterial(matte);
-    ceiling->ApplyMaterial(matte);
-    */
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<std::unique_ptr<Mesh>> lights;
@@ -207,7 +199,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 10 };
+    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

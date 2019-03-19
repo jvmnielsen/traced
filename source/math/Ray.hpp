@@ -33,9 +33,9 @@ public:
     auto direction() const -> const Normal3<T>& { return m_direction; }
     auto point_at_parameter(const T t) const -> Point3<T> { return m_origin + m_direction * t; }
 
-    auto update_max_parameter(const T maxParam) const -> void   { m_max_param = maxParam; }
+    auto update_max_parameter(const T max_param) const -> void   { m_max_param = max_param; }
     auto max_parameter()                        const -> T      { return m_max_param; }
-    auto min_parameter()                        const -> T      { return m_minParam; }
+    auto min_parameter()                        const -> T      { return m_min_param; }
     
     auto within_bounds(const T parameter)      const -> bool    { return parameter < m_max_param && parameter > m_min_param; }
     auto within_upper_bound(const T parameter) const -> bool    { return parameter < m_max_param; }

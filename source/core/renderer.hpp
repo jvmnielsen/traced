@@ -23,8 +23,6 @@ public:
 
 private:
 
-    std::mutex m_mutex;
-    
     struct ScreenSegment {
         ScreenSegment(Point2i lower, Point2i upper, size_t _index) : lowerBound(std::move(lower)), upperBound(std::move(upper)), index(_index) {}
         Point2i lowerBound;

@@ -1,7 +1,7 @@
 #pragma once
 #include "vec2.hpp"
 #include "math_util.hpp"
-#include "Vec3.hpp"
+#include "vec3.hpp"
 
 
 template<typename T>

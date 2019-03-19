@@ -1,20 +1,14 @@
 #pragma once
 
-#include "../math/point3.hpp"
-#include "../math/math_util.hpp"
-//#include "../geometry/mesh.hpp"
 #include <optional>
+#include "bounds.hpp"
 #include "../math/ray.hpp"
-#include "../core/intersection.hpp"
-#include "../geometry/bounds.hpp"
 
-//class Bounds;
-class Triangle;
+class Intersection;
 class Mesh;
 
 // Axis-aligned bounding-box
-class AABB
-{
+class AABB {
 public:
 
     explicit AABB(std::unique_ptr<Mesh> mesh);
@@ -35,7 +29,6 @@ public:
     auto bounds()        const -> const Bounds&;
     auto GetShape()         const -> const Mesh&;
 
-    auto SetMesh(std::unique_ptr<Mesh> mesh) { m_mesh = std::move(mesh); }
     //auto DoesNotContainMesh() const -> bool;
 
     auto center() const -> const Point3f&;

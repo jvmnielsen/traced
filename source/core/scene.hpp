@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include <optional>
-#include "../acceleration/bvh.hpp"
+#include "../geometry/mesh.hpp"
 
 class Scene
 {

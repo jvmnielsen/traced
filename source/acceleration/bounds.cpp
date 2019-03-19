@@ -1,7 +1,5 @@
 #include "bounds.hpp"
 
-
-
 auto
 Bounds::Diagonal() const -> Vec3f {
     return {m_upper - m_lower};

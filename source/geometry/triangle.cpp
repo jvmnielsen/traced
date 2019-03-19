@@ -1,8 +1,7 @@
 #include "triangle.hpp"
 #include <cmath>
-#include "../core/intersection.hpp"
-#include "../math/transform.hpp"
 #include <numeric>
+#include "../acceleration/bounds.hpp"
 
 Triangle::Triangle(
     std::array<Point3f, 3>     vertices,

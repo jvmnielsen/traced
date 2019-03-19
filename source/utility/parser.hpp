@@ -7,12 +7,14 @@
 class Parser
 {
 public:
-	std::unique_ptr<Mesh> GetMeshFromFile(const std::string& filename);
+	//auto GetMeshFromFile(const std::string& filename) -> std::unique_ptr<Mesh>;
+
+	auto construct_mesh_from_file(const std::string& filename, std::shared_ptr<Material> material) -> std::unique_ptr<Mesh>;
 
 private:
-	void ParseFile(const std::string& filename);
-	std::unique_ptr<Mesh> ConstructMesh();
-    void Reset();
+	auto parse_file(const std::string& filename) -> void;
+	auto construct_mesh(std::shared_ptr<Material> material) -> std::unique_ptr<Mesh>;
+    auto reset() -> void;
 
 	std::vector<Point3f> m_vertex;
 	std::vector<Point2f> m_texture_coord;

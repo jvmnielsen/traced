@@ -4,7 +4,7 @@
 #include "aabb.hpp"
 #include <functional>
 #include "../geometry/mesh.hpp"
-#include "../geometry/bounds.hpp"
+
 
 AABB::AABB(std::unique_ptr<Mesh> mesh)
     : m_bounds(mesh->calculate_bounds()),

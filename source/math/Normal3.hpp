@@ -21,7 +21,7 @@ public:
     auto z() const -> T { return m_elements[2]; }
 
     auto length_squared() const -> T {
-        return x * x + y * y + z * z;
+        return x() * x() + y() * y() + z() * z();
     }
 
     auto length() const -> T {
@@ -37,7 +37,7 @@ public:
     }
 
     auto operator!=(const Normal3& other) const -> bool {
-        return x != other.x() || y != other.y() || z != other.z();
+        return x() != other.x() || y() != other.y() || z() != other.z();
     }
 
     auto operator[](const std::size_t i) const -> T {

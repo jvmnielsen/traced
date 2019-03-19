@@ -1,6 +1,6 @@
 #pragma once
 #include "../math/point3.hpp"
-
+//#include "../geometry/mesh.hpp"
 
 class Bounds {
 
@@ -30,10 +30,10 @@ public:
     auto operator[](const std::size_t i) -> Point3f&;
 };
 
-auto bounds_union(const Bounds& b1, const Bounds& b2) -> Bounds {
+auto inline bounds_union(const Bounds& b1, const Bounds& b2) -> Bounds {
     return {elementwise_min(b1.lower(), b2.lower()), elementwise_max(b1.upper(), b2.upper())};
 }
 
-auto point_union(const Bounds& b, const Point3f& p) -> Bounds {
+auto inline point_union(const Bounds& b, const Point3f& p) -> Bounds {
     return {elementwise_min(b.lower(), p), elementwise_max(b.upper(), p)};
 }

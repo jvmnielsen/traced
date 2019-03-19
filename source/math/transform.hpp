@@ -4,7 +4,6 @@
 #include "vec3.hpp"
 #include "point3.hpp"
 #include "normal3.hpp"
-//#include "../math/math_util.hpp"
 
 class Transform
 {
