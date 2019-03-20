@@ -15,7 +15,7 @@ public:
         std::unique_ptr<Scene> scene,
         std::shared_ptr<ImageBuffer> buffer);
 
-    auto Render(int samplesPerPixel) -> void;
+    auto render(int samples_per_pixel) -> void;
     //auto RenderProgressive() -> void;
 
 

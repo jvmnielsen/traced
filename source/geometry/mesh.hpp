@@ -26,7 +26,7 @@ public:
 
     auto SampleRandomTriangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
-    auto SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, FLOAT, Color3f>;
+    auto sample_as_light(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Vec3f, FLOAT, Color3f>;
     auto Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     //auto GetPreTransformedPoint(const Point3f& p) const -> Point3f;
@@ -35,7 +35,7 @@ public:
 
     auto triangle_count() const -> std::size_t;
 
-    auto Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT;
+    auto Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT;
 
     //auto HasInternalBoundingBoxes() const -> bool { return !m_internalBoundingBoxes.empty(); }
 

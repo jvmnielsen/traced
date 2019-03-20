@@ -11,10 +11,10 @@ class Material {
 public:
     Material() = default;
 
-    virtual auto Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f>;
-    virtual auto Evaluate(const Normal3f& wo, const Normal3f& wi) const                           -> Color3f = 0;
-            auto Pdf(const Intersection& isect, const Normal3f& wi) const                                -> FLOAT;
-    virtual auto Emitted(const Intersection& isect, const Normal3f& dir) const                       -> Color3f;
+    virtual auto Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>;
+    virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                           -> Color3f = 0;
+            auto Pdf(const Intersection& isect, const Vec3f& wi) const                                -> FLOAT;
+    virtual auto Emitted(const Intersection& isect, const Vec3f& dir) const                       -> Color3f;
 
     //auto LocalToWorld(const Normal3f& n) const -> Normal3f;
     //auto WorldToLocal(const Normal3f& n) const -> Normal3f;
@@ -30,7 +30,7 @@ public:
 
     explicit Matte(Color3f attenuation = Color3f{0.68}) : m_attenuation(attenuation) {}
 
-    auto Evaluate(const Normal3f& wo, const Normal3f& wi) const -> Color3f override;
+    auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
 
 private:
     Color3f m_attenuation;
@@ -45,7 +45,7 @@ public:
     //auto Emitted() const -> Color3f override;
     
 
-    auto Emitted(const Intersection& isect, const Normal3f& dir) const -> Color3f override;
+    auto Emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f override;
 
     Color3f m_radiance = Color3f{1.0};
 

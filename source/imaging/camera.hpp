@@ -11,13 +11,13 @@ public:
     ~Camera() = default;
 
     Camera(float v_fov, float aspect);
-    Camera(const Point3f& look_from, const Point3f& look_at, const Normal3f& v_up, const float v_fov, const float aspect);
+    Camera(const Point3f& look_from, const Point3f& look_at, const Vec3f& v_up, const float v_fov, const float aspect);
 
-    Rayf GetRay(double u, double v) const;
+    Rayf get_ray(double u, double v) const;
 
 private:
     Point3f m_origin;
-    Point3f m_lowerLeftCorner;
+    Point3f m_lower_left_corner;
     Vec3f m_horizontal;
     Vec3f m_vertical;
 };

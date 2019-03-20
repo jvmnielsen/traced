@@ -7,22 +7,19 @@ struct Normal3;
 
 template<typename T>
 class Vec3 {
-
-    std::array<T, 3> m_elements;//T x, y, z;
-
 public:
 
     Vec3() = default;
    
-    explicit Vec3(T val) : m_elements({val, val, val}) {} // x(val), y(val), z(val) {}
+    explicit Vec3(T val) : m_x(val), m_y(val), m_z(val) {}
 
-    Vec3(T x, T y, T z) : m_elements({x, y, z}) {} //x(x_), y(y_), z(z_) {}
+    Vec3(T x, T y, T z) : m_x(x), m_y(y), m_z(z) {}
 
-    Vec3(const Normal3<T>& n) : m_elements({n.x(), n.y(), n.z()}) { }
+    //Vec3(const Normal3<T>& n) : m_elements({n.x(), n.y(), n.z()}) { }
 
-    auto x() const -> T { return m_elements[0]; }
-    auto y() const -> T { return m_elements[1]; }
-    auto z() const -> T { return m_elements[2]; }
+    auto x() const -> T { return m_x; }
+    auto y() const -> T { return m_y; }
+    auto z() const -> T { return m_z; }
 
     auto length_squared() const -> T {
         return x() * x() + y() * y() + z() * z();
@@ -62,13 +59,33 @@ public:
 
     // Accessors
     auto operator[](const uint8_t i) const -> T {
-        return m_elements.at(i);
+        return (&m_x)[i];
     }
 
     auto operator[](const uint8_t i) -> T& {
-        return m_elements.at(i);
+        return (&m_x)[i];
     }
+
+    auto normalize() const -> Vec3 {
+        return *this / length();
+    }
+
+    auto is_normalized() -> bool {
+        return std::abs(1 - length()) < Math::Constants::Epsilon;
+    }
+
+    static auto zero() -> Vec3 {
+        return Vec3{0};
+    }
+
+private:
+    T m_x, m_y, m_z;
 };
+
+template<typename T>
+auto normalize(const Vec3<T>& vec) -> Vec3<T> {
+    return vec.length() == 0 ? Vec3<T>::zero() : vec / vec.length();
+}
 
 template<typename T>
 auto operator*(const T factor, const Vec3<T>& vec) -> Vec3<T>

@@ -1,17 +1,15 @@
 #include "onb.hpp"
 
-ONB::ONB(const Normal3f& normal) {
+ONB::ONB(const Vec3f& normal) {
 
     m_basis[2] = normal;
 
-    Vec3f tmp;
+    Vec3f a;
     if (std::abs(normal.x()) > 0.9) { // is the normal the x-axis?
-        tmp = Vec3f{0.0, 1.0, 0.0};
+        a = Vec3f{0.0, 1.0, 0.0};
     } else {
-        tmp = Vec3f{1.0, 0.0, 0.0};
+        a = Vec3f{1.0, 0.0, 0.0};
     }
-
-    const auto a = Normal3f{tmp};
 
     m_basis[1] = cross(m_basis[2], a);
     m_basis[0] = cross(m_basis[1], m_basis[2]);
@@ -36,7 +34,7 @@ ONB::LocalToWorld(const Normal3f& n) const -> Vec3f {
 } */
 
 auto
-ONB::operator[](int i) const -> const Normal3f&
+ONB::operator[](int i) const -> const Vec3f&
 {
     return m_basis[i];
 } 

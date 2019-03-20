@@ -9,7 +9,7 @@ Sampler::Sampler()
 
 auto
 Sampler::GetRandomReal() -> float {
-    return m_realDist(m_gen);
+    return m_real_dist(m_gen);
 }
 
 auto
@@ -44,7 +44,7 @@ Sampler::SampleDisk() -> Point2f {
 }
 
 auto 
-Sampler::CosineSampleHemisphere() -> Normal3f {
+Sampler::CosineSampleHemisphere() -> Vec3f {
     
     //const auto p = SampleDisk();
     //FLOAT z = std::sqrt(std::max((FLOAT)0, 1 - p.x * p.x - p.y * p.y));
@@ -57,7 +57,7 @@ Sampler::CosineSampleHemisphere() -> Normal3f {
     const auto phi = 2 * Math::Constants::Pi * r1;
     const auto x = std::cos(phi) * 2 * std::sqrt(r2);
     const auto y = std::sin(phi) * 2 * std::sqrt(r2);
-    return Normal3f{Vec3f{ x, y, z }};
+    return { x, y, z };
 
     //return basis.ConvertToLocal(sampled); */
 

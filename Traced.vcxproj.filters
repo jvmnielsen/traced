@@ -325,11 +325,11 @@
     <ClInclude Include="functional_utility.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="source\geometry\bounds.hpp">
-      <Filter>geometry</Filter>
-    </ClInclude>
     <ClInclude Include="source\math\normal3.hpp">
       <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\acceleration\bounds.hpp">
+      <Filter>acceleration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -414,8 +414,8 @@
     <ClCompile Include="source\material\emissive.cpp">
       <Filter>material</Filter>
     </ClCompile>
-    <ClCompile Include="source\geometry\bounds.cpp">
-      <Filter>geometry</Filter>
+    <ClCompile Include="source\acceleration\bounds.cpp">
+      <Filter>acceleration</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

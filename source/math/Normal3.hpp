@@ -1,6 +1,8 @@
 #pragma once
 #include "vec3.hpp"
 
+/*
+
 template<typename T>
 class Normal3 {
 public:
@@ -80,4 +82,4 @@ auto same_hemisphere(const Normal3<T>& u, const Normal3<T>& v) -> bool {
 
 typedef Normal3<FLOAT> Normal3f;
 typedef Normal3<int> Normal3i;
-//typedef Normal3<double> Normal3d;
+//typedef Normal3<double> Normal3d; */

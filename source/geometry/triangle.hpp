@@ -10,18 +10,18 @@ class Triangle
 public:
 
     Triangle(std::array<Point3f, 3>     vertices,
-             std::array<Normal3f, 3>    vertexNormals,
+             std::array<Vec3f, 3>    vertex_normals,
              std::array<Point2f, 3>     uv);
 
     Triangle(std::array<Point3f, 3>     vertices,
-             std::array<Normal3f, 3>    vertexNormals);
+             std::array<Vec3f, 3>    vertex_normals);
 
     //bool Intersects(const Rayf &ray, Intersection& isect);
     bool IntersectsFast(const Rayf& ray) const;
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
 
 
-    auto InterpolateNormalAt(const Point2f& uv) const -> Normal3f;
+    auto InterpolateNormalAt(const Point2f& uv) const -> Vec3f;
 
     auto TransformBy(const Transform& transform) -> void;
 
@@ -43,8 +43,8 @@ public:
 
 private:
     std::array<Point3f, 3>      m_vertices;         // Three points making up the triangle
-    std::array<Normal3f, 3>     m_vertexNormals;    // Normal at each vertex, used to interpolate a normal across the face
-    Normal3f                    m_faceNormal;       // In cases where vertex normals are not available, use face normal
+    std::array<Vec3f, 3>        m_vertex_normals;    // Normal at each vertex, used to interpolate a normal across the face
+    Vec3f                       m_face_normal;       // In cases where vertex normals are not available, use face normal
     std::array<Vec3f, 2>        m_edges;            // Pre-calculated for use in Intercept function
     std::array<Point2f, 3>      m_uv;               // Texture coordinates
 

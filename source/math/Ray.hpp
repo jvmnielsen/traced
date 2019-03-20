@@ -12,13 +12,13 @@ class Ray
 public:
     Ray() = default;
 
-    Ray(const Point3<T>& origin,
-        const Normal3<T>& direction,
+    Ray(Point3<T> origin,
+        Vec3<T> direction,
         const T maxParam = Math::Constants::MaxFloat,
         const T minParam = 0.0001,
         const RayType& rayType = RayType::PrimaryRay)
-        : m_origin(origin)
-        , m_direction(direction)
+        : m_origin(std::move(origin))
+        , m_direction(std::move(direction))
         , m_max_param(maxParam)
         , m_min_param(minParam)
         , m_ray_type(rayType)
@@ -30,7 +30,7 @@ public:
     }
 
     auto origin() const -> const Point3<T>& { return m_origin; }
-    auto direction() const -> const Normal3<T>& { return m_direction; }
+    auto direction() const -> const Vec3<T>& { return m_direction; }
     auto point_at_parameter(const T t) const -> Point3<T> { return m_origin + m_direction * t; }
 
     auto update_max_parameter(const T max_param) const -> void   { m_max_param = max_param; }
@@ -47,7 +47,7 @@ public:
 
 private:
     Point3<T> m_origin;
-    Normal3<T> m_direction;
+    Vec3<T> m_direction;
     RayType m_ray_type;
 
     mutable T m_max_param;

@@ -121,8 +121,13 @@ int main(int argc, char * argv[]) {
     auto red = std::make_shared<Matte>(Color3f{0.8, 0.3, 0.3});
     auto light = std::make_shared<Emissive>();
 
+#ifdef _MSC_VER
+    const auto cube = "assets/cube.obj";
+    const auto plane = "assets/plane.obj";
+#else 
     const auto cube = "../assets/cube.obj";
     const auto plane = "../assets/plane.obj";
+#endif
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
@@ -136,7 +141,7 @@ int main(int argc, char * argv[]) {
 
 
     auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0, 0.0, -2.0});// .Rotate({0,1,0}, 60);// .Scale(Vec3f{1.2});
+    cube1Transform->Translate({0,1.7, -2.0}).Rotate({0,1,0}, 60);//.Scale(Vec3f{10.2});
     cube1->TransformBy(std::move(cube1Transform));
 
     auto floorTransform = std::make_unique<Transform>();
@@ -188,10 +193,10 @@ int main(int argc, char * argv[]) {
     lights.push_back(std::move(lightSource));
 
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
-    scene->SetBackgroundColor(Color3f{0.0f});
+    scene->set_background_color(Color3f{0.0f});
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 5.0f, 3.0f), Point3f(0.0f, 0.0f, -3.0f),
-                            Vec3f(0.0f, 1.0f, 0.0f), 55.0f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Point3f(0.0f, 3.0f, 40.0f), Point3f(0.0f, 0.0f, -1.0f),
+                            Vec3f(0.0f, 1.0f, 0.0f), 55.0f, static_cast<double>(SCREEN_WIDTH) / static_cast<double>(SCREEN_HEIGHT));
 
     //auto [scene, camera] = CornellBox();
     
@@ -199,7 +204,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::Render, std::ref(renderer), 1 };
+    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 10 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

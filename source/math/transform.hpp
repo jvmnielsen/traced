@@ -25,13 +25,17 @@ public:
     auto Scale(const Vec3f& vec) -> Transform&;
     auto Rotate(const Vec3f& axis, float angle) -> Transform&;
 
-    auto operator()(const Point3f& point) const -> Point3f;
-    auto operator()(const Vec3f& vec) const -> Vec3f;
-    auto operator()(const Normal3f& normal) const -> Normal3f;
+    auto apply_to_point(const Point3f& point) const -> Point3f;
+    auto apply_to_vector(const Vec3f& vec) const -> Vec3f;
+    auto apply_to_normal(const Vec3f& normal) const -> Vec3f;
 
-    auto Inverse(const Point3f& p) const -> Point3f;
-    auto Inverse(const Vec3f& p) const -> Vec3f;
-    auto Inverse(const Normal3f& p) const -> Normal3f;
+    //auto operator()(const Point3f& point) const -> Point3f;
+    //auto operator()(const Vec3f& vec) const -> Vec3f;
+    //auto operator()(const Normal3f& normal) const -> Normal3f;
+
+    //auto Inverse(const Point3f& p) const -> Point3f;
+    //auto Inverse(const Vec3f& p) const -> Vec3f;
+    //auto Inverse(const Normal3f& p) const -> Normal3f;
     //auto Inverse() const -> Transform;
 
     Matrix4x4f m_matrix;

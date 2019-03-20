@@ -6,9 +6,9 @@
 class ONB {
 public:
 
-    explicit ONB(const Normal3f& normal);
+    explicit ONB(const Vec3f& normal);
     
-    auto operator[](int i) const -> const Normal3f&;
+    auto operator[](int i) const -> const Vec3f&;
     auto convert_to_local(const Vec3f& vec) const -> Vec3f;
     //auto ConvertFromLocal()
 
@@ -16,12 +16,12 @@ public:
     //auto WorldToLocal(const Normal3f& n) const -> Vec3f;
     //auto LocalToWorld(const Normal3f& n) const -> Vec3f;
 
-    auto w() const -> const Normal3f& { return m_basis[2]; }
-    auto v() const -> const Normal3f& { return m_basis[1]; }
-    auto u() const -> const Normal3f& { return m_basis[0]; }
+    auto w() const -> const Vec3f& { return m_basis[2]; }
+    auto v() const -> const Vec3f& { return m_basis[1]; }
+    auto u() const -> const Vec3f& { return m_basis[0]; }
     
 
 private:
-    std::array<Normal3f, 3> m_basis;
+    std::array<Vec3f, 3> m_basis;
 };
 

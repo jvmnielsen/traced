@@ -40,6 +40,9 @@ auto Parser::parse_file(const std::string& filename) -> void {
 
 	std::ifstream infile(filename);
 
+    if (!infile)
+        std::cout << "Could not open file: " << filename << '\n';
+
 	std::string line;
 
 	while (getline(infile, line))
@@ -102,7 +105,7 @@ auto Parser::construct_mesh(std::shared_ptr<Material> material) -> std::unique_p
 						m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
 						m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
 				},
-				std::array<Normal3f, 3> {
+				std::array<Vec3f, 3> {
 						m_normals.at(m_normal_ordering.at(i    ) - 1),
 						m_normals.at(m_normal_ordering.at(i + 1) - 1),
 						m_normals.at(m_normal_ordering.at(i + 2) - 1),

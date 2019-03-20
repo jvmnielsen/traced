@@ -81,27 +81,27 @@ Renderer::RenderProgressive() -> void {
 
 
 auto
-Renderer::Render(int samplesPerPixel) -> void {
+Renderer::render(int samples_per_pixel) -> void {
 
     Timer timer{std::string{"Main render loop: "}};
 
     std::vector<ScreenSegment> segments;
 
-    const auto numSegments = std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
-    const auto totalSegments = numSegments * numSegments;
+    const auto num_segments = std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
+    const auto total_segments = num_segments * num_segments;
 
-    std::cout << "Rendering " << totalSegments << " total segments" << std::endl;
+    std::cout << "Rendering " << total_segments << " total segments" << std::endl;
 
-    segments.reserve(totalSegments);
+    segments.reserve(total_segments);
 
-    const auto widthInterval = m_buffer->GetWidth() / numSegments;
-    const auto heightInterval = m_buffer->GetHeight() / numSegments;
+    const auto width_interval = m_buffer->GetWidth() / num_segments;
+    const auto heightInterval = m_buffer->GetHeight() / num_segments;
 
-    for (int i = 0; i < numSegments; ++i) {
-        for (int j = 0; j < numSegments; ++j) {
+    for (int i = 0; i < num_segments; ++i) {
+        for (int j = 0; j < num_segments; ++j) {
             segments.emplace_back(
-                ScreenSegment(Point2i(widthInterval * j, m_buffer->GetHeight() - heightInterval * (i + 1)),
-                Point2i(widthInterval * (j + 1), m_buffer->GetHeight() - heightInterval * i), numSegments * i + j)
+                ScreenSegment(Point2i(width_interval * j, m_buffer->GetHeight() - heightInterval * (i + 1)),
+                Point2i(width_interval * (j + 1), m_buffer->GetHeight() - heightInterval * i), num_segments * i + j)
                 //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
             );
         }
@@ -116,7 +116,7 @@ Renderer::Render(int samplesPerPixel) -> void {
     }
 
     for (auto& segment : segments) {
-        futures.emplace_back(std::async([this, &segment, samplesPerPixel] { return RenderScreenSegment(segment, samplesPerPixel); })); // parallelize
+        futures.emplace_back(std::async([this, &segment, samples_per_pixel] { return RenderScreenSegment(segment, samples_per_pixel); })); // parallelize
     }
     /*
     for (size_t v = 0; v < futures.size(); ++v) {
@@ -163,7 +163,7 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
                 const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetWidth());
                 const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetHeight());
 
-                auto ray = m_camera->GetRay(u, v);
+                auto ray = m_camera->get_ray(u, v);
 
                 color += OutgoingLight(ray, sampler);
                 //color += de_nan(tmp);
@@ -195,7 +195,7 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 
     for (int bounces = 0; bounces < 2; ++bounces) { 
 
-        auto isect = m_scene->Intersects(ray);
+        auto isect = m_scene->intersects(ray);
 
 		if (!isect.has_value()) {
             break;
@@ -204,17 +204,17 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
         auto wo = -ray.direction();
 
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->Emitted(wo);
+            color += throughput * isect->emitted(wo);
         }
 
-        color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
+        color += throughput * m_scene->sample_one_light(*isect, wo, sampler);
 
 
-        auto [wi, pdf, f] = isect->SampleMaterial(wo, sampler);
+        auto [wi, pdf, f] = isect->sample_material(wo, sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
 
-        throughput = throughput * std::abs(dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
+        throughput = throughput * std::abs(dot(wi, isect->get_shading_normal())) * f / pdf; // TODO: overload *=
 
 
         ray = Rayf{ isect->GetPoint(), wi };

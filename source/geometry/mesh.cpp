@@ -104,28 +104,36 @@ Mesh::SampleRandomTriangle(Sampler& sampler) const -> std::tuple<Intersection, F
     return randTriangle.SampleSurface(sampler);
 }
 
+
+
 auto
 Mesh::Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
-    auto [sampledIsect, pdf] = SampleRandomTriangle(sampler);
-    const auto wi = Normal3f(sampledIsect.GetPoint() - ref.GetPoint());
+    auto [sampledIsect, pdfs] = SampleRandomTriangle(sampler);
+    const auto wi = normalize(sampledIsect.GetPoint() - ref.GetPoint());
+
+    
 
     sampledIsect.SetMeshAndMaterial(this, m_material.get());
 
-    const auto denom = std::abs(dot(sampledIsect.GetGeometricNormal(), -wi)) * GetSurfaceArea();
+    FLOAT pdf;
+
+    const auto denom = std::abs(dot(sampledIsect.get_geometric_normal(), -wi)) * GetSurfaceArea();
 
     if (denom != 0.0)
-        pdf *= (sampledIsect.GetPoint() - ref.GetPoint()).length_squared() / denom;
+        pdf = (sampledIsect.GetPoint() - ref.GetPoint()).length_squared() / denom; 
 
     return std::make_tuple(sampledIsect, pdf);
 
 }
 
-auto 
-Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Normal3f, FLOAT, Color3f>
-{
-    const auto [sampledIsect, pdf] = Sample(ref, sampler);
+auto Mesh::sample_as_light(const Intersection& ref,
+    Sampler& sampler) const -> std::tuple<Intersection, Vec3f, double, Color3f> {
+    
+    const auto[sampledIsect, pdfs] = SampleRandomTriangle(sampler);
 
-    const auto wi = Normal3f(sampledIsect.GetPoint() - ref.GetPoint());
+    const auto wi = normalize(sampledIsect.GetPoint() - ref.GetPoint());
+
+    const auto pdf = m_surface_area;
 
     if (pdf == 0)
         return std::make_tuple(sampledIsect, wi, pdf, Color3f::Black());
@@ -135,13 +143,13 @@ Mesh::SampleAsLight(const Intersection& ref, Sampler& sampler) const -> std::tup
 
 
 auto
-Mesh::Pdf(const Intersection& ref, const Normal3f& wi) const -> FLOAT {
+Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT {
     
     Ray ray = Rayf{ref.GetPoint(), wi};
     auto isect = Intersects(ray);
     if (isect.has_value()) {
 
-        const auto denom = std::abs(dot(isect->GetGeometricNormal(), -wi)) * GetSurfaceArea();
+        const auto denom = std::abs(dot(isect->get_geometric_normal(), -wi)) * GetSurfaceArea();
 
         if (denom == 0)
             return 0;

@@ -5,20 +5,20 @@
 
 Triangle::Triangle(
     std::array<Point3f, 3>     vertices,
-    std::array<Normal3f, 3>    vertexNormals,
+    std::array<Vec3f, 3>        vertex_normals,
     std::array<Point2f, 3>     uv)
         : m_vertices(std::move(vertices))
-        , m_vertexNormals(std::move(vertexNormals))
+        , m_vertex_normals(std::move(vertex_normals))
         , m_uv(std::move(uv))
 {
     UpdateEdges();
 }
 
 Triangle::Triangle(
-    std::array<Point3f, 3>     vertices,
-    std::array<Normal3f, 3>    vertexNormals)
+    std::array<Point3f, 3>  vertices,
+    std::array<Vec3f, 3>    vertex_normals)
         : m_vertices(std::move(vertices))
-        , m_vertexNormals(std::move(vertexNormals))
+        , m_vertex_normals(std::move(vertex_normals))
 {
     UpdateEdges();
 }
@@ -29,7 +29,7 @@ Triangle::UpdateEdges() -> void
 {
     m_edges[0]   = m_vertices[1] - m_vertices[0];
     m_edges[1]   = m_vertices[2] - m_vertices[0];
-    m_faceNormal = Normal3f(cross(m_edges[0], m_edges[1]));
+    m_face_normal = cross(m_edges[0], m_edges[1]).normalize();
 }
 
 /*
@@ -135,27 +135,27 @@ Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
     //const auto shaded = InterpolateNormalAt(barycentric);
 
-    return Intersection{ ray.point_at_parameter(parameter), barycentric, m_faceNormal, InterpolateNormalAt(barycentric) };
+    return Intersection{ ray.point_at_parameter(parameter), barycentric, m_face_normal, InterpolateNormalAt(barycentric) };
 }
 
 auto 
-Triangle::InterpolateNormalAt(const Point2f& uv) const -> Normal3f {
+Triangle::InterpolateNormalAt(const Point2f& uv) const -> Vec3f {
 
-    const auto normal =   m_vertexNormals[0] * (1 - uv.x - uv.y)
-                        + m_vertexNormals[1] * uv.x
-                        + m_vertexNormals[2] * uv.y;
+    const auto normal =   m_vertex_normals[0] * (1 - uv.x - uv.y)
+                        + m_vertex_normals[1] * uv.x
+                        + m_vertex_normals[2] * uv.y;
 
-    return Normal3f(normal);
+    return normalize(normal);
 }
 
 auto
 Triangle::TransformBy(const Transform& transform) -> void
 {
     for (auto& vertex : m_vertices)
-        vertex = transform(vertex);
+        vertex = transform.apply_to_point(vertex);
 
-    for (auto& normal : m_vertexNormals)
-        normal = transform(normal);
+    for (auto& normal : m_vertex_normals)
+        normal = transform.apply_to_normal(normal);
 
     // precompute again
     UpdateEdges();
@@ -164,6 +164,7 @@ Triangle::TransformBy(const Transform& transform) -> void
 auto 
 Triangle::GetArea() const -> FLOAT {
     return 0.5f * cross(m_edges[0], m_edges[1]).length();
+    //return area < 1 ? 1 : area;
 }
 
 auto
@@ -185,7 +186,7 @@ Triangle::SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOA
     //pdf = 1 / GetArea(); // TODO: figure out if this should be for triangle or whole mesh
     //const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
     const auto uv = sampler.UniformSampleTriangle();
-    return std::make_tuple(Intersection{ GetPointFromUV(uv), uv, m_faceNormal, InterpolateNormalAt(uv) }, 1 / GetArea());
+    return std::make_tuple(Intersection{ GetPointFromUV(uv), uv, m_face_normal, InterpolateNormalAt(uv) }, 1 / GetArea());
 }
 
 auto 

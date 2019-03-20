@@ -142,12 +142,12 @@
   <ItemGroup>
     <ClInclude Include="functional_utility.hpp" />
     <ClInclude Include="source\acceleration\aabb.hpp" />
+    <ClInclude Include="source\acceleration\bounds.hpp" />
     <ClInclude Include="source\acceleration\bvh.hpp" />
     <ClInclude Include="source\core\intersection.hpp" />
     <ClInclude Include="source\core\renderer.hpp" />
     <ClInclude Include="source\core\sampler.hpp" />
     <ClInclude Include="source\core\scene.hpp" />
-    <ClInclude Include="source\geometry\bounds.hpp" />
     <ClInclude Include="source\geometry\mesh.hpp" />
     <ClInclude Include="source\geometry\triangle.hpp" />
     <ClInclude Include="source\imaging\camera.hpp" />
@@ -253,12 +253,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\acceleration\aabb.cpp" />
+    <ClCompile Include="source\acceleration\bounds.cpp" />
     <ClCompile Include="source\acceleration\bvh.cpp" />
     <ClCompile Include="source\core\intersection.cpp" />
     <ClCompile Include="source\core\renderer.cpp" />
     <ClCompile Include="source\core\sampler.cpp" />
     <ClCompile Include="source\core\scene.cpp" />
-    <ClCompile Include="source\geometry\bounds.cpp" />
     <ClCompile Include="source\geometry\mesh.cpp" />
     <ClCompile Include="source\geometry\triangle.cpp" />
     <ClCompile Include="source\imaging\camera.cpp" />
