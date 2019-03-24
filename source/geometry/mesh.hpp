@@ -17,17 +17,17 @@ public:
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
     auto IntersectsFast(const Rayf& ray) const -> bool;
 
-	auto GetSurfaceArea() const -> FLOAT;
+	auto calculate_surface_area() const -> FLOAT;
     auto calculate_bounds() const -> Bounds;
     auto TransformBy(std::shared_ptr<Transform> transform) -> void;
 
     //auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     //auto GetMaterial() const -> const Material&;
 
-    auto SampleRandomTriangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
+    auto sample_random_triangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     auto sample_as_light(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Vec3f, FLOAT, Color3f>;
-    auto Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
+    //auto sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     //auto GetPreTransformedPoint(const Point3f& p) const -> Point3f;
 	//auto GetTransform() const -> const Transform& { return *m_transformToWorld; }
@@ -52,4 +52,5 @@ private:
     std::shared_ptr<Transform>  m_transform_to_world;
 
 };
+
 

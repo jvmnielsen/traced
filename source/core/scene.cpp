@@ -80,7 +80,7 @@ Scene::sample_light_source(const Intersection& isect, const Vec3f& wo, Sampler& 
 
         if (!f.IsBlack() && line_of_sight_between(isect.PointOffset(), atLight.PointOffset())) {
             const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
-            const auto a =  f * li * weight / lightPdf;
+            auto a =  f * li * weight / lightPdf;
             return a;
         }
     }
@@ -133,7 +133,7 @@ Scene::estimate_direct_light(
    
     directLight += sample_light_source(isect, wo, sampler, light);
  
-    //directLight += sample_bsdf(isect, wo, sampler, light);
+    directLight += sample_bsdf(isect, wo, sampler, light);
     
 
     return directLight;

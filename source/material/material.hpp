@@ -11,7 +11,7 @@ class Material {
 public:
     Material() = default;
 
-    virtual auto Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>;
+    auto Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>;
     virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                           -> Color3f = 0;
             auto Pdf(const Intersection& isect, const Vec3f& wi) const                                -> FLOAT;
     virtual auto Emitted(const Intersection& isect, const Vec3f& dir) const                       -> Color3f;
@@ -28,7 +28,7 @@ class Matte : public Material
 {
 public:
 
-    explicit Matte(Color3f attenuation = Color3f{0.68}) : m_attenuation(attenuation) {}
+    explicit Matte(Color3f attenuation = Color3f{0.18}) : m_attenuation(attenuation) {}
 
     auto Evaluate(const Vec3f& wo, const Vec3f& wi) const -> Color3f override;
 

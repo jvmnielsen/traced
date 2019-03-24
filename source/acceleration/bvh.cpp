@@ -6,13 +6,13 @@ BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes) {
     //std::vector<AABB> aabbs;
 
     for (auto& shape : meshes) {
-        if (shape->triangle_count() > 10) {
-            const auto internal_aabbs = shape->generate_internal_aabbs();
-            for (auto&& aabb : internal_aabbs)
-                m_aabbs.push_back(aabb);
-        } else {
+        //if (shape->triangle_count() > 10) {
+        //    const auto internal_aabbs = shape->generate_internal_aabbs();
+        //    for (auto&& aabb : internal_aabbs)
+        //        m_aabbs.push_back(aabb);
+        //} else {
             m_aabbs.emplace_back(std::move(shape));
-        }
+        //}
     }
 
     m_root_node = build_tree(0, static_cast<int>(m_aabbs.size()));

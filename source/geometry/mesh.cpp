@@ -7,7 +7,7 @@ Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material)
     : m_triangles(std::move(triangles)),
       m_material(std::move(material))
 {
-    m_surface_area = GetSurfaceArea();
+    m_surface_area = calculate_surface_area();
 }
 
 
@@ -50,6 +50,8 @@ void Mesh::TransformBy(std::shared_ptr<Transform> transform) {
 
     for (auto& triangle : m_triangles)
         triangle.TransformBy(*m_transform_to_world);
+
+    m_surface_area = calculate_surface_area();
 }
 
 /*
@@ -90,53 +92,61 @@ Mesh::calculate_bounds() const -> Bounds {
 }
 
 auto
-Mesh::GetSurfaceArea() const -> FLOAT {
+Mesh::calculate_surface_area() const -> FLOAT {
     auto sum = 0.0;
     for (const auto& triangle : m_triangles)
-        sum += triangle.GetArea();
+        sum += triangle.calculate_surface_area();
 
     return sum;
 }
 
 auto
-Mesh::SampleRandomTriangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
+Mesh::sample_random_triangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
     const auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
     return randTriangle.SampleSurface(sampler);
 }
 
 
-
+/*
 auto
-Mesh::Sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
-    auto [sampledIsect, pdfs] = SampleRandomTriangle(sampler);
+Mesh::sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
+    auto [sampledIsect, pdfs] = sample_random_triangle(sampler);
     const auto wi = normalize(sampledIsect.GetPoint() - ref.GetPoint());
-
-    
 
     sampledIsect.SetMeshAndMaterial(this, m_material.get());
 
     FLOAT pdf;
 
-    const auto denom = std::abs(dot(sampledIsect.get_geometric_normal(), -wi)) * GetSurfaceArea();
+    const auto denom = std::abs(dot(sampledIsect.get_geometric_normal(), -wi)) * calculate_surface_area();
 
     if (denom != 0.0)
         pdf = (sampledIsect.GetPoint() - ref.GetPoint()).length_squared() / denom; 
 
     return std::make_tuple(sampledIsect, pdf);
 
-}
+} */
 
 auto Mesh::sample_as_light(const Intersection& ref,
     Sampler& sampler) const -> std::tuple<Intersection, Vec3f, double, Color3f> {
     
-    const auto[sampledIsect, pdfs] = SampleRandomTriangle(sampler);
+    const auto[sampledIsect, pdfs] = sample_random_triangle(sampler);
 
     const auto wi = normalize(sampledIsect.GetPoint() - ref.GetPoint());
 
-    const auto pdf = m_surface_area;
+    const auto pdf = 1.0 / m_surface_area;
+    
+    /*
+    FLOAT pdf = 0;
 
-    if (pdf == 0)
-        return std::make_tuple(sampledIsect, wi, pdf, Color3f::Black());
+    const auto denom = std::abs(dot(sampledIsect.get_geometric_normal(), -wi)) * calculate_surface_area();
+
+    if (denom != 0.0)
+        pdf = (sampledIsect.GetPoint() - ref.GetPoint()).length_squared() / denom;
+        */
+    //const auto pdf = pdfs * 1.0 / m_triangles.size();
+
+    if (pdf == 0 || (sampledIsect.GetPoint() - ref.GetPoint()).length() == 0)
+        return std::make_tuple(sampledIsect, wi, 0, Color3f::Black());
 
     return std::make_tuple(sampledIsect, wi, pdf, m_material->Emitted(sampledIsect, -wi));
 }
@@ -149,7 +159,7 @@ Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT {
     auto isect = Intersects(ray);
     if (isect.has_value()) {
 
-        const auto denom = std::abs(dot(isect->get_geometric_normal(), -wi)) * GetSurfaceArea();
+        const auto denom = std::abs(dot(isect->get_geometric_normal(), -wi)) * calculate_surface_area();
 
         if (denom == 0)
             return 0;
@@ -163,7 +173,7 @@ Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT {
 auto 
 Mesh::generate_internal_bounding_boxes() const -> std::vector<Bounds> {
     
-    const auto num_divisions = static_cast<int>(std::sqrt(triangle_count()));
+    const auto num_divisions = static_cast<int>(std::cbrt(triangle_count())) / 3;
 
     const auto mesh_bounds = calculate_bounds();
     std::vector<Bounds> internal_bounds;

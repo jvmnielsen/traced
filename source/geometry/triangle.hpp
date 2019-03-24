@@ -25,7 +25,7 @@ public:
 
     auto TransformBy(const Transform& transform) -> void;
 
-    auto GetArea() const -> FLOAT;
+    auto calculate_surface_area() const -> FLOAT;
 
     /*
     Point3f GetPointOnSurface(const float u, const float v) const override;
