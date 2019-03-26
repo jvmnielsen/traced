@@ -1,6 +1,7 @@
 
 #include "mesh.hpp"
 #include <functional>
+#include <future>
 #include "../acceleration/aabb.hpp"
 
 Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material)
@@ -249,21 +250,27 @@ Mesh::generate_internal_bounding_boxes() const -> std::vector<Bounds> {
 auto 
 Mesh::assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bounds) const -> std::vector<AABB> {
  
-    std::vector<AABB> aabbs;
+    std::vector<std::future<std::vector<Triangle>>> assigned_triangles;
 
-    for (const auto& bounds : internal_bounds) {
-        //std::cout << "Internal bounds: " << bounds[0].x() << " " << bounds[0].y() << " " << bounds[0].z() << " , "
-            //<< bounds[1].x() << " " << bounds[1].y() << " " << bounds[1].z() << '\n';
+    auto find_overlapping_triangles = [](const std::vector<Triangle>& triangles, const Bounds& bounds) {
         std::vector<Triangle> sub_mesh;
-        for (const auto& triangle : m_triangles) {
+
+        for (const auto& triangle : triangles) {
             const auto triangle_bounds = triangle.calculate_bounds();
-            if (bounds.overlaps(triangle_bounds)) 
+            if (bounds.overlaps(triangle_bounds))
                 sub_mesh.push_back(triangle);
         }
-        if (!sub_mesh.empty()) {
-            //std::cout << "Size of internal AABB: " << sub_mesh.size() << '\n';
-            aabbs.emplace_back(std::make_unique<Mesh>(sub_mesh, m_material), bounds);
-        }
+
+        return sub_mesh;
+    };
+
+    assigned_triangles.reserve(internal_bounds.size());
+    for (const auto& bounds : internal_bounds) {
+        assigned_triangles.emplace_back(std::async(find_overlapping_triangles, m_triangles, bounds));
+    }
+    std::vector<AABB> aabbs;
+    for (auto& future : assigned_triangles) {
+        aabbs.emplace_back(future.get());
     }
     return aabbs;
 }

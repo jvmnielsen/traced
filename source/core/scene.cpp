@@ -132,16 +132,15 @@ Scene::estimate_direct_light(
 
     //Color3f directLight = Color3f::Black();
 
-    auto future_sampled_light = std::async(std::launch::async, &Scene::sample_light_source, this, isect, wo, sampler, light);
-    auto future_sampled_bsdf = std::async(std::launch::async, &Scene::sample_bsdf, this, isect, wo, sampler, light);
+
+    //auto future_sampled_light = std::async(&Scene::sample_light_source, this, isect, wo, sampler, light);
+    //auto future_sampled_bsdf = std::async(std::launch::async, &Scene::sample_bsdf, this, isect, wo, sampler, light);
 
 
-    //directLight += sample_light_source(isect, wo, sampler, light);
- 
-    //directLight += sample_bsdf(isect, wo, sampler, light);
+   return sample_light_source(isect, wo, sampler, light) + sample_bsdf(isect, wo, sampler, light);
     
 
-    return future_sampled_light.get() + future_sampled_bsdf.get();
+   // return future_sampled_light.get() + future_sampled_bsdf.get();
 }
 
 void Scene::set_background_color(const Color3f& color) {

@@ -129,6 +129,7 @@ int main(int argc, char * argv[]) {
 #else 
     const auto cube = "../assets/cube.obj";
     const auto plane = "../assets/plane.obj";
+    const auto bunny = "../assets/bunny.obj";
 #endif
 
     Parser parser;
@@ -177,7 +178,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 1000 };
+    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 1 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
