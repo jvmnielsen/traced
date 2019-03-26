@@ -142,7 +142,7 @@ int main(int argc, char * argv[]) {
     //auto ceiling = parser.construct_mesh_from_file(plane, matte);
 
     auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0,0.7, -.1}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
+    cube1Transform->Translate({0,0.7, 3.}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
     cube1->TransformBy(std::move(cube1Transform));
 
     auto floorTransform = std::make_unique<Transform>();
@@ -151,7 +151,7 @@ int main(int argc, char * argv[]) {
 
     auto lightTransform = std::make_unique<Transform>();
     lightTransform->Translate({-4.2, 20.9, -0.5});
-    lightTransform->Rotate({0.0f, .0f, 1.}, -170.0);
+    lightTransform->Rotate({0.0f, .0f, 3.}, -170.0);
     lightTransform->Scale({3., 3.0, 3.0});
     lightSource->TransformBy(std::move(lightTransform));
 
@@ -177,7 +177,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 1 };
+    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 1000 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
