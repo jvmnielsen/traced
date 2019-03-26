@@ -1,7 +1,7 @@
 #pragma once
 #include "vec3.hpp"
 #include "math_util.hpp"
-
+#include <iterator>
 
 template<typename T>
 class Point3 {
@@ -43,13 +43,11 @@ public:
         return {x() - n.x(), y() - n.y(), z() - n.z()};
     }
 
-    bool operator==(const Point3& other) const
-    {
+    bool operator==(const Point3& other) const {
         return x() == other.x() && y() == other.y() && z() == other.z();
     }
 
-    bool operator!=(const Point3& other) const
-    {
+    bool operator!=(const Point3& other) const {
         return x() != other.x() || y() != other.y() || z() != other.z();
     }
 
@@ -58,6 +56,10 @@ public:
     }
 
     auto operator[](const std::size_t i) const -> T { return m_elements.at(i); }
+
+    auto begin() const { return m_elements.begin(); }
+    auto end() const { return m_elements.end(); }
+
 };
 
 template<typename T>

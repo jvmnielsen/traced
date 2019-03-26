@@ -8,16 +8,35 @@ Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material)
       m_material(std::move(material))
 {
     m_surface_area = calculate_surface_area();
+    //if (m_triangles.size() > 50)
+        //m_internal_bounding = generate_internal_aabbs();
 }
 
 
-
-
-auto 
-Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
-
+auto
+Mesh::intersects_internal_aabbs(const Rayf& ray) const -> std::optional<Intersection> {
+    
     std::optional<Intersection> isect;
 
+    for (auto& aabb : m_internal_bounding) {
+        // the last overridden isect will always be the closest (ray max_param shrinks every time)
+        auto tmp = aabb.Intersects(ray);
+        if (tmp.has_value())
+            isect = tmp;
+    }
+
+    if (isect.has_value()) {
+        isect->SetMeshAndMaterial(this, m_material.get());
+        return isect;
+    }
+
+    return std::nullopt;
+}
+
+auto
+Mesh::intersects_mesh_proper(const Rayf& ray) const -> std::optional<Intersection> {
+
+    std::optional<Intersection> isect;
 
     for (auto& triangle : m_triangles) {
         // the last overridden isect will always be the closest (ray max_param shrinks every time)
@@ -31,7 +50,17 @@ Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
         return isect;
     }
 
-    return std::nullopt;//.has_value() ? std::optional<Intersection>{isect.value()} : std::nullopt;
+    return std::nullopt;
+}
+
+
+auto 
+Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
+
+    if (!m_internal_bounding.empty())
+        return intersects_internal_aabbs(ray);
+
+    return intersects_mesh_proper(ray);
 }
 
 
@@ -173,9 +202,15 @@ Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT {
 auto 
 Mesh::generate_internal_bounding_boxes() const -> std::vector<Bounds> {
     
-    const auto num_divisions = static_cast<int>(std::cbrt(triangle_count())) / 3;
+    const auto num_divisions = static_cast<int>(std::cbrt(triangle_count() / 10));
+    std::cout << "Num divisions: " << num_divisions << '\n';
+
 
     const auto mesh_bounds = calculate_bounds();
+
+    std::cout << "Total bounds: " << mesh_bounds[0].x() << " " << mesh_bounds[0].y() << " " << mesh_bounds[0].z() << " , "
+        <<  mesh_bounds[1].x() << " " << mesh_bounds[1].y() << " " << mesh_bounds[1].z() << '\n';
+
     std::vector<Bounds> internal_bounds;
     internal_bounds.reserve(num_divisions);
 
@@ -198,9 +233,9 @@ Mesh::generate_internal_bounding_boxes() const -> std::vector<Bounds> {
             for (size_t k = 0; k < num_divisions; ++k) {
 
                 auto generate_point = [i, j, k, &generate_axis_value_for_bounds](int offset) {
-                    return Point3f{ generate_axis_value_for_bounds(i + offset, 0),
+                    return Point3f{ generate_axis_value_for_bounds(k + offset, 0),
                                     generate_axis_value_for_bounds(j + offset, 1),
-                                    generate_axis_value_for_bounds(k + offset, 2)};
+                                    generate_axis_value_for_bounds(i + offset, 2)};
                 };
 
                 internal_bounds.emplace_back(generate_point(0), generate_point(1));
@@ -217,20 +252,28 @@ Mesh::assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bo
     std::vector<AABB> aabbs;
 
     for (const auto& bounds : internal_bounds) {
+        //std::cout << "Internal bounds: " << bounds[0].x() << " " << bounds[0].y() << " " << bounds[0].z() << " , "
+            //<< bounds[1].x() << " " << bounds[1].y() << " " << bounds[1].z() << '\n';
         std::vector<Triangle> sub_mesh;
         for (const auto& triangle : m_triangles) {
             const auto triangle_bounds = triangle.calculate_bounds();
             if (bounds.overlaps(triangle_bounds)) 
                 sub_mesh.push_back(triangle);
         }
-        if (!sub_mesh.empty()) 
+        if (!sub_mesh.empty()) {
+            //std::cout << "Size of internal AABB: " << sub_mesh.size() << '\n';
             aabbs.emplace_back(std::make_unique<Mesh>(sub_mesh, m_material), bounds);
+        }
     }
     return aabbs;
 }
 
-auto Mesh::generate_internal_aabbs() const ->std::vector<AABB> {
-    return assign_triangles_to_internal_bounds(generate_internal_bounding_boxes());
+auto Mesh::generate_internal_aabbs() -> void {
+    std::cout << "Size of mesh: " << m_triangles.size() << '\n';
+    m_internal_bounding = assign_triangles_to_internal_bounds(generate_internal_bounding_boxes());
+    std::cout << "Size of list: " << m_internal_bounding.size() << "\n";
+    //for (const auto& aabb : m_internal_bounding)
+       // std::cout << "Size of internal AABB: " << aabb.m_mesh->triangle_count() << '\n';
 }
 
 auto Mesh::triangle_count() const -> std::size_t {

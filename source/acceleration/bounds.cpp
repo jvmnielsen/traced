@@ -48,9 +48,17 @@ auto Bounds::IsInside(const Point3f& point) const -> bool {
 
 auto
 Bounds::overlaps(const Bounds& other) const ->  bool {
+
+    for (int axis = 0; axis < 3; ++axis)
+    {
+        if (m_lower[axis] > other.upper()[axis] || other.lower()[axis] > m_upper[axis])
+            return false;
+    }
+    return true;
+    /*
     return     m_upper.x() >= other.lower().x() && m_lower.x() <= other.upper().x()
         && m_upper.y() >= other.lower().y() && m_lower.y() <= other.upper().y()
-        && m_upper.z() >= other.lower().z() && m_lower.z() <= other.upper().z();
+        && m_upper.z() >= other.lower().z() && m_lower.z() <= other.upper().z(); */
 }
 
 auto 

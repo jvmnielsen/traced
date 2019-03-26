@@ -1,4 +1,5 @@
 #include "scene.hpp"
+#include <future>
 
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
@@ -129,14 +130,18 @@ Scene::estimate_direct_light(
     Sampler& sampler,
     const Mesh& light) const -> Color3f {
 
-    Color3f directLight = Color3f::Black();
-   
-    directLight += sample_light_source(isect, wo, sampler, light);
+    //Color3f directLight = Color3f::Black();
+
+    auto future_sampled_light = std::async(std::launch::async, &Scene::sample_light_source, this, isect, wo, sampler, light);
+    auto future_sampled_bsdf = std::async(std::launch::async, &Scene::sample_bsdf, this, isect, wo, sampler, light);
+
+
+    //directLight += sample_light_source(isect, wo, sampler, light);
  
-    directLight += sample_bsdf(isect, wo, sampler, light);
+    //directLight += sample_bsdf(isect, wo, sampler, light);
     
 
-    return directLight;
+    return future_sampled_light.get() + future_sampled_bsdf.get();
 }
 
 void Scene::set_background_color(const Color3f& color) {

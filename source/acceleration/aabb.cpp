@@ -61,6 +61,45 @@ bool AABB::IntersectsFast(const Rayf& ray) const {
 
 auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
 
+
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+    tmin = (m_bounds[ray.inverse_signs().at(0)].x() - ray.origin().x()) * ray.inverse_direction().x();
+    tmax = (m_bounds[1 - ray.inverse_signs().at(0)].x() - ray.origin().x()) * ray.inverse_direction().x();
+    tymin = (m_bounds[ray.inverse_signs().at(1)].y() - ray.origin().y()) * ray.inverse_direction().y();
+    tymax = (m_bounds[1 - ray.inverse_signs().at(1)].y() - ray.origin().y()) * ray.inverse_direction().y();
+
+    if ((tmin > tymax) || (tymin > tmax))
+        return false;
+
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    tzmin = (m_bounds[ray.inverse_signs().at(2)].z() - ray.origin().z()) * ray.inverse_direction().z();
+    tzmax = (m_bounds[1 - ray.inverse_signs().at(2)].z() - ray.origin().z()) * ray.inverse_direction().z();
+
+    if ((tmin > tzmax) || (tzmin > tmax))
+        return false;
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+
+    //return ( (tmin < t1) && (tmax > t0) );
+
+    auto parameter = tmin;
+
+    if (parameter < 0) {
+        parameter = tmax;
+        if (parameter < 0)
+            return false;
+    }
+
+    return true;
+
+    /*x
     auto min = 0.0;
     auto max = Math::Constants::MaxFloat;
 
@@ -76,15 +115,17 @@ auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
     }
 
     // is the box behind us or are we inside it == false
-    return min >= 0;
+    return min >= 0; */
 }
 
 
 auto AABB::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
-    if (intersects_bounds(ray))
+    if (intersects_bounds(ray)) {
         return m_mesh->Intersects(ray);
-    
+    }
+
+    //std::cout << "missed\n";
     return std::nullopt;
 }
 

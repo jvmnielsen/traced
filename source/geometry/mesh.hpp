@@ -39,18 +39,27 @@ public:
 
     //auto HasInternalBoundingBoxes() const -> bool { return !m_internalBoundingBoxes.empty(); }
 
-    auto generate_internal_aabbs() const -> std::vector<AABB>;
+    auto generate_internal_aabbs() -> void;
 
     auto generate_internal_bounding_boxes() const -> std::vector<Bounds>;
     auto assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bounds) const -> std::vector<AABB>;
 
 private:
 
+    auto intersects_internal_aabbs(const Rayf& ray) const -> std::optional<Intersection>;
+    auto intersects_mesh_proper(const Rayf& ray) const -> std::optional<Intersection>;
+
+    std::vector<AABB>           m_internal_bounding;
     std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;
     FLOAT                       m_surface_area;
     std::shared_ptr<Transform>  m_transform_to_world;
 
+};
+
+class SubMesh : public Mesh
+{
+   
 };
 
 

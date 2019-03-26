@@ -7,9 +7,9 @@ BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes) {
 
     for (auto& shape : meshes) {
         //if (shape->triangle_count() > 10) {
-        //    const auto internal_aabbs = shape->generate_internal_aabbs();
-        //    for (auto&& aabb : internal_aabbs)
-        //        m_aabbs.push_back(aabb);
+            //const auto internal_aabbs = shape->generate_internal_aabbs();
+            //for (auto&& aabb : internal_aabbs)
+               // m_aabbs.push_back(aabb);
         //} else {
             m_aabbs.emplace_back(std::move(shape));
         //}

@@ -113,8 +113,8 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[]) {
 
-    constexpr unsigned int SCREEN_WIDTH = 600;
-    constexpr unsigned int SCREEN_HEIGHT = 600;
+    constexpr unsigned int SCREEN_WIDTH = 500;
+    constexpr unsigned int SCREEN_HEIGHT = 500;
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>(Color3f{0.1, 0.3, 0.1});
@@ -125,7 +125,7 @@ int main(int argc, char * argv[]) {
     const auto cube = "assets/cube.obj";
     const auto plane = "assets/plane.obj";
     const auto bunny = "assets/bunny.obj";
-    const auto sphere = "assets/sphere.obj";
+    const auto sphere = "assets/sphere2.obj";
 #else 
     const auto cube = "../assets/cube.obj";
     const auto plane = "../assets/plane.obj";
@@ -133,7 +133,7 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.construct_mesh_from_file(sphere, green);
+    auto cube1 = parser.construct_mesh_from_file(bunny, green);
     auto lightSource = parser.construct_mesh_from_file(plane, light);
     auto floor = parser.construct_mesh_from_file(plane, matte);
     //auto rightWall = parser.construct_mesh_from_file(plane, matte);
@@ -142,16 +142,16 @@ int main(int argc, char * argv[]) {
     //auto ceiling = parser.construct_mesh_from_file(plane, matte);
 
     auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0,1.7, -1.0}).Rotate({0,1,0}, 45).Scale(Vec3f{3.2});
+    cube1Transform->Translate({0,0.7, -.1}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
     cube1->TransformBy(std::move(cube1Transform));
 
     auto floorTransform = std::make_unique<Transform>();
-    floorTransform->Scale(Vec3f{100.0});
+    floorTransform->Scale(Vec3f{1000.0});
     floor->TransformBy(std::move(floorTransform));
 
     auto lightTransform = std::make_unique<Transform>();
-    lightTransform->Translate({-10.2, 6.9, -0.5});
-    lightTransform->Rotate({0.0f, .0f, 1.0}, -90.0);
+    lightTransform->Translate({-4.2, 20.9, -0.5});
+    lightTransform->Rotate({0.0f, .0f, 1.}, -170.0);
     lightTransform->Scale({3., 3.0, 3.0});
     lightSource->TransformBy(std::move(lightTransform));
 
@@ -159,6 +159,7 @@ int main(int argc, char * argv[]) {
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<std::unique_ptr<Mesh>> lights;
+    cube1->generate_internal_aabbs();
     meshes.push_back(std::move(cube1));
     meshes.push_back(std::move(floor));
 
@@ -167,8 +168,8 @@ int main(int argc, char * argv[]) {
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
     scene->set_background_color(Color3f{0.0f});
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0f, 3.0f, 20.0f), Point3f(0.0f, 0.0f, -3.0f),
-                            Vec3f(0.0f, 1.0f, 0.0f), 55.0f, static_cast<double>(SCREEN_WIDTH) / static_cast<double>(SCREEN_HEIGHT));
+    auto camera = std::make_unique<Camera>(Point3f(0.0, 16.0, 24.0), Point3f(0.0, 0.0, -2.0),
+                            Vec3f(0.0, 1.0, 0.0f), 55.0, static_cast<double>(SCREEN_WIDTH) / static_cast<double>(SCREEN_HEIGHT));
 
     //auto [scene, camera] = CornellBox();
     
@@ -176,7 +177,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 100 };
+    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 1 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
