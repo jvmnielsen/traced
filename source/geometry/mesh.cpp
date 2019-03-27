@@ -3,6 +3,8 @@
 #include <functional>
 #include <future>
 #include "../acceleration/aabb.hpp"
+#include <algorithm>
+
 
 Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material)
     : m_triangles(std::move(triangles)),
@@ -248,26 +250,24 @@ Mesh::generate_internal_bounding_boxes() const -> std::vector<Bounds> {
 }
 
 auto 
-Mesh::assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bounds) const -> std::vector<AABB> {
- 
-    std::vector<std::future<std::vector<Triangle>>> assigned_triangles;
+Mesh::assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bounds) const -> std::vector<AABB>
+{
+    std::vector<std::future<std::optional<AABB>>> assigned_triangles;
 
-    auto find_overlapping_triangles = [](const std::vector<Triangle>& triangles, const Bounds& bounds) {
-        std::vector<Triangle> sub_mesh;
-
-        for (const auto& triangle : triangles) {
-            const auto triangle_bounds = triangle.calculate_bounds();
-            if (bounds.overlaps(triangle_bounds))
-                sub_mesh.push_back(triangle);
-        }
-
-        return sub_mesh;
-    };
-
-    assigned_triangles.reserve(internal_bounds.size());
-    for (const auto& bounds : internal_bounds) {
-        assigned_triangles.emplace_back(std::async(find_overlapping_triangles, m_triangles, bounds));
+    for (const auto& bounds : internal_bounds)
+    {
+        assigned_triangles.emplace_back(
+            std::async([&bounds, this]()
+            {
+                std::vector<Triangle> sub_mesh;
+                std::copy_if(m_triangles.begin(),
+                             m_triangles.end(),
+                             std::back_inserter(sub_mesh),
+                             [&bounds](const Triangle& triangle) { return bounds.overlaps(triangle.calculate_bounds()); });
+                return sub_mesh.empty() ? std::nullopt : AABB{bounds, sub_mesh};
+            }));
     }
+
     std::vector<AABB> aabbs;
     for (auto& future : assigned_triangles) {
         aabbs.emplace_back(future.get());
