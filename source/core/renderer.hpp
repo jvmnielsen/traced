@@ -18,7 +18,7 @@ public:
     auto render(int samples_per_pixel) -> void;
     //auto RenderProgressive() -> void;
 
-
+    auto render_normals(Rayf& ray)->Color3f;
  
 
 private:

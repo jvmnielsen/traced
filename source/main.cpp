@@ -134,7 +134,7 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.construct_mesh_from_file(sphere, green);
+    auto cube1 = parser.construct_mesh_from_file(bunny, green);
     auto lightSource = parser.construct_mesh_from_file(plane, light);
     auto floor = parser.construct_mesh_from_file(plane, matte);
     //auto rightWall = parser.construct_mesh_from_file(plane, matte);

@@ -134,7 +134,7 @@ Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
     //const auto shaded = InterpolateNormalAt(barycentric);
 
-    return Intersection{ ray.point_at_parameter(parameter), barycentric, m_face_normal, InterpolateNormalAt(barycentric) };
+    return Intersection{ ray.point_at_parameter(parameter), barycentric, m_face_normal, InterpolateNormalAt(barycentric)}; //
 }
 
 auto 

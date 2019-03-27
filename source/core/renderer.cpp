@@ -165,7 +165,7 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
 
                 auto ray = m_camera->get_ray(u, v, sampler);
 
-                color += OutgoingLight(ray, sampler);
+                color += render_normals(ray);
                 //color += de_nan(tmp);
             }
 
@@ -228,6 +228,18 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
     }
 
     return color;
+}
+
+auto 
+Renderer::render_normals(Rayf& ray) -> Color3f
+{
+    auto isect = m_scene->intersects(ray);
+
+    if (!isect.has_value()) {
+        return Color3f::Black();
+    }
+
+    return Color3f{std::abs(isect->get_shading_normal().x()), std::abs(isect->get_shading_normal().y()), std::abs(isect->get_shading_normal().z())};
 }
 
 
