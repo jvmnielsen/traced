@@ -13,6 +13,7 @@ struct Point2
     explicit Point2(T val) : x(val), y(val) { }
     Point2(T x_, T y_) : x(x_), y(y_) { }
 
+
     Vec2<T> operator-(const Point2& other) const
     {
         return Vec2<T>{ x - other.x, y - other.y };
@@ -56,6 +57,11 @@ struct Point2
         std::cout << "( " << x << ", " << y << " )\n";
     }
 };
+
+template<typename T>
+Point2<T> operator*(const T factor, const Point2<T>& point) {
+    return Point2<T>{point.x * factor, point.y * factor};
+}
 
 typedef Point2<FLOAT> Point2f;
 typedef Point2<int> Point2i;

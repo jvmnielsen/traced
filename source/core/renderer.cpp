@@ -163,7 +163,7 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
                 const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetWidth());
                 const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetHeight());
 
-                auto ray = m_camera->get_ray(u, v);
+                auto ray = m_camera->get_ray(u, v, sampler);
 
                 color += OutgoingLight(ray, sampler);
                 //color += de_nan(tmp);
@@ -201,7 +201,7 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
             break;
         }
 
-        auto wo = -ray.direction();
+        auto wo = -normalize(ray.direction());
 
         if (bounces == 0 || lastBounceSpecular) {
             color += throughput * isect->emitted(wo);

@@ -5,6 +5,11 @@
 #include "../math/transform.hpp"
 #include "../acceleration/bvh.hpp"
 
+enum class IntersectOption {
+    with_record,
+    discard_record
+};
+
 class Triangle
 {
 public:

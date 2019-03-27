@@ -134,7 +134,7 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.construct_mesh_from_file(bunny, green);
+    auto cube1 = parser.construct_mesh_from_file(sphere, green);
     auto lightSource = parser.construct_mesh_from_file(plane, light);
     auto floor = parser.construct_mesh_from_file(plane, matte);
     //auto rightWall = parser.construct_mesh_from_file(plane, matte);
@@ -151,9 +151,9 @@ int main(int argc, char * argv[]) {
     floor->TransformBy(std::move(floorTransform));
 
     auto lightTransform = std::make_unique<Transform>();
-    lightTransform->Translate({-4.2, 20.9, -0.5});
+    lightTransform->Translate({-4.2, 20.9, -0.1});
     lightTransform->Rotate({0.0f, .0f, 3.}, -170.0);
-    lightTransform->Scale({3., 3.0, 3.0});
+    lightTransform->Scale(Vec3f{5.0});
     lightSource->TransformBy(std::move(lightTransform));
 
 
@@ -162,15 +162,18 @@ int main(int argc, char * argv[]) {
     std::vector<std::unique_ptr<Mesh>> lights;
     cube1->generate_internal_aabbs();
     meshes.push_back(std::move(cube1));
-    meshes.push_back(std::move(floor));
+    //meshes.push_back(std::move(floor));
 
     lights.push_back(std::move(lightSource));
 
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
     scene->set_background_color(Color3f{0.0f});
 
-    auto camera = std::make_unique<Camera>(Point3f(0.0, 16.0, 24.0), Point3f(0.0, 0.0, -2.0),
-                            Vec3f(0.0, 1.0, 0.0f), 55.0, static_cast<double>(SCREEN_WIDTH) / static_cast<double>(SCREEN_HEIGHT));
+    const auto look_from = Point3f(0.0, 16.0, 24.0);
+    const auto look_at = Point3f(0.0, 0.0, -1.0);
+    const auto dist_to_focus = (look_from - look_at).length();
+    const auto aperture = 0;
+    auto camera = std::make_unique<Camera>(look_from, look_at, Vec3f(0.0, 1.0, 0.0f), 55.0, static_cast<double>(SCREEN_WIDTH) / static_cast<double>(SCREEN_HEIGHT), aperture, dist_to_focus);
 
     //auto [scene, camera] = CornellBox();
     
@@ -178,7 +181,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 1 };
+    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 100 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);

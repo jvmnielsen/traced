@@ -1,6 +1,6 @@
 #include "camera.hpp"
 #include "../math/math_util.hpp"
-#include "../math/normal3.hpp"
+#include "../core/sampler.hpp"
 
 Camera::Camera(const float v_fov, const float aspect)
 {
@@ -17,27 +17,35 @@ Camera::Camera(
         const Point3f& look_from,
         const Point3f& look_at,
         const Vec3f& v_up,
-        const float v_fov,
-        const float aspect)
+        FLOAT v_fov,
+        FLOAT aspect,
+        FLOAT aperture,
+        FLOAT focus_dist)
+    : m_lens_radius(aperture / 2)
 {
     const auto theta = Math::DegreeToRadian(v_fov);
-    const auto halfHeight = tan(theta / 2);
-    const auto halfWidth = aspect * halfHeight;
+    const auto half_height = tan(theta / 2);
+    const auto half_width = aspect * half_height;
 
     m_origin = look_from;
 
-    const auto w = normalize(look_from - look_at);
-    const auto u = normalize(cross(v_up, w));
-    const auto v = normalize(cross(w, u));
+    m_w = normalize(look_from - look_at);
+    m_u = normalize(cross(v_up, m_w));
+    m_v = normalize(cross(m_w, m_u));
 
-    m_lower_left_corner = m_origin - u * halfWidth - v * halfHeight - w;
-    m_horizontal = u * 2 * halfWidth;
-    m_vertical = v * 2 * halfHeight;
+    m_lower_left_corner = m_origin - m_u * half_width * focus_dist - m_v * half_height * focus_dist - m_w * focus_dist;
+    m_horizontal = 2 * half_width * focus_dist * m_u;
+    m_vertical = 2 * half_height * focus_dist * m_v;
+
+    
 }
 
-Rayf Camera::get_ray(double u, double v) const
+auto Camera::get_ray(double s, double t, Sampler& sampler) const -> Rayf
 {
-    return {m_origin, // origin of the camera
-            m_lower_left_corner + m_horizontal * u + m_vertical * v - m_origin}; // scale from lower left - origin for vector pointing to this point
+    const auto rd = m_lens_radius * sampler.SampleDisk();
+    const auto offset = m_u * rd.x + m_v * rd.y;
+
+    return {m_origin + offset, // origin of the camera
+            normalize(m_lower_left_corner + m_horizontal * s + m_vertical * t - m_origin - offset)}; // scale from lower left - origin for vector pointing to this point
 
 }

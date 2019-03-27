@@ -13,10 +13,11 @@ public:
     auto CosineSampleHemisphere() -> Vec3f;
     auto GetRandom2D() -> Point2f;
     auto UniformSampleTriangle() -> Point2f;
-
+    auto SampleDisk()->Point2f;
+  
 
 private:
-    auto SampleDisk() -> Point2f;
+    
     // to generate random numbers [0,1]
     //std::random_device m_seed;
     std::mt19937 m_gen;

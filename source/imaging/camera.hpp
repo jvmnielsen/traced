@@ -3,21 +3,22 @@
 #include "../math/vec3.hpp"
 #include "../math/ray.hpp"
 
+class Sampler;
+
 class Camera
 {
 public:
 
-    Camera() = default;
-    ~Camera() = default;
-
     Camera(float v_fov, float aspect);
-    Camera(const Point3f& look_from, const Point3f& look_at, const Vec3f& v_up, const float v_fov, const float aspect);
+    Camera(const Point3f& look_from, const Point3f& look_at, const Vec3f& v_up, FLOAT v_fov, FLOAT aspect, FLOAT aperture, FLOAT focus_dist);
 
-    Rayf get_ray(double u, double v) const;
+    auto get_ray(double s, double t, Sampler& sampler) const -> Rayf;
 
 private:
     Point3f m_origin;
     Point3f m_lower_left_corner;
     Vec3f m_horizontal;
     Vec3f m_vertical;
+    Vec3f m_u, m_v, m_w;
+    FLOAT m_lens_radius;
 };

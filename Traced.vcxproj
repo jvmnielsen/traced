@@ -140,7 +140,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="functional_utility.hpp" />
     <ClInclude Include="source\acceleration\aabb.hpp" />
     <ClInclude Include="source\acceleration\bounds.hpp" />
     <ClInclude Include="source\acceleration\bvh.hpp" />

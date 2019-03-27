@@ -40,7 +40,7 @@ bool Scene::line_of_sight_between(const Point3f& p1, const Point3f& p2) const {
     const Vec3f dir = p2 - p1;
     const auto distance = dir.length();
     Rayf ray{p1, normalize(dir), distance};
-    return !intersects_quick(ray);
+    return !intersects(ray).has_value();
 }
 
 
@@ -134,13 +134,13 @@ Scene::estimate_direct_light(
 
 
     //auto future_sampled_light = std::async(&Scene::sample_light_source, this, isect, wo, sampler, light);
-    //auto future_sampled_bsdf = std::async(std::launch::async, &Scene::sample_bsdf, this, isect, wo, sampler, light);
+    // auto future_sampled_bsdf = std::async(std::launch::async, &Scene::sample_bsdf, this, isect, wo, sampler, light);
 
 
-   return sample_light_source(isect, wo, sampler, light) + sample_bsdf(isect, wo, sampler, light);
+    return sample_light_source(isect, wo, sampler, light);// +sample_bsdf(isect, wo, sampler, light);
     
 
-   // return future_sampled_light.get() + future_sampled_bsdf.get();
+   //return future_sampled_light.get() + future_sampled_bsdf.get();
 }
 
 void Scene::set_background_color(const Color3f& color) {

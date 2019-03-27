@@ -322,9 +322,6 @@
     <ClInclude Include="source\material\disney.hpp">
       <Filter>material</Filter>
     </ClInclude>
-    <ClInclude Include="functional_utility.hpp">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="source\math\normal3.hpp">
       <Filter>math</Filter>
     </ClInclude>

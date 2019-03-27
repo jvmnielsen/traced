@@ -74,13 +74,13 @@ auto
 Triangle::IntersectsFast(const Rayf& ray) const -> bool {
 
     const auto dir = static_cast<Vec3f>(ray.direction());
-    const auto p_vec = cross(dir, m_edges.at(1));
-    const auto det = dot(m_edges.at(0), p_vec);
+    const auto p_vec = cross(dir, m_edges[1]);
+    const auto det = dot(m_edges[0], p_vec);
 
     // precompute for performance
     const auto inverted_det = 1 / det;
 
-    Vec2f barycentric{0};
+    Vec2f barycentric;
 
     // barycentric coordinate u
     const auto t_vec = ray.origin() - m_vertices[0];
@@ -89,15 +89,14 @@ Triangle::IntersectsFast(const Rayf& ray) const -> bool {
         return false;
 
     // barycentric coordinate v
-    const auto q_vec = cross(t_vec, m_edges.at(0));
+    const auto q_vec = cross(t_vec, m_edges[0]);
     barycentric.y = dot(dir, q_vec) * inverted_det;
     if (barycentric.y < 0 || barycentric.y + barycentric.x > 1)
         return false;
 
-    const auto parameter = dot(m_edges.at(1), q_vec) * inverted_det;
+    const auto parameter = dot(m_edges[1], q_vec) * inverted_det;
 
     return parameter > 0 && parameter <= ray.max_parameter();
-
 }
 
 auto 
