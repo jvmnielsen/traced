@@ -4,6 +4,7 @@
 #include <future>
 #include "../acceleration/aabb.hpp"
 #include <algorithm>
+#include "../utility/utility.hpp"
 
 
 Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material)
@@ -260,22 +261,28 @@ Mesh::assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bo
             std::async([&bounds, this]()
             {
                 std::vector<Triangle> sub_mesh;
-                std::copy_if(m_triangles.begin(),
-                             m_triangles.end(),
-                             std::back_inserter(sub_mesh),
+                std::copy_if(m_triangles.begin(), m_triangles.end(), std::back_inserter(sub_mesh),
                              [&bounds](const Triangle& triangle) { return bounds.overlaps(triangle.calculate_bounds()); });
-                return sub_mesh.empty() ? std::nullopt : AABB{bounds, sub_mesh};
+
+                return sub_mesh.empty() ? std::nullopt : std::make_optional(AABB(std::make_unique<Mesh>(sub_mesh, m_material), bounds));
             }));
     }
 
     std::vector<AABB> aabbs;
-    for (auto& future : assigned_triangles) {
-        aabbs.emplace_back(future.get());
+    for (auto& potential_aabb : assigned_triangles)
+    {
+        const auto aabb = potential_aabb.get();
+        if (aabb)
+        {
+            aabbs.push_back(aabb.value());
+        }
     }
+   
     return aabbs;
 }
 
 auto Mesh::generate_internal_aabbs() -> void {
+    Timer timer{std::string{"Generating internal bounds took: "}};
     std::cout << "Size of mesh: " << m_triangles.size() << '\n';
     m_internal_bounding = assign_triangles_to_internal_bounds(generate_internal_bounding_boxes());
     std::cout << "Size of list: " << m_internal_bounding.size() << "\n";
