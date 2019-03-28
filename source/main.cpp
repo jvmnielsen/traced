@@ -134,7 +134,7 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.construct_mesh_from_file(bunny, green);
+    auto cube1 = parser.construct_mesh_from_file(sphere, green);
     auto lightSource = parser.construct_mesh_from_file(plane, light);
     auto floor = parser.construct_mesh_from_file(plane, matte);
     //auto rightWall = parser.construct_mesh_from_file(plane, matte);
@@ -151,7 +151,7 @@ int main(int argc, char * argv[]) {
     floor->TransformBy(std::move(floorTransform));
 
     auto lightTransform = std::make_unique<Transform>();
-    lightTransform->Translate({-4.2, 20.9, -0.1});
+    lightTransform->Translate({0, 20., 3.0});
     lightTransform->Rotate({0.0f, .0f, 3.}, -170.0);
     lightTransform->Scale(Vec3f{5.0});
     lightSource->TransformBy(std::move(lightTransform));
@@ -162,7 +162,7 @@ int main(int argc, char * argv[]) {
     std::vector<std::unique_ptr<Mesh>> lights;
     cube1->generate_internal_aabbs();
     meshes.push_back(std::move(cube1));
-    //meshes.push_back(std::move(floor));
+    meshes.push_back(std::move(floor));
 
     lights.push_back(std::move(lightSource));
 

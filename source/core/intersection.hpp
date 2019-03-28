@@ -15,12 +15,12 @@ public:
     Intersection(Point3f point, Point2f uv_coord, Vec3f geometric_normal, Vec3f shading_normal);
 
 
-    Point3f PointOffset() const;
+    Point3f offset_point() const;
 
    
-    auto GetPoint() const -> const Point3f&;
-    auto get_geometric_normal() const -> const Vec3f&;
-    auto get_shading_normal() const -> const Vec3f&;
+    auto point() const -> const Point3f&;
+    auto geometric_normal() const -> const Vec3f&;
+    auto shading_normal() const -> const Vec3f&;
 
     auto IsSpecular() const -> bool;
 

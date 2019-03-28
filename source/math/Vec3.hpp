@@ -114,7 +114,7 @@ auto cross(const Vec3<T>& v1, const Vec3<T>& v2) -> Vec3<T>
 
 template<typename T>
 auto same_hemisphere(const Vec3<T>& u, const Vec3<T>& v) -> bool {
-    return u.z() * v.z() > 0;
+    return dot(u, v) >= 0;
 }
 
 typedef Vec3<FLOAT> Vec3f;

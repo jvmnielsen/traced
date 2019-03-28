@@ -13,7 +13,7 @@ public:
 
     auto Sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>;
     virtual auto Evaluate(const Vec3f& wo, const Vec3f& wi) const                           -> Color3f = 0;
-            auto Pdf(const Intersection& isect, const Vec3f& wi) const                                -> FLOAT;
+            auto Pdf(const Vec3f& dir, const Intersection& isect) const                                -> FLOAT;
     virtual auto Emitted(const Intersection& isect, const Vec3f& dir) const                       -> Color3f;
 
     //auto LocalToWorld(const Normal3f& n) const -> Normal3f;

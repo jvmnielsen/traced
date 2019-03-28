@@ -164,21 +164,21 @@ auto Mesh::sample_as_light(const Intersection& ref,
     
     const auto[sampledIsect, pdfs] = sample_random_triangle(sampler);
 
-    const auto wi = normalize(sampledIsect.GetPoint() - ref.GetPoint());
+    const auto wi = normalize(sampledIsect.point() - ref.point());
 
-    const auto pdf = 1.0 / m_surface_area;
+    //const auto pdf = 1; // 1.0 / m_surface_area;
     
-    /*
+    
     FLOAT pdf = 0;
 
-    const auto denom = std::abs(dot(sampledIsect.get_geometric_normal(), -wi)) * calculate_surface_area();
+    const auto denom = std::abs(dot(sampledIsect.geometric_normal(), -wi)) * calculate_surface_area();
 
     if (denom != 0.0)
-        pdf = (sampledIsect.GetPoint() - ref.GetPoint()).length_squared() / denom;
-        */
+        pdf = (sampledIsect.point() - ref.point()).length_squared() / denom;
+       
     //const auto pdf = pdfs * 1.0 / m_triangles.size();
 
-    if (pdf == 0 || (sampledIsect.GetPoint() - ref.GetPoint()).length() == 0)
+    if (pdf == 0 || (sampledIsect.point() - ref.point()).length() == 0)
         return std::make_tuple(sampledIsect, wi, 0, Color3f::Black());
 
     return std::make_tuple(sampledIsect, wi, pdf, m_material->Emitted(sampledIsect, -wi));
@@ -188,16 +188,16 @@ auto Mesh::sample_as_light(const Intersection& ref,
 auto
 Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT {
     
-    Ray ray = Rayf{ref.GetPoint(), wi};
+    Ray ray = Rayf{ref.point(), wi};
     auto isect = Intersects(ray);
     if (isect.has_value()) {
 
-        const auto denom = std::abs(dot(isect->get_geometric_normal(), -wi)) * calculate_surface_area();
+        const auto denom = std::abs(dot(isect->geometric_normal(), -wi)) * calculate_surface_area();
 
         if (denom == 0)
             return 0;
 
-        const auto a =  (ref.GetPoint() - isect->GetPoint()).length_squared() / denom;
+        const auto a =  (ref.point() - isect->point()).length_squared() / denom;
         return a;
     }
     return 0;

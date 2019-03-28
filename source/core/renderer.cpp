@@ -165,7 +165,7 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel)
 
                 auto ray = m_camera->get_ray(u, v, sampler);
 
-                color += render_normals(ray);
+                color += OutgoingLight(ray, sampler);
                 //color += de_nan(tmp);
             }
 
@@ -214,10 +214,10 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 
         if (f.IsBlack() || pdf == 0.0f) break;
 
-        throughput = throughput * std::abs(dot(wi, isect->get_shading_normal())) * f / pdf; // TODO: overload *=
+        throughput = throughput * std::abs(dot(wi, isect->shading_normal())) * f / pdf; // TODO: overload *=
 
 
-        ray = Rayf{ isect->GetPoint(), wi };
+        ray = Rayf{ isect->point(), wi };
         
         if (bounces > 3) {
             float q = std::max(color.r, std::max(color.g, color.b));
@@ -239,7 +239,7 @@ Renderer::render_normals(Rayf& ray) -> Color3f
         return Color3f::Black();
     }
 
-    return Color3f{std::abs(isect->get_shading_normal().x()), std::abs(isect->get_shading_normal().y()), std::abs(isect->get_shading_normal().z())};
+    return Color3f{std::abs(isect->shading_normal().x()), std::abs(isect->shading_normal().y()), std::abs(isect->shading_normal().z())};
 }
 
 

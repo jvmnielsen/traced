@@ -72,16 +72,20 @@ auto
 Scene::sample_light_source(const Intersection& isect, const Vec3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
 
     const auto [atLight, wi, lightPdf, li] = light.sample_as_light(isect, sampler);
-    
+
+    //return Color3f{std::abs(isect.shading_normal().x()), std::abs(isect.shading_normal().y()), std::abs(isect.shading_normal().z())};
+    //return Color3f{std::abs(wi.x()), std::abs(wi.y()), std::abs(wi.z())};
+
     if (lightPdf > 0.0f && !li.IsBlack()) {
         const auto eval = isect.evaluate_material(wo, wi);
-        const auto dots = std::abs(dot(wi, isect.get_shading_normal()));
+        const auto dots = dot(wi, isect.shading_normal()) > 0 ? dot(wi, isect.shading_normal()) : 0;
         const auto f = eval * dots;
-        const auto scatteringPdf = isect.material_pdf(wi);
+        const auto scattering_pdf = isect.material_pdf(wi);
+        //if (scattering_pdf > 0) std::cout << scattering_pdf << '\n';
 
-        if (!f.IsBlack() && line_of_sight_between(isect.PointOffset(), atLight.PointOffset())) {
-            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
-            auto a =  f * li * weight / lightPdf;
+        if (!f.IsBlack() && line_of_sight_between(isect.offset_point(), atLight.offset_point())) {
+            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scattering_pdf);
+            auto a = f * li * weight / lightPdf; 
             return a;
         }
     }
@@ -94,7 +98,7 @@ Scene::sample_bsdf(const Intersection& isect, const Vec3f& wo, Sampler& sampler,
     if (!isect.IsSpecular()) {
 
         auto [wi, scatteringPdf, f] = isect.sample_material(wo, sampler);
-        f *= std::abs(dot(wi, isect.get_shading_normal()));
+        f *= std::abs(dot(wi, isect.shading_normal()));
 
         if (!f.IsBlack() && scatteringPdf > 0) {
 
@@ -104,7 +108,7 @@ Scene::sample_bsdf(const Intersection& isect, const Vec3f& wo, Sampler& sampler,
                 return Color3f::Black();
             }
 
-            auto lightIsect = intersects(Rayf{isect.PointOffset(), wi});
+            auto lightIsect = intersects(Rayf{isect.offset_point(), wi});
 
             auto li = Color3f::Black();
             
@@ -137,7 +141,7 @@ Scene::estimate_direct_light(
     // auto future_sampled_bsdf = std::async(std::launch::async, &Scene::sample_bsdf, this, isect, wo, sampler, light);
 
 
-    return sample_light_source(isect, wo, sampler, light);// +sample_bsdf(isect, wo, sampler, light);
+    return sample_light_source(isect, wo, sampler, light) + sample_bsdf(isect, wo, sampler, light);//// +
     
 
    //return future_sampled_light.get() + future_sampled_bsdf.get();

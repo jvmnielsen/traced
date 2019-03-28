@@ -16,23 +16,23 @@ Intersection::Intersection(
       m_shading_basis(shading_normal) {
 }
 
-Point3f Intersection::PointOffset() const {
+Point3f Intersection::offset_point() const {
     return m_point + m_geometric_normal * Math::Constants::Epsilon;
 }
 
 auto
-Intersection::GetPoint() const -> const Point3f& {
+Intersection::point() const -> const Point3f& {
     return m_point;
 }
 
 auto
-Intersection::get_geometric_normal() const -> const Vec3f&
+Intersection::geometric_normal() const -> const Vec3f&
 {
     return m_geometric_normal;
 };
 
 auto
-Intersection::get_shading_normal() const -> const Vec3f&
+Intersection::shading_normal() const -> const Vec3f&
 {
     return m_shading_basis.w();
 }
@@ -55,7 +55,7 @@ Intersection::emitted(const Vec3f& dir) const -> Color3f {
 
 auto 
 Intersection::material_pdf(const Vec3f& wi) const -> FLOAT {
-    return m_material->Pdf(*this, wi);
+    return m_material->Pdf(wi, *this);
 }
 
 auto 
