@@ -26,7 +26,7 @@ auto
 Sampler::SampleDisk() -> Point2f {
     const auto randPoint = GetRandom2D();
     // map to [-1,1]
-    const auto offset = Point2f{ 2.0 * randPoint.x - 1.0, 2.0 * randPoint.y - 1.0 };
+    const auto offset = Point2f{ 2.0f * randPoint.x - 1.0f, 2.0f * randPoint.y - 1.0f };
 
     if (offset.x == 0.0 && offset.y == 0.0)
         return { 0.0, 0.0 };

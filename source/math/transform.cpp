@@ -33,9 +33,9 @@ Transform::Scale(const Vec3f& vec) -> Transform&
     };
 
     m_inverse *= {
-        1.0/vec.x(),          0,         0,  0,
-        0,          1.0/vec.y(),         0,  0,
-        0,                  0, 1.0/vec.z(),  0,
+        1.0f/vec.x(),          0,         0,  0,
+        0,          1.0f/vec.y(),         0,  0,
+        0,                  0, 1.0f/vec.z(),  0,
         0,                  0,         0,  1
     };
 

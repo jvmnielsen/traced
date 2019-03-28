@@ -6,7 +6,7 @@ inline auto SchlickWeight(FLOAT cosTheta) -> FLOAT {
 }
 
 inline auto FrSchlick(FLOAT R0, FLOAT cosTheta) -> FLOAT{
-    return Math::Lerp(SchlickWeight(cosTheta), R0, 1.0);
+    return Math::Lerp(SchlickWeight(cosTheta), R0, 1.0f);
 }
 
 inline auto FrSchlick(const Color3f& R0, FLOAT cosTheta) -> Color3f {

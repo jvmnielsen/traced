@@ -160,7 +160,7 @@ Mesh::sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Inte
 } */
 
 auto Mesh::sample_as_light(const Intersection& ref,
-    Sampler& sampler) const -> std::tuple<Intersection, Vec3f, double, Color3f> {
+    Sampler& sampler) const -> std::tuple<Intersection, Vec3f, FLOAT, Color3f> {
     
     const auto[sampledIsect, pdfs] = sample_random_triangle(sampler);
 
@@ -179,7 +179,7 @@ auto Mesh::sample_as_light(const Intersection& ref,
     //const auto pdf = pdfs * 1.0 / m_triangles.size();
 
     if (pdf == 0 || (sampledIsect.point() - ref.point()).length() == 0)
-        return std::make_tuple(sampledIsect, wi, 0, Color3f::Black());
+        return std::make_tuple(sampledIsect, wi, 0.0f, Color3f::Black());
 
     return std::make_tuple(sampledIsect, wi, pdf, m_material->Emitted(sampledIsect, -wi));
 }

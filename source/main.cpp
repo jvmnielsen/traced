@@ -134,7 +134,7 @@ int main(int argc, char * argv[]) {
 
     Parser parser;
     //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.construct_mesh_from_file(sphere, green);
+    auto cube1 = parser.construct_mesh_from_file(bunny, green);
     auto lightSource = parser.construct_mesh_from_file(plane, light);
     auto floor = parser.construct_mesh_from_file(plane, matte);
     //auto rightWall = parser.construct_mesh_from_file(plane, matte);
@@ -143,7 +143,7 @@ int main(int argc, char * argv[]) {
     //auto ceiling = parser.construct_mesh_from_file(plane, matte);
 
     auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0,0.7, 3.}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
+    cube1Transform->Translate({0,0.7, 4.}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
     cube1->TransformBy(std::move(cube1Transform));
 
     auto floorTransform = std::make_unique<Transform>();
@@ -170,10 +170,10 @@ int main(int argc, char * argv[]) {
     scene->set_background_color(Color3f{0.0f});
 
     const auto look_from = Point3f(0.0, 16.0, 24.0);
-    const auto look_at = Point3f(0.0, 0.0, -1.0);
+    const auto look_at = Point3f(0.0, 0.0, -1.5);
     const auto dist_to_focus = (look_from - look_at).length();
-    const auto aperture = 0;
-    auto camera = std::make_unique<Camera>(look_from, look_at, Vec3f(0.0, 1.0, 0.0f), 55.0, static_cast<double>(SCREEN_WIDTH) / static_cast<double>(SCREEN_HEIGHT), aperture, dist_to_focus);
+    const auto aperture = 0.2f;
+    auto camera = std::make_unique<Camera>(look_from, look_at, Vec3f(0.0f, 1.0f, 0.0f), 55.0f, static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), aperture, dist_to_focus);
 
     //auto [scene, camera] = CornellBox();
     

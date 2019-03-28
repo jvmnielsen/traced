@@ -4,7 +4,7 @@
 //#include "normal3.hpp"
 #include <optional>
 
-#define FLOAT double
+#define FLOAT float
 
 namespace Math {
 
