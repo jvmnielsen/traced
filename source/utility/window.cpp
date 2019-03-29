@@ -59,14 +59,16 @@ bool Window::InitializeWindow(ImageBuffer& buffer)
     // create renderer here for now
     //m_renderer = SDL_CreateRenderer(m_windowHandle, -1, SDL_RENDERER_SOFTWARE);
 
-    // get surface of window 
-    m_screenSurface = SDL_GetWindowSurface( m_windowHandle );
+    
 
     if (m_screenSurface == NULL)
     {
         std::cout << "SDL surface could not be created. Error: " << SDL_GetError();
         return false;
     } */
+
+    // get surface of window 
+    m_screenSurface = SDL_GetWindowSurface(m_windowHandle);
 
     m_texture = SDL_CreateTexture(
             m_renderer,
@@ -138,7 +140,19 @@ void Window::CheckForInput(ImageBuffer &pixelBuffer)
 
         startTime = endTime;
         endTime = SDL_GetTicks();
-    } 
+    }
+
+    
+
+    int width, height;
+    SDL_QueryTexture(m_texture, NULL, NULL, &width, &height);
+    SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+    SDL_RenderReadPixels(m_renderer, NULL, surface->format->format, surface->pixels, surface->pitch);
+    SDL_SaveBMP(surface, "out.bmp");
+    SDL_FreeSurface(surface);
+
+
+    //SDL_SavePNG(m_screenSurface, "out.bmp");
 }
 
 

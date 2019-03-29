@@ -23,14 +23,9 @@ public:
 
 private:
 
-    struct ScreenSegment {
-        ScreenSegment(Point2i lower, Point2i upper, size_t _index) : lowerBound(std::move(lower)), upperBound(std::move(upper)), index(_index) {}
-        Point2i lowerBound;
-        Point2i upperBound;
-        size_t index;
-    };
+    
 
-    auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> bool;
+    auto RenderScreenSegment(const ScreenSegment& segment, int samples_per_pixel) -> void;
     
 
     std::unique_ptr<Camera>      m_camera;

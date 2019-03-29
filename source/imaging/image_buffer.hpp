@@ -2,6 +2,14 @@
 #include "color3.hpp"
 #include <vector>
 #include <mutex>
+#include "../math/point2.hpp"
+
+struct ScreenSegment {
+    ScreenSegment(Point2i lower, Point2i upper, size_t _index) : lowerBound(std::move(lower)), upperBound(std::move(upper)), index(_index) {}
+    Point2i lowerBound;
+    Point2i upperBound;
+    size_t index;
+};
 
 class ImageBuffer
 {
@@ -11,6 +19,8 @@ public:
     void AddPixelAt(Color3f& color, size_t screenX, size_t screenY); // read/write for pixel at specified location
 
     //void AddPixel(const Color& color);
+
+    //auto render_segment(const ScreenSegment& segment) -> void;
 
     constexpr size_t GetWidth() { return m_screenWidth; }
     constexpr size_t GetHeight() { return m_screenHeight; }

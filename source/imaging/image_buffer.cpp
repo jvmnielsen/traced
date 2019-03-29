@@ -68,3 +68,16 @@ ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void 
         m_buffer.at((correctedY * m_screenWidth + screenX) * 4 + 3) = 255;
     } // maybe add throw
 }
+
+
+/*
+auto 
+ImageBuffer::render_segment(const ScreenSegment& segment, const std::vector<Color3f>& pixels) -> void
+{
+    for (int j = segment.upperBound.y - 1; j >= segment.lowerBound.y; j--) { // start in the top left
+        for (int i = segment.lowerBound.x; i < segment.upperBound.x; ++i) {
+            AddPixelAt()
+        }
+    }
+    
+} */

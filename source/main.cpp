@@ -137,32 +137,51 @@ int main(int argc, char * argv[]) {
     auto cube1 = parser.construct_mesh_from_file(bunny, green);
     auto lightSource = parser.construct_mesh_from_file(plane, light);
     auto floor = parser.construct_mesh_from_file(plane, matte);
-    //auto rightWall = parser.construct_mesh_from_file(plane, matte);
-    //auto leftWall = parser.construct_mesh_from_file(plane, matte);
-    //auto backWall = parser.construct_mesh_from_file(plane, matte);
+    auto rightWall = parser.construct_mesh_from_file(plane, matte);
+    auto leftWall = parser.construct_mesh_from_file(plane, matte);
+    auto backWall = parser.construct_mesh_from_file(plane, matte);
     //auto ceiling = parser.construct_mesh_from_file(plane, matte);
 
     auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0,0.7, 4.}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
+    cube1Transform->Translate({0,0.7, 4.5}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
     cube1->TransformBy(std::move(cube1Transform));
 
     auto floorTransform = std::make_unique<Transform>();
-    floorTransform->Scale(Vec3f{1000.0});
+    floorTransform->Scale(Vec3f{200.0});
     floor->TransformBy(std::move(floorTransform));
 
     auto lightTransform = std::make_unique<Transform>();
     lightTransform->Translate({0, 20., 3.0});
-    lightTransform->Rotate({0.0f, .0f, 3.}, -170.0);
-    lightTransform->Scale(Vec3f{5.0});
+    lightTransform->Rotate({0.0f, .0f, 5.}, -170.0);
+    lightTransform->Scale(Vec3f{7.0});
     lightSource->TransformBy(std::move(lightTransform));
 
+    auto rightTransform = std::make_unique<Transform>();
+    rightTransform->Translate({20., 0.0, 0.0});
+    rightTransform->Rotate({0.0, 0.0, 1.0}, 90.0);
+    rightTransform->Scale(Vec3f{20.0});
+    rightWall->TransformBy(std::move(rightTransform));
 
+    auto leftTransform = std::make_unique<Transform>();
+    leftTransform->Translate({-20.0, 0.0, 0.0});
+    leftTransform->Rotate({0., 0.0, 1.0}, -90.0);
+    leftTransform->Scale(Vec3f{20.0});
+    leftWall->TransformBy(std::move(leftTransform));
+
+    auto backTransform = std::make_unique<Transform>();
+    backTransform->Translate({0.0, 0., -20.0});
+    backTransform->Rotate({1.0, 0.0, 0.0}, 90.0);
+    backTransform->Scale(Vec3f{20.});
+    backWall->TransformBy(std::move(backTransform));
 
     std::vector<std::unique_ptr<Mesh>> meshes;
     std::vector<std::unique_ptr<Mesh>> lights;
     cube1->generate_internal_aabbs();
     meshes.push_back(std::move(cube1));
     meshes.push_back(std::move(floor));
+    meshes.push_back(std::move(rightWall));
+    meshes.push_back(std::move(leftWall));
+    meshes.push_back(std::move(backWall));
 
     lights.push_back(std::move(lightSource));
 
@@ -181,7 +200,7 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 100 };
+    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 500 };
     std::cout << "Render-thread started\n";
 
     window->InitializeWindow(*buffer);
