@@ -16,7 +16,6 @@ Camera::Camera(const float v_fov, const float aspect)
 Camera::Camera(
         const Point3f& look_from,
         const Point3f& look_at,
-        const Vec3f& v_up,
         FLOAT v_fov,
         FLOAT aspect,
         FLOAT aperture,
@@ -28,6 +27,7 @@ Camera::Camera(
     const auto half_width = aspect * half_height;
 
     m_origin = look_from;
+    const auto v_up = Vec3f{0, 1, 0};
 
     m_w = normalize(look_from - look_at);
     m_u = normalize(cross(v_up, m_w));

@@ -3,7 +3,7 @@
 
 
 auto
-Transform::Translate(const Vec3f& vec) -> Transform& {
+Transform::translate(const Vec3f& vec) -> Transform& {
     
     
     m_matrix *= {
@@ -23,7 +23,7 @@ Transform::Translate(const Vec3f& vec) -> Transform& {
 }
 
 auto 
-Transform::Scale(const Vec3f& vec) -> Transform&
+Transform::scale(const Vec3f& vec) -> Transform&
 {
     m_matrix *= {
         vec.x(),     0,     0, 0,
@@ -43,7 +43,7 @@ Transform::Scale(const Vec3f& vec) -> Transform&
 }
 
 auto
-Transform::Rotate(const Vec3f& axis, float angle) -> Transform& {
+Transform::rotate(const Vec3f& axis, float angle) -> Transform& {
 
     const auto norm_axis = normalize(axis);
     const auto rad = Math::DegreeToRadian(angle);

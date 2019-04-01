@@ -20,21 +20,17 @@ public:
     auto operator=(const AABB& other) -> AABB&;
 
 
-    auto IntersectsMesh(const Rayf& ray) const -> std::optional<Intersection>;
-    auto IntersectsMeshFast(const Rayf& ray) const -> bool;
+    auto intersects_mesh(const Rayf& ray) const -> std::optional<Intersection>;
+    //auto IntersectsMeshFast(const Rayf& ray) const -> bool;
     auto intersects_bounds(const Rayf& ray) const -> bool;
-    auto IntersectsFast(const Rayf& ray) const -> bool;
-    auto Intersects(const Rayf& ray) const->std::optional<Intersection>;
+    //auto IntersectsFast(const Rayf& ray) const -> bool;
+    auto intersects(const Rayf& ray) const->std::optional<Intersection>;
 
-    auto bounds()        const -> const Bounds&;
-    auto GetShape()         const -> const Mesh&;
-
-    //auto DoesNotContainMesh() const -> bool;
-
+    auto bounds() const -> const Bounds&;
     auto center() const -> const Point3f&;
 
 private:
-    bool IntersectsShape(const Rayf& ray, Intersection& isect) const;
+    //bool IntersectsShape(const Rayf& ray, Intersection& isect) const;
 
     
     Bounds m_bounds;

@@ -48,7 +48,7 @@ set(SOURCE_FILES
         source/utility/utility.hpp
         source/utility/window.hpp source/utility/window.cpp
 
-        source/main.cpp source/material/emissive.cpp)
+        source/main.cpp source/material/emissive.cpp source/material/distributions.hpp source/material/distributions.cpp)
 
 
 

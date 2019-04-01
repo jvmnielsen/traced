@@ -25,17 +25,6 @@ Scene::intersects(const Rayf& ray) const -> std::optional<Intersection> {
     return isect;
 }
 
-bool Scene::intersects_quick(const Rayf& ray) const {
-    if (m_meshes.IntersectsFast(ray))
-        return true;
-    for (const auto& light : m_lights) {
-        if (light->IntersectsFast(ray))
-            return true;
-    }
-    return false;
-}
-
-
 bool Scene::line_of_sight_between(const Point3f& p1, const Point3f& p2) const {
     const Vec3f dir = p2 - p1;
     const auto distance = dir.length();
@@ -102,7 +91,7 @@ Scene::sample_bsdf(const Intersection& isect, const Vec3f& wo, Sampler& sampler,
 
         if (!f.IsBlack() && scatteringPdf > 0) {
 
-            auto lightPdf = light.Pdf(isect, wi);
+            auto lightPdf = light.pdf(isect, wi);
 
             if (lightPdf == 0.0f) {
                 return Color3f::Black();
@@ -132,28 +121,11 @@ Scene::estimate_direct_light(
     const Intersection& isect,
     const Vec3f& wo,
     Sampler& sampler,
-    const Mesh& light) const -> Color3f {
-
-    //Color3f directLight = Color3f::Black();
-
-
-    //auto future_sampled_light = std::async(&Scene::sample_light_source, this, isect, wo, sampler, light);
-    // auto future_sampled_bsdf = std::async(std::launch::async, &Scene::sample_bsdf, this, isect, wo, sampler, light);
-
-
-    return sample_light_source(isect, wo, sampler, light) + sample_bsdf(isect, wo, sampler, light);//// +
-    
-
-   //return future_sampled_light.get() + future_sampled_bsdf.get();
+    const Mesh& light) const -> Color3f
+{
+    return sample_light_source(isect, wo, sampler, light) + sample_bsdf(isect, wo, sampler, light);
 }
 
-void Scene::set_background_color(const Color3f& color) {
-    m_background_color = color;
-}
-
-Color3f Scene::background_color() const {
-    return m_background_color;
-}
 
 
 

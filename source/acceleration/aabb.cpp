@@ -55,9 +55,6 @@ AABB::center() const -> const Point3f&
     return m_center;
 }
 
-bool AABB::IntersectsFast(const Rayf& ray) const {
-    return m_mesh->IntersectsFast(ray);
-}
 
 auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
 
@@ -119,26 +116,19 @@ auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
 }
 
 
-auto AABB::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
+auto AABB::intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
     if (intersects_bounds(ray)) {
         return m_mesh->Intersects(ray);
     }
 
-    //std::cout << "missed\n";
     return std::nullopt;
 }
 
 
 auto 
-AABB::IntersectsMesh(const Rayf& ray) const->std::optional<Intersection> {
+AABB::intersects_mesh(const Rayf& ray) const->std::optional<Intersection> {
     return m_mesh->Intersects(ray);
-}
-
-auto
-AABB::IntersectsMeshFast(const Rayf& ray) const -> bool
-{
-    return m_mesh->IntersectsFast(ray);
 }
 
 auto AABB::bounds() const -> const Bounds&

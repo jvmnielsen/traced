@@ -3,10 +3,6 @@
 #include "../imaging/camera.hpp"
 #include "../imaging/image_buffer.hpp"
 
-
-//#include "Material.h"
-
-
 class Renderer
 {
 public:
@@ -16,28 +12,23 @@ public:
         std::shared_ptr<ImageBuffer> buffer);
 
     auto render(int samples_per_pixel) -> void;
-    //auto RenderProgressive() -> void;
 
-    auto render_normals(Rayf& ray)->Color3f;
+    auto render_normals() -> void;
  
+    auto shutdown() -> void;
 
 private:
 
-    
+    bool m_running;
 
-    auto RenderScreenSegment(const ScreenSegment& segment, int samples_per_pixel) -> void;
-    
+    auto render_screen_segment(const ScreenSegment& segment, int samples_per_pixel) -> void;
 
     std::unique_ptr<Camera>      m_camera;
     std::unique_ptr<Scene>       m_scene;
     std::shared_ptr<ImageBuffer> m_buffer;
-    //std::unique_ptr<Sampler>     m_sampler;
 
-    auto OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f;
+    auto outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f;
 
-    //Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
-    //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
-    //Color3f SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const;
     static constexpr int m_maxBounces = 5;
 };
 

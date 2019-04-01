@@ -12,14 +12,17 @@ class Transform;
 class Mesh
 {
 public:
-    explicit Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material);
+    Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material, const Transform& transform);
+	Mesh(std::vector<Triangle> triangles);
 
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
     auto IntersectsFast(const Rayf& ray) const -> bool;
 
+
+
 	auto calculate_surface_area() const -> FLOAT;
     auto calculate_bounds() const -> Bounds;
-    auto TransformBy(std::shared_ptr<Transform> transform) -> void;
+    auto transform_by(const Transform& transform) -> void;
 
     //auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     //auto GetMaterial() const -> const Material&;
@@ -35,25 +38,28 @@ public:
 
     auto triangle_count() const -> std::size_t;
 
-    auto Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT;
+    auto pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT;
 
     //auto HasInternalBoundingBoxes() const -> bool { return !m_internalBoundingBoxes.empty(); }
 
-    auto generate_internal_aabbs() -> void;
 
-    auto generate_internal_bounding_boxes() const -> std::vector<Bounds>;
-    auto assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bounds) const -> std::vector<AABB>;
 
 private:
 
+
+
     auto intersects_internal_aabbs(const Rayf& ray) const -> std::optional<Intersection>;
     auto intersects_mesh_proper(const Rayf& ray) const -> std::optional<Intersection>;
+
+	auto generate_internal_aabbs() -> void;
+	auto generate_internal_bounding_boxes() const -> std::vector<Bounds>;
+	auto assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bounds) const -> std::vector<AABB>;
 
     std::vector<AABB>           m_internal_bounding;
     std::vector<Triangle>       m_triangles;
     std::shared_ptr<Material>   m_material;
     FLOAT                       m_surface_area;
-    std::shared_ptr<Transform>  m_transform_to_world;
+    // std::shared_ptr<Transform>  m_transform_to_world;
 
 };
 

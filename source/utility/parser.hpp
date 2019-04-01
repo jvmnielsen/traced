@@ -9,11 +9,11 @@ class Parser
 public:
 	//auto GetMeshFromFile(const std::string& filename) -> std::unique_ptr<Mesh>;
 
-	auto construct_mesh_from_file(const std::string& filename, std::shared_ptr<Material> material) -> std::unique_ptr<Mesh>;
+	auto construct_mesh_from_file(const std::string& filename, std::shared_ptr<Material> material, const Transform& transform) -> std::unique_ptr<Mesh>;
 
 private:
 	auto parse_file(const std::string& filename) -> void;
-	auto construct_mesh(std::shared_ptr<Material> material) -> std::unique_ptr<Mesh>;
+	auto construct_mesh(std::shared_ptr<Material> material, const Transform& transform) -> std::unique_ptr<Mesh>;
     auto reset() -> void;
 
 	std::vector<Point3f> m_vertex;

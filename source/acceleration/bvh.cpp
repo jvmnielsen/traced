@@ -69,9 +69,10 @@ auto BVH::BVHNode::Intersects(const Rayf& ray) const -> std::optional<Intersecti
         return std::nullopt;
     }
     //    throw std::exception();
-    return m_aabb.IntersectsMesh(ray);
+    return m_aabb.intersects_mesh(ray);
 }
 
+/*
 auto BVH::BVHNode::IntersectsFast(const Rayf& ray) const -> bool {
     // Do we hit the bounding box?
     if (!m_aabb.intersects_bounds(ray))
@@ -82,7 +83,7 @@ auto BVH::BVHNode::IntersectsFast(const Rayf& ray) const -> bool {
         return m_left_child->IntersectsFast(ray) || m_right_child->IntersectsFast(ray);
     }
     return m_aabb.IntersectsMeshFast(ray);
-}
+} */
 
 BVH::BVHNode::BVHNode(
         std::unique_ptr<BVHNode> leftChild,
@@ -105,7 +106,8 @@ BVH::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     return m_root_node->Intersects(ray);
 }
 
+/*
 auto
 BVH::IntersectsFast(const Rayf& ray) const -> bool {
     return m_root_node->IntersectsFast(ray);
-}
+} */

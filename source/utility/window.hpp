@@ -5,15 +5,13 @@
 class Window
 {
 public:
-	Window(const uint32_t screenHeight, const uint32_t screenWidth);
-	
-    Window();
+	Window(int screen_width, int screen_height);
 	~Window();
 
-	bool InitializeWindow(ImageBuffer& buffer);
+    auto initialize_window(ImageBuffer& buffer) -> bool;
 
-    void CheckForInput(ImageBuffer& pixelBuffer);
-    void UpdateTexture(ImageBuffer& buffer);
+    void handle_input(ImageBuffer& pixelBuffer);
+    void update_texture(ImageBuffer& buffer);
    
 private:
 	SDL_Window *m_windowHandle;
@@ -24,9 +22,9 @@ private:
     //Event handler
     SDL_Event m_eventHandler;
 
-    void* m_pixels; // buffer that holds pixels for screen
+    //void* m_pixels; // buffer that holds pixels for screen
 
-    uint32_t m_screenHeight;
-    uint32_t m_screenWidth;
+    const int m_screen_height;
+    const int m_screen_width;
 };
 

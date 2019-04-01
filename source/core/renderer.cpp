@@ -10,7 +10,9 @@ Renderer::Renderer(
     std::shared_ptr<ImageBuffer> buffer)
         : m_camera(std::move(camera))
         , m_scene(std::move(scene))
-        , m_buffer(std::move(buffer)) {
+        , m_buffer(std::move(buffer))
+        , m_running(true)
+{
 }
 
 
@@ -88,7 +90,7 @@ Renderer::render(int samples_per_pixel) -> void {
 
     std::vector<ScreenSegment> segments;
 
-    const auto num_segments = std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
+    const auto num_segments = 3;// std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
     const auto total_segments = num_segments * num_segments;
 
     std::cout << "Rendering " << total_segments << " total segments" << std::endl;
@@ -115,7 +117,7 @@ Renderer::render(int samples_per_pixel) -> void {
 
     for (auto& segment : segments) {
         //render_result.emplace_back(std::async(&Renderer::RenderScreenSegment, this, segment, samples_per_pixel));
-        render_segments.emplace_back(&Renderer::RenderScreenSegment, this, segment, samples_per_pixel);
+        render_segments.emplace_back(&Renderer::render_screen_segment, this, segment, samples_per_pixel);
     }
 
     for (auto& thread : render_segments)
@@ -124,7 +126,7 @@ Renderer::render(int samples_per_pixel) -> void {
 }
 
 auto
-Renderer::RenderScreenSegment(const ScreenSegment& segment, int samples_per_pixel) -> void {
+Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pixel) -> void {
  
     Timer timer{std::string{"Segment " + std::to_string(segment.index) + " took: "}};
 
@@ -145,8 +147,10 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samples_per_pixe
 
                 auto ray = m_camera->get_ray(u, v, sampler);
 
-                color += OutgoingLight(ray, sampler);
-                //color += de_nan(tmp);
+                color += outgoing_light(ray, sampler);
+
+                if (!m_running)
+                    return;
             }
 
             color /= float(samples_per_pixel);
@@ -157,7 +161,7 @@ Renderer::RenderScreenSegment(const ScreenSegment& segment, int samples_per_pixe
 }
 
 auto
-Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
+Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f {
 
     bool lastBounceSpecular = false;
     Color3f throughput{ 1.0f };
@@ -202,18 +206,33 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 }
 
 auto 
-Renderer::render_normals(Rayf& ray) -> Color3f
+Renderer::render_normals() -> void
 {
-    auto isect = m_scene->intersects(ray);
+    for (int j = (int)m_buffer->GetHeight() - 1; j >= 0; j--) {
+        for (size_t i = 0; i < m_buffer->GetWidth(); ++i) {
 
-    if (!isect.has_value()) {
-        return Color3f::Black();
+            Sampler sampler;
+            const auto ray = m_camera->get_ray(i, j, sampler);
+            auto isect = m_scene->intersects(ray);
+
+            Color3f color = Color3f::Black();
+
+            Color3f{std::abs(isect->shading_normal().x()), std::abs(isect->shading_normal().y()), std::abs(isect->shading_normal().z())};
+
+            if (!isect.has_value()) {
+                color = Color3f::Black();
+            }
+
+            m_buffer->AddPixelAt(color, i, j);
+        }
     }
-
-    return Color3f{std::abs(isect->shading_normal().x()), std::abs(isect->shading_normal().y()), std::abs(isect->shading_normal().z())};
 }
 
-
+auto
+Renderer::shutdown() -> void
+{
+    m_running = false;
+}
 
 /*
 Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)

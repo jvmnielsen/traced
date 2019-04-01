@@ -7,15 +7,22 @@
 #include "../utility/utility.hpp"
 
 
-Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material)
+Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material, const Transform& transform)
     : m_triangles(std::move(triangles)),
       m_material(std::move(material))
 {
     m_surface_area = calculate_surface_area();
-    //if (m_triangles.size() > 50)
-        //m_internal_bounding = generate_internal_aabbs();
+
+    transform_by(transform);
+
+    if (m_triangles.size() > 100)
+        generate_internal_aabbs();
 }
 
+Mesh::Mesh(std::vector<Triangle> triangles)
+    : m_triangles(std::move(triangles))
+{
+}
 
 auto
 Mesh::intersects_internal_aabbs(const Rayf& ray) const -> std::optional<Intersection> {
@@ -24,7 +31,7 @@ Mesh::intersects_internal_aabbs(const Rayf& ray) const -> std::optional<Intersec
 
     for (auto& aabb : m_internal_bounding) {
         // the last overridden isect will always be the closest (ray max_param shrinks every time)
-        auto tmp = aabb.Intersects(ray);
+        auto tmp = aabb.intersects(ray);
         if (tmp.has_value())
             isect = tmp;
     }
@@ -68,21 +75,11 @@ Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 }
 
 
-bool Mesh::IntersectsFast(const Rayf& ray) const {
-    for (const auto& triangle : m_triangles)
-        if (triangle.IntersectsFast(ray))
-            return true;
 
-    return false;
-}
-
-
-void Mesh::TransformBy(std::shared_ptr<Transform> transform) {
-
-    m_transform_to_world = std::move(transform);
+void Mesh::transform_by(const Transform& transform) {
 
     for (auto& triangle : m_triangles)
-        triangle.TransformBy(*m_transform_to_world);
+        triangle.TransformBy(transform);
 
     m_surface_area = calculate_surface_area();
 }
@@ -139,26 +136,6 @@ Mesh::sample_random_triangle(Sampler& sampler) const -> std::tuple<Intersection,
     return randTriangle.SampleSurface(sampler);
 }
 
-
-/*
-auto
-Mesh::sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
-    auto [sampledIsect, pdfs] = sample_random_triangle(sampler);
-    const auto wi = normalize(sampledIsect.GetPoint() - ref.GetPoint());
-
-    sampledIsect.SetMeshAndMaterial(this, m_material.get());
-
-    FLOAT pdf;
-
-    const auto denom = std::abs(dot(sampledIsect.get_geometric_normal(), -wi)) * calculate_surface_area();
-
-    if (denom != 0.0)
-        pdf = (sampledIsect.GetPoint() - ref.GetPoint()).length_squared() / denom; 
-
-    return std::make_tuple(sampledIsect, pdf);
-
-} */
-
 auto Mesh::sample_as_light(const Intersection& ref,
     Sampler& sampler) const -> std::tuple<Intersection, Vec3f, FLOAT, Color3f> {
     
@@ -181,12 +158,12 @@ auto Mesh::sample_as_light(const Intersection& ref,
     if (pdf == 0 || (sampledIsect.point() - ref.point()).length() == 0)
         return std::make_tuple(sampledIsect, wi, 0.0f, Color3f::Black());
 
-    return std::make_tuple(sampledIsect, wi, pdf, m_material->Emitted(sampledIsect, -wi));
+    return std::make_tuple(sampledIsect, wi, pdf, m_material->emitted(sampledIsect, -wi));
 }
 
 
 auto
-Mesh::Pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT {
+Mesh::pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT {
     
     Ray ray = Rayf{ref.point(), wi};
     auto isect = Intersects(ray);
@@ -264,7 +241,7 @@ Mesh::assign_triangles_to_internal_bounds(const std::vector<Bounds>& internal_bo
                 std::copy_if(m_triangles.begin(), m_triangles.end(), std::back_inserter(sub_mesh),
                              [&bounds](const Triangle& triangle) { return bounds.overlaps(triangle.calculate_bounds()); });
 
-                return sub_mesh.empty() ? std::nullopt : std::make_optional(AABB(std::make_unique<Mesh>(sub_mesh, m_material), bounds));
+                return sub_mesh.empty() ? std::nullopt : std::make_optional(AABB(std::make_unique<Mesh>(sub_mesh), bounds));
             }));
     }
 

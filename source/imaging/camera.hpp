@@ -10,7 +10,7 @@ class Camera
 public:
 
     Camera(float v_fov, float aspect);
-    Camera(const Point3f& look_from, const Point3f& look_at, const Vec3f& v_up, FLOAT v_fov, FLOAT aspect, FLOAT aperture, FLOAT focus_dist);
+    Camera(const Point3f& look_from, const Point3f& look_at, FLOAT v_fov, FLOAT aspect, FLOAT aperture, FLOAT focus_dist);
 
     auto get_ray(double s, double t, Sampler& sampler) const -> Rayf;
 

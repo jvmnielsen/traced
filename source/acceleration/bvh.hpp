@@ -19,7 +19,7 @@ private:
         BVHNode(std::unique_ptr<BVHNode> leftChild, std::unique_ptr<BVHNode> rightChild);
 
         auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
-        auto IntersectsFast(const Rayf& ray) const -> bool;
+        //auto IntersectsFast(const Rayf& ray) const -> bool;
 
         auto IsInteriorNode() const -> bool;
 

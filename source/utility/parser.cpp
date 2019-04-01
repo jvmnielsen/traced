@@ -92,7 +92,7 @@ auto Parser::parse_file(const std::string& filename) -> void {
 	infile.close();
 }
 
-auto Parser::construct_mesh(std::shared_ptr<Material> material) -> std::unique_ptr<Mesh> {
+auto Parser::construct_mesh(std::shared_ptr<Material> material, const Transform& transform) -> std::unique_ptr<Mesh> {
 
 	std::vector<Triangle> triangles;
 
@@ -114,7 +114,7 @@ auto Parser::construct_mesh(std::shared_ptr<Material> material) -> std::unique_p
 
 	reset();
 
-	return std::make_unique<Mesh>(std::move(triangles), std::move(material));
+	return std::make_unique<Mesh>(std::move(triangles), std::move(material), transform);
 
 
 }
@@ -131,9 +131,11 @@ auto Parser::reset() -> void {
     m_normal_ordering.clear();
 }
 
-auto Parser::construct_mesh_from_file(const std::string& filename, std::shared_ptr<Material> material) -> std::unique_ptr<Mesh> {
-
+auto Parser::construct_mesh_from_file(const std::string& filename,
+		 							  std::shared_ptr<Material> material,
+		 							  const Transform& transform) -> std::unique_ptr<Mesh>
+{
 	parse_file(filename);
 
-	return construct_mesh(material);
+	return construct_mesh(material, transform);
 }

@@ -45,22 +45,22 @@ Intersection::IsSpecular() const -> bool {
 auto 
 Intersection::sample_material(const Vec3f& wo, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f> 
 {
-    return m_material->Sample(wo, *this, sampler);
+    return m_material->sample(wo, *this, sampler);
 }
 
 auto 
 Intersection::emitted(const Vec3f& dir) const -> Color3f {
-    return m_material->Emitted(*this, dir);
+    return m_material->emitted(*this, dir);
 }
 
 auto 
 Intersection::material_pdf(const Vec3f& wi) const -> FLOAT {
-    return m_material->Pdf(wi, *this);
+    return m_material->pdf(wi, *this);
 }
 
 auto 
 Intersection::evaluate_material(const Vec3f& wo, const Vec3f& wi) const -> Color3f {
-    return m_material->Evaluate(wo, wi);
+    return m_material->evaluate(wo, wi, *this);
 }
 
 auto 

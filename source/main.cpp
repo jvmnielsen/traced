@@ -113,13 +113,14 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[]) {
 
-    constexpr unsigned int SCREEN_WIDTH = 500;
-    constexpr unsigned int SCREEN_HEIGHT = 500;
+    constexpr const unsigned int screen_width = 500;
+    constexpr const unsigned int screen_height = 500;
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>(Color3f{0.1, 0.3, 0.1});
     auto red = std::make_shared<Matte>(Color3f{0.8, 0.3, 0.3});
     auto light = std::make_shared<Emissive>();
+    auto glossy = std::make_shared<Glossy>();
 
 #ifdef _MSC_VER
     const auto cube = "assets/cube.obj";
@@ -130,83 +131,59 @@ int main(int argc, char * argv[]) {
     const auto cube = "../assets/cube.obj";
     const auto plane = "../assets/plane.obj";
     const auto bunny = "../assets/bunny.obj";
+    const auto sphere = "../assets/sphere2.obj";
 #endif
 
+    const auto main_object_transform = Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).translate(Vec3f{3.2});
+    const auto floor_transform = Transform().scale(Vec3f{200.0});
+    const auto light_transform = Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).translate(Vec3f{7.0});
+    const auto right_wall_transform = Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(Vec3f{20.0});
+    const auto left_wall_transform = Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(Vec3f{20.0});
+    const auto back_wall_transform = Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(Vec3f{20.});
+
     Parser parser;
-    //auto floor = parser.GetMeshFromFile("assets/plane.obj");
-    auto cube1 = parser.construct_mesh_from_file(bunny, green);
-    auto lightSource = parser.construct_mesh_from_file(plane, light);
-    auto floor = parser.construct_mesh_from_file(plane, matte);
-    auto rightWall = parser.construct_mesh_from_file(plane, matte);
-    auto leftWall = parser.construct_mesh_from_file(plane, matte);
-    auto backWall = parser.construct_mesh_from_file(plane, matte);
-    //auto ceiling = parser.construct_mesh_from_file(plane, matte);
+    auto main_object = parser.construct_mesh_from_file(bunny, green, main_object_transform);
+    auto light_source = parser.construct_mesh_from_file(plane, light, light_transform);
+    auto floor = parser.construct_mesh_from_file(plane, matte, floor_transform);
+    auto right_wall = parser.construct_mesh_from_file(plane, matte, right_wall_transform);
+    auto left_wall = parser.construct_mesh_from_file(plane, matte, left_wall_transform);
+    auto back_wall = parser.construct_mesh_from_file(plane, matte, back_wall_transform);
 
-    auto cube1Transform = std::make_unique<Transform>();
-    cube1Transform->Translate({0,0.7, 4.5}).Rotate({0,1,0}, 45).Scale(Vec3f{8.2});
-    cube1->TransformBy(std::move(cube1Transform));
-
-    auto floorTransform = std::make_unique<Transform>();
-    floorTransform->Scale(Vec3f{200.0});
-    floor->TransformBy(std::move(floorTransform));
-
-    auto lightTransform = std::make_unique<Transform>();
-    lightTransform->Translate({0, 20., 3.0});
-    lightTransform->Rotate({0.0f, .0f, 5.}, -170.0);
-    lightTransform->Scale(Vec3f{7.0});
-    lightSource->TransformBy(std::move(lightTransform));
-
-    auto rightTransform = std::make_unique<Transform>();
-    rightTransform->Translate({20., 0.0, 0.0});
-    rightTransform->Rotate({0.0, 0.0, 1.0}, 90.0);
-    rightTransform->Scale(Vec3f{20.0});
-    rightWall->TransformBy(std::move(rightTransform));
-
-    auto leftTransform = std::make_unique<Transform>();
-    leftTransform->Translate({-20.0, 0.0, 0.0});
-    leftTransform->Rotate({0., 0.0, 1.0}, -90.0);
-    leftTransform->Scale(Vec3f{20.0});
-    leftWall->TransformBy(std::move(leftTransform));
-
-    auto backTransform = std::make_unique<Transform>();
-    backTransform->Translate({0.0, 0., -20.0});
-    backTransform->Rotate({1.0, 0.0, 0.0}, 90.0);
-    backTransform->Scale(Vec3f{20.});
-    backWall->TransformBy(std::move(backTransform));
 
     std::vector<std::unique_ptr<Mesh>> meshes;
-    std::vector<std::unique_ptr<Mesh>> lights;
-    cube1->generate_internal_aabbs();
-    meshes.push_back(std::move(cube1));
+    meshes.push_back(std::move(main_object));
     meshes.push_back(std::move(floor));
-    meshes.push_back(std::move(rightWall));
-    meshes.push_back(std::move(leftWall));
-    meshes.push_back(std::move(backWall));
+    meshes.push_back(std::move(right_wall));
+    meshes.push_back(std::move(left_wall));
+    meshes.push_back(std::move(back_wall));
 
-    lights.push_back(std::move(lightSource));
+    std::vector<std::unique_ptr<Mesh>> lights;
+    lights.push_back(std::move(light_source));
 
     auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
-    scene->set_background_color(Color3f{0.0f});
 
     const auto look_from = Point3f(0.0, 16.0, 24.0);
     const auto look_at = Point3f(0.0, 0.0, -1.5);
     const auto dist_to_focus = (look_from - look_at).length();
-    const auto aperture = 0.2f;
-    auto camera = std::make_unique<Camera>(look_from, look_at, Vec3f(0.0f, 1.0f, 0.0f), 55.0f, static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), aperture, dist_to_focus);
+    const auto aperture = 0.0f;
+    const auto aspect = static_cast<float>(screen_width) / static_cast<float>(screen_height);
+    auto camera = std::make_unique<Camera>(look_from, look_at, 55.0f, aspect, aperture, dist_to_focus);
 
     //auto [scene, camera] = CornellBox();
     
-    auto window = std::make_unique<Window>(SCREEN_WIDTH, SCREEN_HEIGHT);
-    auto buffer = std::make_shared<ImageBuffer>(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    auto buffer = std::make_shared<ImageBuffer>(screen_width, screen_height);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread RenderThread{ &Renderer::render, std::ref(renderer), 500 };
+    std::thread render_thread{ &Renderer::render, std::ref(renderer), 1 };
     std::cout << "Render-thread started\n";
 
-    window->InitializeWindow(*buffer);
-    window->CheckForInput(*buffer);
+    auto window = std::make_unique<Window>(screen_width, screen_height);
+    //window->initialize_window(*buffer);
+    window->handle_input(*buffer);
 
-    RenderThread.join();
+    renderer.shutdown();
+    render_thread.join();
 
     return 0;
 }

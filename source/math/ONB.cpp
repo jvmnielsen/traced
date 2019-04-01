@@ -11,8 +11,8 @@ ONB::ONB(const Vec3f& normal) {
         a = Vec3f{1.0, 0.0, 0.0};
     }
 
-    m_basis[1] = cross(m_basis[2], a);
-    m_basis[0] = cross(m_basis[1], m_basis[2]);
+    m_basis[1] = normalize(cross(m_basis[2], a));
+    m_basis[0] = normalize(cross(m_basis[1], m_basis[2]));
 }
 
 auto
