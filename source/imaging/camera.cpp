@@ -27,7 +27,7 @@ Camera::Camera(
     const auto half_width = aspect * half_height;
 
     m_origin = look_from;
-    const auto v_up = Vec3f{0, 1, 0};
+    const auto v_up = Vec3f{0.0f, 1.0f, 0.0f};
 
     m_w = normalize(look_from - look_at);
     m_u = normalize(cross(v_up, m_w));

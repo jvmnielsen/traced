@@ -134,15 +134,15 @@ int main(int argc, char * argv[]) {
     const auto sphere = "../assets/sphere2.obj";
 #endif
 
-    const auto main_object_transform = Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).translate(Vec3f{3.2});
+    const auto main_object_transform = Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).scale(Vec3f{3.2});
     const auto floor_transform = Transform().scale(Vec3f{200.0});
-    const auto light_transform = Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).translate(Vec3f{7.0});
+    const auto light_transform = Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(Vec3f{7.0});
     const auto right_wall_transform = Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(Vec3f{20.0});
     const auto left_wall_transform = Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(Vec3f{20.0});
     const auto back_wall_transform = Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(Vec3f{20.});
 
     Parser parser;
-    auto main_object = parser.construct_mesh_from_file(bunny, green, main_object_transform);
+    auto main_object = parser.construct_mesh_from_file(sphere, green, main_object_transform);
     auto light_source = parser.construct_mesh_from_file(plane, light, light_transform);
     auto floor = parser.construct_mesh_from_file(plane, matte, floor_transform);
     auto right_wall = parser.construct_mesh_from_file(plane, matte, right_wall_transform);
@@ -165,7 +165,7 @@ int main(int argc, char * argv[]) {
     const auto look_from = Point3f(0.0, 16.0, 24.0);
     const auto look_at = Point3f(0.0, 0.0, -1.5);
     const auto dist_to_focus = (look_from - look_at).length();
-    const auto aperture = 0.0f;
+    const auto aperture = 0.2f;
     const auto aspect = static_cast<float>(screen_width) / static_cast<float>(screen_height);
     auto camera = std::make_unique<Camera>(look_from, look_at, 55.0f, aspect, aperture, dist_to_focus);
 
@@ -175,11 +175,10 @@ int main(int argc, char * argv[]) {
     auto buffer = std::make_shared<ImageBuffer>(screen_width, screen_height);
     
     Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread render_thread{ &Renderer::render, std::ref(renderer), 1 };
+    std::thread render_thread{ &Renderer::render, std::ref(renderer), 128 };
     std::cout << "Render-thread started\n";
 
     auto window = std::make_unique<Window>(screen_width, screen_height);
-    //window->initialize_window(*buffer);
     window->handle_input(*buffer);
 
     renderer.shutdown();
