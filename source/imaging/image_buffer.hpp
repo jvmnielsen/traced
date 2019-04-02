@@ -14,27 +14,27 @@ struct ScreenSegment {
 class ImageBuffer
 {
 public:
-    ImageBuffer(size_t screenWidth, size_t screenHeight);
+    ImageBuffer(size_t screen_width, size_t screen_height);
 
-    void AddPixelAt(Color3f& color, size_t screenX, size_t screenY); // read/write for pixel at specified location
+    void add_pixel_at(Color3f& color, int screen_x, int screen_y); // read/write for pixel at specified location
 
     //void AddPixel(const Color& color);
 
     //auto render_segment(const ScreenSegment& segment) -> void;
 
-    constexpr size_t GetWidth() { return m_screenWidth; }
-    constexpr size_t GetHeight() { return m_screenHeight; }
+    int get_width() { return m_screen_width; }
+    int get_height() { return m_screen_height; }
 
-    constexpr int BitsPerByte() { return m_bitsPerByte; }
-    constexpr int Channels() { return m_channels; }
+    int bits_per_byte() const { return m_bitsPerByte; }
+    int channels() const { return m_channels; }
 
     auto ConvertToPixelBuffer(std::vector<Color3f> colors) -> void;
 
     std::vector<unsigned char>* PtrToBuffer() { return &m_buffer; }
     std::vector<unsigned char> m_buffer;   // flattened raw RGB array used by SDL
 private:
-    size_t  m_screenWidth;                      // width of screen in pixels
-    size_t  m_screenHeight;                     // height of screen in pixels 
+    int m_screen_width;                      // width of screen in pixels
+    int m_screen_height;                     // height of screen in pixels 
     // std::vector<Color>         m_backBuffer;    // array filled during rendering
 
     std::mutex m_mutex;

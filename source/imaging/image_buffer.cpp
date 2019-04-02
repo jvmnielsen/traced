@@ -23,14 +23,14 @@ void ConvertToRGB(Color3f& color)
 
 
 ImageBuffer::ImageBuffer(
-    const size_t screenWidth,
-    const size_t screenHeight)
-    : m_screenWidth(screenWidth)
-    , m_screenHeight(screenHeight)
+    const size_t screen_width,
+    const size_t screen_height)
+    : m_screen_width(screen_width)
+    , m_screen_height(screen_height)
     , m_channels(4)
     , m_bitsPerByte(8)
 {
-    const auto total = screenWidth * screenHeight * m_channels;
+    const auto total = screen_width * screen_height * m_channels;
     m_buffer.reserve(total);
 
     for (unsigned int i = 0; i < total; i++) {
@@ -57,15 +57,15 @@ ImageBuffer::ConvertToPixelBuffer(std::vector<Color3f> colors) -> void {
 
 // note it's safe to concurrently write to individual elements of std::vector 
 auto
-ImageBuffer::AddPixelAt(Color3f& color, size_t screenX, size_t screenY) -> void {
-    auto correctedY = std::abs(static_cast<int>(screenY) - static_cast<int>(m_screenHeight)) - 1; // to correct for j starting at screen_height and decrementing
+ImageBuffer::add_pixel_at(Color3f& color, int screen_x, int screen_y) -> void {
+    const auto corrected_y = std::abs(screen_y - m_screen_height) - 1; // to correct for j starting at screen_height and decrementing
 
-    if (screenX < m_screenWidth && screenY < m_screenHeight) {
+    if (screen_x < m_screen_width && screen_y < m_screen_height) {
         ConvertToRGB(color);
-        m_buffer.at((correctedY * m_screenWidth + screenX) * 4    ) = static_cast<unsigned char>(color.r);
-        m_buffer.at((correctedY * m_screenWidth + screenX) * 4 + 1) = static_cast<unsigned char>(color.g);
-        m_buffer.at((correctedY * m_screenWidth + screenX) * 4 + 2) = static_cast<unsigned char>(color.b);
-        m_buffer.at((correctedY * m_screenWidth + screenX) * 4 + 3) = 255;
+        m_buffer.at((corrected_y * m_screen_width + screen_x) * 4    ) = static_cast<unsigned char>(color.r);
+        m_buffer.at((corrected_y * m_screen_width + screen_x) * 4 + 1) = static_cast<unsigned char>(color.g);
+        m_buffer.at((corrected_y * m_screen_width + screen_x) * 4 + 2) = static_cast<unsigned char>(color.b);
+        m_buffer.at((corrected_y * m_screen_width + screen_x) * 4 + 3) = 255;
     } // maybe add throw
 }
 

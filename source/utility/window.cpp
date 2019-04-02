@@ -68,7 +68,7 @@ auto Window::update_texture(ImageBuffer& buffer) -> void
 {
     //int pitch = buffer.GetWidth() * sizeof(uint32_t);
     //SDL_LockTexture(m_texture, NULL, (void**)&buffer.m_buffer[0], &pitch);
-    SDL_UpdateTexture(m_texture, NULL, &buffer.m_buffer[0], buffer.GetWidth() * sizeof(uint32_t));
+    SDL_UpdateTexture(m_texture, NULL, &buffer.m_buffer[0], buffer.get_width() * sizeof(uint32_t));
     //m_pixels = &buffer.m_buffer[0];
     //SDL_UnlockTexture(m_texture);
 

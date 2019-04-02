@@ -90,21 +90,21 @@ Renderer::render(int samples_per_pixel) -> void {
 
     std::vector<ScreenSegment> segments;
 
-    const auto num_segments = 3;// std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
+    const auto num_segments = 2;// std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
     const auto total_segments = num_segments * num_segments;
 
     std::cout << "Rendering " << total_segments << " total segments" << std::endl;
 
     segments.reserve(total_segments);
 
-    const auto width_interval = m_buffer->GetWidth() / num_segments;
-    const auto heightInterval = m_buffer->GetHeight() / num_segments;
+    const auto width_interval = m_buffer->get_width() / num_segments;
+    const auto height_interval = m_buffer->get_height() / num_segments;
 
     for (int i = 0; i < num_segments; ++i) {
         for (int j = 0; j < num_segments; ++j) {
             segments.emplace_back(
-                ScreenSegment(Point2i(width_interval * j, m_buffer->GetHeight() - heightInterval * (i + 1)),
-                Point2i(width_interval * (j + 1), m_buffer->GetHeight() - heightInterval * i), num_segments * i + j)
+                ScreenSegment(Point2i(width_interval * j, m_buffer->get_height() - height_interval * (i + 1)),
+                Point2i(width_interval * (j + 1), m_buffer->get_height() - height_interval * i), num_segments * i + j)
                 //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
             );
         }
@@ -142,8 +142,8 @@ Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pi
 
             Color3f color{0};
             for (size_t s = 0; s < samples_per_pixel; ++s) {
-                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetWidth());
-                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetHeight());
+                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->get_width());
+                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->get_height());
 
                 auto ray = m_camera->get_ray(u, v, sampler);
 
@@ -154,7 +154,7 @@ Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pi
             }
 
             color /= float(samples_per_pixel);
-            m_buffer->AddPixelAt(color, i, j);
+            m_buffer->add_pixel_at(color, i, j);
             //result.push_back(color);
         }
     }
@@ -208,8 +208,8 @@ Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f {
 auto 
 Renderer::render_normals() -> void
 {
-    for (int j = (int)m_buffer->GetHeight() - 1; j >= 0; j--) {
-        for (size_t i = 0; i < m_buffer->GetWidth(); ++i) {
+    for (int j = (int)m_buffer->get_height() - 1; j >= 0; j--) {
+        for (size_t i = 0; i < m_buffer->get_width(); ++i) {
 
             Sampler sampler;
             const auto ray = m_camera->get_ray(i, j, sampler);
@@ -223,7 +223,7 @@ Renderer::render_normals() -> void
                 color = Color3f::Black();
             }
 
-            m_buffer->AddPixelAt(color, i, j);
+            m_buffer->add_pixel_at(color, i, j);
         }
     }
 }
