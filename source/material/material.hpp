@@ -11,85 +11,45 @@ class Material {
 public:
     Material() = default;
 
-    virtual auto Sample(const Normal3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f>;
-    virtual auto Evaluate(const Normal3f& wo, const Normal3f& wi) const                           -> Color3f = 0;
-            auto Pdf(const Intersection& isect, const Normal3f& wi) const                                -> FLOAT;
-    virtual auto Emitted(const Intersection& isect, const Normal3f& dir) const                       -> Color3f;
-
-    //auto LocalToWorld(const Normal3f& n) const -> Normal3f;
-    //auto WorldToLocal(const Normal3f& n) const -> Normal3f;
-
-
+    virtual auto sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>;
+    virtual auto evaluate(const Vec3f& wo, const Vec3f& wi, const Intersection& isect) const -> Color3f = 0;
+    virtual auto pdf(const Vec3f& dir, const Intersection& isect) const -> FLOAT;
+    virtual auto emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f;
 };
-
-
 
 class Matte : public Material 
 {
 public:
 
-    auto Evaluate(const Normal3f& wo, const Normal3f& wi) const -> Color3f override;
+    explicit Matte(Color3f attenuation = Color3f{0.18}) : m_attenuation(attenuation) {}
 
-    Color3f m_attenuation = Color3f{ 0.78 };
+    auto evaluate(const Vec3f& wo, const Vec3f& wi, const Intersection& isect) const -> Color3f override;
+
+private:
+    Color3f m_attenuation;
 };
 
 class Emissive : public Matte
 {
 public:
-
-    //auto Sample(SamplingInfo& info, Sampler& sampler) const -> void override; // set pdf as well
-    //auto Evaluate(const SamplingInfo& info) const -> Color3f override;
-    //auto Emitted() const -> Color3f override;
-    
-
-    auto Emitted(const Intersection& isect, const Normal3f& dir) const -> Color3f override;
+    auto emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f override;
 
     Color3f m_radiance = Color3f{1.0};
 
 };
 
 
-/*
-
-class Metal : public Material
+class Glossy : public Material
 {
 public:
-    Metal(const Color3f& albedo, float fuzz) : m_albedo(albedo), m_fuzz(fuzz) { }
-
-    bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return true; }
-
-    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return Color3f{0.4f}; }
-
-    float m_fuzz;
+    auto sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f> override;
+    auto evaluate(const Vec3f& wo, const Vec3f& wi, const Intersection& isect) const -> Color3f override;
+    auto pdf(const Vec3f& dir, const Intersection& isect) const -> FLOAT override;
 
 private:
-    Color3f m_albedo;
+    const Color3f m_attenuation = Color3f{0.1f, 0.2, 0.6f};
+    FLOAT m_ks = 0.7;
+    FLOAT m_exp = 100.0f;
+
+
 };
-
-class Dielectric : public Material
-{
-public:
-    explicit Dielectric(float refractiveIndex) : m_refractiveIndex(refractiveIndex) { }
-
-    bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return true; }
-
-    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return Color3f{0.4f}; }
-
-private:
-    float m_refractiveIndex;
-};
-
-class DiffuseLight : public Material
-{
-    Color3f EvaluateBSDF(const Vec3f& w_o, const Vec3f& w_i) override { return Color3f{0.4f}; }
-
-    bool Scatter(const Rayf& rayIn, const Intersection& isect, Color3f& attenuation, Rayf& scattered) override { return false; }
-    Color3f Emitted(const Point2f& uv, const Point3f& point) const override { return Color3f{40.0f}; }
-};
-
-class Emissive : public Material {
-public:
-    Color3f Emitted(const Point2f& uv, const Point3f& point) const override { return Color3f{40.0f}; }
-};
-
-*/

@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <iostream>
+#include "math_util.hpp"
 
 // todo: clean up
 

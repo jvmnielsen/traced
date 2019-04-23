@@ -4,15 +4,20 @@
 //#include "normal3.hpp"
 #include <optional>
 
-#define FLOAT double
+#define FLOAT float
 
 namespace Math {
 
-    static constexpr FLOAT  Infinity    = std::numeric_limits<FLOAT>::max();
-    static constexpr FLOAT  NegInfinity = std::numeric_limits<FLOAT>::min();
-    static constexpr FLOAT  Pi          = 3.14159265358979323846;
-    static constexpr FLOAT  InvPi       = 0.31830988618379067154;
-    static constexpr FLOAT  Epsilon     = 1e-5;
+    struct Constants
+    {
+        static constexpr FLOAT  MaxFloat = std::numeric_limits<FLOAT>::max();
+        static constexpr FLOAT  MinFloat = std::numeric_limits<FLOAT>::lowest();
+        static constexpr FLOAT  Pi = 3.14159265358979323846;
+        static constexpr FLOAT  InvPi = 0.31830988618379067154;
+        static constexpr FLOAT  Epsilon = 1e-5;
+    };
+
+    
 
     template<typename T>
     T Clamp(T low, T high, T value) {
@@ -26,7 +31,7 @@ namespace Math {
 
     template<typename T>
     auto DegreeToRadian(T degree) -> T {
-        return degree * Pi / 180.0;
+        return degree * Constants::Pi / 180.0;
     }
 
     // Returns in order smallest to largest solution

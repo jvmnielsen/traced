@@ -2,6 +2,7 @@
 #include "../utility/utility.hpp"
 #include <thread>
 #include <future>
+#include <numeric>
 
 Renderer::Renderer(
     std::unique_ptr<Camera> camera,
@@ -9,7 +10,9 @@ Renderer::Renderer(
     std::shared_ptr<ImageBuffer> buffer)
         : m_camera(std::move(camera))
         , m_scene(std::move(scene))
-        , m_buffer(std::move(buffer)) {
+        , m_buffer(std::move(buffer))
+        , m_running(true)
+{
 }
 
 
@@ -81,112 +84,85 @@ Renderer::RenderProgressive() -> void {
 
 
 auto
-Renderer::Render(int samplesPerPixel) -> void {
+Renderer::render(int samples_per_pixel) -> void {
 
     Timer timer{std::string{"Main render loop: "}};
 
     std::vector<ScreenSegment> segments;
 
-    const auto numSegments = std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
-    const auto totalSegments = numSegments * numSegments;
+    // careful about odd / even numbers depending on screen size -- find fix
+    const auto num_segments = 4;// std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
+    const auto total_segments = num_segments * num_segments;
 
-    std::cout << "Rendering " << totalSegments << " total segments" << std::endl;
+    std::cout << "Rendering " << total_segments << " total segments" << std::endl;
 
-    segments.reserve(totalSegments);
+    segments.reserve(total_segments);
 
-    const auto widthInterval = m_buffer->GetWidth() / numSegments;
-    const auto heightInterval = m_buffer->GetHeight() / numSegments;
+    const auto width_interval = m_buffer->get_width() / num_segments;
+    const auto height_interval = m_buffer->get_height() / num_segments;
 
-    for (int i = 0; i < numSegments; ++i) {
-        for (int j = 0; j < numSegments; ++j) {
+    for (int i = 0; i < num_segments; ++i) {
+        for (int j = 0; j < num_segments; ++j) {
             segments.emplace_back(
-                ScreenSegment(Point2i(widthInterval * j, m_buffer->GetHeight() - heightInterval * (i + 1)),
-                Point2i(widthInterval * (j + 1), m_buffer->GetHeight() - heightInterval * i), numSegments * i + j)
+                ScreenSegment(Point2i(width_interval * j, m_buffer->get_height() - height_interval * (i + 1)),
+                Point2i(width_interval * (j + 1), m_buffer->get_height() - height_interval * i), num_segments * i + j)
                 //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
             );
         }
     }
 
-    std::vector<std::future<bool>> futures;
-    std::vector<std::vector<Color3f>> renderResult;
+    //std::vector<std::future<bool>> futures;
+    std::vector<std::future<std::vector<Color3f>>> render_result;
     //renderResult.reserve(totalSegments);
-    std::vector<Color3f> flattened;
-    for (int i = 0; i < m_buffer->GetWidth() * m_buffer->GetHeight(); ++i) {
-        flattened.emplace_back(Color3f{0});
-    }
+    std::vector<std::thread> render_segments;
 
     for (auto& segment : segments) {
-        futures.emplace_back(std::async([this, &segment, samplesPerPixel] { return RenderScreenSegment(segment, samplesPerPixel); })); // parallelize
-    }
-    /*
-    for (size_t v = 0; v < futures.size(); ++v) {
-        const auto& segment = futures.at(v).get();
-        //.emplace_back(future.get());
-        for (int i = 0; i < heightInterval; ++i) {
-            for (int j = 0; j < widthInterval; ++j) {
-                const int yComponent = (int)m_buffer->GetWidth() * std::abs(segments.at(v).upperBound.y - i - (int)m_buffer->GetHeight());
-                const int xComponent = j + segments.at(v).lowerBound.x;
-                flattened[yComponent + xComponent] = segment.at(i * widthInterval + j);
-            }
-        }
-        m_buffer->ConvertToPixelBuffer(flattened);
+        //render_result.emplace_back(std::async(&Renderer::RenderScreenSegment, this, segment, samples_per_pixel));
+        render_segments.emplace_back(&Renderer::render_screen_segment, this, segment, samples_per_pixel);
     }
 
-    */
-
-    for (auto& future : futures) {
-        future.get();
-    }
-
-
-
-    
+    for (auto& thread : render_segments)
+        thread.join();
+   
 }
 
 auto
-Renderer::RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> bool {
+Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pixel) -> void {
  
     Timer timer{std::string{"Segment " + std::to_string(segment.index) + " took: "}};
 
     Sampler sampler;
-    int numPixels = (segment.upperBound.y - segment.lowerBound.y) * (segment.upperBound.x - segment.lowerBound.x);
+    const int num_pixels = (segment.upperBound.y - segment.lowerBound.y) * (segment.upperBound.x - segment.lowerBound.x);
 
     std::vector<Color3f> result;
-    result.reserve(numPixels);
+    result.reserve(num_pixels);
 
     // size_t causes subscript out of range due to underflow
     for (int j = segment.upperBound.y - 1; j >= segment.lowerBound.y; j--) { // start in the top left
         for (int i = segment.lowerBound.x; i < segment.upperBound.x; ++i) {
 
             Color3f color{0};
-            for (size_t s = 0; s < samplesPerPixel; ++s) {
-                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetWidth());
-                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->GetHeight());
+            for (size_t s = 0; s < samples_per_pixel; ++s) {
+                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->get_width());
+                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->get_height());
 
-                auto ray = m_camera->GetRay(u, v);
+                auto ray = m_camera->get_ray(u, v, sampler);
 
-                color += OutgoingLight(ray, sampler);
-                //color += de_nan(tmp);
+                color += outgoing_light(ray, sampler);
+
+                if (!m_running)
+                    return;
             }
 
-            color /= float(samplesPerPixel);
-            m_buffer->AddPixelAt(color, i, j);
+            color /= float(samples_per_pixel);
+            m_buffer->add_pixel_at(color, i, j);
             //result.push_back(color);
         }
     }
-
-    std::vector<Color3f> flattened;
-    for (int i = 0; i < m_buffer->GetWidth() * m_buffer->GetHeight(); ++i) {
-        flattened.emplace_back(Color3f{0});
-    }
-
-
-
-    return true;
 }
 
 auto
-Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
+Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f {
 
     bool lastBounceSpecular = false;
     Color3f throughput{ 1.0f };
@@ -195,29 +171,29 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
 
     for (int bounces = 0; bounces < 2; ++bounces) { 
 
-        auto isect = m_scene->Intersects(ray);
+        auto isect = m_scene->intersects(ray);
 
 		if (!isect.has_value()) {
             break;
         }
 
-        auto wo = -ray.GetDirection();
+        auto wo = -normalize(ray.direction());
 
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->Emitted(wo);
+            color += throughput * isect->emitted(wo);
         }
 
-        color += throughput * m_scene->SampleOneLight(*isect, wo, sampler);
+        color += throughput * m_scene->sample_one_light(*isect, wo, sampler);
 
 
-        auto [wi, pdf, f] = isect->SampleMaterial(wo, sampler);
+        auto [wi, pdf, f] = isect->sample_material(wo, sampler);
 
         if (f.IsBlack() || pdf == 0.0f) break;
 
-        throughput = throughput * std::abs(Dot(wi, isect->GetShadingNormal())) * f / pdf; // TODO: overload *=
+        throughput = throughput * std::abs(dot(wi, isect->shading_normal())) * f / pdf; // TODO: overload *=
 
 
-        ray = Rayf{ isect->GetPoint(), wi };
+        ray = Rayf{ isect->point(), wi };
         
         if (bounces > 3) {
             float q = std::max(color.r, std::max(color.g, color.b));
@@ -230,7 +206,34 @@ Renderer::OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f {
     return color;
 }
 
+auto 
+Renderer::render_normals() -> void
+{
+    for (int j = (int)m_buffer->get_height() - 1; j >= 0; j--) {
+        for (size_t i = 0; i < m_buffer->get_width(); ++i) {
 
+            Sampler sampler;
+            const auto ray = m_camera->get_ray(i, j, sampler);
+            auto isect = m_scene->intersects(ray);
+
+            Color3f color = Color3f::Black();
+
+            Color3f{std::abs(isect->shading_normal().x()), std::abs(isect->shading_normal().y()), std::abs(isect->shading_normal().z())};
+
+            if (!isect.has_value()) {
+                color = Color3f::Black();
+            }
+
+            m_buffer->add_pixel_at(color, i, j);
+        }
+    }
+}
+
+auto
+Renderer::shutdown() -> void
+{
+    m_running = false;
+}
 
 /*
 Color3f WhittedRayTracer::TraceRay(const Rayf& ray, Scene& scene, int depth)

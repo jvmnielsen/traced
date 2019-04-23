@@ -12,7 +12,7 @@ public:
     explicit Color3(T val) : r(val), g(val), b(val) { }
     Color3(T r_, T g_, T b_) : r(r_), g(g_), b(b_) { }
 
-    static auto Black() -> Color3 { return Color3{0.0}; }
+    static auto Black() -> Color3 { return Color3{0}; }
 
     Color3 operator*(T factor) const
     {

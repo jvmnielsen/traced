@@ -12,29 +12,29 @@ class Intersection
 {
 public:
 
-    Intersection(Point3f point, Point2f uvCoord, Normal3f geometricNormal, Normal3f shadingNormal);
+    Intersection(Point3f point, Point2f uv_coord, Vec3f geometric_normal, Vec3f shading_normal);
 
 
-    Point3f PointOffset() const;
+    Point3f offset_point() const;
 
    
-    auto GetPoint() const -> const Point3f&;
-    auto GetGeometricNormal() const -> const Normal3f&;
-    auto GetShadingNormal() const -> const Normal3f&;
+    auto point() const -> const Point3f&;
+    auto geometric_normal() const -> const Vec3f&;
+    auto shading_normal() const -> const Vec3f&;
 
     auto IsSpecular() const -> bool;
 
-    auto GetShadingBasis() const -> const ONB& { return m_shadingBasis; }
+    auto GetShadingBasis() const -> const ONB& { return m_shading_basis; }
     //auto GetTransformedSampledVec(Sampler& sampler) const -> Normal3f;
 
 
 
-    auto SampleMaterial(const Normal3f& wo, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f>;
-    auto Emitted(const Normal3f& dir) const -> Color3f;
-    auto MaterialPdf(const Normal3f& wi) const->FLOAT;
-    auto EvaluateMaterial(const Normal3f& wo, const Normal3f& wi) const->Color3f;
+    auto sample_material(const Vec3f& wo, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>;
+    auto emitted(const Vec3f& dir) const -> Color3f;
+    auto material_pdf(const Vec3f& wi) const->FLOAT;
+    auto evaluate_material(const Vec3f& wo, const Vec3f& wi) const->Color3f;
 
-    auto RayTowards(const Normal3f& dir) const-> Rayf;
+    auto ray_towards(const Vec3f& dir) const-> Rayf;
 
 
     auto SetMeshAndMaterial(const Mesh* mesh, const Material* material) -> void;
@@ -50,11 +50,11 @@ private:
     
 
 
-    ONB m_shadingBasis;
+    ONB m_shading_basis;
 
     Point3f         m_point;
     Point2f         m_uv;
-    Normal3f        m_geometricNormal;
+    Vec3f           m_geometric_normal;
     //Normal3f        m_shadingNormal;
     //Normal3f        m_tangent;
 };

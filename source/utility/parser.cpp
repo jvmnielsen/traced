@@ -8,8 +8,7 @@
 #include "parser.hpp"
 
 auto
-split_string(const std::string& subject) -> std::vector<std::string>
-{
+split_string(const std::string& subject) -> std::vector<std::string> {
     std::istringstream stream{ subject };
 
     std::vector<std::string> container{ std::istream_iterator<std::string>{stream}, std::istream_iterator<std::string>{} };
@@ -17,9 +16,8 @@ split_string(const std::string& subject) -> std::vector<std::string>
     return container;
 }
 
-auto
-split_string(std::string& subject, const std::string& delimiter) -> std::vector<std::string>
-{
+auto split_string(std::string& subject, const std::string& delimiter) -> std::vector<std::string> {
+
 	size_t pos = 0;
 	std::string token;
 
@@ -38,9 +36,12 @@ split_string(std::string& subject, const std::string& delimiter) -> std::vector<
 	return container;
 }
 
-void Parser::ParseFile(const std::string& filename)
-{
-    std::ifstream infile(filename);
+auto Parser::parse_file(const std::string& filename) -> void {
+
+	std::ifstream infile(filename);
+
+    if (!infile)
+        std::cout << "Could not open file: " << filename << '\n';
 
 	std::string line;
 
@@ -91,9 +92,7 @@ void Parser::ParseFile(const std::string& filename)
 	infile.close();
 }
 
-std::unique_ptr<Mesh> Parser::ConstructMesh()
-{
-	//auto mesh_ptr = std::make_unique<Mesh>();
+auto Parser::construct_mesh(std::shared_ptr<Material> material, const Transform& transform) -> std::unique_ptr<Mesh> {
 
 	std::vector<Triangle> triangles;
 
@@ -106,18 +105,22 @@ std::unique_ptr<Mesh> Parser::ConstructMesh()
 						m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
 						m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
 				},
-				std::array<Normal3f, 3> {
+				std::array<Vec3f, 3> {
 						m_normals.at(m_normal_ordering.at(i    ) - 1),
 						m_normals.at(m_normal_ordering.at(i + 1) - 1),
 						m_normals.at(m_normal_ordering.at(i + 2) - 1),
 				});
 	}
 
-	return std::make_unique<Mesh>(std::move(triangles));
+	reset();
+
+	return std::make_unique<Mesh>(std::move(triangles), std::move(material), transform);
+
+
 }
 
-void Parser::Reset()
-{
+auto Parser::reset() -> void {
+
     m_vertex.clear();
     m_texture_coord.clear();
     m_normals.clear();
@@ -128,13 +131,11 @@ void Parser::Reset()
     m_normal_ordering.clear();
 }
 
-std::unique_ptr<Mesh> Parser::GetMeshFromFile(const std::string& filename)
+auto Parser::construct_mesh_from_file(const std::string& filename,
+		 							  std::shared_ptr<Material> material,
+		 							  const Transform& transform) -> std::unique_ptr<Mesh>
 {
-    ParseFile(filename);
+	parse_file(filename);
 
-    auto mesh_ptr = ConstructMesh();
-
-    Reset(); // ready for next one
-
-    return mesh_ptr;
+	return construct_mesh(material, transform);
 }

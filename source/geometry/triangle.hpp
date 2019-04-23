@@ -1,41 +1,44 @@
 #pragma once
 
-#include "../math/point3.hpp"
-#include "../math/normal3.hpp"
-#include "../math/point2.hpp"
-#include "../math/ray.hpp"
-#include "../math/vec3.hpp"
 #include <optional>
 #include "../core/intersection.hpp"
 #include "../math/transform.hpp"
+#include "../acceleration/bvh.hpp"
+
+enum class IntersectOption {
+    with_record,
+    discard_record
+};
 
 class Triangle
 {
 public:
 
     Triangle(std::array<Point3f, 3>     vertices,
-             std::array<Normal3f, 3>    vertexNormals,
+             std::array<Vec3f, 3>    vertex_normals,
              std::array<Point2f, 3>     uv);
 
     Triangle(std::array<Point3f, 3>     vertices,
-             std::array<Normal3f, 3>    vertexNormals);
+             std::array<Vec3f, 3>    vertex_normals);
 
     //bool Intersects(const Rayf &ray, Intersection& isect);
     bool IntersectsFast(const Rayf& ray) const;
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
 
 
-    auto InterpolateNormalAt(const Point2f& uv) const -> Normal3f;
+    auto InterpolateNormalAt(const Point2f& uv) const -> Vec3f;
 
     auto TransformBy(const Transform& transform) -> void;
 
-    auto GetArea() const -> FLOAT;
+    auto calculate_surface_area() const -> FLOAT;
 
     /*
     Point3f GetPointOnSurface(const float u, const float v) const override;
     Point3f GetRandomPointOnSurface() override;
     Intersection GetRandomSurfaceIntersection() override;
     */
+
+    auto calculate_bounds() const -> Bounds;
 
     auto SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
@@ -45,8 +48,8 @@ public:
 
 private:
     std::array<Point3f, 3>      m_vertices;         // Three points making up the triangle
-    std::array<Normal3f, 3>     m_vertexNormals;    // Normal at each vertex, used to interpolate a normal across the face
-    Normal3f                    m_faceNormal;       // In cases where vertex normals are not available, use face normal
+    std::array<Vec3f, 3>        m_vertex_normals;    // Normal at each vertex, used to interpolate a normal across the face
+    Vec3f                       m_face_normal;       // In cases where vertex normals are not available, use face normal
     std::array<Vec3f, 2>        m_edges;            // Pre-calculated for use in Intercept function
     std::array<Point2f, 3>      m_uv;               // Texture coordinates
 

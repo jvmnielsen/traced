@@ -1,4 +1,5 @@
 #include "scene.hpp"
+#include <future>
 
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
@@ -9,7 +10,7 @@ Scene::Scene(
 }
 
 auto
-Scene::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
+Scene::intersects(const Rayf& ray) const -> std::optional<Intersection> {
     auto isect = m_meshes.Intersects(ray);
 
     for (int i = 0; i < m_lights.size(); ++i) {
@@ -24,32 +25,21 @@ Scene::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     return isect;
 }
 
-bool Scene::IntersectsQuick(const Rayf& ray) const {
-    if (m_meshes.IntersectsFast(ray))
-        return true;
-    for (const auto& light : m_lights) {
-        if (light->IntersectsFast(ray))
-            return true;
-    }
-    return false;
-}
-
-
-bool Scene::LineOfSightBetween(const Point3f& p1, const Point3f& p2) const {
+bool Scene::line_of_sight_between(const Point3f& p1, const Point3f& p2) const {
     const Vec3f dir = p2 - p1;
-    const auto distance = dir.Length();
-    Rayf ray{p1, Normalize(dir), distance};
-    return !IntersectsQuick(ray);
+    const auto distance = dir.length();
+    Rayf ray{p1, normalize(dir), distance};
+    return !intersects(ray).has_value();
 }
 
 
 auto
-Scene::SampleOneLight(const Intersection& isect, const Normal3f& wo, Sampler& sampler) const -> Color3f {
+Scene::sample_one_light(const Intersection& isect, const Vec3f& wo, Sampler& sampler) const -> Color3f {
     const auto nLights = m_lights.size();
 
     if (nLights == 0) return Color3f::Black(); // there are no lights
 
-    if (nLights == 1) return EstimateDirectLight(isect, wo, sampler, *m_lights[0]);
+    if (nLights == 1) return estimate_direct_light(isect, wo, sampler, *m_lights[0]);
 
     int num;
     if (isect.m_lightID.has_value()) { // TODO: make lightID do something
@@ -63,49 +53,56 @@ Scene::SampleOneLight(const Intersection& isect, const Normal3f& wo, Sampler& sa
     const auto& light = m_lights[num];
 
     // multiplying by the number of lights is the same as dividing with the fractional pdf 1/nLights
-    return EstimateDirectLight(isect, wo, sampler, *light) * nLights;
+    return estimate_direct_light(isect, wo, sampler, *light) * nLights;
 }
 
 
 auto
-Scene::SampleLightSource(const Intersection& isect, const Normal3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
+Scene::sample_light_source(const Intersection& isect, const Vec3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
 
-    const auto [atLight, wi, lightPdf, li] = light.SampleAsLight(isect, sampler);
-    
+    const auto [atLight, wi, lightPdf, li] = light.sample_as_light(isect, sampler);
+
+    //return Color3f{std::abs(isect.shading_normal().x()), std::abs(isect.shading_normal().y()), std::abs(isect.shading_normal().z())};
+    //return Color3f{std::abs(wi.x()), std::abs(wi.y()), std::abs(wi.z())};
+
     if (lightPdf > 0.0f && !li.IsBlack()) {
-        const auto f = isect.EvaluateMaterial(wo, wi) * std::abs(Dot(wi, isect.GetShadingNormal()));
-        const auto scatteringPdf = isect.MaterialPdf(wi);
+        const auto eval = isect.evaluate_material(wo, wi);
+        const auto dots = dot(wi, isect.shading_normal()) > 0 ? dot(wi, isect.shading_normal()) : 0;
+        const auto f = eval * dots;
+        const auto scattering_pdf = isect.material_pdf(wi);
+        //if (scattering_pdf > 0) std::cout << scattering_pdf << '\n';
 
-        if (!f.IsBlack() && LineOfSightBetween(isect.PointOffset(), atLight.PointOffset())) {
-            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scatteringPdf);
-            return f * li * weight / lightPdf;
+        if (!f.IsBlack() && line_of_sight_between(isect.offset_point(), atLight.offset_point())) {
+            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scattering_pdf);
+            auto a = f * li * weight / lightPdf; 
+            return a;
         }
     }
     return Color3f::Black();
 }
 
 auto
-Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
+Scene::sample_bsdf(const Intersection& isect, const Vec3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
 
     if (!isect.IsSpecular()) {
 
-        auto [wi, scatteringPdf, f] = isect.SampleMaterial(wo, sampler);
-        f *= std::abs(Dot(wi, isect.GetShadingNormal()));
+        auto [wi, scatteringPdf, f] = isect.sample_material(wo, sampler);
+        f *= std::abs(dot(wi, isect.shading_normal()));
 
         if (!f.IsBlack() && scatteringPdf > 0) {
 
-            auto lightPdf = light.Pdf(isect, wi);
+            auto lightPdf = light.pdf(isect, wi);
 
             if (lightPdf == 0.0f) {
                 return Color3f::Black();
             }
 
-            auto lightIsect = Intersects(Rayf{isect.PointOffset(), wi});
+            auto lightIsect = intersects(Rayf{isect.offset_point(), wi});
 
             auto li = Color3f::Black();
             
             if (lightIsect.has_value()) 
-                li = lightIsect->Emitted(-wi);
+                li = lightIsect->emitted(-wi);
           
             if (!li.IsBlack()) {
                 const auto weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
@@ -120,29 +117,15 @@ Scene::SampleBSDF(const Intersection& isect, const Normal3f& wo, Sampler& sample
 
 
 auto
-Scene::EstimateDirectLight(
+Scene::estimate_direct_light(
     const Intersection& isect,
-    const Normal3f& wo,
+    const Vec3f& wo,
     Sampler& sampler,
-    const Mesh& light) const -> Color3f {
-
-    Color3f directLight = Color3f::Black();
-   
-    directLight += SampleLightSource(isect, wo, sampler, light);
- 
-    //directLight += SampleBSDF(isect, wo, sampler, light);
-    
-
-    return directLight;
+    const Mesh& light) const -> Color3f
+{
+    return sample_light_source(isect, wo, sampler, light) + sample_bsdf(isect, wo, sampler, light);
 }
 
-void Scene::SetBackgroundColor(const Color3f& color) {
-    m_backgroundColor = color;
-}
-
-Color3f Scene::BackgroundColor() const {
-    return m_backgroundColor;
-}
 
 
 

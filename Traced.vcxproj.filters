@@ -271,7 +271,7 @@
     <ClInclude Include="source\imaging\camera.hpp">
       <Filter>imaging</Filter>
     </ClInclude>
-    <ClInclude Include="source\imaging\Color3.hpp">
+    <ClInclude Include="source\imaging\color3.hpp">
       <Filter>imaging</Filter>
     </ClInclude>
     <ClInclude Include="source\imaging\image_buffer.hpp">
@@ -283,28 +283,25 @@
     <ClInclude Include="source\math\math_util.hpp">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\Matrix4x4.hpp">
+    <ClInclude Include="source\math\matrix4x4.hpp">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\Normal3.hpp">
+    <ClInclude Include="source\math\point2.hpp">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\Point2.hpp">
+    <ClInclude Include="source\math\point3.hpp">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\Point3.hpp">
-      <Filter>math</Filter>
-    </ClInclude>
-    <ClInclude Include="source\math\Ray.hpp">
+    <ClInclude Include="source\math\ray.hpp">
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="source\math\transform.hpp">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\Vec2.hpp">
+    <ClInclude Include="source\math\vec2.hpp">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\Vec3.hpp">
+    <ClInclude Include="source\math\vec3.hpp">
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\parser.hpp">
@@ -325,8 +322,11 @@
     <ClInclude Include="source\material\disney.hpp">
       <Filter>material</Filter>
     </ClInclude>
-    <ClInclude Include="functional_utility.hpp">
-      <Filter>core</Filter>
+    <ClInclude Include="source\math\normal3.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\acceleration\bounds.hpp">
+      <Filter>acceleration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -410,6 +410,9 @@
     </ClCompile>
     <ClCompile Include="source\material\emissive.cpp">
       <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="source\acceleration\bounds.cpp">
+      <Filter>acceleration</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

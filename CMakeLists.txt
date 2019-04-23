@@ -15,6 +15,7 @@ file(GLOB LIBRARIES "third_party/SDL2/lib/*.dylib")
 set(SOURCE_FILES
         source/acceleration/bvh.hpp source/acceleration/bvh.cpp
         source/acceleration/aabb.hpp source/acceleration/aabb.cpp
+        source/acceleration/bounds.hpp source/acceleration/bounds.cpp
 
         source/core/intersection.hpp source/core/intersection.cpp
         source/core/renderer.hpp source/core/renderer.cpp
@@ -47,7 +48,7 @@ set(SOURCE_FILES
         source/utility/utility.hpp
         source/utility/window.hpp source/utility/window.cpp
 
-        source/main.cpp source/material/emissive.cpp)
+        source/main.cpp source/material/emissive.cpp source/material/distributions.hpp source/material/distributions.cpp)
 
 
 

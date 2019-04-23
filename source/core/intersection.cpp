@@ -5,34 +5,36 @@
 
 Intersection::Intersection(
     Point3f     point,
-    Point2f     uvCoord,
-    Normal3f    geometricNormal,
-    Normal3f    shadingNormal)
+    Point2f     uv_coord,
+    Vec3f    geometric_normal,
+    Vec3f    shading_normal)
     : m_point(std::move(point)),
-      m_uv(std::move(uvCoord)),
-      m_geometricNormal(std::move(geometricNormal)),
+      m_uv(std::move(uv_coord)),
+      m_geometric_normal(std::move(geometric_normal)),
       //m_shadingNormal(std::move(shadingNormal)),
       //m_tangent(std::move(tangent)) {
-      m_shadingBasis(shadingNormal) {
+      m_shading_basis(shading_normal) {
 }
 
-Point3f Intersection::PointOffset() const {
-    return m_point + m_geometricNormal * Math::Epsilon;
+Point3f Intersection::offset_point() const {
+    return m_point + m_geometric_normal * Math::Constants::Epsilon;
 }
 
 auto
-Intersection::GetPoint() const -> const Point3f& {
+Intersection::point() const -> const Point3f& {
     return m_point;
 }
 
 auto
-Intersection::GetGeometricNormal() const -> const Normal3f& {
-    return m_geometricNormal;
+Intersection::geometric_normal() const -> const Vec3f&
+{
+    return m_geometric_normal;
 };
 
 auto
-Intersection::GetShadingNormal() const -> const Normal3f& {
-    return m_shadingBasis.W();
+Intersection::shading_normal() const -> const Vec3f&
+{
+    return m_shading_basis.w();
 }
 
 auto
@@ -41,27 +43,28 @@ Intersection::IsSpecular() const -> bool {
 }
 
 auto 
-Intersection::SampleMaterial(const Normal3f& wo, Sampler& sampler) const -> std::tuple<Normal3f, FLOAT, Color3f> {
-    return m_material->Sample(wo, *this, sampler);
+Intersection::sample_material(const Vec3f& wo, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f> 
+{
+    return m_material->sample(wo, *this, sampler);
 }
 
 auto 
-Intersection::Emitted(const Normal3f& dir) const -> Color3f {
-    return m_material->Emitted(*this, dir);
+Intersection::emitted(const Vec3f& dir) const -> Color3f {
+    return m_material->emitted(*this, dir);
 }
 
 auto 
-Intersection::MaterialPdf(const Normal3f& wi) const -> FLOAT {
-    return m_material->Pdf(*this, wi);
+Intersection::material_pdf(const Vec3f& wi) const -> FLOAT {
+    return m_material->pdf(wi, *this);
 }
 
 auto 
-Intersection::EvaluateMaterial(const Normal3f& wo, const Normal3f& wi) const -> Color3f {
-    return m_material->Evaluate(wo, wi);
+Intersection::evaluate_material(const Vec3f& wo, const Vec3f& wi) const -> Color3f {
+    return m_material->evaluate(wo, wi, *this);
 }
 
 auto 
-Intersection::RayTowards(const Normal3f& dir) const -> Rayf {
+Intersection::ray_towards(const Vec3f& dir) const -> Rayf {
     return {m_point, dir};
 }
 

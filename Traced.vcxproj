@@ -140,8 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="functional_utility.hpp" />
     <ClInclude Include="source\acceleration\aabb.hpp" />
+    <ClInclude Include="source\acceleration\bounds.hpp" />
     <ClInclude Include="source\acceleration\bvh.hpp" />
     <ClInclude Include="source\core\intersection.hpp" />
     <ClInclude Include="source\core\renderer.hpp" />
@@ -150,21 +150,21 @@
     <ClInclude Include="source\geometry\mesh.hpp" />
     <ClInclude Include="source\geometry\triangle.hpp" />
     <ClInclude Include="source\imaging\camera.hpp" />
-    <ClInclude Include="source\imaging\Color3.hpp" />
+    <ClInclude Include="source\imaging\color3.hpp" />
     <ClInclude Include="source\imaging\image_buffer.hpp" />
     <ClInclude Include="source\material\disney.hpp" />
     <ClInclude Include="source\material\emissive.hpp" />
     <ClInclude Include="source\material\material.hpp" />
     <ClInclude Include="source\math\math_util.hpp" />
-    <ClInclude Include="source\math\Matrix4x4.hpp" />
-    <ClInclude Include="source\math\Normal3.hpp" />
+    <ClInclude Include="source\math\matrix4x4.hpp" />
+    <ClInclude Include="source\math\normal3.hpp" />
     <ClInclude Include="source\math\onb.hpp" />
-    <ClInclude Include="source\math\Point2.hpp" />
-    <ClInclude Include="source\math\Point3.hpp" />
-    <ClInclude Include="source\math\Ray.hpp" />
+    <ClInclude Include="source\math\point2.hpp" />
+    <ClInclude Include="source\math\point3.hpp" />
+    <ClInclude Include="source\math\ray.hpp" />
     <ClInclude Include="source\math\transform.hpp" />
-    <ClInclude Include="source\math\Vec2.hpp" />
-    <ClInclude Include="source\math\Vec3.hpp" />
+    <ClInclude Include="source\math\vec2.hpp" />
+    <ClInclude Include="source\math\vec3.hpp" />
     <ClInclude Include="source\utility\parser.hpp" />
     <ClInclude Include="source\utility\utility.hpp" />
     <ClInclude Include="source\utility\window.hpp" />
@@ -252,6 +252,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\acceleration\aabb.cpp" />
+    <ClCompile Include="source\acceleration\bounds.cpp" />
     <ClCompile Include="source\acceleration\bvh.cpp" />
     <ClCompile Include="source\core\intersection.cpp" />
     <ClCompile Include="source\core\renderer.cpp" />

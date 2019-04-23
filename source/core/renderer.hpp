@@ -3,10 +3,6 @@
 #include "../imaging/camera.hpp"
 #include "../imaging/image_buffer.hpp"
 
-
-//#include "Material.h"
-
-
 class Renderer
 {
 public:
@@ -15,36 +11,24 @@ public:
         std::unique_ptr<Scene> scene,
         std::shared_ptr<ImageBuffer> buffer);
 
-    auto Render(int samplesPerPixel) -> void;
-    //auto RenderProgressive() -> void;
+    auto render(int samples_per_pixel) -> void;
 
-
+    auto render_normals() -> void;
  
+    auto shutdown() -> void;
 
 private:
 
-    std::mutex m_mutex;
-    
-    struct ScreenSegment {
-        ScreenSegment(Point2i lower, Point2i upper, size_t _index) : lowerBound(std::move(lower)), upperBound(std::move(upper)), index(_index) {}
-        Point2i lowerBound;
-        Point2i upperBound;
-        size_t index;
-    };
+    bool m_running;
 
-    auto RenderScreenSegment(const ScreenSegment& segment, int samplesPerPixel) -> bool;
-    
+    auto render_screen_segment(const ScreenSegment& segment, int samples_per_pixel) -> void;
 
     std::unique_ptr<Camera>      m_camera;
     std::unique_ptr<Scene>       m_scene;
     std::shared_ptr<ImageBuffer> m_buffer;
-    //std::unique_ptr<Sampler>     m_sampler;
 
-    auto OutgoingLight(Rayf& ray, Sampler& sampler) -> Color3f;
+    auto outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f;
 
-    //Color3f SamplePointLights(const Intersection& isect, const Rayf& ray) const;
-    //Color3f SampleAreaLights(const Intersection& isect, const Rayf& ray) const;
-    //Color3f SampleIndirectLighting(const Intersection& isect, const Rayf& ray) const;
     static constexpr int m_maxBounces = 5;
 };
 
