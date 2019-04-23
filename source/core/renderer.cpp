@@ -90,7 +90,8 @@ Renderer::render(int samples_per_pixel) -> void {
 
     std::vector<ScreenSegment> segments;
 
-    const auto num_segments = 2;// std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
+    // careful about odd / even numbers depending on screen size -- find fix
+    const auto num_segments = 4;// std::thread::hardware_concurrency() / 2; // experiment further to determine proper values
     const auto total_segments = num_segments * num_segments;
 
     std::cout << "Rendering " << total_segments << " total segments" << std::endl;

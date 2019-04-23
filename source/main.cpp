@@ -113,8 +113,8 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[]) {
 
-    constexpr const unsigned int screen_width = 400;
-    constexpr const unsigned int screen_height = 400;
+    constexpr const unsigned int screen_width = 500;
+    constexpr const unsigned int screen_height = 500;
 
     auto matte = std::make_shared<Matte>();
     auto green = std::make_shared<Matte>(Color3f{0.1, 0.3, 0.1});
