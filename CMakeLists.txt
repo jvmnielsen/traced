@@ -13,12 +13,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(graphics-math)
 
-FetchContent_Declare(
-  SDL
-  GIT_REPOSITORY https://github.com/SDL-mirror/SDL
-  GIT_TAG master
-)
-FetchContent_MakeAvailable(SDL)
+# FetchContent_Declare(
+#   SDL
+#   GIT_REPOSITORY https://github.com/SDL-mirror/SDL
+#   GIT_TAG master
+# )
+# FetchContent_MakeAvailable(SDL)
 
 
 # set(CMAKE_CXX_STANDARD 17)
