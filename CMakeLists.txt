@@ -3,7 +3,22 @@ cmake_minimum_required(VERSION 3.12)
 project(Traced)
 
 add_subdirectory(src)
-add_subdirectory(extern)
+# add_subdirectory(extern)
+
+include(FetchContent)
+FetchContent_Declare(
+  graphics-math
+  GIT_REPOSITORY https://github.com/jvmnielsen/graphics-math.git
+  GIT_TAG dev
+)
+FetchContent_MakeAvailable(graphics-math)
+
+FetchContent_Declare(
+  SDL
+  GIT_REPOSITORY https://github.com/SDL-mirror/SDL
+  GIT_TAG master
+)
+FetchContent_MakeAvailable(SDL)
 
 
 # set(CMAKE_CXX_STANDARD 17)
