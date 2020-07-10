@@ -239,3 +239,4 @@ _Pvt_Extensions
 *.ipch
 
 out\.bmp
+build/
