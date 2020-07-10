@@ -1,8 +1,11 @@
 #pragma once
 
-#include <optional>
+
 #include "bounds.hpp"
 #include "../math/ray.hpp"
+
+#include <optional>
+#include <memory>
 
 class Intersection;
 class Mesh;
