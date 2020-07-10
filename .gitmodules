@@ -1,0 +1,6 @@
+[submodule "extern/graphics-math"]
+	path = extern/graphics-math
+	url = https://github.com/jvmnielsen/graphics-math
+[submodule "extern/SDL"]
+	path = extern/SDL
+	url = https://github.com/SDL-mirror/SDL
