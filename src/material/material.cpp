@@ -6,12 +6,12 @@ auto
 Material::sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>
 {
 
-    //const auto wo = isect.GetShadingBasis().WorldToLocal(worldWo);
+    //const auto wo = isect.get_shading_basis().WorldToLocal(worldWo);
     //if (wo.z == 0) return
-    auto wi = isect.GetShadingBasis().convert_to_local(sampler.CosineSampleHemisphere());
+    auto wi = isect.get_shading_basis().convert_to_local(sampler.cosine_sample_hemisphere());
     //if (wo.z() < 0) wi = -wi; // flip to match direction
     const auto pdf = Material::pdf(wi, isect);
-    //const auto wiWorld = isect.GetShadingBasis().LocalToWorld(wi);
+    //const auto wiWorld = isect.get_shading_basis().LocalToWorld(wi);
     return std::make_tuple(wi, pdf, evaluate(wo, wi, isect)); // called by derived class
 }
 
@@ -48,7 +48,7 @@ Emissive::emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f 
 auto Glossy::sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>
 {
     const auto onb = ONB{-wo + isect.shading_normal() * 2.0f * dot(wo, isect.shading_normal())};
-    const auto v = sampler.CosineSampleHemisphere();
+    const auto v = sampler.cosine_sample_hemisphere();
     auto wi = onb.convert_to_local(v);
     if (dot(isect.shading_normal(), wi) < 0)
         wi = -v.x() * onb.u() -v.y() * onb.v() + onb.w() * v.z();

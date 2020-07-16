@@ -9,7 +9,9 @@
 #include "imaging/image_buffer.hpp"
 #include "core/renderer.hpp"
 #include <thread>
-#include "math/transform.hpp"
+//#include "math/transform.hpp"
+
+#include <graphics-math.hpp>
 
 /*
 auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
@@ -112,7 +114,7 @@ auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
 
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[]) {
-
+    
     constexpr const unsigned int screen_width = 500;
     constexpr const unsigned int screen_height = 500;
 

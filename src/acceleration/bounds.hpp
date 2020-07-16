@@ -1,39 +1,42 @@
 #pragma once
-#include "../math/point3.hpp"
+//#include "../math/point3.hpp"
 //#include "../geometry/mesh.hpp"
+
+#include <graphics-math.hpp>
+
+namespace tr {
 
 class Bounds {
 
-    Point3f m_lower;
-    Point3f m_upper;
+    gm::Point3f m_lower;
+    gm::Point3f m_upper;
 
 public:
+    Bounds(gm::Point3f lower, gm::Point3f upper) : m_lower(std::move(lower)), m_upper(std::move(upper)) {}
 
-    //Bounds() = default;
+    auto lower() const -> gm::Point3f { return m_lower; }
+    auto upper() const -> gm::Point3f { return m_upper; }
 
-    Bounds(Point3f lower, Point3f upper) : m_lower(std::move(lower)), m_upper(std::move(upper)) {}
-    auto lower() const -> Point3f { return m_lower; }
-    auto upper() const -> Point3f { return m_upper; }
+    auto overlaps(Bounds const& other) const -> bool;
+    auto inside(gm::Point3f const& point) const -> bool;
 
+    auto center() const -> gm::Point3f;
 
-    auto overlaps(const Bounds& other) const -> bool;
-    auto IsInside(const Point3f& point) const -> bool;
+    auto Diagonal() const-> gm::Vec3f;
+    auto SurfaceArea() const-> FLOAT;
+    auto CalculateCenter() const-> gm::Point3f;
+    auto axis_of_max_extent() const -> int;
 
-    auto center() const -> Point3f;
-
-    auto Diagonal()         const->Vec3f;
-    auto SurfaceArea()      const->FLOAT;
-    auto CalculateCenter()  const->Point3f;
-    auto axis_of_max_extent()    const -> int;
-
-    auto operator[](const std::size_t i) const -> Point3f;
-    auto operator[](const std::size_t i) -> Point3f&;
+    auto operator[](const std::size_t i) const -> gm::Point3f;
+    auto operator[](const std::size_t i) -> gm::Point3f&;
 };
 
-auto inline bounds_union(const Bounds& b1, const Bounds& b2) -> Bounds {
+auto inline bounds_union(Bounds const& b1, Bounds const& b2) -> Bounds {
     return {elementwise_min(b1.lower(), b2.lower()), elementwise_max(b1.upper(), b2.upper())};
 }
 
-auto inline point_union(const Bounds& b, const Point3f& p) -> Bounds {
+auto inline point_union(Bounds const& b, gm::Point3f const& p) -> Bounds {
     return {elementwise_min(b.lower(), p), elementwise_max(b.upper(), p)};
+}
+
 }

@@ -1,24 +1,29 @@
 #pragma once
-#include "../math/point3.hpp"
-#include "../math/vec3.hpp"
-#include "../math/ray.hpp"
 
-class Sampler;
+#include "../geometry/ray.hpp"
 
-class Camera
-{
-public:
+#include <graphics-math.hpp>
 
-    Camera(float v_fov, float aspect);
-    Camera(const Point3f& look_from, const Point3f& look_at, FLOAT v_fov, FLOAT aspect, FLOAT aperture, FLOAT focus_dist);
+namespace tr {
 
-    auto get_ray(double s, double t, Sampler& sampler) const -> Rayf;
+    class Sampler;
 
-private:
-    Point3f m_origin;
-    Point3f m_lower_left_corner;
-    Vec3f m_horizontal;
-    Vec3f m_vertical;
-    Vec3f m_u, m_v, m_w;
-    FLOAT m_lens_radius;
-};
+    class Camera
+    {
+    public:
+
+        Camera(float v_fov, float aspect);
+        Camera(const gm::Point3f& look_from, const gm::Point3f& look_at, FLOAT v_fov, FLOAT aspect, FLOAT aperture, FLOAT focus_dist);
+
+        auto get_ray(double s, double t, Sampler& sampler) const -> Rayf;
+
+    private:
+        gm::Point3f m_origin;
+        gm::Point3f m_lower_left_corner;
+        gm::Vec3f m_horizontal;
+        gm::Vec3f m_vertical;
+        gm::Vec3f m_u, m_v, m_w;
+        FLOAT m_lens_radius;
+    };
+
+}

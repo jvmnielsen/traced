@@ -184,7 +184,7 @@ auto
 Triangle::SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
     //pdf = 1 / GetArea(); // TODO: figure out if this should be for triangle or whole mesh
     //const Point2f uv { sampler.GetRandomReal(), sampler.GetRandomReal() };
-    const auto uv = sampler.UniformSampleTriangle();
+    const auto uv = sampler.uniform_sample_triangle();
     return std::make_tuple(Intersection{ GetPointFromUV(uv), uv, m_face_normal, InterpolateNormalAt(uv) }, 1 / calculate_surface_area());
 }
 

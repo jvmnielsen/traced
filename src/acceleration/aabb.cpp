@@ -1,10 +1,9 @@
-//
-// Created by Jacob Vesti Moeslund Nielsen on 18/11/2018.
-//
 #include "aabb.hpp"
 #include <functional>
 #include "../geometry/mesh.hpp"
 
+using namespace tr; 
+using namespace gm; 
 
 AABB::AABB(std::unique_ptr<Mesh> mesh)
     : m_bounds(mesh->calculate_bounds()),
@@ -23,7 +22,8 @@ AABB::AABB(std::unique_ptr<Mesh> mesh, Bounds bounds)
     : m_bounds(std::move(bounds)),
       m_center(bounds.center()),
       m_mesh(std::move(mesh))
-{ }
+{ 
+}
 
 
 AABB::AABB(const AABB& other)
@@ -33,8 +33,7 @@ AABB::AABB(const AABB& other)
 {
 }
 
-auto AABB::operator=(const AABB& other) -> AABB&
-{
+auto AABB::operator=(const AABB& other) -> AABB& {
     if (&other == this)
         return *this;
     
@@ -49,8 +48,7 @@ auto AABB::operator=(const AABB& other) -> AABB&
 }
 
 
-auto
-AABB::center() const -> const Point3f&
+auto AABB::center() const -> Point3f const&
 {
     return m_center;
 }
@@ -61,10 +59,10 @@ auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
 
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (m_bounds[ray.inverse_signs().at(0)].x() - ray.origin().x()) * ray.inverse_direction().x();
-    tmax = (m_bounds[1 - ray.inverse_signs().at(0)].x() - ray.origin().x()) * ray.inverse_direction().x();
-    tymin = (m_bounds[ray.inverse_signs().at(1)].y() - ray.origin().y()) * ray.inverse_direction().y();
-    tymax = (m_bounds[1 - ray.inverse_signs().at(1)].y() - ray.origin().y()) * ray.inverse_direction().y();
+    tmin = (m_bounds[ray.inverse_signs().at(0)].x - ray.origin().x) * ray.inverse_direction().x;
+    tmax = (m_bounds[1 - ray.inverse_signs().at(0)].x - ray.origin().x) * ray.inverse_direction().x;
+    tymin = (m_bounds[ray.inverse_signs().at(1)].y - ray.origin().y) * ray.inverse_direction().y;
+    tymax = (m_bounds[1 - ray.inverse_signs().at(1)].y - ray.origin().y) * ray.inverse_direction().y;
 
     if ((tmin > tymax) || (tymin > tmax))
         return false;
@@ -74,8 +72,8 @@ auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
     if (tymax < tmax)
         tmax = tymax;
 
-    tzmin = (m_bounds[ray.inverse_signs().at(2)].z() - ray.origin().z()) * ray.inverse_direction().z();
-    tzmax = (m_bounds[1 - ray.inverse_signs().at(2)].z() - ray.origin().z()) * ray.inverse_direction().z();
+    tzmin = (m_bounds[ray.inverse_signs().at(2)].z - ray.origin().z) * ray.inverse_direction().z;
+    tzmax = (m_bounds[1 - ray.inverse_signs().at(2)].z - ray.origin().z) * ray.inverse_direction().z;
 
     if ((tmin > tzmax) || (tzmin > tmax))
         return false;

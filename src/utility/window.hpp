@@ -2,29 +2,32 @@
 #include <SDL2/SDL.h>
 #include "../imaging/image_buffer.hpp"
 
-class Window
-{
-public:
-	Window(int screen_width, int screen_height);
-	~Window();
+namespace tr {
 
-    auto initialize_window(ImageBuffer& buffer) -> bool;
+    class Window
+    {
+    public:
+        Window(int screen_width, int screen_height);
+        ~Window();
 
-    void handle_input(ImageBuffer& pixelBuffer);
-    void update_texture(ImageBuffer& buffer);
-   
-private:
-	SDL_Window *m_windowHandle;
-	SDL_Surface *m_screenSurface;
-    SDL_Renderer *m_renderer;
-    SDL_Texture *m_texture;
+        auto initialize_window(ImageBuffer& buffer) -> bool;
 
-    //Event handler
-    SDL_Event m_eventHandler;
+        void handle_input(ImageBuffer& pixelBuffer);
+        void update_texture(ImageBuffer& buffer);
+    
+    private:
+        SDL_Window *m_windowHandle;
+        SDL_Surface *m_screenSurface;
+        SDL_Renderer *m_renderer;
+        SDL_Texture *m_texture;
 
-    //void* m_pixels; // buffer that holds pixels for screen
+        //Event handler
+        SDL_Event m_eventHandler;
 
-    const int m_screen_height;
-    const int m_screen_width;
-};
+        //void* m_pixels; // buffer that holds pixels for screen
 
+        const int m_screen_height;
+        const int m_screen_width;
+    };
+
+}

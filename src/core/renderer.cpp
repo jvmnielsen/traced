@@ -4,6 +4,8 @@
 #include <future>
 #include <numeric>
 
+using namespace tr;
+
 Renderer::Renderer(
     std::unique_ptr<Camera> camera,
     std::unique_ptr<Scene> scene,
@@ -143,8 +145,8 @@ Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pi
 
             Color3f color{0};
             for (size_t s = 0; s < samples_per_pixel; ++s) {
-                const auto u = (i + sampler.GetRandomReal()) / static_cast<float>(m_buffer->get_width());
-                const auto v = (j + sampler.GetRandomReal()) / static_cast<float>(m_buffer->get_height());
+                const auto u = (i + sampler.get_random_real()) / static_cast<float>(m_buffer->get_width());
+                const auto v = (j + sampler.get_random_real()) / static_cast<float>(m_buffer->get_height());
 
                 auto ray = m_camera->get_ray(u, v, sampler);
 
@@ -197,7 +199,7 @@ Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f {
         
         if (bounces > 3) {
             float q = std::max(color.r, std::max(color.g, color.b));
-            if (sampler.GetRandomReal() > q) // generate number [0.0, 1.0)
+            if (sampler.get_random_real() > q) // generate number [0.0, 1.0)
                 break;
             throughput /= q;
         } 

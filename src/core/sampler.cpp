@@ -1,30 +1,32 @@
 #include "sampler.hpp"
-#include "../math/math_util.hpp"
-#include "../math/normal3.hpp"
 
+#include <graphics-math.hpp>
+
+using namespace gm;
+using namespace tr;
 
 Sampler::Sampler()
         : m_gen(std::random_device()()) {
 }
 
 auto
-Sampler::GetRandomReal() -> float {
+Sampler::get_random_real() -> float {
     return m_real_dist(m_gen);
 }
 
 auto
-Sampler::GetRandomInDistribution(int upperBound) -> int {
-    return static_cast<unsigned int>(GetRandomReal() * (upperBound-1));
+Sampler::get_random_in_distribution(int upperBound) -> int {
+    return static_cast<unsigned int>(get_random_real() * (upperBound - 1));
 }
 
 auto
-Sampler::GetRandom2D() -> Point2f {
-    return { GetRandomReal(), GetRandomReal() };
+Sampler::get_random_2D() -> Point2f {
+    return {get_random_real(), get_random_real() };
 }
 
 auto
-Sampler::SampleDisk() -> Point2f {
-    const auto randPoint = GetRandom2D();
+Sampler::sample_disk() -> Point2f {
+    const auto randPoint = get_random_2D();
     // map to [-1,1]
     const auto offset = Point2f{ 2.0f * randPoint.x - 1.0f, 2.0f * randPoint.y - 1.0f };
 
@@ -44,14 +46,14 @@ Sampler::SampleDisk() -> Point2f {
 }
 
 auto 
-Sampler::CosineSampleHemisphere() -> Vec3f {
+Sampler::cosine_sample_hemisphere() -> Vec3f {
     
-    //const auto p = SampleDisk();
+    //const auto p = sample_disk();
     //FLOAT z = std::sqrt(std::max((FLOAT)0, 1 - p.x * p.x - p.y * p.y));
     //return Normalize(Vec3f{ p.x, p.y, z });
 
-    const auto r1 = GetRandomReal();
-    const auto r2 = GetRandomReal();
+    const auto r1 = get_random_real();
+    const auto r2 = get_random_real();
     
     const auto z = std::sqrt(1 - r2);
     const auto phi = 2 * Math::Constants::Pi * r1;
@@ -65,8 +67,8 @@ Sampler::CosineSampleHemisphere() -> Vec3f {
 }
 
 auto
-Sampler::UniformSampleTriangle() -> Point2f {
-    const auto p = GetRandom2D();
+Sampler::uniform_sample_triangle() -> Point2f {
+    const auto p = get_random_2D();
     FLOAT su0 = std::sqrt(p[0]);
     return { 1 - su0, p[1] * su0 };
 }

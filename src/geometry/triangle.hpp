@@ -1,61 +1,66 @@
 #pragma once
 
-#include <optional>
 #include "../core/intersection.hpp"
-#include "../math/transform.hpp"
+//#include "../math/transform.hpp"
 #include "../acceleration/bvh.hpp"
 
-enum class IntersectOption {
-    with_record,
-    discard_record
-};
+#include <graphics-math.hpp>
 
-class Triangle
-{
-public:
+#include <optional>
 
-    Triangle(std::array<Point3f, 3>     vertices,
-             std::array<Vec3f, 3>    vertex_normals,
-             std::array<Point2f, 3>     uv);
+namespace tr {
 
-    Triangle(std::array<Point3f, 3>     vertices,
-             std::array<Vec3f, 3>    vertex_normals);
+    enum class IntersectOption {
+        with_record,
+        discard_record
+    };
 
-    //bool Intersects(const Rayf &ray, Intersection& isect);
-    bool IntersectsFast(const Rayf& ray) const;
-    auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
+    class Triangle {
+    public:
 
+        Triangle(std::array<gm::Point3f, 3>     vertices,
+                std::array<gm::Vec3f, 3>    vertex_normals,
+                std::array<gm::Point2f, 3>     uv);
 
-    auto InterpolateNormalAt(const Point2f& uv) const -> Vec3f;
+        Triangle(std::array<gm::Point3f, 3>     vertices,
+                std::array<gm::Vec3f, 3>    vertex_normals);
 
-    auto TransformBy(const Transform& transform) -> void;
-
-    auto calculate_surface_area() const -> FLOAT;
-
-    /*
-    Point3f GetPointOnSurface(const float u, const float v) const override;
-    Point3f GetRandomPointOnSurface() override;
-    Intersection GetRandomSurfaceIntersection() override;
-    */
-
-    auto calculate_bounds() const -> Bounds;
-
-    auto SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
-
-    const std::array<Point3f, 3>& GetVertices() const;
-    //std::unique_ptr<AABB> GetBoundingVolume() const override;
+        //bool Intersects(const Rayf &ray, Intersection& isect);
+        bool IntersectsFast(const Rayf& ray) const;
+        auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
 
 
-private:
-    std::array<Point3f, 3>      m_vertices;         // Three points making up the triangle
-    std::array<Vec3f, 3>        m_vertex_normals;    // Normal at each vertex, used to interpolate a normal across the face
-    Vec3f                       m_face_normal;       // In cases where vertex normals are not available, use face normal
-    std::array<Vec3f, 2>        m_edges;            // Pre-calculated for use in Intercept function
-    std::array<Point2f, 3>      m_uv;               // Texture coordinates
+        auto InterpolateNormalAt(gm::Point2f const & uv) const -> gm::Vec3f;
 
-	void UpdateEdges();
+        auto TransformBy(gm::Transform const& transform) -> void;
 
-    auto GetPointFromUV(const Point2f& uv) const -> Point3f;
+        auto calculate_surface_area() const -> FLOAT;
 
-};
+        /*
+        Point3f GetPointOnSurface(const float u, const float v) const override;
+        Point3f GetRandomPointOnSurface() override;
+        Intersection GetRandomSurfaceIntersection() override;
+        */
 
+        auto calculate_bounds() const -> Bounds;
+
+        auto SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
+
+        const std::array<Point3f, 3>& GetVertices() const;
+        //std::unique_ptr<AABB> GetBoundingVolume() const override;
+
+
+    private:
+        std::array<gm::Point3f, 3>      m_vertices;         // Three points making up the triangle
+        std::array<gm::Vec3f, 3>        m_vertex_normals;    // Normal at each vertex, used to interpolate a normal across the face
+        gm::Vec3f                       m_face_normal;       // In cases where vertex normals are not available, use face normal
+        std::array<gm::Vec3f, 2>        m_edges;            // Pre-calculated for use in Intercept function
+        std::array<gm::Point2f, 3>      m_uv;               // Texture coordinates
+
+        void UpdateEdges();
+
+        auto GetPointFromUV(gm::Point2f const& uv) const -> gm::Point3f;
+
+    };
+
+}

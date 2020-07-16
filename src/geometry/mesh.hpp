@@ -1,16 +1,18 @@
 #pragma once
+
+#include "triangle.hpp"
+#include "ray.hpp"
+
+#include <optional>
 #include <memory>
 #include <vector>
-#include "triangle.hpp"
-#include <optional>
-//#include "../acceleration/bvh.hpp"
 
+namespace tr {
 
 class Transform;
-//class AABB;
 
-class Mesh
-{
+
+class Mesh {
 public:
     Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material, const Transform& transform);
 	Mesh(std::vector<Triangle> triangles);
@@ -29,7 +31,7 @@ public:
 
     auto sample_random_triangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
-    auto sample_as_light(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, Vec3f, FLOAT, Color3f>;
+    auto sample_as_light(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, gm::Vec3f, FLOAT, gm::Color3f>;
     //auto sample(const Intersection& ref, Sampler& sampler) const -> std::tuple<Intersection, FLOAT>;
 
     //auto GetPreTransformedPoint(const Point3f& p) const -> Point3f;
@@ -63,9 +65,4 @@ private:
 
 };
 
-class SubMesh : public Mesh
-{
-   
-};
-
-
+}

@@ -1,6 +1,8 @@
 #include "scene.hpp"
 #include <future>
 
+using namespace tr;
+
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
         std::vector<std::unique_ptr<Mesh>> lights)
@@ -44,10 +46,10 @@ Scene::sample_one_light(const Intersection& isect, const Vec3f& wo, Sampler& sam
     int num;
     if (isect.m_lightID.has_value()) { // TODO: make lightID do something
         do {
-            num = sampler.GetRandomInDistribution(nLights);
+            num = sampler.get_random_in_distribution(nLights);
         } while (num == isect.m_lightID.value());
     } else {
-        num = sampler.GetRandomInDistribution(nLights);
+        num = sampler.get_random_in_distribution(nLights);
     }
 
     const auto& light = m_lights[num];
@@ -84,7 +86,7 @@ Scene::sample_light_source(const Intersection& isect, const Vec3f& wo, Sampler& 
 auto
 Scene::sample_bsdf(const Intersection& isect, const Vec3f& wo, Sampler& sampler, const Mesh& light) const -> Color3f {
 
-    if (!isect.IsSpecular()) {
+    if (!isect.is_specular()) {
 
         auto [wi, scatteringPdf, f] = isect.sample_material(wo, sampler);
         f *= std::abs(dot(wi, isect.shading_normal()));

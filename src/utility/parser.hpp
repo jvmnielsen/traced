@@ -4,6 +4,8 @@
 #include <vector>
 #include "../geometry/mesh.hpp"
 
+namespace tr {
+
 class Parser
 {
 public:
@@ -26,3 +28,4 @@ private:
     std::vector<int> m_normal_ordering;
 };
 
+}

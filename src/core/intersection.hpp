@@ -1,60 +1,66 @@
 #pragma once
 
-#include <optional>
-#include "../math/point3.hpp"
-#include "../math/point2.hpp"
 #include "../material/material.hpp"
-#include "../math/ray.hpp"
+#include "../geometry/ray.hpp"
 
-class Mesh;
+#include <graphics-math.hpp>
 
-class Intersection
-{
-public:
+#include <optional>
 
-    Intersection(Point3f point, Point2f uv_coord, Vec3f geometric_normal, Vec3f shading_normal);
+namespace tr {
+    class Mesh;
 
+    class Intersection {
+    public:
 
-    Point3f offset_point() const;
-
-   
-    auto point() const -> const Point3f&;
-    auto geometric_normal() const -> const Vec3f&;
-    auto shading_normal() const -> const Vec3f&;
-
-    auto IsSpecular() const -> bool;
-
-    auto GetShadingBasis() const -> const ONB& { return m_shading_basis; }
-    //auto GetTransformedSampledVec(Sampler& sampler) const -> Normal3f;
+        Intersection(gm::Point3f point, gm::Point2f uv_coord, gm::Vec3f geometric_normal, gm::Vec3f shading_normal);
 
 
-
-    auto sample_material(const Vec3f& wo, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>;
-    auto emitted(const Vec3f& dir) const -> Color3f;
-    auto material_pdf(const Vec3f& wi) const->FLOAT;
-    auto evaluate_material(const Vec3f& wo, const Vec3f& wi) const->Color3f;
-
-    auto ray_towards(const Vec3f& dir) const-> Rayf;
+        [[nodiscard]] auto offset_point() const -> gm::Point3f;
 
 
-    auto SetMeshAndMaterial(const Mesh* mesh, const Material* material) -> void;
+        [[nodiscard]] auto point() const -> gm::Point3f const &;
 
-    std::optional<int> m_lightID;
+        [[nodiscard]] auto geometric_normal() const -> gm::Vec3f const &;
 
-private:
+        [[nodiscard]] auto shading_normal() const -> gm::Vec3f const &;
 
-    const Mesh*           m_mesh;
+        [[nodiscard]] auto is_specular() const -> bool;
 
-    const Material*       m_material;
+        [[nodiscard]] auto get_shading_basis() const -> gm::ONB const & { return m_shading_basis; }
+        //auto GetTransformedSampledVec(Sampler& sampler) const -> Normal3f;
 
-    
 
 
-    ONB m_shading_basis;
+        auto sample_material(gm::Vec3f const &wo, Sampler &sampler) const -> std::tuple<gm::Vec3f, FLOAT, gm::Color3f>;
 
-    Point3f         m_point;
-    Point2f         m_uv;
-    Vec3f           m_geometric_normal;
-    //Normal3f        m_shadingNormal;
-    //Normal3f        m_tangent;
-};
+        [[nodiscard]] auto emitted(gm::Vec3f const &dir) const -> gm::Color3f;
+
+        [[nodiscard]] auto material_pdf(gm::Vec3f const &wi) const -> FLOAT;
+
+        [[nodiscard]] auto evaluate_material(gm::Vec3f const &wo, gm::Vec3f const &wi) const -> gm::Color3f;
+
+        [[nodiscard]] auto ray_towards(const gm::Vec3f &dir) const -> Rayf;
+
+
+        auto SetMeshAndMaterial(const Mesh *mesh, const Material *material) -> void;
+
+        std::optional<int> m_lightID;
+
+    private:
+
+        const Mesh *m_mesh;
+
+        const Material *m_material;
+
+
+        gm::ONB m_shading_basis;
+
+        gm::Point3f m_point;
+        gm::Point2f m_uv;
+        gm::Vec3f m_geometric_normal;
+        //Normal3f        m_shadingNormal;
+        //Normal3f        m_tangent;
+    };
+
+}

@@ -132,7 +132,7 @@ Mesh::calculate_surface_area() const -> FLOAT {
 
 auto
 Mesh::sample_random_triangle(Sampler& sampler) const -> std::tuple<Intersection, FLOAT> {
-    const auto randTriangle = m_triangles[sampler.GetRandomInDistribution(m_triangles.size())];
+    const auto randTriangle = m_triangles[sampler.get_random_in_distribution(m_triangles.size())];
     return randTriangle.SampleSurface(sampler);
 }
 

@@ -1,5 +1,8 @@
 #include "bounds.hpp"
 
+using namespace tr;
+using namespace gm; 
+
 auto
 Bounds::Diagonal() const -> Vec3f {
     return {m_upper - m_lower};
@@ -8,30 +11,30 @@ Bounds::Diagonal() const -> Vec3f {
 auto
 Bounds::SurfaceArea() const -> FLOAT {
     const auto diagonal = Diagonal();
-    return 2.0 * (diagonal.x() * diagonal.y() + diagonal.x() * diagonal.z() + diagonal.y() * diagonal.z());
+    return static_cast<FLOAT>(2) * (diagonal.x * diagonal.y + diagonal.x * diagonal.z + diagonal.y * diagonal.z);
 }
 
 
 auto
 Bounds::CalculateCenter() const -> Point3f {
-    return m_lower + Diagonal() * 0.5f;
+    return m_lower + 0.5f * Diagonal();
 }
 
 
 auto
 Bounds::axis_of_max_extent() const -> int {
     const auto diagonal = Diagonal();
-    if (diagonal.x() > diagonal.y() && diagonal.x() > diagonal.z())
+    if (diagonal.x > diagonal.y && diagonal.x > diagonal.z)
         return 0;
 
-    if (diagonal.y() > diagonal.z())
+    if (diagonal.y > diagonal.z)
         return 1;
 
     return 2;
 }
 
 
-auto Bounds::IsInside(const Point3f& point) const -> bool {
+auto Bounds::inside(const Point3f& point) const -> bool {
 
     /*
     const auto isInsideBoundsForAxis = [this, p] (int axis) {

@@ -3,6 +3,10 @@
 #include "../imaging/camera.hpp"
 #include "../imaging/image_buffer.hpp"
 
+#include <graphics-math.hpp>
+
+namespace tr {
+
 class Renderer
 {
 public:
@@ -27,7 +31,7 @@ private:
     std::unique_ptr<Scene>       m_scene;
     std::shared_ptr<ImageBuffer> m_buffer;
 
-    auto outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f;
+    auto outgoing_light(Rayf& ray, Sampler& sampler) -> gm::Color3f;
 
     static constexpr int m_maxBounces = 5;
 };
@@ -53,3 +57,5 @@ class StochasticRayTracer : public Renderer
 public:
     
 }; */
+
+}

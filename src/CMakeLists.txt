@@ -27,10 +27,10 @@ set(SOURCE_FILES
     geometry/mesh.cpp
     geometry/triangle.hpp 
     geometry/triangle.cpp
+    geometry/ray.hpp
 
     imaging/camera.hpp 
     imaging/camera.cpp
-    imaging/color3.hpp
     imaging/image_buffer.hpp 
     imaging/image_buffer.cpp
     

@@ -1,6 +1,9 @@
 #include "bvh.hpp"
 #include "../geometry/mesh.hpp"
 
+using namespace tr;
+using namespace gm;
+
 BVH::BVH(std::vector<std::unique_ptr<Mesh>> meshes) {
 
     //std::vector<AABB> aabbs;

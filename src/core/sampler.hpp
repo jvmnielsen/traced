@@ -1,19 +1,23 @@
 #pragma once
+
+#include <graphics-math.hpp>
+
 #include <random>
-#include "../math/point2.hpp"
-#include "../math/normal3.hpp"
+
+
+namespace tr {
 
 
 class Sampler {
 public:
     Sampler();
 
-    auto GetRandomReal() -> float;
-    auto GetRandomInDistribution(int upperBound) -> int;
-    auto CosineSampleHemisphere() -> Vec3f;
-    auto GetRandom2D() -> Point2f;
-    auto UniformSampleTriangle() -> Point2f;
-    auto SampleDisk()->Point2f;
+    auto get_random_real() -> float;
+    auto get_random_in_distribution(int upperBound) -> int;
+    auto cosine_sample_hemisphere() -> gm::Vec3f;
+    auto get_random_2D() -> gm::Point2f;
+    auto uniform_sample_triangle() -> gm::Point2f;
+    auto sample_disk() -> gm::Point2f;
   
 
 private:
@@ -24,4 +28,6 @@ private:
     std::uniform_real_distribution<float> m_real_dist { 0.0f, 1.0f };
     //std::uniform_int_distribution<> m_intDist;
 };
+
+}
 
