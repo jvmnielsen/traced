@@ -17,9 +17,9 @@ void GammaEncode(Color3f& color, float gamma) {
 void ConvertToRGB(Color3f& color) {
     GammaEncode(color, 2.2f);
 
-    color.r = 255 * std::clamp(0.0f, 1.0f, color.r);
-    color.g = 255 * std::clamp(0.0f, 1.0f, color.g);
-    color.b = 255 * std::clamp(0.0f, 1.0f, color.b);
+    color.r = 255 * std::clamp(color.r, 0.0f, 1.0f);
+    color.g = 255 * std::clamp(color.g, 0.0f, 1.0f);
+    color.b = 255 * std::clamp(color.b, 0.0f, 1.0f);
 }
 
 
