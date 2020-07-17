@@ -25,7 +25,7 @@ namespace tr {
     class Matte : public Material {
     public:
 
-        explicit Matte(gm::Color3f attenuation = gm::Color3f::fill(0.18)) : m_attenuation(attenuation) {}
+        explicit Matte(gm::Color3f attenuation = gm::Color3f(0.18)) : m_attenuation(attenuation) {}
 
         auto evaluate(const gm::Vec3f &wo, const gm::Vec3f &wi, const Intersection &isect) const -> gm::Color3f override;
 
@@ -37,7 +37,7 @@ namespace tr {
     public:
         auto emitted(const Intersection &isect, const gm::Vec3f &dir) const -> gm::Color3f override;
 
-        gm::Color3f m_radiance = gm::Color3f::fill(1.0);
+        gm::Color3f m_radiance = gm::Color3f(1.0);
 
     };
 

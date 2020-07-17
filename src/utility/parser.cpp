@@ -109,10 +109,10 @@ auto Parser::construct_mesh(std::shared_ptr<Material> material, const Transform&
 						m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
 						m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
 				},
-				std::array<Vec3f, 3> {
-						m_normals.at(m_normal_ordering.at(i    ) - 1),
-						m_normals.at(m_normal_ordering.at(i + 1) - 1),
-						m_normals.at(m_normal_ordering.at(i + 2) - 1),
+				std::array<Normal3f, 3> {
+						m_normals.at(m_normal_ordering.at(i    ) - 1).normalise(),
+						m_normals.at(m_normal_ordering.at(i + 1) - 1).normalise(),
+						m_normals.at(m_normal_ordering.at(i + 2) - 1).normalise(),
 				});
 	}
 

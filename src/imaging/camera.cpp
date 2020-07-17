@@ -15,7 +15,7 @@ Camera::Camera(const float v_fov, const float aspect)
     m_lower_left_corner = gm::Point3f(-half_width, -half_height, -1.0f);
     m_horizontal = gm::Vec3f(2.0f * half_width, 0.0f, 0.0f);
     m_vertical = gm::Vec3f(0.0f, 2.0f * half_height, 0.0f);
-    m_origin = gm::Point3f::fill(0.0f);
+    m_origin = gm::Point3f(0.0f);
 }
 
 Camera::Camera(
@@ -51,9 +51,9 @@ Camera::Camera(
 auto Camera::get_ray(FLOAT s, FLOAT t, Sampler& sampler) const -> Rayf
 {
     const auto rd = m_lens_radius * sampler.sample_disk();
-    const auto offset = m_u * rd.x + m_v * rd.y;
+    const auto offset = rd.x * m_u + rd.y * m_v;
 
     return {m_origin + offset, // origin of the camera
-            (m_lower_left_corner + m_horizontal * s + m_vertical * t - m_origin - offset).normalise()}; // scale from lower left - origin for vector pointing to this point
+            m_lower_left_corner + m_horizontal * s + m_vertical * t - m_origin - offset}; // scale from lower left - origin for vector pointing to this point
 
 }

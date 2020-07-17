@@ -144,7 +144,7 @@ Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pi
     for (int j = segment.upperBound.y - 1; j >= segment.lowerBound.y; j--) { // start in the top left
         for (int i = segment.lowerBound.x; i < segment.upperBound.x; ++i) {
 
-            auto color = Color3f::fill(0);
+            auto color = Color3f(0);
             for (size_t s = 0; s < samples_per_pixel; ++s) {
                 const auto u = (i + sampler.get_random_real()) / static_cast<float>(m_buffer->get_width());
                 const auto v = (j + sampler.get_random_real()) / static_cast<float>(m_buffer->get_height());
@@ -168,7 +168,7 @@ auto
 Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> gm::Color3f {
 
     bool lastBounceSpecular = false;
-    auto throughput = gm::Color3f::fill(1.0f);
+    auto throughput = gm::Color3f(1.0f);
 
     auto color = gm::Color3f::black();
 

@@ -194,8 +194,8 @@ Triangle::SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOA
 auto 
 Triangle::calculate_bounds() const -> Bounds {
     
-    auto min = Point3f::fill(gm::constants::max_float); // min{Math::Constants::MaxFloat};
-    auto max = Point3f::fill(gm::constants::min_float); // max{Math::Constants::MinFloat};
+    auto min = Point3f(gm::constants::max_float); // min{Math::Constants::MaxFloat};
+    auto max = Point3f(gm::constants::min_float); // max{Math::Constants::MinFloat};
 
     for (const auto& vertex : m_vertices) {
         min = elementwise_min(min, vertex);

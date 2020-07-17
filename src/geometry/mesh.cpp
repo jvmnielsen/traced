@@ -110,8 +110,8 @@ std::unique_ptr<Mesh> Mesh::Clone()
 auto 
 Mesh::calculate_bounds() const -> Bounds {
 
-    auto min = Point3f::fill(gm::constants::max_float);
-    auto max = Point3f::fill(gm::constants::min_float);
+    auto min = Point3f(gm::constants::max_float);
+    auto max = Point3f(gm::constants::min_float);
 
     for (const auto& triangle : m_triangles) {
         for (const auto& vertex : triangle.GetVertices()) {

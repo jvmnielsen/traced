@@ -43,12 +43,12 @@ auto Emissive::emitted(Intersection const& isect, gm::Vec3f const& dir) const ->
 
 
 auto Glossy::sample(gm::Vec3f const& wo, Intersection const& isect, Sampler& sampler) const -> std::tuple<gm::Vec3f, FLOAT, gm::Color3f> {
-    auto const n = (-wo + isect.shading_normal() * 2.0f * dot(isect.shading_normal(), wo)).normalise();
+    auto const n = (-wo + 2.0f * isect.shading_normal() * dot(isect.shading_normal(), wo)).normalise();
     const auto onb = gm::ONB{n};
     const auto v = sampler.cosine_sample_hemisphere();
     auto wi = onb.convert_to_local(v);
     if (dot(isect.shading_normal(), wi) < 0)
-        wi = -v.x * onb.u() -v.y * onb.v() + onb.w() * v.z;
+        wi = -v.x * onb.u() -v.y * onb.v() + v.z * onb.w();
 
     const auto phong_lobe = std::pow(dot(onb.w(), wi), m_exp);
     const auto pdf = phong_lobe * dot(isect.shading_normal(), wi);
@@ -65,7 +65,7 @@ auto Glossy::evaluate(gm::Vec3f const& wo, Vec3f const& wi, Intersection const& 
     const auto r_dot_wo = dot(r, wo);
 
     if (r_dot_wo > 0.0f)
-        color = Color3f{m_ks * std::pow(r_dot_wo, m_exp)};
+        color = Color3f(m_ks * std::pow(r_dot_wo, m_exp));
 
     return color;
 }

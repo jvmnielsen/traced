@@ -8,10 +8,14 @@
 #include "utility/window.hpp"
 #include "imaging/image_buffer.hpp"
 #include "core/renderer.hpp"
-#include <thread>
+#include "material/material.hpp"
+
 //#include "math/transform.hpp"
 
 #include <graphics-math.hpp>
+
+#include <thread>
+
 
 /*
 auto CornellBox() -> std::tuple<std::unique_ptr<Scene>, std::unique_ptr<Camera>>
@@ -118,11 +122,11 @@ int main(int argc, char * argv[]) {
     constexpr const unsigned int screen_width = 500;
     constexpr const unsigned int screen_height = 500;
 
-    auto matte = std::make_shared<Matte>();
-    auto green = std::make_shared<Matte>(gm::Color3f{0.1, 0.3, 0.1});
-    auto red = std::make_shared<Matte>(gm::Color3f{0.8, 0.3, 0.3});
-    auto light = std::make_shared<Emissive>();
-    auto glossy = std::make_shared<Glossy>();
+    auto matte = std::make_shared<tr::Matte>();
+    auto green = std::make_shared<tr::Matte>(gm::Color3f{0.1, 0.3, 0.1});
+    auto red = std::make_shared<tr::Matte>(gm::Color3f{0.8, 0.3, 0.3});
+    auto light = std::make_shared<tr::Emissive>();
+    auto glossy = std::make_shared<tr::Glossy>();
 
 #ifdef _MSC_VER
     const auto cube = "assets/cube.obj";
@@ -131,19 +135,19 @@ int main(int argc, char * argv[]) {
     const auto sphere = "assets/sphere2.obj";
 #else 
     const auto cube = "../assets/cube.obj";
-    const auto plane = "../assets/plane.obj";
+    const auto plane = "assets/plane.obj";
     const auto bunny = "../assets/bunny.obj";
-    const auto sphere = "../assets/sphere2.obj";
+    const auto sphere = "assets/sphere2.obj";
 #endif
 
-    const auto main_object_transform = gm::Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).scale(Vec3f{3.2});
-    const auto floor_transform = gm::Transform().scale(Vec3f{200.0});
-    const auto light_transform = gm::Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(Vec3f{7.0});
-    const auto right_wall_transform = gm::Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(Vec3f{20.0});
-    const auto left_wall_transform = gm::Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(Vec3f{20.0});
-    const auto back_wall_transform = gm::Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(Vec3f{20.});
+    const auto main_object_transform = gm::Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).scale(gm::Vec3f{3.2});
+    const auto floor_transform = gm::Transform().scale(gm::Vec3f(200.0));
+    const auto light_transform = gm::Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(gm::Vec3f{7.0});
+    const auto right_wall_transform = gm::Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(gm::Vec3f{20.0});
+    const auto left_wall_transform = gm::Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(gm::Vec3f{20.0});
+    const auto back_wall_transform = gm::Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(gm::Vec3f{20.});
 
-    Parser parser;
+    tr::Parser parser;
     auto main_object = parser.construct_mesh_from_file(sphere, green, main_object_transform);
     auto light_source = parser.construct_mesh_from_file(plane, light, light_transform);
     auto floor = parser.construct_mesh_from_file(plane, matte, floor_transform);
@@ -152,35 +156,35 @@ int main(int argc, char * argv[]) {
     auto back_wall = parser.construct_mesh_from_file(plane, matte, back_wall_transform);
 
 
-    std::vector<std::unique_ptr<Mesh>> meshes;
+    std::vector<std::unique_ptr<tr::Mesh>> meshes;
     meshes.push_back(std::move(main_object));
     meshes.push_back(std::move(floor));
     meshes.push_back(std::move(right_wall));
     meshes.push_back(std::move(left_wall));
     meshes.push_back(std::move(back_wall));
 
-    std::vector<std::unique_ptr<Mesh>> lights;
+    std::vector<std::unique_ptr<tr::Mesh>> lights;
     lights.push_back(std::move(light_source));
 
-    auto scene = std::make_unique<Scene>(std::move(meshes), std::move(lights));
+    auto scene = std::make_unique<tr::Scene>(std::move(meshes), std::move(lights));
 
-    const auto look_from = Point3f(0.0, 16.0, 24.0);
-    const auto look_at = Point3f(0.0, 0.0, -1.5);
+    const auto look_from = gm::Point3f(0.0, 16.0, 24.0);
+    const auto look_at = gm::Point3f(0.0, 0.0, -1.5);
     const auto dist_to_focus = (look_from - look_at).length() - 5;
     const auto aperture = 0.8f;
     const auto aspect = static_cast<float>(screen_width) / static_cast<float>(screen_height);
-    auto camera = std::make_unique<Camera>(look_from, look_at, 55.0f, aspect, aperture, dist_to_focus);
+    auto camera = std::make_unique<tr::Camera>(look_from, look_at, 55.0f, aspect, aperture, dist_to_focus);
 
     //auto [scene, camera] = CornellBox();
     
 
-    auto buffer = std::make_shared<ImageBuffer>(screen_width, screen_height);
+    auto buffer = std::make_shared<tr::ImageBuffer>(screen_width, screen_height);
     
-    Renderer renderer{ std::move(camera), std::move(scene), buffer };
-    std::thread render_thread{ &Renderer::render, std::ref(renderer), 128 };
+    tr::Renderer renderer{ std::move(camera), std::move(scene), buffer };
+    std::thread render_thread{ &tr::Renderer::render, std::ref(renderer), 128 };
     std::cout << "Render-thread started\n";
 
-    auto window = std::make_unique<Window>(screen_width, screen_height);
+    auto window = std::make_unique<tr::Window>(screen_width, screen_height);
     window->handle_input(*buffer);
 
     renderer.shutdown();
