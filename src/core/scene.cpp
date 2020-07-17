@@ -2,6 +2,7 @@
 #include <future>
 
 using namespace tr;
+using namespace gm;
 
 Scene::Scene(
         std::vector<std::unique_ptr<Mesh>> meshes,
@@ -30,7 +31,7 @@ Scene::intersects(const Rayf& ray) const -> std::optional<Intersection> {
 bool Scene::line_of_sight_between(const Point3f& p1, const Point3f& p2) const {
     const Vec3f dir = p2 - p1;
     const auto distance = dir.length();
-    Rayf ray{p1, normalize(dir), distance};
+    Rayf ray{p1, dir, distance};
     return !intersects(ray).has_value();
 }
 
@@ -39,7 +40,7 @@ auto
 Scene::sample_one_light(const Intersection& isect, const Vec3f& wo, Sampler& sampler) const -> Color3f {
     const auto nLights = m_lights.size();
 
-    if (nLights == 0) return Color3f::Black(); // there are no lights
+    if (nLights == 0) return Color3f::black(); // there are no lights
 
     if (nLights == 1) return estimate_direct_light(isect, wo, sampler, *m_lights[0]);
 
@@ -67,20 +68,20 @@ Scene::sample_light_source(const Intersection& isect, const Vec3f& wo, Sampler& 
     //return Color3f{std::abs(isect.shading_normal().x()), std::abs(isect.shading_normal().y()), std::abs(isect.shading_normal().z())};
     //return Color3f{std::abs(wi.x()), std::abs(wi.y()), std::abs(wi.z())};
 
-    if (lightPdf > 0.0f && !li.IsBlack()) {
+    if (lightPdf > 0.0f && !li.is_black()) {
         const auto eval = isect.evaluate_material(wo, wi);
-        const auto dots = dot(wi, isect.shading_normal()) > 0 ? dot(wi, isect.shading_normal()) : 0;
+        const auto dots = dot(isect.shading_normal(), wi) > 0 ? dot(isect.shading_normal(), wi) : 0;
         const auto f = eval * dots;
         const auto scattering_pdf = isect.material_pdf(wi);
         //if (scattering_pdf > 0) std::cout << scattering_pdf << '\n';
 
-        if (!f.IsBlack() && line_of_sight_between(isect.offset_point(), atLight.offset_point())) {
-            const auto weight = Math::PowerHeuristic(1, lightPdf, 1, scattering_pdf);
+        if (!f.is_black() && line_of_sight_between(isect.offset_point(), atLight.offset_point())) {
+            const auto weight = gm::power_heuristic(1, lightPdf, 1, scattering_pdf);
             auto a = f * li * weight / lightPdf; 
             return a;
         }
     }
-    return Color3f::Black();
+    return Color3f::black();
 }
 
 auto
@@ -89,32 +90,32 @@ Scene::sample_bsdf(const Intersection& isect, const Vec3f& wo, Sampler& sampler,
     if (!isect.is_specular()) {
 
         auto [wi, scatteringPdf, f] = isect.sample_material(wo, sampler);
-        f *= std::abs(dot(wi, isect.shading_normal()));
+        f *= std::abs(dot(isect.shading_normal(), wi));
 
-        if (!f.IsBlack() && scatteringPdf > 0) {
+        if (!f.is_black() && scatteringPdf > 0) {
 
             auto lightPdf = light.pdf(isect, wi);
 
             if (lightPdf == 0.0f) {
-                return Color3f::Black();
+                return Color3f::black();
             }
 
             auto lightIsect = intersects(Rayf{isect.offset_point(), wi});
 
-            auto li = Color3f::Black();
+            auto li = Color3f::black();
             
             if (lightIsect.has_value()) 
                 li = lightIsect->emitted(-wi);
           
-            if (!li.IsBlack()) {
-                const auto weight = Math::PowerHeuristic(1, scatteringPdf, 1, lightPdf);
+            if (!li.is_black()) {
+                const auto weight = gm::power_heuristic(1, scatteringPdf, 1, lightPdf);
                 auto directLight = f * li * weight / scatteringPdf;
                 return directLight;
             }
         }
     }
 
-    return Color3f::Black();
+    return Color3f::black();
 }
 
 

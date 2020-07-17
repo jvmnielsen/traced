@@ -1,10 +1,12 @@
-#include <cmath>
 #include "image_buffer.hpp"
-#include "../math/math_util.hpp"
+
+#include <algorithm>
 #include <mutex>
 
-void GammaEncode(Color3f& color, float gamma)
-{
+using namespace tr;
+using namespace gm; 
+
+void GammaEncode(Color3f& color, float gamma) {
     float gammaExponent = 1 / gamma;
     color.r = std::pow(color.r, gammaExponent);
     color.g = std::pow(color.g, gammaExponent);
@@ -12,13 +14,12 @@ void GammaEncode(Color3f& color, float gamma)
 }
 
 
-void ConvertToRGB(Color3f& color)
-{
+void ConvertToRGB(Color3f& color) {
     GammaEncode(color, 2.2f);
 
-    color.r = 255 * Math::Clamp(0.0f, 1.0f, color.r);
-    color.g = 255 * Math::Clamp(0.0f, 1.0f, color.g);
-    color.b = 255 * Math::Clamp(0.0f, 1.0f, color.b);
+    color.r = 255 * std::clamp(0.0f, 1.0f, color.r);
+    color.g = 255 * std::clamp(0.0f, 1.0f, color.g);
+    color.b = 255 * std::clamp(0.0f, 1.0f, color.b);
 }
 
 

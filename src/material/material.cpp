@@ -2,9 +2,10 @@
 #include "../core/intersection.hpp"
 #include <cmath>
 
-auto
-Material::sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>
-{
+using namespace tr;
+using namespace gm;
+
+auto Material::sample(gm::Vec3f const& wo, Intersection const& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f> {
 
     //const auto wo = isect.get_shading_basis().WorldToLocal(worldWo);
     //if (wo.z == 0) return
@@ -15,43 +16,39 @@ Material::sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) c
     return std::make_tuple(wi, pdf, evaluate(wo, wi, isect)); // called by derived class
 }
 
-auto
-Material::pdf(const Vec3f& dir, const Intersection& isect) const -> FLOAT {
+auto Material::pdf(gm::Vec3f const& dir, Intersection const& isect) const -> FLOAT {
     /*
     const auto cosine = dot(dir, isect.shading_normal());
     if (cosine > 0)
         return cosine / Math::Constants::Pi;
     return 0 ; */
-    return dot(isect.shading_normal(), dir) / Math::Constants::Pi;
+    return dot(isect.shading_normal(), dir) / gm::constants::pi;
    
 }
 
-auto
-Material::emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f {
-    return Color3f::Black();
+auto Material::emitted(Intersection const& isect, gm::Vec3f const& dir) const -> gm::Color3f {
+    return gm::Color3f::black();
 }
 
-auto
-Matte::evaluate(const Vec3f& wo, const Vec3f& wi, const Intersection& isect) const -> Color3f {
+auto Matte::evaluate(Vec3f const& wo, Vec3f const& wi, Intersection const& isect) const -> Color3f {
     //return same_hemisphere(wo, wi) ? m_attenuation * Math::Constants::Pi : Color3f::Black();
-    return m_attenuation * Math::Constants::Pi;
+    return m_attenuation * gm::constants::pi;
 }
 
-auto
-Emissive::emitted(const Intersection& isect, const Vec3f& dir) const -> Color3f {
-    return dot(dir, isect.shading_normal()) > 0 ? m_radiance : Color3f::Black();
+auto Emissive::emitted(Intersection const& isect, gm::Vec3f const& dir) const -> gm::Color3f {
+    return gm::dot(isect.shading_normal(), dir) > 0 ? m_radiance : gm::Color3f::black();
 }
 
 
 
 
-auto Glossy::sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler) const -> std::tuple<Vec3f, FLOAT, Color3f>
-{
-    const auto onb = ONB{-wo + isect.shading_normal() * 2.0f * dot(wo, isect.shading_normal())};
+auto Glossy::sample(gm::Vec3f const& wo, Intersection const& isect, Sampler& sampler) const -> std::tuple<gm::Vec3f, FLOAT, gm::Color3f> {
+    auto const n = (-wo + isect.shading_normal() * 2.0f * dot(isect.shading_normal(), wo)).normalise();
+    const auto onb = gm::ONB{n};
     const auto v = sampler.cosine_sample_hemisphere();
     auto wi = onb.convert_to_local(v);
     if (dot(isect.shading_normal(), wi) < 0)
-        wi = -v.x() * onb.u() -v.y() * onb.v() + onb.w() * v.z();
+        wi = -v.x * onb.u() -v.y * onb.v() + onb.w() * v.z;
 
     const auto phong_lobe = std::pow(dot(onb.w(), wi), m_exp);
     const auto pdf = phong_lobe * dot(isect.shading_normal(), wi);
@@ -60,11 +57,11 @@ auto Glossy::sample(const Vec3f& wo, const Intersection& isect, Sampler& sampler
     return {wi, pdf, color};
 }
 
-auto Glossy::evaluate(const Vec3f& wo, const Vec3f& wi, const Intersection& isect) const -> Color3f
+auto Glossy::evaluate(gm::Vec3f const& wo, Vec3f const& wi, Intersection const& isect) const -> gm::Color3f
 {
-    Color3f color = Color3f::Black();
-    const auto n_dot_wi = dot(isect.shading_normal(), wi);
-    Vec3f r{-wi + 2.0f * isect.shading_normal() * n_dot_wi};
+    gm::Color3f color = gm::Color3f::black();
+    const auto n_dot_wi = gm::dot(isect.shading_normal(), wi);
+    gm::Vec3f r{-wi + 2.0f * isect.shading_normal() * n_dot_wi};
     const auto r_dot_wo = dot(r, wo);
 
     if (r_dot_wo > 0.0f)
@@ -73,8 +70,7 @@ auto Glossy::evaluate(const Vec3f& wo, const Vec3f& wi, const Intersection& isec
     return color;
 }
 
-auto Glossy::pdf(const Vec3f& wi, const Intersection& isect) const -> FLOAT
-{
+auto Glossy::pdf(Vec3f const& wi, Intersection const& isect) const -> FLOAT {
     const auto phong_lobe = std::pow(dot(isect.shading_normal(), wi), m_exp);
     return phong_lobe * dot(isect.shading_normal(), wi);
 }

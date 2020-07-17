@@ -119,8 +119,8 @@ int main(int argc, char * argv[]) {
     constexpr const unsigned int screen_height = 500;
 
     auto matte = std::make_shared<Matte>();
-    auto green = std::make_shared<Matte>(Color3f{0.1, 0.3, 0.1});
-    auto red = std::make_shared<Matte>(Color3f{0.8, 0.3, 0.3});
+    auto green = std::make_shared<Matte>(gm::Color3f{0.1, 0.3, 0.1});
+    auto red = std::make_shared<Matte>(gm::Color3f{0.8, 0.3, 0.3});
     auto light = std::make_shared<Emissive>();
     auto glossy = std::make_shared<Glossy>();
 
@@ -136,12 +136,12 @@ int main(int argc, char * argv[]) {
     const auto sphere = "../assets/sphere2.obj";
 #endif
 
-    const auto main_object_transform = Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).scale(Vec3f{3.2});
-    const auto floor_transform = Transform().scale(Vec3f{200.0});
-    const auto light_transform = Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(Vec3f{7.0});
-    const auto right_wall_transform = Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(Vec3f{20.0});
-    const auto left_wall_transform = Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(Vec3f{20.0});
-    const auto back_wall_transform = Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(Vec3f{20.});
+    const auto main_object_transform = gm::Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).scale(Vec3f{3.2});
+    const auto floor_transform = gm::Transform().scale(Vec3f{200.0});
+    const auto light_transform = gm::Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(Vec3f{7.0});
+    const auto right_wall_transform = gm::Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(Vec3f{20.0});
+    const auto left_wall_transform = gm::Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(Vec3f{20.0});
+    const auto back_wall_transform = gm::Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(Vec3f{20.});
 
     Parser parser;
     auto main_object = parser.construct_mesh_from_file(sphere, green, main_object_transform);

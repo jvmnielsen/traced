@@ -5,6 +5,7 @@
 #include <numeric>
 
 using namespace tr;
+using namespace gm;
 
 Renderer::Renderer(
     std::unique_ptr<Camera> camera,
@@ -106,15 +107,15 @@ Renderer::render(int samples_per_pixel) -> void {
     for (int i = 0; i < num_segments; ++i) {
         for (int j = 0; j < num_segments; ++j) {
             segments.emplace_back(
-                ScreenSegment(Point2i(width_interval * j, m_buffer->get_height() - height_interval * (i + 1)),
-                Point2i(width_interval * (j + 1), m_buffer->get_height() - height_interval * i), num_segments * i + j)
+                ScreenSegment(gm::Point2i(width_interval * j, m_buffer->get_height() - height_interval * (i + 1)),
+                gm::Point2i(width_interval * (j + 1), m_buffer->get_height() - height_interval * i), num_segments * i + j)
                 //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
             );
         }
     }
 
     //std::vector<std::future<bool>> futures;
-    std::vector<std::future<std::vector<Color3f>>> render_result;
+    std::vector<std::future<std::vector<gm::Color3f>>> render_result;
     //renderResult.reserve(totalSegments);
     std::vector<std::thread> render_segments;
 
@@ -136,14 +137,14 @@ Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pi
     Sampler sampler;
     const int num_pixels = (segment.upperBound.y - segment.lowerBound.y) * (segment.upperBound.x - segment.lowerBound.x);
 
-    std::vector<Color3f> result;
+    std::vector<gm::Color3f> result;
     result.reserve(num_pixels);
 
     // size_t causes subscript out of range due to underflow
     for (int j = segment.upperBound.y - 1; j >= segment.lowerBound.y; j--) { // start in the top left
         for (int i = segment.lowerBound.x; i < segment.upperBound.x; ++i) {
 
-            Color3f color{0};
+            auto color = Color3f::fill(0);
             for (size_t s = 0; s < samples_per_pixel; ++s) {
                 const auto u = (i + sampler.get_random_real()) / static_cast<float>(m_buffer->get_width());
                 const auto v = (j + sampler.get_random_real()) / static_cast<float>(m_buffer->get_height());
@@ -164,12 +165,12 @@ Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pi
 }
 
 auto
-Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f {
+Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> gm::Color3f {
 
     bool lastBounceSpecular = false;
-    Color3f throughput{ 1.0f };
+    auto throughput = gm::Color3f::fill(1.0f);
 
-    Color3f color = Color3f::Black();
+    auto color = gm::Color3f::black();
 
     for (int bounces = 0; bounces < 2; ++bounces) { 
 
@@ -179,20 +180,20 @@ Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> Color3f {
             break;
         }
 
-        auto wo = -normalize(ray.direction());
+        auto wo = -ray.direction().normalise();
 
         if (bounces == 0 || lastBounceSpecular) {
-            color += throughput * isect->emitted(wo);
+            color += throughput * isect->emitted(static_cast<Vec3f>(wo));
         }
 
-        color += throughput * m_scene->sample_one_light(*isect, wo, sampler);
+        color += throughput * m_scene->sample_one_light(*isect, static_cast<Vec3f>(wo), sampler);
 
 
-        auto [wi, pdf, f] = isect->sample_material(wo, sampler);
+        auto [wi, pdf, f] = isect->sample_material(static_cast<Vec3f>(wo), sampler);
 
-        if (f.IsBlack() || pdf == 0.0f) break;
+        if (f.is_black() || pdf == 0.0f) break;
 
-        throughput = throughput * std::abs(dot(wi, isect->shading_normal())) * f / pdf; // TODO: overload *=
+        throughput = throughput * std::abs(dot(isect->shading_normal(), wi)) * f / pdf; // TODO: overload *=
 
 
         ray = Rayf{ isect->point(), wi };
@@ -218,12 +219,12 @@ Renderer::render_normals() -> void
             const auto ray = m_camera->get_ray(i, j, sampler);
             auto isect = m_scene->intersects(ray);
 
-            Color3f color = Color3f::Black();
+            auto color = Color3f::black();
 
-            Color3f{std::abs(isect->shading_normal().x()), std::abs(isect->shading_normal().y()), std::abs(isect->shading_normal().z())};
+            Color3f{std::abs(isect->shading_normal().x()), std::abs(isect->shading_normal().y()), std::abs(isect->shading_normal().z()) };
 
             if (!isect.has_value()) {
-                color = Color3f::Black();
+                color = Color3f::black();
             }
 
             m_buffer->add_pixel_at(color, i, j);

@@ -2,6 +2,9 @@
 
 #include "triangle.hpp"
 #include "ray.hpp"
+#include "../acceleration/bvh.hpp"
+
+#include <graphics-math.hpp>
 
 #include <optional>
 #include <memory>
@@ -9,12 +12,9 @@
 
 namespace tr {
 
-class Transform;
-
-
 class Mesh {
 public:
-    Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material, const Transform& transform);
+    Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material, gm::Transform const& transform);
 	Mesh(std::vector<Triangle> triangles);
 
     auto Intersects(const Rayf& ray) const -> std::optional<Intersection>;
@@ -24,7 +24,7 @@ public:
 
 	auto calculate_surface_area() const -> FLOAT;
     auto calculate_bounds() const -> Bounds;
-    auto transform_by(const Transform& transform) -> void;
+    auto transform_by(gm::Transform const& transform) -> void;
 
     //auto ApplyMaterial(std::shared_ptr<Material> material) -> void;
     //auto GetMaterial() const -> const Material&;
@@ -40,7 +40,7 @@ public:
 
     auto triangle_count() const -> std::size_t;
 
-    auto pdf(const Intersection& ref, const Vec3f& wi) const -> FLOAT;
+    auto pdf(const Intersection& ref, const gm::Vec3f& wi) const -> FLOAT;
 
     //auto HasInternalBoundingBoxes() const -> bool { return !m_internalBoundingBoxes.empty(); }
 

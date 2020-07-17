@@ -1,6 +1,8 @@
 #include "window.hpp"
 #include <iostream>
 
+using namespace tr;
+
 Window::Window(const int screen_width, const int screen_height)
     : m_screen_width(screen_width),
       m_screen_height(screen_height)
@@ -87,7 +89,7 @@ auto Window::handle_input(ImageBuffer& pixelBuffer) -> void
     Uint32 startTime = 0;
     Uint32 endTime = 0;
     Uint32 delta = 0;
-    short timePerFrame = 32; // miliseconds
+    Uint32 timePerFrame = 32; // miliseconds
 
 
     //While application is running 

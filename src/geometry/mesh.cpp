@@ -6,8 +6,10 @@
 #include <algorithm>
 #include "../utility/utility.hpp"
 
+using namespace tr;
+using namespace gm; 
 
-Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material, const Transform& transform)
+Mesh::Mesh(std::vector<Triangle> triangles, std::shared_ptr<Material> material, gm::Transform const& transform)
     : m_triangles(std::move(triangles)),
       m_material(std::move(material))
 {
@@ -76,7 +78,7 @@ Mesh::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
 
 
-void Mesh::transform_by(const Transform& transform) {
+void Mesh::transform_by(Transform const& transform) {
 
     for (auto& triangle : m_triangles)
         triangle.TransformBy(transform);
@@ -108,8 +110,8 @@ std::unique_ptr<Mesh> Mesh::Clone()
 auto 
 Mesh::calculate_bounds() const -> Bounds {
 
-    Point3f min{ Math::Constants::MaxFloat };
-    Point3f max{ Math::Constants::MinFloat};
+    auto min = Point3f::fill(gm::constants::max_float);
+    auto max = Point3f::fill(gm::constants::min_float);
 
     for (const auto& triangle : m_triangles) {
         for (const auto& vertex : triangle.GetVertices()) {
@@ -141,14 +143,14 @@ auto Mesh::sample_as_light(const Intersection& ref,
     
     const auto[sampledIsect, pdfs] = sample_random_triangle(sampler);
 
-    const auto wi = normalize(sampledIsect.point() - ref.point());
+    const auto wi = (sampledIsect.point() - ref.point()).normalise();
 
     //const auto pdf = 1; // 1.0 / m_surface_area;
     
     
     FLOAT pdf = 0;
 
-    const auto denom = std::abs(dot(sampledIsect.geometric_normal(), -wi)) * calculate_surface_area();
+    const auto denom = std::abs(dot(-wi, sampledIsect.geometric_normal())) * calculate_surface_area();
 
     if (denom != 0.0)
         pdf = (sampledIsect.point() - ref.point()).length_squared() / denom;
@@ -156,9 +158,9 @@ auto Mesh::sample_as_light(const Intersection& ref,
     //const auto pdf = pdfs * 1.0 / m_triangles.size();
 
     if (pdf == 0 || (sampledIsect.point() - ref.point()).length() == 0)
-        return std::make_tuple(sampledIsect, wi, 0.0f, Color3f::Black());
+        return std::make_tuple(sampledIsect, static_cast<Vec3f>(wi), 0.0f, Color3f::black());
 
-    return std::make_tuple(sampledIsect, wi, pdf, m_material->emitted(sampledIsect, -wi));
+    return std::make_tuple(sampledIsect, static_cast<Vec3f>(wi), pdf, m_material->emitted(sampledIsect, -static_cast<Vec3f>(wi)));
 }
 
 
@@ -189,8 +191,8 @@ Mesh::generate_internal_bounding_boxes() const -> std::vector<Bounds> {
 
     const auto mesh_bounds = calculate_bounds();
 
-    std::cout << "Total bounds: " << mesh_bounds[0].x() << " " << mesh_bounds[0].y() << " " << mesh_bounds[0].z() << " , "
-        <<  mesh_bounds[1].x() << " " << mesh_bounds[1].y() << " " << mesh_bounds[1].z() << '\n';
+    std::cout << "Total bounds: " << mesh_bounds[0].x << " " << mesh_bounds[0].y << " " << mesh_bounds[0].z << " , "
+        <<  mesh_bounds[1].x << " " << mesh_bounds[1].y << " " << mesh_bounds[1].z << '\n';
 
     std::vector<Bounds> internal_bounds;
     internal_bounds.reserve(num_divisions);

@@ -31,7 +31,7 @@ auto BVH::build_tree(int start, int end) -> std::unique_ptr<BVHNode> {
         return std::make_unique<BVHNode>(m_aabbs[start]);
     }
 
-    Bounds center_bounds{Point3f{0.0}, Point3f{0.0}};
+    Bounds center_bounds{Point3f::fill(0), Point3f::fill(0)};
     for (int i = start; i < end; ++i) {
         center_bounds = point_union(center_bounds, m_aabbs.at(i).center());
     }

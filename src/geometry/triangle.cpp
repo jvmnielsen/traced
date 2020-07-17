@@ -3,12 +3,16 @@
 #include <numeric>
 #include "../acceleration/bounds.hpp"
 
+using namespace tr;
+using namespace gm;
+
 Triangle::Triangle(
     std::array<Point3f, 3>     vertices,
-    std::array<Vec3f, 3>        vertex_normals,
+    std::array<Normal3f, 3>    vertex_normals,
     std::array<Point2f, 3>     uv)
         : m_vertices(std::move(vertices))
         , m_vertex_normals(std::move(vertex_normals))
+        , m_face_normal(vertex_normals[0])
         , m_uv(std::move(uv))
 {
     UpdateEdges();
@@ -16,9 +20,10 @@ Triangle::Triangle(
 
 Triangle::Triangle(
     std::array<Point3f, 3>  vertices,
-    std::array<Vec3f, 3>    vertex_normals)
+    std::array<Normal3f, 3>    vertex_normals)
         : m_vertices(std::move(vertices))
         , m_vertex_normals(std::move(vertex_normals))
+        , m_face_normal(vertex_normals[0])
 {
     UpdateEdges();
 }
@@ -29,7 +34,7 @@ Triangle::UpdateEdges() -> void
 {
     m_edges[0]   = m_vertices[1] - m_vertices[0];
     m_edges[1]   = m_vertices[2] - m_vertices[0];
-    m_face_normal = cross(m_edges[0], m_edges[1]).normalize();
+    m_face_normal = cross(m_edges[0], m_edges[1]).normalise();
 }
 
 /*
@@ -137,24 +142,22 @@ Triangle::Intersects(const Rayf& ray) const -> std::optional<Intersection> {
     return Intersection{ ray.point_at_parameter(parameter), barycentric, m_face_normal, InterpolateNormalAt(barycentric)}; //
 }
 
-auto 
-Triangle::InterpolateNormalAt(const Point2f& uv) const -> Vec3f {
+auto Triangle::InterpolateNormalAt(Point2f const& uv) const -> Normal3f {
 
-    const auto normal =   m_vertex_normals[0] * (1 - uv.x - uv.y)
-                        + m_vertex_normals[1] * uv.x
-                        + m_vertex_normals[2] * uv.y;
+    const auto normal =   static_cast<Vec3f>(m_vertex_normals[0]) * (1 - uv.x - uv.y)
+                        + static_cast<Vec3f>(m_vertex_normals[1]) * uv.x
+                        + static_cast<Vec3f>(m_vertex_normals[2]) * uv.y;
 
-    return normalize(normal);
+    return normal.normalise();
 }
 
-auto
-Triangle::TransformBy(const Transform& transform) -> void
+auto Triangle::TransformBy(Transform const& transform) -> void
 {
     for (auto& vertex : m_vertices)
-        vertex = transform.apply_to_point(vertex);
+        vertex = transform.apply(vertex);
 
     for (auto& normal : m_vertex_normals)
-        normal = transform.apply_to_normal(normal);
+        normal = transform.apply(normal);
 
     // precompute again
     UpdateEdges();
@@ -191,8 +194,8 @@ Triangle::SampleSurface(Sampler& sampler) const -> std::tuple<Intersection, FLOA
 auto 
 Triangle::calculate_bounds() const -> Bounds {
     
-    Point3f min{Math::Constants::MaxFloat};
-    Point3f max{Math::Constants::MinFloat};
+    auto min = Point3f::fill(gm::constants::max_float); // min{Math::Constants::MaxFloat};
+    auto max = Point3f::fill(gm::constants::min_float); // max{Math::Constants::MinFloat};
 
     for (const auto& vertex : m_vertices) {
         min = elementwise_min(min, vertex);

@@ -1,11 +1,15 @@
 #include "parser.hpp"
+
 #include <fstream>
 #include <string>
 #include <iterator>
 #include <sstream>
 #include <memory>
 #include <vector>
-#include "parser.hpp"
+
+
+using namespace tr;
+using namespace gm;
 
 auto
 split_string(const std::string& subject) -> std::vector<std::string> {

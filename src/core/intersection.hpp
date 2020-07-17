@@ -13,7 +13,7 @@ namespace tr {
     class Intersection {
     public:
 
-        Intersection(gm::Point3f point, gm::Point2f uv_coord, gm::Vec3f geometric_normal, gm::Vec3f shading_normal);
+        Intersection(gm::Point3f point, gm::Point2f uv_coord, gm::Normal3f geometric_normal, gm::Normal3f shading_normal);
 
 
         [[nodiscard]] auto offset_point() const -> gm::Point3f;
@@ -21,9 +21,9 @@ namespace tr {
 
         [[nodiscard]] auto point() const -> gm::Point3f const &;
 
-        [[nodiscard]] auto geometric_normal() const -> gm::Vec3f const &;
+        [[nodiscard]] auto geometric_normal() const -> gm::Normal3f const &;
 
-        [[nodiscard]] auto shading_normal() const -> gm::Vec3f const &;
+        [[nodiscard]] auto shading_normal() const -> gm::Normal3f const &;
 
         [[nodiscard]] auto is_specular() const -> bool;
 
@@ -58,7 +58,7 @@ namespace tr {
 
         gm::Point3f m_point;
         gm::Point2f m_uv;
-        gm::Vec3f m_geometric_normal;
+        gm::Normal3f m_geometric_normal;
         //Normal3f        m_shadingNormal;
         //Normal3f        m_tangent;
     };
