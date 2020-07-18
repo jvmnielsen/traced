@@ -8,29 +8,24 @@ using namespace gm;
 AABB::AABB(std::unique_ptr<Mesh> mesh)
     : m_bounds(mesh->calculate_bounds()),
       m_center(m_bounds.center()),
-      m_mesh(std::move(mesh))
-{
+      m_mesh(std::move(mesh)) {
 }
 
 AABB::AABB(Bounds bounds)
     : m_bounds(std::move(bounds)),
-      m_center(bounds.center())
-{
+      m_center(bounds.center()) {
 }
 
 AABB::AABB(std::unique_ptr<Mesh> mesh, Bounds bounds)
     : m_bounds(std::move(bounds)),
       m_center(bounds.center()),
-      m_mesh(std::move(mesh))
-{ 
+      m_mesh(std::move(mesh)) {
 }
-
 
 AABB::AABB(const AABB& other)
     : m_bounds(other.m_bounds),
       m_mesh(std::make_unique<Mesh>(*other.m_mesh)),
-      m_center(other.m_center)
-{
+      m_center(other.m_center) {
 }
 
 auto AABB::operator=(const AABB& other) -> AABB& {
@@ -47,16 +42,11 @@ auto AABB::operator=(const AABB& other) -> AABB& {
     return *this;
 }
 
-
-auto AABB::center() const -> Point3f const&
-{
+auto AABB::center() const -> Point3f const& {
     return m_center;
 }
 
-
 auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
-
-
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
     tmin = (m_bounds[ray.inverse_signs().at(0)].x - ray.origin().x) * ray.inverse_direction().x;
@@ -82,8 +72,6 @@ auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
     if (tzmax < tmax)
         tmax = tzmax;
 
-    //return ( (tmin < t1) && (tmax > t0) );
-
     auto parameter = tmin;
 
     if (parameter < 0) {
@@ -91,45 +79,20 @@ auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
         if (parameter < 0)
             return false;
     }
-
     return true;
-
-    /*x
-    auto min = 0.0;
-    auto max = Math::Constants::MaxFloat;
-
-    for (int axis = 0; axis < 3; ++axis) {
-        // use the precomputed sign of the ray to avoid having to swap t_near and t_far
-        const auto t_near = (m_bounds[ray.inverse_signs()[axis]][axis] - ray.origin()[axis]) * ray.inverse_direction()[axis];
-        const auto t_far  = (m_bounds[1 - ray.inverse_signs()[axis]][axis] - ray.origin()[axis]) * ray.inverse_direction()[axis];
-
-        // we want the smallest max and largest min
-        min = t_near > min ? t_near : min;
-        max = t_far < max ? t_far : max;
-
-    }
-
-    // is the box behind us or are we inside it == false
-    return min >= 0; */
 }
 
-
 auto AABB::intersects(const Rayf& ray) const -> std::optional<Intersection> {
-
     if (intersects_bounds(ray)) {
         return m_mesh->intersects(ray);
     }
-
     return std::nullopt;
 }
 
-
-auto 
-AABB::intersects_mesh(const Rayf& ray) const->std::optional<Intersection> {
+auto AABB::intersects_mesh(const Rayf& ray) const->std::optional<Intersection> {
     return m_mesh->intersects(ray);
 }
 
-auto AABB::bounds() const -> const Bounds&
-{
+auto AABB::bounds() const -> const Bounds& {
     return m_bounds;
 }

@@ -34,7 +34,7 @@ auto Mesh::intersects_internal_aabbs(const Rayf& ray) const -> std::optional<Int
             isect = tmp;
     }
     if (isect.has_value()) {
-        isect->SetMeshAndMaterial(this, m_material.get());
+        isect->set_mesh_and_material(this, m_material.get());
         return isect;
     }
     return std::nullopt;
@@ -50,7 +50,7 @@ auto Mesh::intersects_mesh_proper(const Rayf& ray) const -> std::optional<Inters
             isect = tmp;
     }
     if (isect.has_value()) {
-        isect->SetMeshAndMaterial(this, m_material.get());
+        isect->set_mesh_and_material(this, m_material.get());
         return isect;
     }
     return std::nullopt;
