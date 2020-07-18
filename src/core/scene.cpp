@@ -18,7 +18,7 @@ Scene::intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
     for (int i = 0; i < m_lights.size(); ++i) {
         // the last overridden isect will always be the closest (ray max_param shrinks every time)
-        auto tmp = m_lights[i]->Intersects(ray);
+        auto tmp = m_lights[i]->intersects(ray);
 		if (tmp.has_value()) {
 			isect = tmp;
 			isect->m_lightID = i;

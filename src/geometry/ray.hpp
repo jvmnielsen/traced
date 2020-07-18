@@ -23,8 +23,8 @@ namespace tr {
             , m_max_param(max_param)
             , m_min_param(min_param)
             , m_ray_type(ray_type)
-            , m_inverse_dir(1 / direction.x, 1 / direction.y, 1 / direction.z)
-        {
+            , m_inverse_dir(1 / direction.x, 1 / direction.y, 1 / direction.z) {
+
             m_inverse_signs[0] = m_inverse_dir.x < 0;
             m_inverse_signs[1] = m_inverse_dir.y < 0;
             m_inverse_signs[2] = m_inverse_dir.z < 0;

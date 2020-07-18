@@ -117,7 +117,7 @@ auto AABB::intersects_bounds(const Rayf& ray) const -> bool {
 auto AABB::intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
     if (intersects_bounds(ray)) {
-        return m_mesh->Intersects(ray);
+        return m_mesh->intersects(ray);
     }
 
     return std::nullopt;
@@ -126,7 +126,7 @@ auto AABB::intersects(const Rayf& ray) const -> std::optional<Intersection> {
 
 auto 
 AABB::intersects_mesh(const Rayf& ray) const->std::optional<Intersection> {
-    return m_mesh->Intersects(ray);
+    return m_mesh->intersects(ray);
 }
 
 auto AABB::bounds() const -> const Bounds&
