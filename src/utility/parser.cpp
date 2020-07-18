@@ -1,46 +1,41 @@
 #include "parser.hpp"
 
-#include <fstream>
 #include <string>
 #include <iterator>
 #include <sstream>
 #include <memory>
+#include <utility>
 #include <vector>
-
 
 using namespace tr;
 using namespace gm;
 
-auto
-split_string(const std::string& subject) -> std::vector<std::string> {
+auto split_string(std::string const& subject) -> std::vector<std::string> {
     std::istringstream stream{ subject };
-
-    std::vector<std::string> container{ std::istream_iterator<std::string>{stream}, std::istream_iterator<std::string>{} };
-
+    std::vector<std::string> container{
+        std::istream_iterator<std::string>{stream},
+        std::istream_iterator<std::string>{}
+    };
     return container;
 }
 
-auto split_string(std::string& subject, const std::string& delimiter) -> std::vector<std::string> {
+auto split_string(std::string& subject, std::string const& delimiter) -> std::vector<std::string> {
 
 	size_t pos = 0;
 	std::string token;
-
 	std::vector<std::string> container;
 
-	while ((pos = subject.find(delimiter)) != std::string::npos)
-	{
+	while ((pos = subject.find(delimiter)) != std::string::npos) {
 		token = subject.substr(0, pos);
 		container.emplace_back(token);
-
 		subject.erase( 0, pos + delimiter.length() );
 	}
 
 	container.emplace_back(subject);
-
 	return container;
 }
 
-auto Parser::parse_file(const std::string& filename) -> void {
+auto Parser::parse_file(std::string const& filename) -> void {
 
 	std::ifstream infile(filename);
 
@@ -49,8 +44,7 @@ auto Parser::parse_file(const std::string& filename) -> void {
 
 	std::string line;
 
-	while (getline(infile, line))
-	{
+	while (getline(infile, line)) {
 		auto split_str = split_string(line);
 
         if (split_str.empty()) // checks will crash with empty vector
@@ -69,10 +63,8 @@ auto Parser::parse_file(const std::string& filename) -> void {
 				    std::stof(split_str[2]),
 				    std::stof(split_str[3])});
 		}
-		else if (split_str[0] == "f") // face declaration, we assume only triangles are used
-		{
-            for (size_t i = 1; i < split_str.size(); i++) // skip first
-            {
+		else if (split_str[0] == "f") { // face declaration, we assume only triangles are used
+		    for (size_t i = 1; i < split_str.size(); i++) { // skip first
                 if (split_str.size() > 4)
                     continue;
 
@@ -96,31 +88,26 @@ auto Parser::parse_file(const std::string& filename) -> void {
 	infile.close();
 }
 
-auto Parser::construct_mesh(std::shared_ptr<Material> material, const Transform& transform) -> std::unique_ptr<Mesh> {
+auto Parser::construct_mesh(std::shared_ptr<Material> material, Transform const& transform) -> std::unique_ptr<Mesh> {
 
 	std::vector<Triangle> triangles;
-
 	triangles.reserve(m_vertex_ordering.size() / 3);
 
 	for (size_t i = 0; i < m_vertex_ordering.size(); i += 3) {
 		triangles.emplace_back(
-				std::array<Point3f, 3> {
-						m_vertex.at(m_vertex_ordering.at(i    ) - 1),
-						m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
-						m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
-				},
-				std::array<Normal3f, 3> {
-						m_normals.at(m_normal_ordering.at(i    ) - 1).normalise(),
-						m_normals.at(m_normal_ordering.at(i + 1) - 1).normalise(),
-						m_normals.at(m_normal_ordering.at(i + 2) - 1).normalise(),
-				});
+            std::array<Point3f, 3> {
+                    m_vertex.at(m_vertex_ordering.at(i    ) - 1),
+                    m_vertex.at(m_vertex_ordering.at(i + 1) - 1),
+                    m_vertex.at(m_vertex_ordering.at(i + 2) - 1),
+            },
+            std::array<Normal3f, 3> {
+                    m_normals.at(m_normal_ordering.at(i    ) - 1).normalise(),
+                    m_normals.at(m_normal_ordering.at(i + 1) - 1).normalise(),
+                    m_normals.at(m_normal_ordering.at(i + 2) - 1).normalise(),
+            });
 	}
-
 	reset();
-
 	return std::make_unique<Mesh>(std::move(triangles), std::move(material), transform);
-
-
 }
 
 auto Parser::reset() -> void {
@@ -135,11 +122,11 @@ auto Parser::reset() -> void {
     m_normal_ordering.clear();
 }
 
-auto Parser::construct_mesh_from_file(const std::string& filename,
-		 							  std::shared_ptr<Material> material,
-		 							  const Transform& transform) -> std::unique_ptr<Mesh>
-{
-	parse_file(filename);
+auto Parser::construct_mesh_from_file(
+    std::string const& filename,
+    std::shared_ptr<Material> material,
+    Transform const& transform) -> std::unique_ptr<Mesh> {
 
-	return construct_mesh(material, transform);
+	parse_file(filename);
+	return construct_mesh(std::move(material), transform);
 }

@@ -101,14 +101,14 @@ Renderer::render(int samples_per_pixel) -> void {
 
     segments.reserve(total_segments);
 
-    const auto width_interval = m_buffer->get_width() / num_segments;
-    const auto height_interval = m_buffer->get_height() / num_segments;
+    const auto width_interval = m_buffer->width() / num_segments;
+    const auto height_interval = m_buffer->height() / num_segments;
 
     for (int i = 0; i < num_segments; ++i) {
         for (int j = 0; j < num_segments; ++j) {
             segments.emplace_back(
-                ScreenSegment(gm::Point2i(width_interval * j, m_buffer->get_height() - height_interval * (i + 1)),
-                gm::Point2i(width_interval * (j + 1), m_buffer->get_height() - height_interval * i), num_segments * i + j)
+                ScreenSegment(gm::Point2i(width_interval * j, m_buffer->height() - height_interval * (i + 1)),
+                              gm::Point2i(width_interval * (j + 1), m_buffer->height() - height_interval * i), num_segments * i + j)
                 //ScreenSegment(Point2i(widthInterval * j, heightInterval * i), Point2i(widthInterval * (j + 1), heightInterval * (i+1)))
             );
         }
@@ -146,8 +146,8 @@ Renderer::render_screen_segment(const ScreenSegment& segment, int samples_per_pi
 
             auto color = Color3f(0);
             for (size_t s = 0; s < samples_per_pixel; ++s) {
-                const auto u = (i + sampler.get_random_real()) / static_cast<float>(m_buffer->get_width());
-                const auto v = (j + sampler.get_random_real()) / static_cast<float>(m_buffer->get_height());
+                const auto u = (i + sampler.get_random_real()) / static_cast<float>(m_buffer->width());
+                const auto v = (j + sampler.get_random_real()) / static_cast<float>(m_buffer->height());
 
                 auto ray = m_camera->get_ray(u, v, sampler);
 
@@ -212,8 +212,8 @@ Renderer::outgoing_light(Rayf& ray, Sampler& sampler) -> gm::Color3f {
 auto 
 Renderer::render_normals() -> void
 {
-    for (int j = (int)m_buffer->get_height() - 1; j >= 0; j--) {
-        for (size_t i = 0; i < m_buffer->get_width(); ++i) {
+    for (int j = (int) m_buffer->height() - 1; j >= 0; j--) {
+        for (size_t i = 0; i < m_buffer->width(); ++i) {
 
             Sampler sampler;
             const auto ray = m_camera->get_ray(i, j, sampler);

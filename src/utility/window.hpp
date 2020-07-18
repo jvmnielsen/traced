@@ -1,17 +1,14 @@
 #pragma once
-#include <SDL2/SDL.h>
 #include "../imaging/image_buffer.hpp"
+#include <SDL2/SDL.h>
+
 
 namespace tr {
 
-    class Window
-    {
+    class Window {
     public:
         Window(int screen_width, int screen_height);
         ~Window();
-
-        auto initialize_window(ImageBuffer& buffer) -> bool;
-
         void handle_input(ImageBuffer& pixelBuffer);
         void update_texture(ImageBuffer& buffer);
     
@@ -20,14 +17,9 @@ namespace tr {
         SDL_Surface *m_screenSurface;
         SDL_Renderer *m_renderer;
         SDL_Texture *m_texture;
-
-        //Event handler
         SDL_Event m_eventHandler;
-
-        //void* m_pixels; // buffer that holds pixels for screen
-
-        const int m_screen_height;
-        const int m_screen_width;
+        int const m_screen_height;
+        int const m_screen_width;
     };
 
 }

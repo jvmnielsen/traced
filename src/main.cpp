@@ -135,14 +135,14 @@ int main(int argc, char * argv[]) {
     const auto sphere = "assets/sphere2.obj";
 #else 
     const auto cube = "../assets/cube.obj";
-    const auto plane = "assets/plane.obj";
+    const auto plane = "../../assets/plane.obj";
     const auto bunny = "../assets/bunny.obj";
-    const auto sphere = "assets/sphere2.obj";
+    const auto sphere = "../../assets/sphere2.obj";
 #endif
 
     const auto main_object_transform = gm::Transform().translate({0, 3.7, 4.5}).rotate({1, 0, 0}, 90).scale(gm::Vec3f{3.2});
     const auto floor_transform = gm::Transform().scale(gm::Vec3f(200.0));
-    const auto light_transform = gm::Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(gm::Vec3f{7.0});
+    const auto light_transform = gm::Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(gm::Vec3f{12.0});
     const auto right_wall_transform = gm::Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(gm::Vec3f{20.0});
     const auto left_wall_transform = gm::Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(gm::Vec3f{20.0});
     const auto back_wall_transform = gm::Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(gm::Vec3f{20.});
@@ -150,7 +150,7 @@ int main(int argc, char * argv[]) {
     tr::Parser parser;
     auto main_object = parser.construct_mesh_from_file(sphere, green, main_object_transform);
     auto light_source = parser.construct_mesh_from_file(plane, light, light_transform);
-    auto floor = parser.construct_mesh_from_file(plane, matte, floor_transform);
+    auto floor = parser.construct_mesh_from_file(plane, red, floor_transform);
     auto right_wall = parser.construct_mesh_from_file(plane, matte, right_wall_transform);
     auto left_wall = parser.construct_mesh_from_file(plane, matte, left_wall_transform);
     auto back_wall = parser.construct_mesh_from_file(plane, matte, back_wall_transform);
