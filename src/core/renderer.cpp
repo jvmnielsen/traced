@@ -22,7 +22,7 @@ auto Renderer::render(int samples_per_pixel) -> void {
     Timer timer{std::string{"Main render loop: "}};
     std::vector<ScreenSegment> segments;
     // careful about odd / even numbers depending on screen size -- find fix
-    const auto num_segments = 2;
+    const auto num_segments = 4;
     const auto total_segments = num_segments * num_segments;
 
     std::cout << "Rendering " << total_segments << " total segments" << std::endl;
