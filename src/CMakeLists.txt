@@ -1,11 +1,3 @@
-# add_subdirectory(acceleration)
-# add_subdirectory(core)
-# add_subdirectory(geometry)
-# add_subdirectory(imaging)
-# add_subdirectory(material)
-# add_subdirectory(math)
-# add_subdirectory(utility)
-
 set(SOURCE_FILES
     acceleration/bvh.hpp 
     acceleration/bvh.cpp
@@ -36,20 +28,6 @@ set(SOURCE_FILES
     
     material/material.hpp 
     material/material.cpp
-
-    # math/math_util.hpp 
-    # math/math_util.cpp
-    # math/matrix4x4.hpp
-    # math/normal3.hpp
-    # math/point2.hpp
-    # math/point3.hpp
-    # math/ray.hpp
-    # math/transform.hpp 
-    # math/transform.cpp
-    # math/vec2.hpp
-    # math/vec3.hpp
-    # math/onb.hpp
-    # math/onb.cpp
 
     utility/parser.hpp 
     utility/parser.cpp
