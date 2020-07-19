@@ -14,11 +14,12 @@
 // arguments necessary for SDL to be multi-platform
 int main(int argc, char * argv[]) {
     
-    auto constexpr screen_width = 1280;
-    auto constexpr screen_height = 720;
-    auto constexpr rpp = 1024;
+    auto constexpr screen_width = 720;
+    auto constexpr screen_height = 480;
+    auto constexpr rpp = 2048;
 
-    auto matte = std::make_shared<tr::Matte>(gm::Color3f{0.4, 0.4, 0.4});
+    auto matte = std::make_shared<tr::Matte>(gm::Color3f{0.5, 0.5, 0.5});
+    auto dark = std::make_shared<tr::Matte>(gm::Color3f{0.02, 0.02, 0.02});
     auto green = std::make_shared<tr::Matte>(gm::Color3f{0.1, 0.3, 0.1});
     auto red = std::make_shared<tr::Matte>(gm::Color3f{0.4, 0.1, 0.1});
     auto blue = std::make_shared<tr::Matte>(gm::Color3f{0.1, 0.1, 0.4});
@@ -38,21 +39,21 @@ int main(int argc, char * argv[]) {
 
     auto const bunny_transform = gm::Transform().translate({-3, 0.5, 4.5}).rotate({0, 1, 0}, 35).scale(gm::Vec3f{7.5});
     auto const ball1_transform = gm::Transform().translate({8, 6.7, 1.5}).scale(gm::Vec3f{6.2});
-    auto const ball2_transform = gm::Transform().translate({7.5, 3.7, 10.5}).scale(gm::Vec3f{3.2});
+    auto const ball2_transform = gm::Transform().translate({6, 3.7, 10.5}).scale(gm::Vec3f{3.2});
     auto const floor_transform = gm::Transform().scale(gm::Vec3f(200.0));
-    auto const light_transform = gm::Transform().translate({0, 20., 3.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(gm::Vec3f{12.0});
+    auto const light_transform = gm::Transform().translate({0, 22., 2.0}).rotate({0.0f, .0f, 5.}, -170.0).scale(gm::Vec3f{14.0});
     auto const right_wall_transform = gm::Transform().translate({20., 0.0, 0.0}).rotate({0.0, 0.0, 1.0}, 90.0).scale(gm::Vec3f{20.0});
     auto const left_wall_transform = gm::Transform().translate({-20.0, 0.0, 0.0}).rotate({0., 0.0, 1.0}, -90.0).scale(gm::Vec3f{20.0});
     auto const back_wall_transform = gm::Transform().translate({0.0, 0., -20.0}).rotate({1.0, 0.0, 0.0}, 90.0).scale(gm::Vec3f{20.});
 
     tr::Parser parser;
     auto bunny_model = parser.construct_mesh_from_file(bunny, green, bunny_transform);
-    auto ball1 = parser.construct_mesh_from_file(sphere, red, ball1_transform);
-    auto ball2 = parser.construct_mesh_from_file(sphere, blue, ball2_transform);
+    auto ball1 = parser.construct_mesh_from_file(sphere, matte, ball1_transform);
+    auto ball2 = parser.construct_mesh_from_file(sphere, matte, ball2_transform);
     auto light_source = parser.construct_mesh_from_file(plane, light, light_transform);
     auto floor = parser.construct_mesh_from_file(plane, matte, floor_transform);
-    auto right_wall = parser.construct_mesh_from_file(plane, matte, right_wall_transform);
-    auto left_wall = parser.construct_mesh_from_file(plane, matte, left_wall_transform);
+    auto right_wall = parser.construct_mesh_from_file(plane, blue, right_wall_transform);
+    auto left_wall = parser.construct_mesh_from_file(plane, red, left_wall_transform);
     auto back_wall = parser.construct_mesh_from_file(plane, matte, back_wall_transform);
 
 
@@ -73,7 +74,7 @@ int main(int argc, char * argv[]) {
     auto const look_from = gm::Point3f(0.0, 16.0, 24.0);
     auto const look_at = gm::Point3f(0.0, 0.0, -1.5);
     auto const dist_to_focus = (look_from - look_at).length() - 15;
-    auto const aperture = 0.8f;
+    auto const aperture = 0;
     auto const aspect = static_cast<float>(screen_width) / static_cast<float>(screen_height);
     auto camera = std::make_unique<tr::Camera>(look_from, look_at, 55.0f, aspect, aperture, dist_to_focus);   
 
