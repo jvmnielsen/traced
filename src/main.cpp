@@ -16,7 +16,7 @@ int main(int argc, char * argv[]) {
     
     auto constexpr screen_width = 1280;
     auto constexpr screen_height = 720;
-    auto constexpr rpp = 32;
+    auto constexpr rpp = 1024;
 
     auto matte = std::make_shared<tr::Matte>(gm::Color3f{0.4, 0.4, 0.4});
     auto green = std::make_shared<tr::Matte>(gm::Color3f{0.1, 0.3, 0.1});
